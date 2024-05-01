@@ -143,7 +143,7 @@ const Hero = () => {
                   color={"#052C42"}
                   width={"100%"}
                 >
-                  Learn more
+                  Contact us
                 </Button>
               </FormControl>
             </LightMode>

@@ -42,15 +42,18 @@ import {
             as="section"
             w="100%" // Ensure this section also takes full width
             color="gold"
+            bgGradient="linear(to-br, #052C42, #034C6A)"
+            border="1px solid gold" // Adds a border
+            boxShadow="0px 4px 10px rgba(0, 0, 0, 0.15)"
+            alignContent={'center'}
+            marginRight={'10%'}
             
           >
             <Container
               maxW="100%"
               px="4"
               py={{ base: "16", md: "24" }}
-              bgGradient="linear(to-br, #052C42, #034C6A)"
-              border="1px solid gold" // Adds a border
-              boxShadow="0px 4px 10px rgba(0, 0, 0, 0.15)"
+             
               
             >
               {/* Adjust Container inside Box to be full width too */}
@@ -71,7 +74,7 @@ import {
                   justify="center"
                   w="full" // Full width for alignment
                 >
-                  <Button
+                  {/* <Button
                     mt={5}
                     fontSize={"lg"} // Standardized button font size
                     height={"3rem"}
@@ -82,7 +85,7 @@ import {
                     width={{ base: "100%", sm: "60%" }} // Responsive button width
                   >
                     Click here to learn more
-                  </Button>
+                  </Button> */}
                 </Stack>
               </Stack>
             </Container>

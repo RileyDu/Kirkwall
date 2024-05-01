@@ -6,7 +6,7 @@ import {
   Stack,
   Text,
   Image,
-  Flex
+  Flex,
 } from "@chakra-ui/react";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 import Logo from "../../Assets/Images/Logo.svg";
@@ -23,34 +23,24 @@ const Footer = () => (
     padding={3}
     color="gold"
   >
-    <Container as="footer" role="contentinfo" py={{ base: "12", md: "16" }} >
+    <Container as="footer" role="contentinfo" py={{ base: "12", md: "16" }}>
       <Stack spacing={{ base: "4", md: "5" }}>
         <Stack justify="space-between" direction="row" align="center">
           <Image boxSize="10rem" src={Logo} alt="kirkwall logo" />
           <ButtonGroup variant="tertiary.accent">
             <IconButton
+              isRound={true}
+              fontSize={'25px'}
+              size="lg"
               as="a"
-              href="#"
+              href="https://www.linkedin.com/company/kirkwall/"
               aria-label="LinkedIn"
               icon={<FaLinkedin />}
-            />
-            <IconButton
-              as="a"
-              href="#"
-              aria-label="GitHub"
-              icon={<FaGithub />}
-            />
-            <IconButton
-              as="a"
-              href="#"
-              aria-label="Twitter"
-              icon={<FaTwitter />}
             />
           </ButtonGroup>
         </Stack>
         <Text fontSize="sm" color="fg.accent.subtle">
-          &copy; {new Date().getFullYear()} Kirkwall. All rights
-          reserved.
+          &copy; {new Date().getFullYear()} Kirkwall. All rights reserved.
         </Text>
       </Stack>
     </Container>
