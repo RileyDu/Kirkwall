@@ -42,6 +42,7 @@ import {
             as="section"
             w="100%" // Ensure this section also takes full width
             color="gold"
+            
           >
             <Container
               maxW="100%"
@@ -50,6 +51,7 @@ import {
               bgGradient="linear(to-br, #052C42, #034C6A)"
               border="1px solid gold" // Adds a border
               boxShadow="0px 4px 10px rgba(0, 0, 0, 0.15)"
+              
             >
               {/* Adjust Container inside Box to be full width too */}
               <Stack spacing={{ base: "8", md: "10" }} align="center">

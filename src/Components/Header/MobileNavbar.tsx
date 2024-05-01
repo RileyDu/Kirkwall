@@ -12,11 +12,11 @@ export const MobileDrawer = (props: Omit<DrawerProps, "children">) => (
     <DrawerContent  bgGradient="linear(to-br, #052C42, #034C6A)" mt={"2rem"} color={"goldenrod"}>
       <DrawerBody mt="16">
         <Stack spacing="6" align="stretch">
-          {["Components","Support"].map((item) => (
+          {/* {["Components","Support"].map((item) => (
             <Button key={item} size="lg" variant="text" colorScheme="gray">
               {item}
             </Button>
-          ))}
+          ))} */}
           <Button bg={"goldenrod"} color={"black"}>
             Contact us
           </Button>

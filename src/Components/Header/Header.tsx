@@ -40,11 +40,11 @@ const Header = () => {
               colorScheme="gray"
               spacing="3"
             >
-              {["Components", "Support"].map(
+              {/* {["Components", "Support"].map(
                 (item) => (
                   <Button key={item}>{item}</Button>
                 )
-              )}
+              )} */}
             </ButtonGroup>
             <Button bg={'goldenrod'} color={"black"}>Contact us</Button>
           </HStack>

@@ -15,12 +15,59 @@ import {
   FormLabel,
   FormHelperText,
   Container,
+  useToast
 } from "@chakra-ui/react";
 import { FaPlay } from "react-icons/fa";
 import * as Logos from "./Brands";
 import platform from '../../Assets/Images/platform.png'
+import emailjs from "emailjs-com";
+import React, { useRef, useState, props } from "react";
 
 const Hero = () => {
+  const form = useRef();
+  const toast = useToast();
+  // CODE TO SEND EMAIL
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    // Replace 'your_service_id', 'your_template_id', and 'your_user_id' with your actual EmailJS details
+    emailjs
+      .sendForm(
+        "service_dakyqbe",
+        "template_bhvy1tq",
+        e.target,
+        "14bYaszt4CBGDyU3u"
+      )
+      .then(
+        (result) => {
+          console.log(result.text);
+          toast({
+            title: "Email sent successfully",
+            description:
+              "We have received your message and will get back to you shortly!",
+            status: "success",
+            duration: 9000,
+            isClosable: true,
+          });
+          setInput(""); // Clear the input after sending the email
+        },
+        (error) => {
+          console.log(error.text);
+          toast({
+            title: "Email sending failed",
+            description:
+              "There was an error sending your email, please try again.",
+            status: "error",
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+      );
+  };
+
+  // Form Erroring
+  const [input, setInput] = useState("");
+  const handleInputChange = (e) => setInput(e.target.value);
   return (
     <Box>
       <Box
@@ -52,57 +99,6 @@ const Hero = () => {
             </Text>
           </Box>
 
-          {/* <Box as="section"  bgGradient="linear(to-br, #052C42, #034C6A)" color="fg.accent.default">
-            <Container py={{ base: "16", md: "24" }}>
-              <Stack spacing={{ base: "8", md: "10" }}>
-                <Stack spacing={{ base: "4", md: "5" }} align="center">
-                  <Heading size={{ base: "sm", md: "md" }}>
-                    Ready to Grow?
-                  </Heading>
-                  <Text
-                    color="on-accent-muteed"
-                    maxW="2xl"
-                    textAlign="center"
-                    fontSize="xl"
-                  >
-                    With this beautiful and responsive React components you will
-                    realize your next project in no time.
-                  </Text>
-                </Stack>
-                <Stack
-                  spacing="3"
-                  direction={{ base: "column", sm: "row" }}
-                  justify="center"
-                >
-                  <Button
-                    mt={5}
-                    fontSize={"20px"}
-                    height={"3rem"}
-                    size={"lg"}
-                    bg={"goldenrod"}
-                    type="submit"
-                    color={"#052C42"}
-                    width={"50%"}
-                  >
-                    Learn more
-                  </Button>
-                  <Button
-                    mt={5}
-                    fontSize={"20px"}
-                    height={"3rem"}
-                    size={"lg"}
-                    bg={"goldenrod"}
-                    type="submit"
-                    color={"#052C42"}
-                    width={"50%"}
-                  >
-                    Start Free Trial
-                  </Button>
-                </Stack>
-              </Stack>
-            </Container>
-          </Box> */}
-
           <Stack
             justify="center"
             direction={{ base: "column", md: "row", xl: "column" }}
@@ -111,17 +107,9 @@ const Hero = () => {
             spacing="4"
           >
             <LightMode>
-              {/* <Button
-                size="lg"
-                colorScheme="teal"
-                px="8"
-                fontWeight="bold"
-                fontSize="md"
-              >
-                Get started free
-              </Button> */}
+         
               <FormControl
-                // onSubmit={sendEmail}
+                onSubmit={sendEmail}
                 isRequired
                 marginTop={"2rem"}
                 color={"goldenrod"}
@@ -131,12 +119,12 @@ const Hero = () => {
                   Email
                 </FormLabel>
                 <Input
-                  //   for="user_email"
+                    for="user_email"
                   marginRight={"2rem"}
                   background={"white"}
                   type="email"
-                  //   value={input}
-                  //   onChange={handleInputChange}
+                    value={input}
+                    onChange={handleInputChange}
                   name="user_email"
                   height={"3rem"}
                   placeholder="Email"

@@ -49,7 +49,7 @@ const Footer = () => (
           </ButtonGroup>
         </Stack>
         <Text fontSize="sm" color="fg.accent.subtle">
-          &copy; {new Date().getFullYear()} Chakra UI Pro, Inc. All rights
+          &copy; {new Date().getFullYear()} Kirkwall. All rights
           reserved.
         </Text>
       </Stack>
