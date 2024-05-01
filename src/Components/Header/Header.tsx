@@ -46,7 +46,7 @@ const Header = () => {
                 )
               )} */}
             </ButtonGroup>
-            <Button bg={'goldenrod'} color={"black"}>Contact us</Button>
+            {/* <Button bg={'goldenrod'} color={"black"}>Contact us</Button> */}
           </HStack>
         ) : (
           <>
