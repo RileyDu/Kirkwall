@@ -14,10 +14,10 @@ import {
   
 const Cta = () => (
     <Box as="section"   bg="#052C42" color={'whitesmoke'}>
-      <Container py={{ base: '16', md: '24' }} >
+      <Container py={{ base: '16', md: '36' }} maxW={'70%'} >
         <Stack spacing={{ base: '12', md: '16' }}>
           <Stack spacing={{ base: '4', md: '5' }} maxW="3xl">
-            <Stack spacing="3" align={'center'}>
+            <Stack spacing="3" >
               <Text  fontSize={{ base: 'md', md: 'md' }} fontWeight="semibold" color="accent">
                 Features
               </Text>
