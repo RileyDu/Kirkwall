@@ -16,6 +16,7 @@ import Hero from "./Views/Hero/Hero";
 import Footer from "./Components/Footer/Footer";
 import MainImage from "./Views/Hero/MainImage";
 import Cta from './Views/Hero/Cta'
+import Team from './Views/Team/Team'
 import "./App.css";
 
 export const App = () => (
@@ -25,6 +26,7 @@ export const App = () => (
       <Hero />
       <MainImage />
       <Cta />
+      <Team />
       <Footer />
     </div>
   </ChakraProvider>
