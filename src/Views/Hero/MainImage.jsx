@@ -83,11 +83,11 @@ import {
               letterSpacing="wide"
               color="gray.600" // Assuming light mode by default
             >
-              Partnered with 10+ universitys and organizations
+              Partnered with multiple universitys and Companies
             </Text>
             <SimpleGrid
               mt="8"
-              columns={{ base: 1, md: 2, lg: 2 }}
+              columns={{ base: 1, md: 3, lg: 3 }}
               color="gray.500"
               alignItems="center"
               justifyItems="center"
@@ -96,6 +96,7 @@ import {
             >
               <Text> NDSU</Text>
               <Text> UND</Text>
+              <Text> Devii</Text>
             </SimpleGrid>
           </Box>
         </Box>

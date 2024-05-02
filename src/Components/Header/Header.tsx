@@ -50,7 +50,7 @@ const Header = () => {
           </HStack>
         ) : (
           <>
-            <ToggleButton
+            {/* <ToggleButton
               onClick={mobileNavbar.onToggle}
               isOpen={mobileNavbar.isOpen}
               aria-label="Open Menu"
@@ -58,7 +58,7 @@ const Header = () => {
             <MobileDrawer
               isOpen={mobileNavbar.isOpen}
               onClose={mobileNavbar.onClose}
-            />
+            /> */}
           </>
         )}
       </HStack>
