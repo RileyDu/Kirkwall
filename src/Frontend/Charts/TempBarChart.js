@@ -44,7 +44,8 @@ export default function TempBarGraph() {
         label: 'Temperature',
         data: weatherData.map((dataPoint) => dataPoint.temperature),
         backgroundColor: 'rgba(0,163, 0,0.4)',
-        borderColor: 'black',
+        borderColor: 'rgba(0,163, 0,1)',
+        borderWidth: 1,
       },
     ],
   };
