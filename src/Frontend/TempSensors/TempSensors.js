@@ -1,12 +1,36 @@
-import { Box, Heading } from "@chakra-ui/react";
-import TempBarGraph from "../Charts/TempBarChart";
+import { Box, Divider, Heading } from '@chakra-ui/react';
+import TempBarGraph from '../Charts/TempBarChart';
+import ChartWrapper from '../Charts/ChartWrapper';
+import { getWeatherData } from '../../Backend/Graphql_helper';
+import { LineChart } from '../Charts/Charts';
+import { useEffect, useState } from 'react';
 
 export default function TempSensors() {
-    return (
-    <Box p="4" width={"100%"} height={"100%"}>
-        <Heading size="lg" textAlign={"center"}>Temperature Sensors</Heading>
+  const [weatherData, setWeatherData] = useState([]);
+  const fetchData = async () => {
+    try {
+      const response = await getWeatherData();
+      setWeatherData(response.data.weather_data);
+    } catch (err) {
+      console.error('Failed to fetch weather data', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  return (
+    <Box p="4" width={'100%'} height={'100%'}>
+      <Heading size="lg" textAlign={'center'} mb={'4'}>
+        Temperature Sensors
+      </Heading>
+      <ChartWrapper title="Temperature Levels">
         <TempBarGraph />
+      </ChartWrapper>
+      <Divider my={'8'} borderColor="blue.500" borderWidth="4px" />
+      <ChartWrapper title="Temperature Over Time">
+        <LineChart data={weatherData} metric="temperature" />
+      </ChartWrapper>
     </Box>
-    
-    );
+  );
 }
