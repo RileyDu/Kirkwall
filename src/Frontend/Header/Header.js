@@ -12,7 +12,7 @@ const Header = () => {
     const [user] = useAuthState(auth);
     return (
       <Flex
-        bg="navy"
+        bg="#1A9687"
         color="white"
         px="4"
         py="2"
@@ -22,8 +22,8 @@ const Header = () => {
         top="0"
         zIndex="1000"
       >
-        <Box as="span" fontSize="lg" fontWeight="bold">
-          Logo
+        <Box>
+          <img src='/kirkwall_logo.png' alt="kirkwall logo" height="250px" width="250px" />
         </Box>
         {isLargerThan768 ? (
           user ? (
