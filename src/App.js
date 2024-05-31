@@ -102,7 +102,6 @@ const Header = () => {
       <Box as="span" fontSize="lg" fontWeight="bold">
         Logo
       </Box>
-      {user && <Logout />}
       {isLargerThan768 ? (
         <Flex>
           <Box mx="2" _hover={{ color: 'green', textDecoration: 'underline' }}>
@@ -118,13 +117,14 @@ const Header = () => {
       ) : (
         <IconButton icon={<FaBars />} bg="transparent" aria-label="Menu" />
       )}
-      <Box>
+      {/* <Box>
         <IconButton
           icon={<FaUserCircle />}
           bg="transparent"
           aria-label="User Profile"
-        />
-      </Box>
+          />
+      </Box> */}
+          {user && <Logout />}
     </Flex>
   );
 };
