@@ -3,21 +3,16 @@ import {
   ChakraProvider,
   Box,
   Flex,
-  Grid,
-  GridItem,
   Spinner,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { FaCog, FaQuestionCircle, FaUserCircle, FaBars } from 'react-icons/fa';
-import { LineChart, BarChart } from './Frontend/Charts/Charts';
+
 import { getWeatherData } from './Backend/Graphql_helper';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './Frontend/AuthComponents/ProtectedRoute';
 import SignUp from './Frontend/AuthComponents/Signup';
 import Login from './Frontend/AuthComponents/Login';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from './Backend/Firebase';
 import Header from './Frontend/Header/Header';
 import customTheme from './Frontend/Styles/theme';
 import Sidebar from './Frontend/Sidebar/Siderbar';
