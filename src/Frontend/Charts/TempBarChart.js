@@ -43,7 +43,7 @@ export default function TempBarGraph() {
       {
         label: 'Temperature',
         data: weatherData.map((dataPoint) => dataPoint.temperature),
-        backgroundColor: 'rgba(0,0,163,0.4)',
+        backgroundColor: 'rgba(0,163, 0,0.4)',
         borderColor: 'black',
       },
     ],
@@ -53,8 +53,8 @@ export default function TempBarGraph() {
     responsive: true,
     scales: {
       y: {
-        min: minTemp - 5,
-        max: maxTemp + 5,
+        min: minTemp - 3,
+        max: maxTemp + 3,
       },
     },
     plugins: {
