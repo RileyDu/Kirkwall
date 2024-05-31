@@ -103,6 +103,7 @@ const Header = () => {
         Logo
       </Box>
       {isLargerThan768 ? (
+        user ? (
         <Flex>
           <Box mx="2" _hover={{ color: 'green', textDecoration: 'underline' }}>
             Home
@@ -114,6 +115,7 @@ const Header = () => {
             Reports
           </Box>
         </Flex>
+        ) : null
       ) : (
         <IconButton icon={<FaBars />} bg="transparent" aria-label="Menu" />
       )}
