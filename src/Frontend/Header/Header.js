@@ -36,15 +36,15 @@ const Header = () => {
       {isLargerThan768 ? (
         user ? (
           <Flex fontSize={'2em'}  color={'black'} align="center">
-            <Box mx="5" _hover={{ textDecoration: 'underline' }} lineHeight="1.5em">
+            <Box mx="5" _hover={{ textDecoration: 'underline', cursor: 'pointer' }} lineHeight="1.5em">
               Home
             </Box>
             <DividerBox />
-            <Box mx="5" _hover={{ textDecoration: 'underline' }} lineHeight="1.5em">
+            <Box mx="5" _hover={{ textDecoration: 'underline', cursor: 'pointer' }} lineHeight="1.5em">
               Sensors
             </Box>
             <DividerBox />
-            <Box mx="5" _hover={{ textDecoration: 'underline' }} lineHeight="1.5em">
+            <Box mx="5" _hover={{ textDecoration: 'underline', cursor: 'pointer' }} lineHeight="1.5em">
               Reports
             </Box>
           </Flex>
