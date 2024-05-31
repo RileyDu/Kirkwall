@@ -44,3 +44,6 @@ yarn-error.log*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+src/Backend/Auth.js
+src/Backend/Firebase.js
