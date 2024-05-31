@@ -12,7 +12,7 @@ const MainContent = ({ weatherData }) => (
         </GridItem>
         <GridItem colSpan={1}>
           <ChartWrapper title="Humidity Levels">
-            <BarChart data={weatherData} metric="humidity" />
+            <BarChart data={weatherData} metric="percent_humidity" />
           </ChartWrapper>
         </GridItem>
         <GridItem colSpan={1}>
