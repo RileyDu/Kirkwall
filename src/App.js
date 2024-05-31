@@ -9,7 +9,7 @@ import {
 
 import { getWeatherData } from './Backend/Graphql_helper';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { AuthProvider } from './AuthContext';
+import { AuthProvider } from './Frontend/AuthComponents/AuthContext';
 import ProtectedRoute from './Frontend/AuthComponents/ProtectedRoute';
 import SignUp from './Frontend/AuthComponents/Signup';
 import Login from './Frontend/AuthComponents/Login';
