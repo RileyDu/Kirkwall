@@ -34,7 +34,7 @@ const Login = () => {
   };
 
   return (
-    <Box bg="gray.200" h="100vh">
+    <Box bg="gray.200" h="100vh" w={'100%'}>
       <Container maxW="lg" py={{ base: '12', md: '24' }} px={{ base: '0', sm: '8' }}>
         <Stack spacing="8">
           <Stack spacing="6">
@@ -46,8 +46,6 @@ const Login = () => {
             py={{ base: '0', sm: '8' }}
             px={{ base: '4', sm: '10' }}
             bg={{ base: 'secondary.100', sm: 'white' }}
-            // boxShadow="brutalShadow"
-            // sx={brutalBorderStyles}
             borderRadius="lg"
           >
             <Stack spacing="6">
