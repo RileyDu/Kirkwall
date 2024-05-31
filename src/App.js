@@ -17,7 +17,8 @@ import Header from './Frontend/Header/Header';
 import customTheme from './Frontend/Styles/theme';
 import Sidebar from './Frontend/Sidebar/Siderbar';
 import MainContent from './Frontend/Main/Main';
-import TempSensors from './Frontend/TempSensors/TempSensors';
+import TempSensors from './Frontend/Sensors/TempSensors/TempSensors';
+import SensorsMain from './Frontend/Sensors/SensorsMain/SensorsMain';
 
 
 
@@ -69,6 +70,14 @@ const App = () => {
                     <ProtectedRoute>
                       {isLargerThan768 && <Sidebar />}
                       <TempSensors weatherData={weatherData} />
+                    </ProtectedRoute>
+                  } />
+              <Route
+                  path='/Sensors'
+                  element={
+                    <ProtectedRoute>
+                      {isLargerThan768 && <Sidebar />}
+                      <SensorsMain  />
                     </ProtectedRoute>
                   } />
               </Routes>
