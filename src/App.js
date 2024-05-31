@@ -14,7 +14,10 @@ import {
 } from '@chakra-ui/react';
 import { FaCog, FaQuestionCircle, FaUserCircle, FaBars } from 'react-icons/fa';
 import { LineChart, BarChart } from './Frontend/Charts'; 
-import { getWeatherData } from './Backend/Graphql_helper'; 
+import { getWeatherData } from './Backend/Graphql_helper';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './AuthContext';
+import ProtectedRoute from './Frontend/AuthComponents/ProtectedRoute';
 
 const customTheme = extendTheme({
   colors: {
