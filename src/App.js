@@ -13,11 +13,16 @@ import {
   useMediaQuery,
 } from '@chakra-ui/react';
 import { FaCog, FaQuestionCircle, FaUserCircle, FaBars } from 'react-icons/fa';
-import { LineChart, BarChart } from './Frontend/Charts'; 
+import { LineChart, BarChart } from './Frontend/Charts';
 import { getWeatherData } from './Backend/Graphql_helper';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './Frontend/AuthComponents/ProtectedRoute';
+import SignUp from './Frontend/AuthComponents/Signup';
+import Login from './Frontend/AuthComponents/Login';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from './Backend/Firebase';
+import Logout from './Frontend/AuthComponents/Logout';
 
 const customTheme = extendTheme({
   colors: {
@@ -31,7 +36,7 @@ const customTheme = extendTheme({
 const App = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
+  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,50 +58,89 @@ const App = () => {
 
   return (
     <ChakraProvider theme={customTheme}>
-      <Box>
-        <Header />
-        <Flex>
-          {isLargerThan768 && <Sidebar />}
-          <MainContent weatherData={weatherData} />
-        </Flex>
-      </Box>
+      <Router>
+        <AuthProvider>
+          <Box>
+            <Header />
+            <Flex>
+              <Routes>
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/login" element={<Login />} />
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      {isLargerThan768 && <Sidebar />}
+                      <MainContent weatherData={weatherData} />
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </Flex>
+          </Box>
+        </AuthProvider>
+      </Router>
     </ChakraProvider>
   );
 };
 
 const Header = () => {
-  const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
+  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
+  const [user] = useAuthState(auth);
   return (
-    <Flex bg="navy" color="white" px="4" py="2" align="center" justify="space-between" position="sticky" top="0" zIndex="1000">
-      <Box as="span" fontSize="lg" fontWeight="bold">Logo</Box>
+    <Flex
+      bg="navy"
+      color="white"
+      px="4"
+      py="2"
+      align="center"
+      justify="space-between"
+      position="sticky"
+      top="0"
+      zIndex="1000"
+    >
+      <Box as="span" fontSize="lg" fontWeight="bold">
+        Logo
+      </Box>
+      {user && <Logout />}
       {isLargerThan768 ? (
         <Flex>
-          <Box mx="2" _hover={{ color: 'green', textDecoration: 'underline' }}>Home</Box>
-          <Box mx="2" _hover={{ color: 'green', textDecoration: 'underline' }}>Sensors</Box>
-          <Box mx="2" _hover={{ color: 'green', textDecoration: 'underline' }}>Reports</Box>
+          <Box mx="2" _hover={{ color: 'green', textDecoration: 'underline' }}>
+            Home
+          </Box>
+          <Box mx="2" _hover={{ color: 'green', textDecoration: 'underline' }}>
+            Sensors
+          </Box>
+          <Box mx="2" _hover={{ color: 'green', textDecoration: 'underline' }}>
+            Reports
+          </Box>
         </Flex>
       ) : (
         <IconButton icon={<FaBars />} bg="transparent" aria-label="Menu" />
       )}
       <Box>
-        <IconButton icon={<FaUserCircle />} bg="transparent" aria-label="User Profile" />
+        <IconButton
+          icon={<FaUserCircle />}
+          bg="transparent"
+          aria-label="User Profile"
+        />
       </Box>
     </Flex>
   );
 };
 
 const Sidebar = () => (
-  <Box
-    bg="black"
-    color="white"
-    w="250px"
-    minH="100vh"
-    p="4"
-  >
+  <Box bg="black" color="white" w="250px" minH="100vh" p="4">
     <Box mb="4">Sensor Categories</Box>
-    <Box _hover={{ color: 'green' }} mb="2">Temperature Sensors</Box>
-    <Box _hover={{ color: 'green' }} mb="2">Humidity Sensors</Box>
-    <Box _hover={{ color: 'green' }} mb="2">Soil Moisture Sensors</Box>
+    <Box _hover={{ color: 'green' }} mb="2">
+      Temperature Sensors
+    </Box>
+    <Box _hover={{ color: 'green' }} mb="2">
+      Humidity Sensors
+    </Box>
+    <Box _hover={{ color: 'green' }} mb="2">
+      Soil Moisture Sensors
+    </Box>
   </Box>
 );
 
@@ -128,15 +172,36 @@ const MainContent = ({ weatherData }) => (
 );
 
 const ChartWrapper = ({ title, children }) => (
-  <Box border="1px" borderColor="green" borderRadius="md" p="6" bg="white" h="500px" w="100%">
+  <Box
+    border="1px"
+    borderColor="green"
+    borderRadius="md"
+    p="6"
+    bg="white"
+    h="500px"
+    w="100%"
+  >
     <Flex justify="space-between" mb="4">
-      <Box fontSize="lg" fontWeight="bold">{title}</Box>
+      <Box fontSize="lg" fontWeight="bold">
+        {title}
+      </Box>
       <Flex>
         <Tooltip label="Customize">
-          <IconButton icon={<FaCog />} variant="outline" colorScheme="green" size="sm" mr="2" />
+          <IconButton
+            icon={<FaCog />}
+            variant="outline"
+            colorScheme="green"
+            size="sm"
+            mr="2"
+          />
         </Tooltip>
         <Tooltip label="Help">
-          <IconButton icon={<FaQuestionCircle />} variant="outline" colorScheme="navy" size="sm" />
+          <IconButton
+            icon={<FaQuestionCircle />}
+            variant="outline"
+            colorScheme="navy"
+            size="sm"
+          />
         </Tooltip>
       </Flex>
     </Flex>

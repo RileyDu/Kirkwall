@@ -14,7 +14,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { brutalBorderStyles } from '../../Styles/style';
+// import { brutalBorderStyles } from '../../Styles/style';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -73,9 +73,9 @@ const Login = () => {
               </Stack>
               {error && <Text color="red.500">{error}</Text>}
               <Stack spacing="6">
-                <Button colorScheme="accent" onClick={handleLogin}>Sign In</Button>
+                <Button onClick={handleLogin}>Sign In</Button>
                 <Divider />
-                <Button colorScheme='secondary' onClick={() => navigate('/signup')}>Sign Up</Button>
+                <Button onClick={() => navigate('/signup')}>Sign Up</Button>
               </Stack>
             </Stack>
           </Box>
