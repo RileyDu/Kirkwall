@@ -7,13 +7,13 @@ const Sidebar = () => {
   return (
     <Box bg="black" color="white" w="250px" minH="100vh" p="4" >
       <Box mb="2" fontWeight="bold" fontSize="lg" textDecoration={'underline'}>Sensor Categories</Box>
-      <Box _hover={{ color: 'green' }} mb="2" onClick={() => navigate('/TempSensors')} >
+      <Box _hover={{ color: 'green' }} mb="2" onClick={() => navigate('/TempSensors')} cursor={'pointer'}>
         - Temperature Sensors
       </Box>
-      <Box _hover={{ color: 'green' }} mb="2">
+      <Box _hover={{ color: 'green' }} mb="2" onClick={() => navigate('/HumiditySensors')} cursor={'pointer'}>
         - Humidity Sensors
       </Box>
-      <Box _hover={{ color: 'green' }} mb="2">
+      <Box _hover={{ color: 'green' }} mb="2" onClick={() => navigate('/SoilMoistureSensors')} cursor={'pointer'}>
         - Soil Moisture Sensors
       </Box>
     </Box>

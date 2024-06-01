@@ -35,6 +35,7 @@ const Header = () => {
           height="150px"
           width="150px"
           onClick={() => navigate('/')}
+          style={{ cursor: 'pointer' }}
         />
       </Box>
       {isLargerThan768 ? (
