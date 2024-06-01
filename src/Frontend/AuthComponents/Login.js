@@ -14,7 +14,6 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-// import { brutalBorderStyles } from '../../Styles/style';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -34,7 +33,23 @@ const Login = () => {
   };
 
   return (
-    <Box bg="gray.200" h="100vh" w={'100%'}>
+    <Box
+      h="100vh"
+      w="100%"
+      _before={{
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        backgroundImage: '/slide-wheat.jpg',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        filter: 'blur(10px)',
+        zIndex: -1,
+      }}
+    >
       <Container maxW="lg" py={{ base: '12', md: '24' }} px={{ base: '0', sm: '8' }}>
         <Stack spacing="8">
           <Stack spacing="6">
@@ -47,6 +62,9 @@ const Login = () => {
             px={{ base: '4', sm: '10' }}
             bg={{ base: 'secondary.100', sm: 'white' }}
             borderRadius="lg"
+            boxShadow="lg"
+            zIndex={1}
+            position="relative"
           >
             <Stack spacing="6">
               <Stack spacing="5">

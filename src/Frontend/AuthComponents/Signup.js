@@ -33,7 +33,23 @@ const SignUp = () => {
   };
 
   return (
-    <Box bg="gray.200" h="100vh" w={'100%'}>
+    <Box 
+    h="100vh"
+    w="100%"
+    _before={{
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      backgroundImage: '/slide-wheat.jpg',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      filter: 'blur(10px)',
+      zIndex: -1,
+    }}
+    >
       <Container maxW="lg" py={{ base: '12', md: '24' }} px={{ base: '0', sm: '8' }}>
         <Stack spacing="8">
           <Stack spacing="6">
