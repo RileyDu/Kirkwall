@@ -19,6 +19,7 @@ import Sidebar from './Frontend/Sidebar/Siderbar';
 import MainContent from './Frontend/Main/Main';
 import TempSensors from './Frontend/Sensors/TempSensors/TempSensors';
 import SensorsMain from './Frontend/Sensors/SensorsMain/SensorsMain';
+import HumiditySensors from './Frontend/Sensors/HumiditySensors/HumiditySensors';
 
 
 
@@ -64,6 +65,14 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 />
+                  <Route
+                      path='/Sensors'
+                      element={
+                        <ProtectedRoute>
+                          {isLargerThan768 && <Sidebar />}
+                          <SensorsMain  />
+                        </ProtectedRoute>
+                      } />
                 <Route
                   path='/TempSensors'
                   element={
@@ -73,13 +82,14 @@ const App = () => {
                     </ProtectedRoute>
                   } />
               <Route
-                  path='/Sensors'
+                  path='/HumiditySensors'
                   element={
                     <ProtectedRoute>
                       {isLargerThan768 && <Sidebar />}
-                      <SensorsMain  />
+                      <HumiditySensors weatherData={weatherData} />
                     </ProtectedRoute>
                   } />
+                  
               </Routes>
             </Flex>
           </Box>
