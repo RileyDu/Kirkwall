@@ -6,8 +6,10 @@ const ChartWrapper = ({ title, children }) => (
       border="1px"
       borderColor="green"
       borderRadius="md"
+      boxShadow="md"
       p="6"
-      bg="white"
+      pb="12"
+      bg="gray.50"
       h="500px"
       w="100%"
     >
