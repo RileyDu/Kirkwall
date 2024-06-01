@@ -20,6 +20,7 @@ import MainContent from './Frontend/Main/Main';
 import TempSensors from './Frontend/Sensors/TempSensors/TempSensors';
 import SensorsMain from './Frontend/Sensors/SensorsMain/SensorsMain';
 import HumiditySensors from './Frontend/Sensors/HumiditySensors/HumiditySensors';
+import SoilSensors from './Frontend/Sensors/SoilSensors/SoilSensors';
 
 
 
@@ -89,7 +90,14 @@ const App = () => {
                       <HumiditySensors weatherData={weatherData} />
                     </ProtectedRoute>
                   } />
-                  
+                  <Route
+                  path='/SoilMoistureSensors'
+                  element={
+                    <ProtectedRoute>
+                      {isLargerThan768 && <Sidebar />}
+                      <SoilSensors weatherData={weatherData} />
+                    </ProtectedRoute>
+                  } />
               </Routes>
             </Flex>
           </Box>
