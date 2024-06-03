@@ -13,7 +13,7 @@ export default function WindSensors({ weatherData }) {
         );
     }
 
-    const latestWindSpeed = weatherData[weatherData.length - 1]?.wind_speed;
+    const latestWindSpeed = weatherData[0]?.wind_speed;
 
     if (latestWindSpeed === undefined) {
         return (
