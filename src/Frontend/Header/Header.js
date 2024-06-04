@@ -66,7 +66,7 @@ const Header = () => {
         ) : (
           <IconButton icon={<FaBars />} bg="transparent" aria-label="Menu" />
         )}
-        {user && <Logout />}
+        
       </Flex>
       <WeatherAlerts />
     </>
