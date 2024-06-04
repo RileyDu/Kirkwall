@@ -1,4 +1,4 @@
-import { Box, Flex, IconButton, Tooltip } from '@chakra-ui/react';
+import { Box, Flex, IconButton, Popover, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Tooltip } from '@chakra-ui/react';
 import { FaCog, FaQuestionCircle } from 'react-icons/fa';
 
 const ChartWrapper = ({ title, children }) => (
@@ -18,6 +18,8 @@ const ChartWrapper = ({ title, children }) => (
           {title}
         </Box>
         <Flex>
+          <Popover>
+            <PopoverTrigger>
           <Tooltip label="Customize">
             <IconButton
               icon={<FaCog />}
@@ -27,6 +29,15 @@ const ChartWrapper = ({ title, children }) => (
               mr="2"
             />
           </Tooltip>
+        </PopoverTrigger>
+        <PopoverContent>
+          <PopoverCloseButton />
+          <PopoverHeader>Customize Chart</PopoverHeader>
+          <PopoverBody>
+            <p>Coming Soon!</p>
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
           <Tooltip label="Help">
             <IconButton
               icon={<FaQuestionCircle />}
