@@ -9,8 +9,20 @@ const MainContent = ({ weatherData }) => {
   const [windChartType, setWindChartType] = useState('line');
   const [rainfallChartType, setRainfallChartType] = useState('line');
 
-  const handleChartChange = newType => {
+  const handleTempChartChange = newType => {
     setTempChartType(newType);
+  };
+
+  const handleHumidityChartChange = newType => {
+    setHumidityChartType(newType);
+  };
+
+  const handleWindChartChange = newType => {
+    setWindChartType(newType);
+  };
+
+  const handleRainfallChartChange = newType => {
+    setRainfallChartType(newType);
   };
 
   return (
@@ -19,7 +31,7 @@ const MainContent = ({ weatherData }) => {
         <GridItem colSpan={1}>
           <ChartWrapper
             title="Temperature Over Time"
-            onChartChange={handleChartChange}
+            onChartChange={handleTempChartChange}
           >
             {tempChartType === 'line' ? (
               <LineChart data={weatherData} metric="temperature" />
@@ -29,7 +41,7 @@ const MainContent = ({ weatherData }) => {
           </ChartWrapper>
         </GridItem>
         <GridItem colSpan={1}>
-          <ChartWrapper title="Humidity Levels">
+          <ChartWrapper title="Humidity Levels" onChartChange={handleHumidityChartChange}>
             {humidityChartType === 'line' ? (
               <LineChart data={weatherData} metric="percent_humidity" />
             ) : (
@@ -38,7 +50,7 @@ const MainContent = ({ weatherData }) => {
           </ChartWrapper>
         </GridItem>
         <GridItem colSpan={1}>
-          <ChartWrapper title="Rainfall (15 min)">
+          <ChartWrapper title="Rainfall (15 min)" onChartChange={handleRainfallChartChange}>
             {rainfallChartType === 'line' ? (
               <LineChart data={weatherData} metric="rainfall" />
             ) : (
@@ -47,7 +59,7 @@ const MainContent = ({ weatherData }) => {
           </ChartWrapper>
         </GridItem>
         <GridItem colSpan={1}>
-          <ChartWrapper title="Wind Speed">
+          <ChartWrapper title="Wind Speed" onChartChange={handleWindChartChange}>
             {windChartType === 'line' ? (
               <LineChart data={weatherData} metric="wind_speed" />
             ) : (
