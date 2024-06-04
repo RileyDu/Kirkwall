@@ -31,13 +31,21 @@ const Header = () => {
       >
         <Box>
           <img
-            src="/kirkwall_logo.png"
+            src="/KWhite.svg"
             alt="kirkwall logo"
             height="150px"
             width="150px"
             onClick={() => navigate('/')}
             style={{ cursor: 'pointer' }}
           />
+          {/* <img
+            src="/kirkwall_logo.png"
+            alt="kirkwall logo"
+            height="150px"
+            width="150px"
+            onClick={() => navigate('/')}
+            style={{ cursor: 'pointer' }}
+          /> */}
         </Box>
         {isLargerThan768 ? (
           user ? (
