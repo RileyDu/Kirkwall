@@ -10,14 +10,17 @@ const Sidebar = () => {
       <Box _hover={{ color: 'green' }} mb="2" onClick={() => navigate('/TempSensors')} cursor={'pointer'}>
         - Temperature Sensors
       </Box>
+      <Box _hover={{ color: 'green' }} mb="2" onClick={() => navigate('/WindSensors')} cursor={'pointer'}>
+        - Wind Sensors
+      </Box>
+      <Box _hover={{ color: 'green' }} mb="2" onClick={() => navigate('/RainSensors')} cursor={'pointer'}>
+        - Rain Sensors
+      </Box>
       <Box _hover={{ color: 'green' }} mb="2" onClick={() => navigate('/HumiditySensors')} cursor={'pointer'}>
         - Humidity Sensors
       </Box>
       <Box _hover={{ color: 'green' }} mb="2" onClick={() => navigate('/SoilMoistureSensors')} cursor={'pointer'}>
         - Soil Moisture Sensors
-      </Box>
-      <Box _hover={{ color: 'green' }} mb="2" onClick={() => navigate('/WindSensors')} cursor={'pointer'}>
-        - Wind Sensors
       </Box>
     </Box>
   );

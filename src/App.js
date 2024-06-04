@@ -22,6 +22,7 @@ import SensorsMain from './Frontend/Sensors/SensorsMain/SensorsMain';
 import HumiditySensors from './Frontend/Sensors/HumiditySensors/HumiditySensors';
 import SoilSensors from './Frontend/Sensors/SoilSensors/SoilSensors';
 import WindSensors from './Frontend/Sensors/WindSensors/WindSensor';
+import RainSensors from './Frontend/Sensors/RainSensors/RainSensors';
 
 
 const App = () => {
@@ -104,6 +105,14 @@ const App = () => {
                     <ProtectedRoute>
                       {isLargerThan768 && <Sidebar />}
                       <WindSensors weatherData={weatherData} />
+                    </ProtectedRoute>
+                  } />
+                  <Route
+                  path='/RainSensors'
+                  element={
+                    <ProtectedRoute>
+                      {isLargerThan768 && <Sidebar />}
+                      <RainSensors weatherData={weatherData} />
                     </ProtectedRoute>
                   } />
               </Routes>

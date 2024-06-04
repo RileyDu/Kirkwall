@@ -36,7 +36,7 @@ export default function WindSensors({ weatherData }) {
                     <ReactSpeedometer
                         minValue={0}
                         maxValue={100}
-                        value={Number(windSpeedMph)}
+                        value={Number(latestWindSpeed)}
                         segments={9}
                         segmentColors={[
                             "#00FF00", // Calm
@@ -74,7 +74,7 @@ export default function WindSensors({ weatherData }) {
                         // valueTextFontWeight="bold"
                         valueTextShadowColor="black"
                                             />
-                    <Text mt="4" fontSize="xxx-large">Current Wind Speed: {windSpeedMph} mph</Text>
+                    <Text mt="4" fontSize="xxx-large">Current Wind Speed: {latestWindSpeed} mph</Text>
                 </Box>
             </Flex>
         </Box>
