@@ -46,13 +46,13 @@ function WeatherAlerts() {
     )}
     <Flex justifyContent="center" alignItems="center" mb={0}>
     
-    {alerts.map((alert, index) => (
-      <Alert key={index} status="warning" mb={0} borderRadius="0" bgColor="red.500" color="white" width="100%">
+      <Alert status="warning" mb={0} borderRadius="0" bgColor="red.500" color="white" width="100%">
             <Text fontSize="large" fontWeight="bold" paddingRight={5}>{conditions}</Text>
             <AlertIcon color="white"/>
-            <AlertDescription>{alert}</AlertDescription>
+    {alerts.map((alert) => (
+            <AlertDescription px={2}>{alert}</AlertDescription>
+          ))}
           </Alert>
-        ))}
         
         </Flex>
         
