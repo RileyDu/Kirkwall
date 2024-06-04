@@ -1,7 +1,20 @@
-import { Box, Flex, IconButton, Popover, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Flex, IconButton, Popover, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Tooltip } from '@chakra-ui/react';
 import { FaCog, FaQuestionCircle } from 'react-icons/fa';
+import { useState } from 'react';
 
-const ChartWrapper = ({ title, children }) => (
+const ChartWrapper = ({ title, children, onChartChange }) => {
+  const [chartType, setChartType] = useState('line');
+
+
+  const changeChartType = (type) => {
+    setChartType(type);
+    // Call the prop if available
+    if (onChartChange) {
+      onChartChange(type);
+    }
+  };
+
+  return (
     <Box
       border="1px"
       borderColor="green"
@@ -32,9 +45,10 @@ const ChartWrapper = ({ title, children }) => (
           </Tooltip>
         <PopoverContent>
           <PopoverCloseButton />
-          <PopoverHeader>Customize Chart</PopoverHeader>
+          <PopoverHeader fontWeight="bold" fontSize={'lg'}>Customize Chart</PopoverHeader>
           <PopoverBody>
-            <p>Coming Soon!</p>
+            <Button mr={2} mb={2} borderRadius={"full"} border={"1px"} color={"green"} width={"100%"} onClick={() => changeChartType('line')}>Line</Button>
+            <Button mr={2} borderRadius={"full"} border={"1px"} color={"green"} width={"100%"} onClick={() => changeChartType('bar')}>Bar</Button>
           </PopoverBody>
         </PopoverContent>
       </Popover>
@@ -51,5 +65,6 @@ const ChartWrapper = ({ title, children }) => (
       {children}
     </Box>
   );
+};
 
   export default ChartWrapper
