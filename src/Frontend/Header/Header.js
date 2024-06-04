@@ -13,13 +13,13 @@ const Header = () => {
   const navigate = useNavigate();
 
   const DividerBox = () => (
-    <Box height="1.5em" width="3px" bg="black" />
+    <Box height="1.5em" width="3px" bg="white" />
   );
 
   return (
     <>
       <Flex
-        bg="#1A9687"
+        bg="black"
         color="white"
         px="4"
         py="2"
@@ -49,7 +49,7 @@ const Header = () => {
         </Box>
         {isLargerThan768 ? (
           user ? (
-            <Flex fontSize={'2em'} color={'black'} align="center">
+            <Flex fontSize={'2em'} color={'white'} align="center">
               <Box mx="5" _hover={{ textDecoration: 'underline', cursor: 'pointer' }} lineHeight="1.5em" onClick={() => navigate('/')}>
                 Home
               </Box>
