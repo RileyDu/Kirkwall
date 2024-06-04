@@ -19,8 +19,8 @@ const ChartWrapper = ({ title, children }) => (
         </Box>
         <Flex>
           <Popover>
-            <PopoverTrigger>
           <Tooltip label="Customize">
+            <PopoverTrigger>
             <IconButton
               icon={<FaCog />}
               variant="outline"
@@ -28,8 +28,8 @@ const ChartWrapper = ({ title, children }) => (
               size="sm"
               mr="2"
             />
-          </Tooltip>
         </PopoverTrigger>
+          </Tooltip>
         <PopoverContent>
           <PopoverCloseButton />
           <PopoverHeader>Customize Chart</PopoverHeader>
