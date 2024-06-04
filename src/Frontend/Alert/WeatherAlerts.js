@@ -50,7 +50,7 @@ function WeatherAlerts() {
             <Text fontSize="xl" fontWeight="bold" paddingRight={5}>{conditions}</Text>
             <AlertIcon color="white"/>
     {alerts.map((alert) => (
-            <Box border={"2px"} borderColor="black" borderRadius="50px" boxShadow="lg" p="2" bg="gray.50" key={alert} mx={2}>
+            <Box border={"2px"} borderColor="black" borderRadius="50px"  p="2" bg="gray.50" key={alert} mx={2}>
             <AlertDescription px={4} fontSize={"large"} color={"red.500"}>{alert}</AlertDescription>
             </Box>
           ))}
