@@ -28,7 +28,7 @@ async function executeGraphqlQuery(query, variables = {}) {
 async function getWeatherData() {
   const WeatherDataQuery = `
   query weather_data {
-    weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: 13) {
+    weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: 130) {
       station {
         name
         location {

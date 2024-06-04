@@ -50,17 +50,17 @@ const Header = () => {
         {isLargerThan768 ? (
           user ? (
             <Flex fontSize={'2em'} color={'white'} align="center">
-              <Box mx="5" _hover={{ textDecoration: 'underline', cursor: 'pointer' }} lineHeight="1.5em" onClick={() => navigate('/')}>
+              {/* <Box mx="5" _hover={{ textDecoration: 'underline', cursor: 'pointer' }} lineHeight="1.5em" onClick={() => navigate('/')}>
                 Home
-              </Box>
-              <DividerBox />
+              </Box> */}
+              {/* <DividerBox />
               <Box mx="5" _hover={{ textDecoration: 'underline', cursor: 'pointer' }} lineHeight="1.5em" onClick={() => navigate('/Sensors')}>
                 Sensors
-              </Box>
-              <DividerBox />
+              </Box> */}
+              {/* <DividerBox />
               <Box mx="5" _hover={{ textDecoration: 'underline', cursor: 'pointer' }} lineHeight="1.5em">
                 Reports
-              </Box>
+              </Box> */}
             </Flex>
           ) : null
         ) : (

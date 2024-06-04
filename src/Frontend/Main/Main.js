@@ -8,6 +8,12 @@ const MainContent = ({ weatherData }) => {
   const [humidityChartType, setHumidityChartType] = useState('line');
   const [windChartType, setWindChartType] = useState('line');
   const [rainfallChartType, setRainfallChartType] = useState('line');
+  const [tempChartInterval, setTempChartInterval] = useState(1);
+  const [humidityChartInterval, setHumidityChartInterval] = useState(1);
+  const [windChartInterval, setWindChartInterval] = useState(1);
+  const [rainfallChartInterval, setRainfallChartInterval] = useState(1);
+
+
 
   const handleTempChartChange = newType => {
     setTempChartType(newType);
@@ -52,9 +58,9 @@ const MainContent = ({ weatherData }) => {
         <GridItem colSpan={1}>
           <ChartWrapper title="Rainfall (15 min)" onChartChange={handleRainfallChartChange}>
             {rainfallChartType === 'line' ? (
-              <LineChart data={weatherData} metric="rainfall" />
+              <LineChart data={weatherData} metric="rain_15_min_inches" />
             ) : (
-              <BarChart data={weatherData} metric="rainfall" />
+              <BarChart data={weatherData} metric="rain_15_min_inches" />
             )}
           </ChartWrapper>
         </GridItem>
