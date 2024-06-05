@@ -19,7 +19,7 @@ const Header = () => {
   return (
     <>
       <Flex
-        bg="black"
+        bg="#212121"
         color="white"
         px="4"
         py="2"
