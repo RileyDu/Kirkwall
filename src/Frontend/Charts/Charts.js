@@ -11,7 +11,7 @@ const processWeatherData = (data, key) => {
   const reversedData = [...data].reverse();
 
   const chartData = {
-    labels: reversedData.map(item => new Date(item.message_timestamp).toLocaleTimeString()),
+    labels: reversedData.map(item => new Date(item.message_timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })),
     datasets: [
       {
         label: key,
