@@ -31,12 +31,13 @@ const Header = () => {
       >
         <Box>
           <img
-            src="/KWhite.svg"
+            src="/kirkwall_logo_1_white.png"
             alt="kirkwall logo"
             height="150px"
             width="150px"
             onClick={() => navigate('/')}
             style={{ cursor: 'pointer' }}
+            
           />
           {/* <img
             src="/kirkwall_logo.png"
