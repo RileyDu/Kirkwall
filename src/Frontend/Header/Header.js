@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../Backend/Firebase';
-import { useMediaQuery, Flex, Box, IconButton } from '@chakra-ui/react';
+import { useMediaQuery, Flex, Box, IconButton, Avatar, AvatarBadge } from '@chakra-ui/react';
 import { FaBars } from 'react-icons/fa';
 import Logout from '../../Frontend/AuthComponents/Logout';
 import { useNavigate } from 'react-router-dom';
@@ -37,16 +37,7 @@ const Header = () => {
             width="150px"
             onClick={() => navigate('/')}
             style={{ cursor: 'pointer' }}
-            
           />
-          {/* <img
-            src="/kirkwall_logo.png"
-            alt="kirkwall logo"
-            height="150px"
-            width="150px"
-            onClick={() => navigate('/')}
-            style={{ cursor: 'pointer' }}
-          /> */}
         </Box>
         {isLargerThan768 ? (
           user ? (
@@ -62,12 +53,20 @@ const Header = () => {
               <Box mx="5" _hover={{ textDecoration: 'underline', cursor: 'pointer' }} lineHeight="1.5em">
                 Reports
               </Box> */}
+              <Avatar
+                size="md"
+                name="Grand Farm Logo"
+                src="/GrandFarmLogo.jpg" // Ensure this path is correct and the image is in the public directory
+              >
+              </Avatar>
+              {/* <Box mx="5" onClick={() => navigate('/profile')}>
+                {user.displayName || user.email}
+              </Box> */}
             </Flex>
           ) : null
         ) : (
           <IconButton icon={<FaBars />} bg="transparent" aria-label="Menu" />
         )}
-        
       </Flex>
       <WeatherAlerts />
     </>
