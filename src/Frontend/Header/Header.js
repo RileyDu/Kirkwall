@@ -42,26 +42,12 @@ const Header = () => {
         {isLargerThan768 ? (
           user ? (
             <Flex fontSize={'2em'} color={'white'} align="center">
-              {/* <Box mx="5" _hover={{ textDecoration: 'underline', cursor: 'pointer' }} lineHeight="1.5em" onClick={() => navigate('/')}>
-                Home
-              </Box> */}
-              {/* <DividerBox />
-              <Box mx="5" _hover={{ textDecoration: 'underline', cursor: 'pointer' }} lineHeight="1.5em" onClick={() => navigate('/Sensors')}>
-                Sensors
-              </Box> */}
-              {/* <DividerBox />
-              <Box mx="5" _hover={{ textDecoration: 'underline', cursor: 'pointer' }} lineHeight="1.5em">
-                Reports
-              </Box> */}
               <Avatar
                 size="md"
                 name="Grand Farm Logo"
-                src="/GrandFarmLogo.jpg" // Ensure this path is correct and the image is in the public directory
+                src="/GrandFarmLogo.jpg"
               >
               </Avatar>
-              {/* <Box mx="5" onClick={() => navigate('/profile')}>
-                {user.displayName || user.email}
-              </Box> */}
             </Flex>
           ) : null
         ) : (
