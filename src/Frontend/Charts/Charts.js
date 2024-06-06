@@ -55,7 +55,7 @@ const temperatureChartOptions = {
     y: {
       ...defaultChartOptions.scales.y,
       min: 40,
-      max: 80,
+      max: 90,
     },
   },
 };
