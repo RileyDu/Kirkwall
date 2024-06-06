@@ -29,6 +29,7 @@ const Header = () => {
         position="sticky"
         top="0"
         zIndex="1001"
+        borderBottom={'3px solid #fd9801'}
       >
         <Box>
           <img
