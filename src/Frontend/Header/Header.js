@@ -53,9 +53,9 @@ const Header = () => {
                   >
                   </Avatar>
                 </PopoverTrigger>
-                <PopoverContent bg="#fd9801">
-                  <PopoverCloseButton />
-                  <PopoverHeader fontWeight="bold" fontSize={'xl'} > Grand Farm </PopoverHeader>
+                <PopoverContent bg="white" borderColor={'black'}>
+                  <PopoverCloseButton size={'lg'} />
+                  <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} > Grand Farm </PopoverHeader>
                   <PopoverBody>
                     <Button onClick={toggleAlerts} w="100%" size={'lg'} borderRadius={'full'} fontSize={'xl'}>
                       TOGGLE ALERTS
