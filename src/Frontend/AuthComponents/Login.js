@@ -89,7 +89,7 @@ const Login = () => {
               </Stack>
               {error && <Text color="red.500">{error}</Text>}
               <Stack spacing="6">
-                <Button onClick={handleLogin}>Sign In</Button>
+                <Button onClick={handleLogin} color='#fd9801'>Sign In</Button>
                 <Divider />
                 <Button onClick={() => navigate('/signup')}>Sign Up</Button>
               </Stack>
