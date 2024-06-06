@@ -9,7 +9,6 @@ const Sidebar = () => {
       bg="#212121"
       color="white"
       w="250px"
-      h="100vh"
       p="4"
       position="sticky"
       top="0"
@@ -34,9 +33,8 @@ const Sidebar = () => {
           Soil Moisture Sensors
         </Box>
       </Box>
-      <Box>
-        <Logout />
-      </Box>
+
+      <Logout />
     </Box>
   );
 };

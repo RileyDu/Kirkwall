@@ -55,9 +55,7 @@ function WeatherAlerts() {
             </Box>
           ))}
           </Alert>
-        
         </Flex>
-        
         </Box>
         </Center>
       ) : null
