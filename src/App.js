@@ -24,7 +24,6 @@ import SoilSensors from './Frontend/Sensors/SoilSensors/SoilSensors';
 import WindSensors from './Frontend/Sensors/WindSensors/WindSensor';
 import RainSensors from './Frontend/Sensors/RainSensors/RainSensors';
 
-
 const App = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -41,7 +40,12 @@ const App = () => {
         setLoading(false);
       }
     };
+
     fetchData();
+
+    const intervalId = setInterval(fetchData, 30000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   if (loading) {
@@ -67,54 +71,60 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 />
-                  <Route
-                      path='/Sensors'
-                      element={
-                        <ProtectedRoute>
-                          {isLargerThan768 && <Sidebar />}
-                          <SensorsMain  />
-                        </ProtectedRoute>
-                      } />
                 <Route
-                  path='/TempSensors'
+                  path="/Sensors"
+                  element={
+                    <ProtectedRoute>
+                      {isLargerThan768 && <Sidebar />}
+                      <SensorsMain />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/TempSensors"
                   element={
                     <ProtectedRoute>
                       {isLargerThan768 && <Sidebar />}
                       <TempSensors weatherData={weatherData} />
                     </ProtectedRoute>
-                  } />
-              <Route
-                  path='/HumiditySensors'
+                  }
+                />
+                <Route
+                  path="/HumiditySensors"
                   element={
                     <ProtectedRoute>
                       {isLargerThan768 && <Sidebar />}
                       <HumiditySensors weatherData={weatherData} />
                     </ProtectedRoute>
-                  } />
-                  <Route
-                  path='/SoilMoistureSensors'
+                  }
+                />
+                <Route
+                  path="/SoilMoistureSensors"
                   element={
                     <ProtectedRoute>
                       {isLargerThan768 && <Sidebar />}
                       <SoilSensors weatherData={weatherData} />
                     </ProtectedRoute>
-                  } />
-                  <Route
-                  path='/WindSensors'
+                  }
+                />
+                <Route
+                  path="/WindSensors"
                   element={
                     <ProtectedRoute>
                       {isLargerThan768 && <Sidebar />}
                       <WindSensors weatherData={weatherData} />
                     </ProtectedRoute>
-                  } />
-                  <Route
-                  path='/RainSensors'
+                  }
+                />
+                <Route
+                  path="/RainSensors"
                   element={
                     <ProtectedRoute>
                       {isLargerThan768 && <Sidebar />}
                       <RainSensors weatherData={weatherData} />
                     </ProtectedRoute>
-                  } />
+                  }
+                />
               </Routes>
             </Flex>
           </Box>
@@ -123,8 +133,5 @@ const App = () => {
     </ChakraProvider>
   );
 };
-
-
-
 
 export default App;
