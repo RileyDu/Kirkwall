@@ -33,8 +33,6 @@ const Sidebar = () => {
           Soil Moisture Sensors
         </Box>
       </Box>
-
-      <Logout />
     </Box>
   );
 };
