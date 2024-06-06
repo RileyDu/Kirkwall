@@ -84,6 +84,9 @@ const defaultChartOptions = {
       cornerRadius: 4, // Tooltip border radius
       displayColors: false, // Hide the color box in the tooltip
     },
+    legend: {
+      display: false,
+    },
   },
 };
 
