@@ -1,52 +1,83 @@
+import { Flex, Stack, Button } from '@chakra-ui/react';
 import {
-  Avatar,
-  Box,
-  Flex,
-  HStack,
-  Icon,
-  IconButton,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Stack,
-  StackDivider,
-  Text,
-  Button
-} from '@chakra-ui/react'
-import {
-  FiBookmark,
-  FiClock,
-  FiGrid,
-  FiHelpCircle,
-  FiMoreVertical,
-  FiPieChart,
-  FiSearch,
-  FiSettings,
-} from 'react-icons/fi'
+  WiThermometer,
+  WiStrongWind,
+  WiRain,
+  WiHumidity,
+} from 'react-icons/wi';
 import { useNavigate } from 'react-router-dom';
-
 
 const Sidebar = () => {
   const navigate = useNavigate();
   return (
-    <Flex as="section" bg='#212121'>
+    <Flex as="section" bg="#212121" height="100vh">
       <Stack
         flex="1"
         maxW={{ base: 'full', sm: 'xs' }}
         py={{ base: '6', sm: '8' }}
         px={{ base: '4', sm: '6' }}
-        bg="bg.accent.default"
-        color="fg.accent.default"
+        bg="#212121"
+        color="white"
         borderRightWidth="1px"
         justifyContent="space-between"
       >
         <Stack spacing="8">
-          <Stack spacing="1">
-            <Button variant="outline" color='white' _hover={{ bg: 'white', color: 'black' }} leftIcon={<FiGrid />} onClick={() => navigate('/TempSensors')}>Temperature Sensors</Button>
-            <Button variant="outline" color='white' _hover={{ bg: 'white', color: 'black' }} leftIcon={<FiPieChart />} onClick={() => navigate('/WindSensors')}>Wind Sensors</ Button>
-            <Button variant="outline" color='white' _hover={{ bg: 'white', color: 'black' }} leftIcon={<FiClock />} onClick={() => navigate('/RainSensors')}>Rain Sensors</Button>
-            <Button variant="outline" color='white' _hover={{ bg: 'white', color: 'black' }} leftIcon={<FiBookmark />} onClick={() => navigate('/HumiditySensors')}>Humidity Sensors</Button>
-            <Button variant={"outline"} color='white' _hover={{ bg: 'white', color: 'black' }} leftIcon={<FiGrid />} onClick={() => navigate('/SoilMoistureSensors')}>Soil Moisture Sensors</Button>
+          <Stack spacing="4">
+            <Button
+              variant="outline"
+              color="white"
+              _hover={{ bg: 'white', color: 'black' }}
+              leftIcon={<WiThermometer size="36" />}
+              onClick={() => navigate('/TempSensors')}
+              justifyContent="flex-start"
+              fontSize={'xl'}
+            >
+              Temperature Sensors
+            </Button>
+            <Button
+              variant="outline"
+              color="white"
+              _hover={{ bg: 'white', color: 'black' }}
+              leftIcon={<WiStrongWind size="36" />}
+              onClick={() => navigate('/WindSensors')}
+              justifyContent="flex-start"
+              fontSize={'xl'}
+            >
+              Wind Sensors
+            </Button>
+            <Button
+              variant="outline"
+              color="white"
+              _hover={{ bg: 'white', color: 'black' }}
+              leftIcon={<WiRain size="36" />}
+              onClick={() => navigate('/RainSensors')}
+              justifyContent="flex-start"
+              fontSize={'xl'}
+            >
+              Rain Sensors
+            </Button>
+            <Button
+              variant="outline"
+              color="white"
+              _hover={{ bg: 'white', color: 'black' }}
+              leftIcon={<WiHumidity size="36" />}
+              onClick={() => navigate('/HumiditySensors')}
+              justifyContent="flex-start"
+              fontSize={'xl'}
+            >
+              Humidity Sensors
+            </Button>
+            <Button
+              variant="outline"
+              color="white"
+              _hover={{ bg: 'white', color: 'black' }}
+              leftIcon={<WiHumidity size="36" />}
+              onClick={() => navigate('/SoilMoistureSensors')}
+              justifyContent="flex-start"
+              fontSize={'xl'}
+            >
+              Soil Moisture Sensors
+            </Button>
           </Stack>
         </Stack>
       </Stack>
