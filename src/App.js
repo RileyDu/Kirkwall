@@ -58,74 +58,70 @@ const App = () => {
         <AuthProvider>
           <Box>
             <Header />
-            <Flex>
-              <Routes>
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/login" element={<Login />} />
-                <Route
-                  path="/"
-                  element={
-                    <ProtectedRoute>
-                      {isLargerThan768 && <Sidebar />}
-                      <MainContent weatherData={weatherData} />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/Sensors"
-                  element={
-                    <ProtectedRoute>
-                      {isLargerThan768 && <Sidebar />}
-                      <SensorsMain />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/TempSensors"
-                  element={
-                    <ProtectedRoute>
-                      {isLargerThan768 && <Sidebar />}
-                      <TempSensors weatherData={weatherData} />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/HumiditySensors"
-                  element={
-                    <ProtectedRoute>
-                      {isLargerThan768 && <Sidebar />}
-                      <HumiditySensors weatherData={weatherData} />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/SoilMoistureSensors"
-                  element={
-                    <ProtectedRoute>
-                      {isLargerThan768 && <Sidebar />}
-                      <SoilSensors weatherData={weatherData} />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/WindSensors"
-                  element={
-                    <ProtectedRoute>
-                      {isLargerThan768 && <Sidebar />}
-                      <WindSensors weatherData={weatherData} />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/RainSensors"
-                  element={
-                    <ProtectedRoute>
-                      {isLargerThan768 && <Sidebar />}
-                      <RainSensors weatherData={weatherData} />
-                    </ProtectedRoute>
-                  }
-                />
-              </Routes>
+            <Flex minH="100vh">
+              {isLargerThan768 && <Sidebar />}
+              <Box flex="1" overflowY="auto" ml={isLargerThan768 ? '250px' : '0'} >
+                <Routes>
+                  <Route path="/signup" element={<SignUp />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route
+                    path="/"
+                    element={
+                      <ProtectedRoute>
+                        <MainContent weatherData={weatherData} />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/Sensors"
+                    element={
+                      <ProtectedRoute>
+                        <SensorsMain />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/TempSensors"
+                    element={
+                      <ProtectedRoute>
+                        <TempSensors weatherData={weatherData} />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/HumiditySensors"
+                    element={
+                      <ProtectedRoute>
+                        <HumiditySensors weatherData={weatherData} />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/SoilMoistureSensors"
+                    element={
+                      <ProtectedRoute>
+                        <SoilSensors weatherData={weatherData} />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/WindSensors"
+                    element={
+                      <ProtectedRoute>
+                        <WindSensors weatherData={weatherData} />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/RainSensors"
+                    element={
+                      <ProtectedRoute>
+                        <RainSensors weatherData={weatherData} />
+                      </ProtectedRoute>
+                    }
+                  />
+                </Routes>
+              </Box>
             </Flex>
           </Box>
         </AuthProvider>

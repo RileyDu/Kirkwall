@@ -28,7 +28,7 @@ const Header = () => {
         justify="space-between"
         position="sticky"
         top="0"
-        zIndex="1000"
+        zIndex="1001"
       >
         <Box>
           <img
