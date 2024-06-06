@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 const Sidebar = () => {
   const navigate = useNavigate();
   return (
-    <Flex as="section" bg="#212121" height="100vh">
+    <Flex as="section" bg="#212121">
       <Stack
         flex="1"
         maxW={{ base: 'full', sm: 'xs' }}
