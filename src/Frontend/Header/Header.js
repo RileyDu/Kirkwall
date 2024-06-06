@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../Backend/Firebase';
-import { useMediaQuery, Flex, Box, IconButton, Avatar, Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverCloseButton, PopoverBody, Button } from '@chakra-ui/react';
+import { useMediaQuery, Flex, Box, IconButton, Avatar, Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverCloseButton, PopoverBody, Button } from '@chakra-ui/react';
 import { FaBars } from 'react-icons/fa';
 import Logout from '../../Frontend/AuthComponents/Logout';
 import { useNavigate } from 'react-router-dom';
@@ -43,7 +43,7 @@ const Header = () => {
         {isLargerThan768 ? (
           user ? (
             <Flex fontSize={'2em'} color={'white'} align="center">
-              <Popover>
+              <Popover >
                 <PopoverTrigger>
                   <Avatar
                     size="md"
@@ -53,12 +53,12 @@ const Header = () => {
                   >
                   </Avatar>
                 </PopoverTrigger>
-                <PopoverContent>
-                  <PopoverArrow />
+                <PopoverContent bg="#fd9801">
                   <PopoverCloseButton />
+                  <PopoverHeader fontWeight="bold" fontSize={'xl'} > Grand Farm </PopoverHeader>
                   <PopoverBody>
-                    <Button onClick={toggleAlerts} mb={4}>
-                      Toggle Alerts
+                    <Button onClick={toggleAlerts} w="100%" size={'lg'} borderRadius={'full'} fontSize={'xl'}>
+                      TOGGLE ALERTS
                     </Button>
                     <Logout />
                   </PopoverBody>
