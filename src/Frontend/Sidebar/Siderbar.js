@@ -67,7 +67,7 @@ const Sidebar = () => {
             >
               Humidity Sensors
             </Button>
-            <Button
+            {/* <Button
               variant="outline"
               color="white"
               _hover={{ bg: 'white', color: 'black' }}
@@ -77,7 +77,7 @@ const Sidebar = () => {
               fontSize={'md'}
             >
               Soil Moisture Sensors
-            </Button>
+            </Button> */}
           </Stack>
         </Stack>
       </Stack>
