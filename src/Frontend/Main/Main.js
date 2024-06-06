@@ -32,7 +32,7 @@ const MainContent = ({ weatherData }) => {
   };
 
   return (
-    <Box bg="white" flex="1" p="4">
+    <Box bg="#fd9801" flex="1" p="4">
       <Grid templateColumns="repeat(2, 1fr)" gap="6">
         <GridItem colSpan={1}>
           <ChartWrapper

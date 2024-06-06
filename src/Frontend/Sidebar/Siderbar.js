@@ -1,39 +1,77 @@
-import { Box, Flex } from '@chakra-ui/react';
+import {
+  Avatar,
+  Box,
+  Flex,
+  HStack,
+  Icon,
+  IconButton,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Stack,
+  StackDivider,
+  Text,
+  Button
+} from '@chakra-ui/react'
+import {
+  FiBookmark,
+  FiClock,
+  FiGrid,
+  FiHelpCircle,
+  FiMoreVertical,
+  FiPieChart,
+  FiSearch,
+  FiSettings,
+} from 'react-icons/fi'
 import { useNavigate } from 'react-router-dom';
-import Logout from '../AuthComponents/Logout';
+
 
 const Sidebar = () => {
   const navigate = useNavigate();
   return (
-    <Box
-      bg="#212121"
-      color="white"
-      w="250px"
-      p="4"
-      position="sticky"
-      top="0"
-      display="flex"
-      flexDirection="column"
-      justifyContent="space-between"
-    >
-      <Box>
-        <Box _hover={{ color: 'green' }} mb="2" onClick={() => navigate('/TempSensors')} cursor={'pointer'}>
-          Temperature Sensors
-        </Box>
-        <Box _hover={{ color: 'green' }} mb="2" onClick={() => navigate('/WindSensors')} cursor={'pointer'}>
-          Wind Sensors
-        </Box>
-        <Box _hover={{ color: 'green' }} mb="2" onClick={() => navigate('/RainSensors')} cursor={'pointer'}>
-          Rain Sensors
-        </Box>
-        <Box _hover={{ color: 'green' }} mb="2" onClick={() => navigate('/HumiditySensors')} cursor={'pointer'}>
-          Humidity Sensors
-        </Box>
-        <Box _hover={{ color: 'green' }} mb="2" onClick={() => navigate('/SoilMoistureSensors')} cursor={'pointer'}>
-          Soil Moisture Sensors
-        </Box>
-      </Box>
-    </Box>
+    <Flex as="section" minH="100vh" bg='#212121'>
+      <Stack
+        flex="1"
+        maxW={{ base: 'full', sm: 'xs' }}
+        py={{ base: '6', sm: '8' }}
+        px={{ base: '4', sm: '6' }}
+        bg="bg.accent.default"
+        color="fg.accent.default"
+        borderRightWidth="1px"
+        justifyContent="space-between"
+      >
+        <Stack spacing="8">
+          <Stack spacing="1">
+            <Button leftIcon={<FiGrid />} onClick={() => navigate('/TempSensors')}>Temperature Sensors</Button>
+            <Button leftIcon={<FiPieChart />} onClick={() => navigate('/WindSensors')}>Wind Sensors</ Button>
+            <Button leftIcon={<FiClock />} onClick={() => navigate('/RainSensors')}>Rain Sensors</Button>
+            <Button leftIcon={<FiBookmark />} onClick={() => navigate('/HumiditySensors')}>Humidity Sensors</Button>
+            <Button leftIcon={<FiGrid />} onClick={() => navigate('/SoilMoistureSensors')}>Soil Moisture Sensors</Button>
+          </Stack>
+        </Stack>
+        <Stack spacing="4" divider={<StackDivider borderColor="bg.accent.subtle" />}>
+          <Box />
+          <Stack spacing="1">
+            <Button leftIcon={<FiHelpCircle />}>Help Center</Button>
+            <Button leftIcon={<FiSettings />}>Settings</Button>
+          </Stack>
+          <HStack spacing="3" justify="space-between">
+            <HStack spacing="3">
+              <Avatar boxSize="10" src="https://i.pravatar.cc/300" />
+              <Box>
+                <Text textStyle="sm" fontWeight="medium">
+                  John Doe
+                </Text>
+                <Text textStyle="sm" color="fg.accent.muted">
+                  john@chakra-ui.com
+                </Text>
+              </Box>
+            </HStack>
+            <IconButton variant="tertiary.accent" icon={<FiMoreVertical />} aria-label="Open Menu" />
+          </HStack>
+        </Stack>
+      </Stack>
+    </Flex>
   );
 };
 
