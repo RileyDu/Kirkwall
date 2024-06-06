@@ -27,10 +27,10 @@ const Sidebar = () => {
               variant="outline"
               color="white"
               _hover={{ bg: 'white', color: 'black' }}
-              leftIcon={<WiThermometer size="36" />}
+              leftIcon={<WiThermometer size="30" />}
               onClick={() => navigate('/TempSensors')}
               justifyContent="flex-start"
-              fontSize={'xl'}
+              fontSize={'md'}
             >
               Temperature Sensors
             </Button>
@@ -38,10 +38,10 @@ const Sidebar = () => {
               variant="outline"
               color="white"
               _hover={{ bg: 'white', color: 'black' }}
-              leftIcon={<WiStrongWind size="36" />}
+              leftIcon={<WiStrongWind size="30" />}
               onClick={() => navigate('/WindSensors')}
               justifyContent="flex-start"
-              fontSize={'xl'}
+              fontSize={'md'}
             >
               Wind Sensors
             </Button>
@@ -49,10 +49,10 @@ const Sidebar = () => {
               variant="outline"
               color="white"
               _hover={{ bg: 'white', color: 'black' }}
-              leftIcon={<WiRain size="36" />}
+              leftIcon={<WiRain size="30" />}
               onClick={() => navigate('/RainSensors')}
               justifyContent="flex-start"
-              fontSize={'xl'}
+              fontSize={'md'}
             >
               Rain Sensors
             </Button>
@@ -60,10 +60,10 @@ const Sidebar = () => {
               variant="outline"
               color="white"
               _hover={{ bg: 'white', color: 'black' }}
-              leftIcon={<WiHumidity size="36" />}
+              leftIcon={<WiHumidity size="30" />}
               onClick={() => navigate('/HumiditySensors')}
               justifyContent="flex-start"
-              fontSize={'xl'}
+              fontSize={'md'}
             >
               Humidity Sensors
             </Button>
@@ -71,10 +71,10 @@ const Sidebar = () => {
               variant="outline"
               color="white"
               _hover={{ bg: 'white', color: 'black' }}
-              leftIcon={<WiHumidity size="36" />}
+              leftIcon={<WiHumidity size="30" />}
               onClick={() => navigate('/SoilMoistureSensors')}
               justifyContent="flex-start"
-              fontSize={'xl'}
+              fontSize={'md'}
             >
               Soil Moisture Sensors
             </Button>
