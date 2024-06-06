@@ -27,6 +27,12 @@ const ChartDetails = ({ chartType }) => {
 
   const reversedData = [...weatherData].reverse();
 
+  function capitalizeFirstLetter(word) {
+    if (!word) return word;
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  }
+
+  const chartTitle = capitalizeFirstLetter(chartType);
 
   const currentData = reversedData.map(data => data.temperature);
 
@@ -40,10 +46,10 @@ const ChartDetails = ({ chartType }) => {
         <Text>Loading...</Text>
       ) : (
         <>
-          <Text fontWeight="bold">Chart Type: {chartType}</Text>
-          <Text>Most Recent Value: {mostRecentValue}</Text>
-          <Text>Min Value: {min}</Text>
-          <Text>Max Value: {max}</Text>
+          <Text><strong>Chart Type:</strong> {chartTitle}</Text>
+          <Text><strong>Most Recent Value:</strong> {mostRecentValue}</Text>
+          <Text><strong>Min Value:</strong> {min}</Text>
+          <Text><strong>Max Value:</strong> {max}</Text>
         </>
       )}
     </Box>
