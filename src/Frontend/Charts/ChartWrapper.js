@@ -28,7 +28,7 @@ const ChartWrapper = ({ title, children, onChartChange }) => {
       w="100%"
     >
       <Flex justify="space-between" mb="4">
-        <Box fontSize="lg" fontWeight="bold">
+        <Box fontSize="xl" fontWeight="bold">
           {title}
         </Box>
         <Flex>
