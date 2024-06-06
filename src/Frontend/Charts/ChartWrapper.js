@@ -18,7 +18,7 @@ const ChartWrapper = ({ title, children, onChartChange }) => {
   return (
     <Box
       border="1px"
-      borderColor="green"
+      borderColor="#fd9801"
       borderRadius="md"
       boxShadow="md"
       p="6"

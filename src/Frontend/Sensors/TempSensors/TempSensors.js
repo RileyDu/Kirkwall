@@ -13,7 +13,7 @@ export default function TempSensors({ weatherData }) {
       <ChartWrapper title="Temperature Over Time">
         <LineChart data={weatherData} metric="temperature" />
       </ChartWrapper>
-      <Divider my={'8'} borderColor="blue.500" borderWidth="4px" />
+      <Divider my={'8'} borderColor="blue.500" borderWidth="4px" borderRadius={"full"}/>
       <ChartWrapper title="Temperature Over Time">
         <BarChart data={weatherData} metric="temperature" />
       </ChartWrapper>
