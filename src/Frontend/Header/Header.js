@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../Backend/Firebase';
-import { useMediaQuery, Flex, Box, IconButton, Avatar, AvatarBadge } from '@chakra-ui/react';
+import { useMediaQuery, Flex, Box, IconButton, Avatar, Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverCloseButton, PopoverBody } from '@chakra-ui/react';
 import { FaBars } from 'react-icons/fa';
 import Logout from '../../Frontend/AuthComponents/Logout';
 import { useNavigate } from 'react-router-dom';
@@ -42,12 +42,24 @@ const Header = () => {
         {isLargerThan768 ? (
           user ? (
             <Flex fontSize={'2em'} color={'white'} align="center">
-              <Avatar
-                size="md"
-                name="Grand Farm Logo"
-                src="/GrandFarmLogo.jpg"
-              >
-              </Avatar>
+              <Popover>
+                <PopoverTrigger>
+                  <Avatar
+                    size="md"
+                    name="Grand Farm Logo"
+                    src="/GrandFarmLogo.jpg"
+                    cursor="pointer"
+                  >
+                  </Avatar>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverArrow />
+                  <PopoverCloseButton />
+                  <PopoverBody>
+                    <Logout />
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
             </Flex>
           ) : null
         ) : (
