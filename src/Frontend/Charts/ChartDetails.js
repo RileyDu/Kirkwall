@@ -45,11 +45,19 @@ const ChartDetails = ({ chartType, metric }) => {
       {loading ? (
         <Text>Loading...</Text>
       ) : (
-        <>
-          <Text><strong>Chart Type:</strong> {chartTitle}</Text>
-          <Text><strong>Most Recent Value:</strong> {mostRecentValue}</Text>
-          <Text><strong>Min Value:</strong> {min}</Text>
-          <Text><strong>Max Value:</strong> {max}</Text>
+          <>
+          <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" borderRadius="md" boxShadow="md">
+            <Text fontSize="2xl" fontWeight="bold">{mostRecentValue}</Text>
+            <Text>Most Recent Value</Text>
+          </Box>
+          <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" borderRadius="md" boxShadow="md" mt={4}>
+            <Text fontSize="2xl" fontWeight="bold">{min}</Text>
+            <Text>Min Value</Text>
+          </Box>
+          <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" borderRadius="md" boxShadow="md" mt={4}>
+            <Text fontSize="2xl" fontWeight="bold">{max}</Text>
+            <Text>Max Value</Text>
+          </Box>
         </>
       )}
     </Box>

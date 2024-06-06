@@ -67,9 +67,9 @@ const ChartWrapper = ({ title, children, onChartChange, metric }) => {
                 />
               </PopoverTrigger>
             </Tooltip>
-            <PopoverContent>
+            <PopoverContent borderColor={'#212121'}>
               <PopoverCloseButton />
-              <PopoverHeader fontWeight="bold" fontSize={'lg'}>Details</PopoverHeader>
+              <PopoverHeader fontWeight="bold" fontSize={'lg'} bg={'#fd9801'} color={'white'}> Chart Details</PopoverHeader>
               <PopoverBody>
                 <ChartDetails chartType={chartType} metric={metric} />
               </PopoverBody>
