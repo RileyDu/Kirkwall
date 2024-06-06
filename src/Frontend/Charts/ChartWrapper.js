@@ -4,13 +4,11 @@ import {
 } from '@chakra-ui/react';
 import { FaCog } from 'react-icons/fa';
 import { BsBarChartFill } from 'react-icons/bs';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import ChartDetails from './ChartDetails';
-import { getWeatherData } from '../../Backend/Graphql_helper';
 
-const ChartWrapper = ({ title, children, onChartChange }) => {
+const ChartWrapper = ({ title, children, onChartChange, metric }) => {
   const [chartType, setChartType] = useState('bar');
-  const [weatherData, setWeatherData] = useState(null);
 
   const changeChartType = (type) => {
     setChartType(type);
@@ -73,7 +71,7 @@ const ChartWrapper = ({ title, children, onChartChange }) => {
               <PopoverCloseButton />
               <PopoverHeader fontWeight="bold" fontSize={'lg'}>Details</PopoverHeader>
               <PopoverBody>
-                <ChartDetails chartType={chartType} />
+                <ChartDetails chartType={chartType} metric={metric} />
               </PopoverBody>
             </PopoverContent>
           </Popover>

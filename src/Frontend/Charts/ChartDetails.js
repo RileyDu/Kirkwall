@@ -2,7 +2,7 @@ import { Box, Text } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { getWeatherData } from '../../Backend/Graphql_helper';
 
-const ChartDetails = ({ chartType }) => {
+const ChartDetails = ({ chartType, metric }) => {
   const [weatherData, setWeatherData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -34,7 +34,7 @@ const ChartDetails = ({ chartType }) => {
 
   const chartTitle = capitalizeFirstLetter(chartType);
 
-  const currentData = reversedData.map(data => data.temperature);
+  const currentData = reversedData.map(data => data[metric]);
 
   const min = currentData.length > 0 ? Math.min(...currentData) : 'N/A';
   const max = currentData.length > 0 ? Math.max(...currentData) : 'N/A';
