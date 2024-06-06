@@ -29,7 +29,6 @@ const Sidebar = () => {
           px={{ base: '4', sm: '6' }}
           bg="#212121"
           color="white"
-          borderRightWidth="1px"
           justifyContent="space-between"
         >
           <Stack spacing="8">
