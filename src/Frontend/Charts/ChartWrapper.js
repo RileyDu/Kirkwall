@@ -1,5 +1,6 @@
 import { Box, Button, Flex, Text, IconButton, Popover, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Tooltip, Divider } from '@chakra-ui/react';
 import { FaCog, FaQuestionCircle } from 'react-icons/fa';
+import { BsBarChartFill } from "react-icons/bs";
 import { useState } from 'react';
 
 const ChartWrapper = ({ title, children, onChartChange }) => {
@@ -58,14 +59,25 @@ const ChartWrapper = ({ title, children, onChartChange }) => {
           </PopoverBody>
         </PopoverContent>
       </Popover>
-          <Tooltip label="Help">
+      <Popover>
+          <Tooltip label="Details">
+            <PopoverTrigger>
             <IconButton
-              icon={<FaQuestionCircle />}
+              icon={<BsBarChartFill />}
               variant="outline"
               colorScheme="navy"
               size="sm"
             />
+        </PopoverTrigger>
           </Tooltip>
+        <PopoverContent>
+          <PopoverCloseButton />
+          <PopoverHeader fontWeight="bold" fontSize={'lg'}>Details</PopoverHeader>
+          <PopoverBody>
+            <Text>Hello World</Text>
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
         </Flex>
       </Flex>
       {children}
