@@ -17,8 +17,8 @@ const Sidebar = () => {
       top="0"
       left="0"
       height="100vh"
-      width="250px" // Adjust the width as necessary
-      zIndex="1000" // Ensure the sidebar is above other content
+      width="250px" 
+      zIndex="1000" 
       flexShrink={0}
       flexDirection="column"
     >

@@ -53,7 +53,7 @@ const Header = () => {
                   >
                   </Avatar>
                 </PopoverTrigger>
-                <PopoverContent bg="white" borderColor={'black'}>
+                <PopoverContent bg="white" borderColor={'black'} zIndex={1005}> 
                   <PopoverCloseButton size={'lg'} />
                   <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} > Grand Farm </PopoverHeader>
                   <PopoverBody>

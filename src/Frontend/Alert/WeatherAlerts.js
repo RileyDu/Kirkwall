@@ -36,7 +36,7 @@ function WeatherAlerts({ isVisible, onClose }) {
   return (
     user ? (
       <Center>
-        <Box p={0} width="100%">
+        <Box p={0} width="100%" zIndex={999} ml={'250px'}>
           {error && (
             <Alert status="error" mb={0} borderRadius="0" bgColor="red.500" color="white">
               <AlertIcon />
