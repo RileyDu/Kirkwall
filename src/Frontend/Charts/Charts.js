@@ -43,7 +43,7 @@ const processWeatherData = (data, key) => {
         label: key,
         data: reversedData.map(item => item[key]),
         backgroundColor: '#fd9801',
-        borderColor: 'black',
+        borderColor: '#fd9801',
         borderWidth: 1,
         pointBackgroundColor: reversedData.map((item, index) =>
           index === reversedData.length - 1 ? 'red' : '#fd9801'
