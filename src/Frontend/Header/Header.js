@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../Backend/Firebase';
-import { useMediaQuery, Flex, Box, IconButton, Avatar, Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverCloseButton, PopoverBody } from '@chakra-ui/react';
+import { useMediaQuery, Flex, Box, IconButton, Avatar, Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverCloseButton, PopoverBody, Button } from '@chakra-ui/react';
 import { FaBars } from 'react-icons/fa';
 import Logout from '../../Frontend/AuthComponents/Logout';
 import { useNavigate } from 'react-router-dom';
@@ -11,10 +11,11 @@ const Header = () => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
+  const [showAlerts, setShowAlerts] = useState(true); // State to manage WeatherAlerts visibility
 
-  const DividerBox = () => (
-    <Box height="1.5em" width="3px" bg="white" />
-  );
+  const toggleAlerts = () => {
+    setShowAlerts(!showAlerts);
+  };
 
   return (
     <>
@@ -56,6 +57,9 @@ const Header = () => {
                   <PopoverArrow />
                   <PopoverCloseButton />
                   <PopoverBody>
+                    <Button onClick={toggleAlerts} mb={4}>
+                      Toggle Alerts
+                    </Button>
                     <Logout />
                   </PopoverBody>
                 </PopoverContent>
@@ -66,7 +70,7 @@ const Header = () => {
           <IconButton icon={<FaBars />} bg="transparent" aria-label="Menu" />
         )}
       </Flex>
-      <WeatherAlerts />
+      {showAlerts && <WeatherAlerts isVisible={showAlerts} onClose={toggleAlerts} />} {/* Conditionally render WeatherAlerts */}
     </>
   );
 };
