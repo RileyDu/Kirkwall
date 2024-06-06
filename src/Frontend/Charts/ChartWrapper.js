@@ -49,8 +49,8 @@ const ChartWrapper = ({ title, children, onChartChange }) => {
           <PopoverHeader fontWeight="bold" fontSize={'lg'}>Customize Chart</PopoverHeader>
           <PopoverBody>
             <Text fontWeight="bold" fontSize={'lg'} py={2} textAlign={"center"}>Select Chart Type</Text>
-            <Button mr={2} mb={2} borderRadius={"full"} border={"1px"} color={"green"} width={"100%"} onClick={() => changeChartType('line')}>Line</Button>
-            <Button mr={2} borderRadius={"full"} border={"1px"} color={"green"} width={"100%"} onClick={() => changeChartType('bar')}>Bar</Button>
+            <Button mr={2} mb={2} borderRadius={"full"} border={"1px"} color={"#fd9801"} width={"100%"} onClick={() => changeChartType('line')}>LINE</Button>
+            <Button mr={2} borderRadius={"full"} border={"1px"} color={"#fd9801"} width={"100%"} onClick={() => changeChartType('bar')}>BAR</Button>
             {/* <Divider my={4} mt={6} borderColor={"green"} borderWidth={"2px"} borderRadius={"full"}/>
             <Text fontWeight="bold" fontSize={'lg'} pb={2}  textAlign={"center"}>Select Time Interval</Text>
             <Button mr={2} mb={2} borderRadius={"full"} border={"1px"} color={"green"} width={"100%"}>5 minutes</Button>
