@@ -4,10 +4,10 @@ import ChartWrapper from '../Charts/ChartWrapper';
 import { useState } from 'react';
 
 const MainContent = ({ weatherData }) => {
-  const [tempChartType, setTempChartType] = useState('line');
-  const [humidityChartType, setHumidityChartType] = useState('line');
-  const [windChartType, setWindChartType] = useState('line');
-  const [rainfallChartType, setRainfallChartType] = useState('line');
+  const [tempChartType, setTempChartType] = useState('bar');
+  const [humidityChartType, setHumidityChartType] = useState('bar');
+  const [windChartType, setWindChartType] = useState('bar');
+  const [rainfallChartType, setRainfallChartType] = useState('bar');
   const [tempChartInterval, setTempChartInterval] = useState(1);
   const [humidityChartInterval, setHumidityChartInterval] = useState(1);
   const [windChartInterval, setWindChartInterval] = useState(1);

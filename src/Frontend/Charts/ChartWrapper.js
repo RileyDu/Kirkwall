@@ -4,7 +4,7 @@ import { BsBarChartFill } from "react-icons/bs";
 import { useState } from 'react';
 
 const ChartWrapper = ({ title, children, onChartChange }) => {
-  const [chartType, setChartType] = useState('line');
+  const [chartType, setChartType] = useState('bar');
 
 
   const changeChartType = (type) => {
