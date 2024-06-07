@@ -6,11 +6,14 @@ import { FaCog } from 'react-icons/fa';
 import { BsBarChartFill } from 'react-icons/bs';
 import { FaChartBar, FaChartLine } from "react-icons/fa";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import ChartDetails from './ChartDetails';
 
 const ChartWrapper = ({ title, children, onChartChange, metric }) => {
   const [chartType, setChartType] = useState('bar');
+  const [showIcons, setShowIcons] = useState(true);
+  const location = useLocation();
 
   const changeChartType = (type) => {
     setChartType(type);
@@ -18,6 +21,12 @@ const ChartWrapper = ({ title, children, onChartChange, metric }) => {
       onChartChange(type);
     }
   };
+
+  const restrictedRoutes = ['/TempSensors', '/HumiditySensors', '/SoilMoistureSensors', '/WindSensors', '/RainSensors']; // Replace with your actual restricted routes
+
+  useEffect(() => {
+    setShowIcons(!restrictedRoutes.includes(location.pathname));
+  }, [location.pathname]);
 
   const iconSize = '24';
 
@@ -37,49 +46,51 @@ const ChartWrapper = ({ title, children, onChartChange, metric }) => {
         <Box fontSize="xl" fontWeight="bold">
           {title}
         </Box>
-        <Flex>
-          <Popover>
-            <Tooltip label="Customize">
-              <PopoverTrigger>
-                <IconButton
-                  icon={<FaCog />}
-                  variant="outline"
-                  colorScheme="#212121"
-                  size="sm"
-                  mr="2"
-                />
-              </PopoverTrigger>
-            </Tooltip>
-            <PopoverContent borderColor={'#212121'}>
-              <PopoverCloseButton color={'white'} size={"lg"}/>
-              <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'}>Customize Chart</PopoverHeader>
-              <PopoverBody>
-                <Text fontWeight="bold" fontSize={'lg'} py={2} textAlign={"center"}>Select Chart Type</Text>
-                <Button mr={2} mb={2} borderRadius={"md"} border={"1px"} color={"#fd9801"} bg={"white"} borderColor={"#212121"} width={"100%"} onClick={() => changeChartType('line')} leftIcon={<FaChartLine size={iconSize} />}>LINE</Button>
-                <Button mr={2} borderRadius={"md"} border={"1px"} color={"#fd9801"} bg={"white"} borderColor={"#212121"} width={"100%"} onClick={() => changeChartType('bar')} leftIcon={<FaChartBar size={iconSize} />}>BAR</Button>
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
-          <Popover>
-            <Tooltip label="Details">
-              <PopoverTrigger>
-                <IconButton
-                  icon={<BsBarChartFill />}
-                  variant="outline"
-                  colorScheme="#212121"
-                  size="sm"
-                />
-              </PopoverTrigger>
-            </Tooltip>
-            <PopoverContent borderColor={'#212121'}>
-              <PopoverCloseButton color={'white'} size={"lg"}/>
-              <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'}> Chart Details</PopoverHeader>
-              <PopoverBody>
-                <ChartDetails chartType={chartType} metric={metric} />
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
-        </Flex>
+        {showIcons && (
+          <Flex>
+            <Popover>
+              <Tooltip label="Customize">
+                <PopoverTrigger>
+                  <IconButton
+                    icon={<FaCog />}
+                    variant="outline"
+                    colorScheme="#212121"
+                    size="sm"
+                    mr="2"
+                  />
+                </PopoverTrigger>
+              </Tooltip>
+              <PopoverContent borderColor={'#212121'}>
+                <PopoverCloseButton color={'white'} size={"lg"}/>
+                <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'}>Customize Chart</PopoverHeader>
+                <PopoverBody>
+                  <Text fontWeight="bold" fontSize={'lg'} py={2} textAlign={"center"}>Select Chart Type</Text>
+                  <Button mr={2} mb={2} borderRadius={"md"} border={"1px"} color={"#fd9801"} bg={"white"} borderColor={"#212121"} width={"100%"} onClick={() => changeChartType('line')} leftIcon={<FaChartLine size={iconSize} />}>LINE</Button>
+                  <Button mr={2} borderRadius={"md"} border={"1px"} color={"#fd9801"} bg={"white"} borderColor={"#212121"} width={"100%"} onClick={() => changeChartType('bar')} leftIcon={<FaChartBar size={iconSize} />}>BAR</Button>
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+            <Popover>
+              <Tooltip label="Details">
+                <PopoverTrigger>
+                  <IconButton
+                    icon={<BsBarChartFill />}
+                    variant="outline"
+                    colorScheme="#212121"
+                    size="sm"
+                  />
+                </PopoverTrigger>
+              </Tooltip>
+              <PopoverContent borderColor={'#212121'}>
+                <PopoverCloseButton color={'white'} size={"lg"}/>
+                <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'}> Chart Details</PopoverHeader>
+                <PopoverBody>
+                  <ChartDetails chartType={chartType} metric={metric} />
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+          </Flex>
+        )}
       </Flex>
       {children}
     </Box>
