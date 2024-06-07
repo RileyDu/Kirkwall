@@ -48,7 +48,7 @@ const ChartWrapper = ({ title, children, onChartChange, metric }) => {
             </Tooltip>
             <PopoverContent>
               <PopoverCloseButton />
-              <PopoverHeader fontWeight="bold" fontSize={'lg'}>Customize Chart</PopoverHeader>
+              <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'}>Customize Chart</PopoverHeader>
               <PopoverBody>
                 <Text fontWeight="bold" fontSize={'lg'} py={2} textAlign={"center"}>Select Chart Type</Text>
                 <Button mr={2} mb={2} borderRadius={"full"} border={"1px"} color={"#fd9801"} width={"100%"} onClick={() => changeChartType('line')}>LINE</Button>
@@ -69,7 +69,7 @@ const ChartWrapper = ({ title, children, onChartChange, metric }) => {
             </Tooltip>
             <PopoverContent borderColor={'#212121'}>
               <PopoverCloseButton />
-              <PopoverHeader fontWeight="bold" fontSize={'lg'} bg={'#fd9801'} color={'white'}> Chart Details</PopoverHeader>
+              <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'}> Chart Details</PopoverHeader>
               <PopoverBody>
                 <ChartDetails chartType={chartType} metric={metric} />
               </PopoverBody>

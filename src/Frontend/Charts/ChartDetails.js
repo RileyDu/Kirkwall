@@ -50,11 +50,11 @@ const ChartDetails = ({ chartType, metric }) => {
             <Text fontSize="2xl" fontWeight="bold">{mostRecentValue}</Text>
             <Text>Most Recent Value</Text>
           </Box>
-          <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" borderRadius="md" boxShadow="md" mt={4}>
+          <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" borderRadius="md" boxShadow="md" mt={3}>
             <Text fontSize="2xl" fontWeight="bold">{min}</Text>
             <Text>Min Value</Text>
           </Box>
-          <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" borderRadius="md" boxShadow="md" mt={4}>
+          <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" borderRadius="md" boxShadow="md" mt={3}>
             <Text fontSize="2xl" fontWeight="bold">{max}</Text>
             <Text>Max Value</Text>
           </Box>
