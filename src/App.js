@@ -32,7 +32,7 @@ const App = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getWeatherData();
+        const response = await getWeatherData('25');
         setWeatherData(response.data.weather_data);
         setLoading(false);
       } catch (error) {

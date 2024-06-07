@@ -25,10 +25,10 @@ async function executeGraphqlQuery(query, variables = {}) {
 }
 
 // Function to retrieve all the list and item data
-async function getWeatherData() {
+async function getWeatherData(limit) {
   const WeatherDataQuery = `
-  query weather_data {
-    weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: 26) {
+  query weather_data($limit: Int!) {
+    weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: $limit) {
       station {
         name
         location {
@@ -47,9 +47,8 @@ async function getWeatherData() {
       wind_direction
     }
   }
-     
-    `;
-  return executeGraphqlQuery(WeatherDataQuery);
+  `;
+  return executeGraphqlQuery(WeatherDataQuery, { limit });
 }
 
 
