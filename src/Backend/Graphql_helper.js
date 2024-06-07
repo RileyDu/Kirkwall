@@ -52,6 +52,8 @@ async function getWeatherData() {
   return executeGraphqlQuery(WeatherDataQuery);
 }
 
+
+
 async function editWeatherData(dataid, temperature, humidity, windSpeed, windDirection) {
     const editWeatherMutation = `
         mutation ($i: weather_dataInput, $j: ID!) {
