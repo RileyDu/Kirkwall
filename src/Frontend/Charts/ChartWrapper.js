@@ -51,8 +51,8 @@ const ChartWrapper = ({ title, children, onChartChange, metric }) => {
               <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'}>Customize Chart</PopoverHeader>
               <PopoverBody>
                 <Text fontWeight="bold" fontSize={'lg'} py={2} textAlign={"center"}>Select Chart Type</Text>
-                <Button mr={2} mb={2} borderRadius={"md"} border={"1px"} color={"#fd9801"} bg={"white"} width={"100%"} onClick={() => changeChartType('line')}>LINE</Button>
-                <Button mr={2} borderRadius={"md"} border={"1px"} color={"#fd9801"} bg={"white"} width={"100%"} onClick={() => changeChartType('bar')}>BAR</Button>
+                <Button mr={2} mb={2} borderRadius={"md"} border={"1px"} color={"#fd9801"} bg={"white"} borderColor={"#212121"} width={"100%"} onClick={() => changeChartType('line')}>LINE</Button>
+                <Button mr={2} borderRadius={"md"} border={"1px"} color={"#fd9801"} bg={"white"} borderColor={"#212121"} width={"100%"} onClick={() => changeChartType('bar')}>BAR</Button>
               </PopoverBody>
             </PopoverContent>
           </Popover>

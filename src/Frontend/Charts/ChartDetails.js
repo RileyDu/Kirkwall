@@ -2,6 +2,21 @@ import { Box, Text } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { getWeatherData } from '../../Backend/Graphql_helper';
 
+const getLabelForMetric = (metric) => {
+  switch (metric) {
+    case 'temperature':
+      return { label: '°F', addSpace: false };
+    case 'percent_humidity':
+      return { label: '% Humidity', addSpace: false };
+    case 'rain_15_min_inches':
+      return { label: 'inches', addSpace: true };
+    case 'wind_speed':
+      return { label: 'MPH', addSpace: true };
+    default:
+      return { label: '', addSpace: false };
+  }
+};
+
 const ChartDetails = ({ chartType, metric }) => {
   const [weatherData, setWeatherData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,9 +55,11 @@ const ChartDetails = ({ chartType, metric }) => {
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
   };
 
+  const timePeriod = calculateTimePeriod(currentData.length - 1); // Subtract 1 to account for the most recent value
 
+  const { label, addSpace } = getLabelForMetric(metric);
 
-  const timePeriod = calculateTimePeriod(currentData.length-1); // Subtract 1 to account for the most recent value
+  const formatValue = (value) => `${value}${addSpace ? ' ' : ''}${label}`;
 
   return (
     <Box>
@@ -51,15 +68,15 @@ const ChartDetails = ({ chartType, metric }) => {
       ) : (
         <>
           <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" borderRadius="md" boxShadow="md">
-            <Text fontSize="2xl" fontWeight="bold">{mostRecentValue}</Text>
+            <Text fontSize="2xl" fontWeight="bold">{formatValue(mostRecentValue)}</Text>
             <Text>Most Recent Value</Text>
           </Box>
           <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" borderRadius="md" boxShadow="md" mt={3}>
-            <Text fontSize="2xl" fontWeight="bold">{min}</Text>
+            <Text fontSize="2xl" fontWeight="bold">{formatValue(min)}</Text>
             <Text>Min Value</Text>
           </Box>
           <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" borderRadius="md" boxShadow="md" mt={3}>
-            <Text fontSize="2xl" fontWeight="bold">{max}</Text>
+            <Text fontSize="2xl" fontWeight="bold">{formatValue(max)}</Text>
             <Text>Max Value</Text>
           </Box>
           <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" borderRadius="md" boxShadow="md" mt={3}>
