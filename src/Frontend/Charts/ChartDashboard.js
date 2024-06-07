@@ -65,22 +65,22 @@ const MiniDashboard = ({ metric }) => {
       ) : (
         <Flex justifyContent="space-evenly" mb={4}>
           <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" bg='#fd9801' borderRadius="md" boxShadow="lg" m={1} width={'200px'}>
-            <Text fontSize="2xl" fontWeight="bold">{formatValue(mostRecentValue)}</Text>
-            <Text>Most Recent Value</Text>
+            <Text fontSize="3xl" fontWeight="bold" color={"#212121"}>{formatValue(mostRecentValue)}</Text>
+            <Text fontSize={'2xl'} >Current Value</Text>
           </Box>
           <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" bg='#fd9801' borderRadius="md" boxShadow="lg" m={1} width={'200px'}>
-            <Text fontSize="2xl" fontWeight="bold">{formatValue(min)}</Text>
-            <Text>Min Value</Text>
+            <Text fontSize="3xl" fontWeight="bold">{formatValue(min)}</Text>
+            <Text fontSize={'2xl'}>Min Value</Text>
           </Box>
           <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" bg='#fd9801' borderRadius="md" boxShadow="lg" m={1} width={'200px'}>
-            <Text fontSize="2xl" fontWeight="bold">{formatValue(max)}</Text>
-            <Text>Max Value</Text>
+            <Text fontSize="3xl" fontWeight="bold">{formatValue(max)}</Text>
+            <Text fontSize={'2xl'}>Max Value</Text>
           </Box>
           <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" bg='#fd9801' borderRadius="md" boxShadow="lg" m={1} width={'200px'}>
             <Flex alignItems="center">
-              <Text fontSize="2xl" fontWeight="bold">{timePeriod}</Text>
+              <Text fontSize="3xl" fontWeight="bold">{timePeriod}</Text>
             </Flex>
-            <Text>Time Period</Text>
+            <Text fontSize={'2xl'}>Time Period</Text>
           </Box>
         </Flex>
       )}

@@ -89,7 +89,7 @@ const ChartDetails = ({ chartType, metric }) => {
             <Text fontSize="2xl" fontWeight="bold">
               {formatValue(mostRecentValue)}
             </Text>
-            <Text>Most Recent Value</Text>
+            <Text>Current Value</Text>
           </Box>
           <Box
             display="flex"
