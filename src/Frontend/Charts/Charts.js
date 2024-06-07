@@ -65,6 +65,8 @@ const defaultChartOptions = {
       ticks: {
         maxRotation: 90,
         minRotation: 45,
+        autoSkip: true,
+        maxTicksLimit: 10,
       },
     },
     y: {
