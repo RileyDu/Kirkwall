@@ -70,11 +70,11 @@ const MiniDashboard = ({ metric }) => {
           </Box>
           <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" bg='#fd9801' borderRadius="md" boxShadow="lg" m={1} width={'200px'}>
             <Text fontSize="3xl" fontWeight="bold">{formatValue(min)}</Text>
-            <Text fontSize={'2xl'}>Min Value</Text>
+            <Text fontSize={'2xl'}>Low</Text>
           </Box>
           <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" bg='#fd9801' borderRadius="md" boxShadow="lg" m={1} width={'200px'}>
             <Text fontSize="3xl" fontWeight="bold">{formatValue(max)}</Text>
-            <Text fontSize={'2xl'}>Max Value</Text>
+            <Text fontSize={'2xl'}>High</Text>
           </Box>
           <Box display="flex" flexDirection="column" alignItems="center" p={2} border="1px solid" borderColor="#212121" bg='#fd9801' borderRadius="md" boxShadow="lg" m={1} width={'200px'}>
             <Flex alignItems="center">
