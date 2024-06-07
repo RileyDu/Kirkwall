@@ -12,7 +12,7 @@ export default function HumiditySensors({ weatherData }) {
    <ChartWrapper title="Humidity Levels">
             <BarChart data={weatherData} metric="percent_humidity" />
           </ChartWrapper>
-          <Divider my={'8'} borderColor="blue.500" borderWidth="4px" />
+          <Divider my={'8'} borderColor="#212121" borderWidth="4px" borderRadius={"full"}/>
           <ChartWrapper title="Humidity Levels">
             <LineChart data={weatherData} metric="percent_humidity" />
           </ChartWrapper>
