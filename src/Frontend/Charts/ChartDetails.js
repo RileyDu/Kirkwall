@@ -105,7 +105,7 @@ const ChartDetails = ({ chartType, metric }) => {
             <Text fontSize="2xl" fontWeight="bold">
               {formatValue(min)}
             </Text>
-            <Text>Min Value</Text>
+            <Text>Low</Text>
           </Box>
           <Box
             display="flex"
@@ -121,7 +121,7 @@ const ChartDetails = ({ chartType, metric }) => {
             <Text fontSize="2xl" fontWeight="bold">
               {formatValue(max)}
             </Text>
-            <Text>Max Value</Text>
+            <Text>High</Text>
           </Box>
           <Box
             display="flex"
