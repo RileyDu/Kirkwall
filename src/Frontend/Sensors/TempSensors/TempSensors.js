@@ -7,7 +7,7 @@ import MiniDashboard from '../../Charts/ChartDashboard';
 export default function TempSensors({ weatherData }) {
   return (
     <Box p="4" width={'100%'} height={'100%'}>
-      <Heading size="lg" textAlign={'center'} mb={'4'}>
+      <Heading size="xl" textAlign={'center'} mb={'4'}>
         Temperature Sensors
       </Heading>
         <Box width="100%" ml="4">
