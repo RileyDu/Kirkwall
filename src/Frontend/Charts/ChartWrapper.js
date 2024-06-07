@@ -47,7 +47,7 @@ const ChartWrapper = ({ title, children, onChartChange, metric }) => {
               </PopoverTrigger>
             </Tooltip>
             <PopoverContent borderColor={'#212121'}>
-              <PopoverCloseButton />
+              <PopoverCloseButton color={'white'} size={"lg"}/>
               <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'}>Customize Chart</PopoverHeader>
               <PopoverBody>
                 <Text fontWeight="bold" fontSize={'lg'} py={2} textAlign={"center"}>Select Chart Type</Text>
@@ -68,7 +68,7 @@ const ChartWrapper = ({ title, children, onChartChange, metric }) => {
               </PopoverTrigger>
             </Tooltip>
             <PopoverContent borderColor={'#212121'}>
-              <PopoverCloseButton />
+              <PopoverCloseButton color={'white'} size={"lg"}/>
               <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'}> Chart Details</PopoverHeader>
               <PopoverBody>
                 <ChartDetails chartType={chartType} metric={metric} />
