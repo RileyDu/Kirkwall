@@ -4,21 +4,27 @@ import ReactSpeedometer from 'react-d3-speedometer';
 import ChartWrapper from '../../Charts/ChartWrapper';
 import { BarChart, LineChart } from '../../Charts/Charts';
 import MiniDashboard from '../../Charts/ChartDashboard';
+import WindGauageStyling from './WindGaugeStyling.css';
+
+const getCardinalDirection = (degree) => {
+  const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+  const index = Math.round((degree % 360) / 22.5);
+  return directions[index];
+};
 
 export default function WindSensors({ weatherData }) {
   if (!weatherData) {
+    console.log('WeatherData is not defined', weatherData);
     return (
-      console.log('WeatherData is not defined', weatherData),
-      (
-        <Box p="4" width="100%" height="100%" textAlign="center">
-          <Spinner size="xl" />
-          <Text mt="4">Loading wind data...</Text>
-        </Box>
-      )
+      <Box p="4" width="100%" height="100%" textAlign="center">
+        <Spinner size="xl" />
+        <Text mt="4">Loading wind data...</Text>
+      </Box>
     );
   }
 
   const latestWindSpeed = weatherData[0]?.wind_speed;
+  const latestWindDirection = weatherData[0]?.wind_direction;
 
   if (latestWindSpeed === undefined) {
     return (
@@ -31,48 +37,32 @@ export default function WindSensors({ weatherData }) {
     );
   }
 
-  const windSpeedMph = (latestWindSpeed * 2.23694).toFixed(2);
-
   return (
     <Box width="100%" height="100%" textAlign="center" p={'4'}>
       <Heading size="xl" py={'4'}>
         Wind Sensors
       </Heading>
-        <Box width="100%" mb="4">
-          <MiniDashboard metric="wind_speed" />
-        </Box>
-        <Box width="100%" mb="4">
-          <ChartWrapper title="Wind Speed Over Time">
-            <LineChart data={weatherData} metric="wind_speed" />
-          </ChartWrapper>
-        </Box>
-        <Divider
-          my={'8'}
-          borderColor="#212121"
-          borderWidth="4px"
-          borderRadius={'full'}
-        />
-        <Box width="100%" mb="4">
-          <ChartWrapper title="Wind Speed Distribution">
-            <BarChart data={weatherData} metric="wind_speed" />
-          </ChartWrapper>
-        </Box>
-        <Divider
-          my={'8'}
-          borderColor="#212121"
-          borderWidth="4px"
-          borderRadius={'full'}
-        />
-        <Box
-          p="4"
-          textAlign="center"
-          border={'1px'}
-          borderColor="#fd9801"
-          borderRadius="md"
-          boxShadow="md"
-          mb="4"
-        >
+      <Box width="100%" mb="4">
+        <MiniDashboard metric="wind_speed" />
+      </Box>
+      <Flex
+        direction="column"
+        align="center"
+        justify="center"
+        p="4"
+        textAlign="center"
+        border={'1px'}
+        borderColor="#fd9801"
+        borderRadius="md"
+        boxShadow="md"
+        mb="4"
+      >
+        <Text fontSize="xxx-large" mb={'6'} mt={'6'}>
+          Current Wind Speed and Direction: {latestWindSpeed} MPH {getCardinalDirection(latestWindDirection)}
+        </Text>
+        <Box marginBottom={'-40px'}>
           <ReactSpeedometer
+            className="custom-speedometer"
             minValue={0}
             maxValue={100}
             value={Number(latestWindSpeed)}
@@ -90,15 +80,15 @@ export default function WindSensors({ weatherData }) {
             ]}
             customSegmentStops={[0, 5, 11, 19, 28, 38, 49, 61, 74, 100]}
             customSegmentLabels={[
-              { text: '0-5', position: 'INSIDE' },
-              { text: '6-11', position: 'INSIDE' },
-              { text: '12-19', position: 'INSIDE' },
-              { text: '20-28', position: 'INSIDE' },
-              { text: '29-38', position: 'INSIDE' },
-              { text: '39-49', position: 'INSIDE' },
-              { text: '50-61', position: 'INSIDE' },
-              { text: '62-74', position: 'INSIDE' },
-              { text: '75+', position: 'INSIDE' },
+              { text: '0-5', position: 'OUTSIDE' },
+              { text: '6-11', position: 'OUTSIDE' },
+              { text: '12-19', position: 'OUTSIDE' },
+              { text: '20-28', position: 'OUTSIDE' },
+              { text: '29-38', position: 'OUTSIDE' },
+              { text: '39-49', position: 'OUTSIDE' },
+              { text: '50-61', position: 'OUTSIDE' },
+              { text: '62-74', position: 'OUTSIDE' },
+              { text: '75+', position: 'OUTSIDE' },
             ]}
             needleHeightRatio={0.7}
             needleColor="#000000"
@@ -107,13 +97,33 @@ export default function WindSensors({ weatherData }) {
             height={400}
             width={600}
             textColor="black"
-            valueTextFontSize="x-large"
             valueTextShadowColor="black"
+            currentValueText=" "
           />
-          <Text mt="4" fontSize="xxx-large">
-            Current Wind Speed: {latestWindSpeed} mph
-          </Text>
         </Box>
+      </Flex>
+      <Divider
+        my={'8'}
+        borderColor="#212121"
+        borderWidth="4px"
+        borderRadius={'full'}
+      />
+      <Box width="100%" mb="4">
+        <ChartWrapper title="Wind Speed Over Time">
+          <LineChart data={weatherData} metric="wind_speed" />
+        </ChartWrapper>
+      </Box>
+      <Divider
+        my={'8'}
+        borderColor="#212121"
+        borderWidth="4px"
+        borderRadius={'full'}
+      />
+      <Box width="100%" mb="4">
+        <ChartWrapper title="Wind Speed Distribution">
+          <BarChart data={weatherData} metric="wind_speed" />
+        </ChartWrapper>
+      </Box>
     </Box>
   );
 }
