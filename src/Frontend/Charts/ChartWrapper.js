@@ -40,7 +40,7 @@ const ChartWrapper = ({ title, children, onChartChange, metric }) => {
                 <IconButton
                   icon={<FaCog />}
                   variant="outline"
-                  colorScheme="green"
+                  colorScheme="#212121"
                   size="sm"
                   mr="2"
                 />
@@ -62,7 +62,7 @@ const ChartWrapper = ({ title, children, onChartChange, metric }) => {
                 <IconButton
                   icon={<BsBarChartFill />}
                   variant="outline"
-                  colorScheme="navy"
+                  colorScheme="#212121"
                   size="sm"
                 />
               </PopoverTrigger>
