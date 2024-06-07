@@ -21,12 +21,12 @@ const getLabelForMetric = metric => {
 const ChartDetails = ({ chartType, metric }) => {
   const [weatherData, setWeatherData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [limit, setLimit] = useState(26);
+  // const [limit, setLimit] = useState(26);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getWeatherData(limit);
+        const response = await getWeatherData('25');
         setWeatherData(response.data.weather_data);
         setLoading(false);
       } catch (error) {
@@ -40,7 +40,7 @@ const ChartDetails = ({ chartType, metric }) => {
     const intervalId = setInterval(fetchData, 30000);
 
     return () => clearInterval(intervalId);
-  }, [limit]); // Add limit as a dependency to refetch data when it changes
+  }, []); // Add limit as a dependency to refetch data when it changes
 
   const reversedData = [...weatherData].reverse();
 
@@ -67,8 +67,8 @@ const ChartDetails = ({ chartType, metric }) => {
 
   const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
 
-  const incrementLimit = () => setLimit(prevLimit => prevLimit + 1);
-  const decrementLimit = () => setLimit(prevLimit => Math.max(1, prevLimit - 1)); // Ensure limit does not go below 1
+  // const incrementLimit = () => setLimit(prevLimit => prevLimit + 1);
+  // const decrementLimit = () => setLimit(prevLimit => Math.max(1, prevLimit - 1)); // Ensure limit does not go below 1
 
   return (
     <Box>
@@ -135,11 +135,11 @@ const ChartDetails = ({ chartType, metric }) => {
             mt={3}
           >
             <Flex alignItems="center">
-              <Icon as={FaPlus} color="green.500" mr={2} ml={2} boxSize={5} onClick={incrementLimit} />
+              {/* <Icon as={FaPlus} color="green.500" mr={2} ml={2} boxSize={5} onClick={incrementLimit} /> */}
               <Text fontSize="2xl" fontWeight="bold" >
                 {timePeriod}
               </Text>
-              <Icon as={FaMinus} color="red.500" boxSize={5} onClick={decrementLimit} />
+              {/* <Icon as={FaMinus} color="red.500" boxSize={5} onClick={decrementLimit} /> */}
             </Flex>
             <Text>Time Period</Text>
           </Box>
