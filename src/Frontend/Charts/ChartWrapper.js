@@ -4,6 +4,8 @@ import {
 } from '@chakra-ui/react';
 import { FaCog } from 'react-icons/fa';
 import { BsBarChartFill } from 'react-icons/bs';
+import { FaChartBar, FaChartLine } from "react-icons/fa";
+
 import { useState } from 'react';
 import ChartDetails from './ChartDetails';
 
@@ -16,6 +18,8 @@ const ChartWrapper = ({ title, children, onChartChange, metric }) => {
       onChartChange(type);
     }
   };
+
+  const iconSize = '24';
 
   return (
     <Box
@@ -51,8 +55,8 @@ const ChartWrapper = ({ title, children, onChartChange, metric }) => {
               <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'}>Customize Chart</PopoverHeader>
               <PopoverBody>
                 <Text fontWeight="bold" fontSize={'lg'} py={2} textAlign={"center"}>Select Chart Type</Text>
-                <Button mr={2} mb={2} borderRadius={"md"} border={"1px"} color={"#fd9801"} bg={"white"} borderColor={"#212121"} width={"100%"} onClick={() => changeChartType('line')}>LINE</Button>
-                <Button mr={2} borderRadius={"md"} border={"1px"} color={"#fd9801"} bg={"white"} borderColor={"#212121"} width={"100%"} onClick={() => changeChartType('bar')}>BAR</Button>
+                <Button mr={2} mb={2} borderRadius={"md"} border={"1px"} color={"#fd9801"} bg={"white"} borderColor={"#212121"} width={"100%"} onClick={() => changeChartType('line')} leftIcon={<FaChartLine size={iconSize} />}>LINE</Button>
+                <Button mr={2} borderRadius={"md"} border={"1px"} color={"#fd9801"} bg={"white"} borderColor={"#212121"} width={"100%"} onClick={() => changeChartType('bar')} leftIcon={<FaChartBar size={iconSize} />}>BAR</Button>
               </PopoverBody>
             </PopoverContent>
           </Popover>
