@@ -33,7 +33,7 @@ const Header = () => {
       >
         <Box>
           <img
-            src="/kirkwall_logo_1_white.png"
+            src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
             alt="kirkwall logo"
             height="150px"
             width="150px"
@@ -49,7 +49,7 @@ const Header = () => {
                   <Avatar
                     size="md"
                     name="Grand Farm Logo"
-                    src="/GrandFarmLogo.jpg"
+                    src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
                     cursor="pointer"
                   >
                   </Avatar>
