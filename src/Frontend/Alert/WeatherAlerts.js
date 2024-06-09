@@ -15,7 +15,7 @@ function WeatherAlerts({ isVisible, onClose }) {
 
   const fetchWeatherAlerts = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/weather-alerts/${zipcode}`);
+      const response = await axios.get(`https://kirkwall-demo.vercel.app//weather-alerts/${zipcode}`);
       setConditions(response.data.conditions);
       setAlerts(response.data.alerts);
       setError('');
