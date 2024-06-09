@@ -6,7 +6,6 @@ import {
   Spinner,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { getWeatherData } from './Backend/Graphql_helper';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { AuthProvider } from './Frontend/AuthComponents/AuthContext';
 import ProtectedRoute from './Frontend/AuthComponents/ProtectedRoute';
@@ -46,8 +45,12 @@ const App = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getWeatherData('25');
-        setWeatherData(response.data.weather_data);
+        const response = await fetch('/weather-alerts/58102'); // Replace '58102' with the desired zip code
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setWeatherData(data);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching weather data:', error);
@@ -74,7 +77,7 @@ const App = () => {
             <Header />
             <Layout>
               <Routes>
-                {/* <Route path="/signup" element={<SignUp />} /> */}
+                <Route path="/signup" element={<SignUp />} />
                 <Route path="/login" element={<Login />} />
                 <Route
                   path="/"
