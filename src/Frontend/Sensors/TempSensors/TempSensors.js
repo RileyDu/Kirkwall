@@ -1,5 +1,5 @@
 import { Box, Divider, Heading, Flex } from '@chakra-ui/react';
-import TempBarGraph from '../../Charts/TempBarChart';
+// import TempBarGraph from '../../Charts/TempBarChart';
 import ChartWrapper from '../../Charts/ChartWrapper';
 import { BarChart, LineChart } from '../../Charts/Charts';
 import MiniDashboard from '../../Charts/ChartDashboard';

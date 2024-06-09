@@ -4,7 +4,7 @@ import ReactSpeedometer from 'react-d3-speedometer';
 import ChartWrapper from '../../Charts/ChartWrapper';
 import { BarChart, LineChart } from '../../Charts/Charts';
 import MiniDashboard from '../../Charts/ChartDashboard';
-import WindGauageStyling from './WindGaugeStyling.css';
+
 
 const getCardinalDirection = (degree) => {
   const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];

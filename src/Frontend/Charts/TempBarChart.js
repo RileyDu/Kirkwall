@@ -1,7 +1,7 @@
 import { Bar } from 'react-chartjs-2';
 import { useEffect, useState } from 'react';
 import { getWeatherData } from '../../Backend/Graphql_helper';
-import { theme } from '@chakra-ui/react';
+// import { theme } from '@chakra-ui/react';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);

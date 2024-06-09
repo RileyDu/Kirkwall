@@ -1,7 +1,7 @@
 // Helper functions for GraphQL queries and mutations
 import axios from 'axios';
 
-import { getAccessToken, setupAuthHeaders } from './Auth';
+import { setupAuthHeaders } from './Auth';
 
 const QUERY_URL = 'https://api.devii.io/query';
 

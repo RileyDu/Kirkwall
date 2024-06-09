@@ -6,7 +6,7 @@ import { FaCog } from 'react-icons/fa';
 import { BsBarChartFill } from 'react-icons/bs';
 import { FaChartBar, FaChartLine } from "react-icons/fa";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import ChartDetails from './ChartDetails';
 
@@ -22,11 +22,17 @@ const ChartWrapper = ({ title, children, onChartChange, metric }) => {
     }
   };
 
-  const restrictedRoutes = ['/TempSensors', '/HumiditySensors', '/SoilMoistureSensors', '/WindSensors', '/RainSensors']; // Replace with your actual restricted routes
+  const restrictedRoutes = useMemo(() => [
+    '/TempSensors', 
+    '/HumiditySensors', 
+    '/SoilMoistureSensors', 
+    '/WindSensors', 
+    '/RainSensors'
+  ], []); // Memoize the array
 
   useEffect(() => {
     setShowIcons(!restrictedRoutes.includes(location.pathname));
-  }, [location.pathname]);
+  }, [location.pathname, restrictedRoutes]);
 
   const iconSize = '24';
 
