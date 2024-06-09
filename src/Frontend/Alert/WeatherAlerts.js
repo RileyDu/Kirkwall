@@ -15,7 +15,7 @@ function WeatherAlerts({ isVisible, onClose }) {
 
   const fetchWeatherAlerts = async () => {
     try {
-      const response = await axios.get(`https://kirkwall-demo.vercel.app//weather-alerts/${zipcode}`);
+      const response = await axios.get(`https://kirkwall-demo.vercel.app/weather-alerts/${zipcode}`);
       setConditions(response.data.conditions);
       setAlerts(response.data.alerts);
       setError('');
@@ -48,7 +48,7 @@ function WeatherAlerts({ isVisible, onClose }) {
             <Alert status="warning" mb={0} borderRadius="0" bgColor="red.500" color="white" width="100%">
               <Text fontSize="xl" fontWeight="bold" paddingRight={5}>{conditions}</Text>
               <AlertIcon color="white" />
-              {alerts.map((alert) => (
+              {alerts?.map((alert) => (
                 <Box border={"2px"} borderColor="black" borderRadius="50px" p="2" bg="gray.50" key={alert} mx={2}>
                   <AlertDescription px={4} fontSize={"large"} color={"red.500"}>{alert}</AlertDescription>
                 </Box>
