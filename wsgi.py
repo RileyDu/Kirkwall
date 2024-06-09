@@ -1,4 +1,4 @@
-from WeatherScraper import app
+from Backend.WeatherScraper import app
 
 if __name__ == "__main__":
     app.run()
