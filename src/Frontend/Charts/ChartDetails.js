@@ -1,7 +1,6 @@
-import { Box, Icon, Text, Flex } from '@chakra-ui/react';
+import { Box, Text, Flex } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { getWeatherData } from '../../Backend/Graphql_helper';
-import { FaPlus, FaMinus } from 'react-icons/fa';
 
 const getLabelForMetric = metric => {
   switch (metric) {

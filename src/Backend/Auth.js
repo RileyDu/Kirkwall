@@ -40,7 +40,7 @@ async function getAccessToken() {
 }
 
 
-const accessToken = getAccessToken();
+// const accessToken = getAccessToken();
 
 
 
