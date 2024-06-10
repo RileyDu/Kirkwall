@@ -71,7 +71,7 @@ const Header = () => {
           <IconButton icon={<FaBars />} bg="transparent" aria-label="Menu" />
         )}
       </Flex>
-      {showAlerts && <WeatherAlerts isVisible={showAlerts} onClose={toggleAlerts} />} {/* Conditionally render WeatherAlerts */}
+      {/* {showAlerts && <WeatherAlerts isVisible={showAlerts} onClose={toggleAlerts} />} Conditionally render WeatherAlerts */}
     </>
   );
 };
