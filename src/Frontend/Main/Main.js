@@ -1,13 +1,22 @@
-import { Box, Grid, GridItem } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import { Box, Grid, GridItem, Spinner } from '@chakra-ui/react';
 import { LineChart, BarChart } from '../Charts/Charts';
 import ChartWrapper from '../Charts/ChartWrapper';
-import { useState } from 'react';
 
 const MainContent = ({ weatherData }) => {
   const [tempChartType, setTempChartType] = useState('line');
   const [humidityChartType, setHumidityChartType] = useState('line');
   const [windChartType, setWindChartType] = useState('bar');
   const [rainfallChartType, setRainfallChartType] = useState('bar');
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 1); // delay to let layout stabilize
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleTempChartChange = newType => {
     setTempChartType(newType);
@@ -25,9 +34,17 @@ const MainContent = ({ weatherData }) => {
     setRainfallChartType(newType);
   };
 
+  if (!isReady) {
+    return (
+      <Box bg="white" flex="1" p="4">
+        
+      </Box>
+    );
+  }
+
   return (
     <Box bg="white" flex="1" p="4">
-      <Grid templateColumns="repeat(2, 1fr)" gap="6">
+      <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap="6">
         <GridItem colSpan={1}>
           <ChartWrapper
             title="Temperature Over Time (°F)"
