@@ -15,7 +15,7 @@ const Logout = () => {
   };
 
   return (
-    <Button onClick={handleLogout} size={'lg'} w="100%" fontSize="x-large" borderRadius={'full'}>LOGOUT</Button>
+    <Button onClick={handleLogout} size={'lg'} w="100%" fontSize="x-large" borderRadius={'full'}  border={'2px solid #212121'}>LOGOUT</Button>
   );
 };
 
