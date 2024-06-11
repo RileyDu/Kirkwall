@@ -1,19 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import {
-  ChakraProvider,
-  Box,
-  Flex,
-  Spinner,
-  useMediaQuery,
-} from '@chakra-ui/react';
-import { getWeatherData } from './Backend/Graphql_helper';
+import React, { useState, useEffect } from 'react';
+import { ChakraProvider, Box, Spinner, useMediaQuery, Flex } from '@chakra-ui/react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { AuthProvider } from './Frontend/AuthComponents/AuthContext';
 import ProtectedRoute from './Frontend/AuthComponents/ProtectedRoute';
 import SignUp from './Frontend/AuthComponents/Signup';
 import Login from './Frontend/AuthComponents/Login';
 import Header from './Frontend/Header/Header';
-import customTheme from './Frontend/Styles/theme';
 import Sidebar from './Frontend/Sidebar/Siderbar';
 import MainContent from './Frontend/Main/Main';
 import TempSensors from './Frontend/Sensors/TempSensors/TempSensors';
@@ -22,11 +14,14 @@ import HumiditySensors from './Frontend/Sensors/HumiditySensors/HumiditySensors'
 import SoilSensors from './Frontend/Sensors/SoilSensors/SoilSensors';
 import RainSensors from './Frontend/Sensors/RainSensors/RainSensors';
 import WindSensors from './Frontend/Sensors/WindSensors/WindSensor';
+import MobileMenu from './Frontend/MobileMenu/MobileMenu';
+import customTheme from './Frontend/Styles/theme';
+import { getWeatherData } from './Backend/Graphql_helper';
 
 const Layout = ({ children, isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMenu }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const location = useLocation();
-  
+
   const shouldShowSidebar = location.pathname !== '/login' && location.pathname !== '/signup';
 
   return (
@@ -83,7 +78,7 @@ const App = () => {
       <Router>
         <AuthProvider>
           <Box>
-            <Header />
+            <Header toggleMobileMenu={toggleMobileMenu} />
             <Layout
               isMinimized={isMinimized}
               toggleSidebar={toggleSidebar}
@@ -91,7 +86,7 @@ const App = () => {
               toggleMobileMenu={toggleMobileMenu}
             >
               <Routes>
-                {/* <Route path="/signup" element={<SignUp />} /> */}
+                <Route path="/signup" element={<SignUp />} />
                 <Route path="/login" element={<Login />} />
                 <Route
                   path="/"
@@ -152,6 +147,7 @@ const App = () => {
               </Routes>
             </Layout>
           </Box>
+          <MobileMenu isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} />
         </AuthProvider>
       </Router>
     </ChakraProvider>

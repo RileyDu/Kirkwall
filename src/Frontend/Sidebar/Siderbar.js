@@ -93,15 +93,14 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMen
 
   return (
     <>
-      <IconButton
-        icon={isMobileMenuOpen ? <CloseIcon color={'white'} /> : <HamburgerIcon  color={'white'}/>}
+      <IconButton 
+        icon={isMobileMenuOpen ? <CloseIcon color="white" /> : <HamburgerIcon color="#fd9801" />}
         onClick={toggleMobileMenu}
         aria-label="Toggle Mobile Menu"
         display={{ base: 'block', md: 'none' }}
         position="fixed"
         top="1rem"
         left="1rem"
-        color='white'
       />
       <Flex
         as="aside"
@@ -138,11 +137,10 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMen
             variant={"outline"}
             width={'100%'}
           />
-          </Box>
-        </Flex>
-      </>
-    );
-  };
-  
-  export default Sidebar;
-  
+        </Box>
+      </Flex>
+    </>
+  );
+};
+
+export default Sidebar;
