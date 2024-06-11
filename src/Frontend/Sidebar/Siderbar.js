@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react';
+import { auth } from '../../Backend/Firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import { Flex, Stack, Button, Box, IconButton } from '@chakra-ui/react';
 import {
   WiThermometer,
@@ -12,7 +15,23 @@ import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMenu }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [user, setUser] = useState(null);
 
+  useEffect(() => {
+    console.log('Sidebar mounted');
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+        console.log(user);
+      } else {
+        setUser(null);
+        console.log('User is signed out');
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
 
   const SidebarContent = () => (
     <Stack spacing="8">
@@ -95,7 +114,7 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMen
 
   return (
     <>
-      {location.pathname !== '/login' && (
+      {user && location.pathname !== '/login' && (
         <IconButton 
           icon={isMobileMenuOpen ? <CloseIcon color="white" /> : <HamburgerIcon color="#fd9801" />}
           onClick={toggleMobileMenu}
