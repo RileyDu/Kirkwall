@@ -34,22 +34,8 @@ const MobileMenu = ({ isOpen, onClose }) => {
         <Button variant="outline" color="white" leftIcon={<WiStrongWind size="30" />} onClick={() => navigate('/WindSensors')}>Wind Sensors</Button>
         <Button variant="outline" color="white" leftIcon={<WiRain size="30" />} onClick={() => navigate('/RainSensors')}>Rain Sensors</Button>
         <Button variant="outline" color="white" leftIcon={<WiHumidity size="30" />} onClick={() => navigate('/HumiditySensors')}>Humidity Sensors</Button>
-        <Logout />
+        <Logout onLogout={onClose} />
       </Stack>
-      {/* <Flex justify="center" mt="auto" p="4">
-        <Popover>
-          <PopoverTrigger>
-            <Avatar size="md" name="Grand Farm Logo" src="/GrandFarmLogo.jpg" cursor="pointer" />
-          </PopoverTrigger>
-          <PopoverContent bg="white" borderColor="#212121" zIndex={1005}>
-            <PopoverCloseButton size="lg" />
-            <PopoverHeader fontWeight="bold" fontSize="xl" bg="#fd9801">Grand Farm</PopoverHeader>
-            <PopoverBody>
-              <Logout />
-            </PopoverBody>
-          </PopoverContent>
-        </Popover>
-      </Flex> */}
     </Box>
   );
 };
