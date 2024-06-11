@@ -6,11 +6,13 @@ import {
   WiHumidity,
 } from 'react-icons/wi';
 import { FiMaximize2, FiMinimize2 } from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 
 const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMenu }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+
 
   const SidebarContent = () => (
     <Stack spacing="8">
@@ -93,15 +95,17 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMen
 
   return (
     <>
-      <IconButton 
-        icon={isMobileMenuOpen ? <CloseIcon color="white" /> : <HamburgerIcon color="#fd9801" />}
-        onClick={toggleMobileMenu}
-        aria-label="Toggle Mobile Menu"
-        display={{ base: 'block', md: 'none' }}
-        position="fixed"
-        top="1rem"
-        left="1rem"
-      />
+      {location.pathname !== '/login' && (
+        <IconButton 
+          icon={isMobileMenuOpen ? <CloseIcon color="white" /> : <HamburgerIcon color="#fd9801" />}
+          onClick={toggleMobileMenu}
+          aria-label="Toggle Mobile Menu"
+          display={{ base: 'block', md: 'none' }}
+          position="fixed"
+          top="1rem"
+          left="1rem"
+        />
+      )}
       <Flex
         as="aside"
         bg="#212121"
