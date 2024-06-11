@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Flex, Stack, Button, Box, IconButton } from '@chakra-ui/react';
 import {
   WiThermometer,
@@ -10,13 +9,8 @@ import { FiMaximize2, FiMinimize2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 
-const Sidebar = () => {
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMenu }) => {
   const navigate = useNavigate();
-
-  const toggleSidebar = () => setIsMinimized(!isMinimized);
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   const SidebarContent = () => (
     <Stack spacing="8">
@@ -143,10 +137,11 @@ const Sidebar = () => {
             variant={"outline"}
             width={'100%'}
           />
-        </Box>
-      </Flex>
-    </>
-  );
-};
-
-export default Sidebar;
+          </Box>
+        </Flex>
+      </>
+    );
+  };
+  
+  export default Sidebar;
+  

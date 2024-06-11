@@ -20,10 +20,10 @@ import TempSensors from './Frontend/Sensors/TempSensors/TempSensors';
 import SensorsMain from './Frontend/Sensors/SensorsMain/SensorsMain';
 import HumiditySensors from './Frontend/Sensors/HumiditySensors/HumiditySensors';
 import SoilSensors from './Frontend/Sensors/SoilSensors/SoilSensors';
-import WindSensors from './Frontend/Sensors/WindSensors/WindSensor';
 import RainSensors from './Frontend/Sensors/RainSensors/RainSensors';
+import WindSensors from './Frontend/Sensors/WindSensors/WindSensor';
 
-const Layout = ({ children }) => {
+const Layout = ({ children, isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMenu }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const location = useLocation();
   
@@ -31,8 +31,15 @@ const Layout = ({ children }) => {
 
   return (
     <Flex minH="100vh">
-      {isLargerThan768 && shouldShowSidebar && <Sidebar />}
-      <Box flex="1" overflowY="auto" ml={isLargerThan768 && shouldShowSidebar ? '250px' : '0'}>
+      {isLargerThan768 && shouldShowSidebar && (
+        <Sidebar 
+          isMinimized={isMinimized}
+          toggleSidebar={toggleSidebar}
+          isMobileMenuOpen={isMobileMenuOpen}
+          toggleMobileMenu={toggleMobileMenu}
+        />
+      )}
+      <Box flex="1" overflowY="auto" ml={isLargerThan768 && shouldShowSidebar ? (isMinimized ? '80px' : '250px') : '0'}>
         {children}
       </Box>
     </Flex>
@@ -42,6 +49,11 @@ const Layout = ({ children }) => {
 const App = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleSidebar = () => setIsMinimized(!isMinimized);
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,7 +84,12 @@ const App = () => {
         <AuthProvider>
           <Box>
             <Header />
-            <Layout>
+            <Layout
+              isMinimized={isMinimized}
+              toggleSidebar={toggleSidebar}
+              isMobileMenuOpen={isMobileMenuOpen}
+              toggleMobileMenu={toggleMobileMenu}
+            >
               <Routes>
                 {/* <Route path="/signup" element={<SignUp />} /> */}
                 <Route path="/login" element={<Login />} />
