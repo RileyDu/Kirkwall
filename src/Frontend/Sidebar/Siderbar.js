@@ -94,13 +94,14 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMen
   return (
     <>
       <IconButton
-        icon={isMobileMenuOpen ? <CloseIcon /> : <HamburgerIcon />}
+        icon={isMobileMenuOpen ? <CloseIcon color={'white'} /> : <HamburgerIcon  color={'white'}/>}
         onClick={toggleMobileMenu}
         aria-label="Toggle Mobile Menu"
         display={{ base: 'block', md: 'none' }}
         position="fixed"
         top="1rem"
         left="1rem"
+        color='white'
       />
       <Flex
         as="aside"
