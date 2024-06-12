@@ -79,6 +79,7 @@ const Login = () => {
                       borderRadius={'md'}
                       p={2}
                       bg={'black'}
+                      mt={16}
                     >
                       <img
                         src={logoSrc}
@@ -88,13 +89,13 @@ const Login = () => {
                     </Box>
                   </Flex>
                   <Heading size={{ md: 'lg', xl: 'xl' }} color={'white'}>
-                  <Divider borderColor={'#fd9801'} color={'#fd9801'} mt={2} mb={4} borderWidth={2} borderRadius={'full'} />
+                  {/* <Divider borderColor={'#fd9801'} color={'#fd9801'} mt={2} mb={4} borderWidth={2} borderRadius={'full'} /> */}
                     Securing the Sky | Defending the Prairie
                   </Heading>
                   <Text
-                    fontSize="xl"
+                    fontSize="2xl"
                     maxW="md"
-                    fontWeight="normal"
+                    fontWeight="light"
                     color="white"
                     width={'600px'}
                   >
@@ -116,7 +117,7 @@ const Login = () => {
           <Container
             maxW="lg"
             py={{ base: '12', md: '48' }}
-            px={{ base: '0', sm: '8' }}
+            px={{ base: '4', sm: '8' }}
           >
             <Stack spacing="8">
               {showMobileLogo && (
@@ -142,7 +143,7 @@ const Login = () => {
               )}
               <Stack spacing="6">
                 <Stack spacing={{ base: '1', md: '2' }} textAlign="center">
-                  <Heading size={{ base: 'lg', md: 'lg' }}>
+                  <Heading size={{ base: 'lg', md: 'lg' }} mt={'-20px'}>
                     Log in to your account
                   </Heading>
                 </Stack>
