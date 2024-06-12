@@ -60,9 +60,9 @@ const ChartWrapper = ({ title, children, onChartChange, metric, weatherData }) =
                   />
                 </PopoverTrigger>
               </Tooltip>
-              <PopoverContent borderColor={'#212121'}>
+              <PopoverContent borderColor={'#212121'} mr={2} border={'2px'} borderRadius={'lg'}>
                 <PopoverCloseButton color={'white'} size={"lg"}/>
-                <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'}>Customize Chart</PopoverHeader>
+                <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'} borderRadius={'md'}>Customize Chart</PopoverHeader>
                 <PopoverBody>
                   <Text fontWeight="bold" fontSize={'lg'} py={2} textAlign={"center"}>Select Chart Type</Text>
                   <Button mr={2} mb={2} borderRadius={"md"} border={"1px"} color={"#fd9801"} bg={"white"} borderColor={"#212121"} width={"100%"} onClick={() => changeChartType('line')} leftIcon={<FaChartLine size={iconSize} />}>LINE</Button>
@@ -81,9 +81,9 @@ const ChartWrapper = ({ title, children, onChartChange, metric, weatherData }) =
                   />
                 </PopoverTrigger>
               </Tooltip>
-              <PopoverContent borderColor={'#212121'}>
+              <PopoverContent borderColor={'#212121'} mr={2} border={'2px'} borderRadius={'lg'}>
                 <PopoverCloseButton color={'white'} size={"lg"}/>
-                <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'}> Chart Details</PopoverHeader>
+                <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'} borderRadius={'md'}> Chart Details</PopoverHeader>
                 <PopoverBody>
                   <ChartDetails chartType={chartType} metric={metric} weatherData={weatherData} />
                 </PopoverBody>
