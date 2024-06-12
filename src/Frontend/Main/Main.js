@@ -43,7 +43,7 @@ const MainContent = ({ weatherData, isMinimized }) => {
           <ChartWrapper
             title="Temperature Over Time (°F)"
             onChartChange={handleChartChange(setTempChartType)}
-            data={weatherData}
+            weatherData={weatherData}
             metric="temperature"
             flex="1"
           >
@@ -58,7 +58,7 @@ const MainContent = ({ weatherData, isMinimized }) => {
           <ChartWrapper
             title="Humidity Percentage Levels"
             onChartChange={handleChartChange(setHumidityChartType)}
-            data={weatherData}
+            weatherData={weatherData}
             metric="percent_humidity"
             flex="1"
           >
@@ -73,7 +73,7 @@ const MainContent = ({ weatherData, isMinimized }) => {
           <ChartWrapper
             title="Rainfall (inches)"
             onChartChange={handleChartChange(setRainfallChartType)}
-            data={weatherData}
+            weatherData={weatherData}
             metric="rain_15_min_inches"
             flex="1"
           >
@@ -88,7 +88,7 @@ const MainContent = ({ weatherData, isMinimized }) => {
           <ChartWrapper
             title="Wind Speed (mph)"
             onChartChange={handleChartChange(setWindChartType)}
-            data={weatherData}
+            weatherData={weatherData}
             metric="wind_speed"
             flex="1"
           >

@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import ChartDetails from './ChartDetails';
 
-const ChartWrapper = ({ title, children, onChartChange, metric }) => {
+const ChartWrapper = ({ title, children, onChartChange, metric, weatherData }) => {
   const [chartType, setChartType] = useState('bar');
   const [showIcons, setShowIcons] = useState(true);
   const location = useLocation();
@@ -85,7 +85,7 @@ const ChartWrapper = ({ title, children, onChartChange, metric }) => {
                 <PopoverCloseButton color={'white'} size={"lg"}/>
                 <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'}> Chart Details</PopoverHeader>
                 <PopoverBody>
-                  <ChartDetails chartType={chartType} metric={metric} />
+                  <ChartDetails chartType={chartType} metric={metric} weatherData={weatherData} />
                 </PopoverBody>
               </PopoverContent>
             </Popover>

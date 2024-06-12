@@ -42,7 +42,7 @@ const Layout = ({ children, isMinimized, toggleSidebar, isMobileMenuOpen, toggle
 };
 
 const MainApp = () => {
-  const [weatherData, setWeatherData] = useState(null);
+  const [weatherData, setWeatherData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -55,10 +55,16 @@ const MainApp = () => {
     const fetchData = async () => {
       try {
         const response = await getWeatherData('25');
-        setWeatherData(response.data.weather_data);
+        if (Array.isArray(response.data.weather_data)) {
+          setWeatherData(response.data.weather_data);
+        } else {
+          setWeatherData([]);
+          console.error('Fetched weather data is not an array');
+        }
         setLoading(false);
       } catch (error) {
         console.error('Error fetching weather data:', error);
+        setWeatherData([]);
         setLoading(false);
       }
     };
@@ -151,6 +157,7 @@ const MainApp = () => {
     </Box>
   );
 };
+
 
 const App = () => {
   return (

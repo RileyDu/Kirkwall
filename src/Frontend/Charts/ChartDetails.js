@@ -1,6 +1,5 @@
 import { Box, Text, Flex } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
-import { getWeatherData } from '../../Backend/Graphql_helper';
 
 const getLabelForMetric = (metric) => {
   switch (metric) {
@@ -17,46 +16,27 @@ const getLabelForMetric = (metric) => {
   }
 };
 
-const ChartDetails = ({ chartType, metric }) => {
-  const [weatherData, setWeatherData] = useState([]);
+const ChartDetails = ({ chartType, metric, weatherData }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getWeatherData('25');
-        setWeatherData(response.data.weather_data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching weather data:', error);
-        setLoading(false);
-      }
-    };
+    if (weatherData && weatherData.length > 0) {
+      setLoading(false);
+    }
+  }, [weatherData]);
 
-    fetchData();
-
-    const intervalId = setInterval(fetchData, 30000);
-
-    return () => clearInterval(intervalId);
-  }, []);
-
-  const reversedData = [...weatherData].reverse();
-
+  const reversedData = weatherData ? [...weatherData].reverse() : [];
   const currentData = reversedData.map((data) => data[metric]);
 
   const min = currentData.length > 0 ? Math.min(...currentData) : 'N/A';
   const max = currentData.length > 0 ? Math.max(...currentData) : 'N/A';
-  const mostRecentValue =
-    currentData.length > 0 ? currentData[currentData.length - 1] : 'N/A';
+  const mostRecentValue = currentData.length > 0 ? currentData[currentData.length - 1] : 'N/A';
 
   const calculateTimePeriod = (dataLength) => {
     const totalMinutes = dataLength * 5;
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(
-      2,
-      '0'
-    )}`;
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
   };
 
   const timePeriod = calculateTimePeriod(currentData.length - 1);
