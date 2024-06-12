@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, GridItem } from '@chakra-ui/react';
+import { Box, Center, Flex, Grid, GridItem, Spinner } from '@chakra-ui/react';
 import { LineChart, BarChart } from '../Charts/Charts';
 import ChartWrapper from '../Charts/ChartWrapper';
 
-const MainContent = ({ weatherData }) => {
+const MainContent = ({ weatherData, isMinimized }) => {
   const [tempChartType, setTempChartType] = useState('line');
   const [humidityChartType, setHumidityChartType] = useState('line');
   const [windChartType, setWindChartType] = useState('bar');
@@ -11,12 +11,13 @@ const MainContent = ({ weatherData }) => {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
+    setIsReady(false);
     const timer = setTimeout(() => {
       setIsReady(true);
-    }, 1); // delay to let layout stabilize
+    }, .5); // delay to let layout stabilize
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [isMinimized]);
 
   const handleChartChange = (setChartType) => (newType) => {
     setChartType(newType);
@@ -24,8 +25,14 @@ const MainContent = ({ weatherData }) => {
 
   if (!isReady) {
     return (
-      <Box bg="white" flex="1" p="4">
-      </Box>
+      <Box 
+      display="flex" 
+      justifyContent="center" 
+      alignItems="center" 
+      height="100vh"
+    >
+      {/* <Spinner size="xl" /> */}
+    </Box>
     );
   }
 

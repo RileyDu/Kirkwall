@@ -46,7 +46,7 @@ const MainApp = () => {
   const [loading, setLoading] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const location = useLocation(); // Use useLocation inside MainApp
+  const location = useLocation();
 
   const toggleSidebar = () => setIsMinimized(!isMinimized);
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -101,15 +101,7 @@ const MainApp = () => {
             path="/"
             element={
               <ProtectedRoute>
-                <MainContent weatherData={weatherData} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/Sensors"
-            element={
-              <ProtectedRoute>
-                <SensorsMain />
+                <MainContent weatherData={weatherData} isMinimized={isMinimized} />
               </ProtectedRoute>
             }
           />
