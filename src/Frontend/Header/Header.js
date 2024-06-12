@@ -74,7 +74,7 @@ const Header = ({ toggleMobileMenu, isMobileMenuOpen }) => {
                 </PopoverTrigger>
                 <PopoverContent bg="white" borderColor="#212121" zIndex={1005}>
                   <PopoverCloseButton size="lg" />
-                  <PopoverHeader fontWeight="bold" fontSize="xl" bg="#fd9801">Grand Farm</PopoverHeader>
+                  <PopoverHeader fontWeight="bold" fontSize="xl" bg="#fd9801" borderRadius={"md"}>Grand Farm</PopoverHeader>
                   <PopoverBody>
                     <Logout />
                   </PopoverBody>

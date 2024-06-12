@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import {
   Box,
@@ -39,7 +39,8 @@ const Login = () => {
     md: '/kirkwall_logo_1_white.png', // Desktop logo
   });
 
-  const handleLogin = async () => {
+  const handleLogin = async (event) => {
+    event.preventDefault();
     if (!email || !password) {
       setError('Please fill in both the email and password fields.');
       return;
@@ -58,6 +59,18 @@ const Login = () => {
       setError(errorMessage);
     }
   };
+
+  useEffect(() => {
+    const handleEnterPress = (event) => {
+      if (event.key === 'Enter') {
+        handleLogin(event);
+      }
+    };
+    window.addEventListener('keydown', handleEnterPress);
+    return () => {
+      window.removeEventListener('keydown', handleEnterPress);
+    };
+  }, [email, password]);
 
   return (
     <Flex minH={{ base: 'auto', md: '100vh' }} bg="#212121">
@@ -89,7 +102,6 @@ const Login = () => {
                     </Box>
                   </Flex>
                   <Heading size={{ md: 'lg', xl: 'xl' }} color={'white'}>
-                  {/* <Divider borderColor={'#fd9801'} color={'#fd9801'} mt={2} mb={4} borderWidth={2} borderRadius={'full'} /> */}
                     Securing the Sky | Defending the Prairie
                   </Heading>
                   <Text
@@ -129,13 +141,13 @@ const Login = () => {
                     p={2}
                     bg={'black'}
                   >
-                  <img
-                    src={logoSrc}
-                    alt="kirkwall logo"
-                    style={{ width: '250px', height: 'auto' }}
-                  />
+                    <img
+                      src={logoSrc}
+                      alt="kirkwall logo"
+                      style={{ width: '250px', height: 'auto' }}
+                    />
                   </Box>
-                  <Divider borderColor={'#fd9801'} width={'300px'} mt={4} borderWidth={2} borderRadius={'full'}/>
+                  <Divider borderColor={'#fd9801'} width={'300px'} mt={4} borderWidth={2} borderRadius={'full'} />
                   <Heading size={{ base: 'md', md: 'md' }} color={'black'} my={4}>
                     Securing the Sky | Defending the Prairie
                   </Heading>
@@ -148,58 +160,60 @@ const Login = () => {
                   </Heading>
                 </Stack>
               </Stack>
-              <Box
-                py={{ base: '4', sm: '8' }}
-                px={{ base: '4', sm: '10' }}
-                m={'2'}
-                bg="#212121"
-                borderRadius="lg"
-                boxShadow="lg"
-                zIndex={1}
-                position="relative"
-                border={'2px solid #fd9801'}
-              >
-                <Stack spacing="6">
-                  <Stack spacing="5">
-                    <FormControl>
-                      <FormLabel htmlFor="email" color={'white'}>
-                        Email
-                      </FormLabel>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                        required
-                        bg={'white'}
-                      />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel htmlFor="password" color={'white'}>
-                        Password
-                      </FormLabel>
-                      <Input
-                        id="password"
-                        type="password"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        required
-                        bg={'white'}
-                      />
-                    </FormControl>
-                  </Stack>
-                  {error && <Text color="red.500">{error}</Text>}
+              <form onSubmit={handleLogin}>
+                <Box
+                  py={{ base: '4', sm: '8' }}
+                  px={{ base: '4', sm: '10' }}
+                  m={'2'}
+                  bg="#212121"
+                  borderRadius="lg"
+                  boxShadow="lg"
+                  zIndex={1}
+                  position="relative"
+                  border={'2px solid #fd9801'}
+                >
                   <Stack spacing="6">
-                    <Button
-                      onClick={handleLogin}
-                      color="#fd9801"
-                      isDisabled={!email || !password}
-                    >
-                      Sign In
-                    </Button>
+                    <Stack spacing="5">
+                      <FormControl>
+                        <FormLabel htmlFor="email" color={'white'}>
+                          Email
+                        </FormLabel>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={email}
+                          onChange={e => setEmail(e.target.value)}
+                          required
+                          bg={'white'}
+                        />
+                      </FormControl>
+                      <FormControl>
+                        <FormLabel htmlFor="password" color={'white'}>
+                          Password
+                        </FormLabel>
+                        <Input
+                          id="password"
+                          type="password"
+                          value={password}
+                          onChange={e => setPassword(e.target.value)}
+                          required
+                          bg={'white'}
+                        />
+                      </FormControl>
+                    </Stack>
+                    {error && <Text color="red.500">{error}</Text>}
+                    <Stack spacing="6">
+                      <Button
+                        type="submit"
+                        color="#fd9801"
+                        isDisabled={!email || !password}
+                      >
+                        Sign In
+                      </Button>
+                    </Stack>
                   </Stack>
-                </Stack>
-              </Box>
+                </Box>
+              </form>
             </Stack>
           </Container>
         </Center>
