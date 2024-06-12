@@ -1,4 +1,4 @@
-import { Box, Text, Flex } from '@chakra-ui/react';
+import { Box, Text, Grid, GridItem, Flex } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 
 const getLabelForMetric = (metric) => {
@@ -50,74 +50,82 @@ const ChartDetails = ({ chartType, metric, weatherData }) => {
       {loading ? (
         <Text>Loading...</Text>
       ) : (
-        <>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            p={[1, 2, 3]}
-            border="1px solid"
-            borderColor="#212121"
-            borderRadius="md"
-            boxShadow="md"
-            mt={[1, 2, 3]}
-          >
-            <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">
-              {formatValue(mostRecentValue)}
-            </Text>
-            <Text>Current Value</Text>
-          </Box>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            p={[1, 2, 3]}
-            border="1px solid"
-            borderColor="#212121"
-            borderRadius="md"
-            boxShadow="md"
-            mt={[1, 2, 3]}
-          >
-            <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">
-              {formatValue(min)}
-            </Text>
-            <Text>Low</Text>
-          </Box>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            p={[1, 2, 3]}
-            border="1px solid"
-            borderColor="#212121"
-            borderRadius="md"
-            boxShadow="md"
-            mt={[1, 2, 3]}
-          >
-            <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">
-              {formatValue(max)}
-            </Text>
-            <Text>High</Text>
-          </Box>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            p={[1, 2, 3]}
-            border="1px solid"
-            borderColor="#212121"
-            borderRadius="md"
-            boxShadow="md"
-            mt={[1, 2, 3]}
-          >
-            <Flex alignItems="center">
+        <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+          <GridItem>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              p={[1, 2, 3]}
+              border="1px solid"
+              borderColor="#212121"
+              borderRadius="md"
+              boxShadow="md"
+              mt={[1, 2, 3]}
+            >
               <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">
-                {timePeriod}
+                {formatValue(mostRecentValue)}
               </Text>
-            </Flex>
-            <Text>Time Period</Text>
-          </Box>
-        </>
+              <Text>Current Value</Text>
+            </Box>
+          </GridItem>
+          <GridItem>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              p={[1, 2, 3]}
+              border="1px solid"
+              borderColor="#212121"
+              borderRadius="md"
+              boxShadow="md"
+              mt={[1, 2, 3]}
+            >
+              <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">
+                {formatValue(min)}
+              </Text>
+              <Text>Low</Text>
+            </Box>
+          </GridItem>
+          <GridItem>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              p={[1, 2, 3]}
+              border="1px solid"
+              borderColor="#212121"
+              borderRadius="md"
+              boxShadow="md"
+              mt={[1, 2, 3]}
+            >
+              <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">
+                {formatValue(max)}
+              </Text>
+              <Text>High</Text>
+            </Box>
+          </GridItem>
+          <GridItem>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              p={[1, 2, 3]}
+              border="1px solid"
+              borderColor="#212121"
+              borderRadius="md"
+              boxShadow="md"
+              mt={[1, 2, 3]}
+            >
+              <Flex alignItems="center">
+                <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">
+                  {timePeriod}
+                </Text>
+              </Flex>
+              <Text>Time Period</Text>
+            </Box>
+          </GridItem>
+        </Grid>
       )}
     </Box>
   );

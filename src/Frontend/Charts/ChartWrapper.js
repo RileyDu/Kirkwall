@@ -32,7 +32,7 @@ const ChartWrapper = ({ title, children, onChartChange, metric, weatherData }) =
 
   return (
     <Box
-      border="1px"
+      border="2px"
       borderColor="#fd9801"
       borderRadius="md"
       boxShadow="md"
