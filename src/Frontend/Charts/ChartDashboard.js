@@ -40,11 +40,12 @@ const MiniDashboard = ({ weatherData, metric }) => {
 
   return (
     <Box>
-      <Flex justifyContent="space-evenly" mb={4}>
+      <Flex justifyContent="space-evenly" mb={4} flexWrap="wrap">
         <Box
           display="flex"
           flexDirection="column"
           alignItems="center"
+          justifyContent="center"
           p={2}
           border="1px solid"
           borderColor="#212121"
@@ -52,17 +53,19 @@ const MiniDashboard = ({ weatherData, metric }) => {
           borderRadius="md"
           boxShadow="lg"
           m={1}
-          width={'175px'}
+          width={['100px', '150px', '175px']}
+          textAlign="center"
         >
-          <Text fontSize="2xl" fontWeight="bold" color={'#212121'}>
+          <Text fontSize={['xl', '2xl']} fontWeight="bold" color={'#212121'}>
             {formatValue(mostRecentValue)}
           </Text>
-          <Text fontSize={'xl'}>Current Value</Text>
+          <Text fontSize={['lg', 'xl']}>Current Value</Text>
         </Box>
         <Box
           display="flex"
           flexDirection="column"
           alignItems="center"
+          justifyContent="center"
           p={2}
           border="1px solid"
           borderColor="#212121"
@@ -70,17 +73,19 @@ const MiniDashboard = ({ weatherData, metric }) => {
           borderRadius="md"
           boxShadow="lg"
           m={1}
-          width={'175px'}
+          width={['100px', '150px', '175px']}
+          textAlign="center"
         >
-          <Text fontSize="2xl" fontWeight="bold">
+          <Text fontSize={['xl', '2xl']} fontWeight="bold">
             {formatValue(min)}
           </Text>
-          <Text fontSize={'xl'}>Low</Text>
+          <Text fontSize={['lg', 'xl']}>Low</Text>
         </Box>
         <Box
           display="flex"
           flexDirection="column"
           alignItems="center"
+          justifyContent="center"
           p={2}
           border="1px solid"
           borderColor="#212121"
@@ -88,17 +93,19 @@ const MiniDashboard = ({ weatherData, metric }) => {
           borderRadius="md"
           boxShadow="lg"
           m={1}
-          width={'175px'}
+          width={['100px', '150px', '175px']}
+          textAlign="center"
         >
-          <Text fontSize="2xl" fontWeight="bold">
+          <Text fontSize={['xl', '2xl']} fontWeight="bold">
             {formatValue(max)}
           </Text>
-          <Text fontSize={'xl'}>High</Text>
+          <Text fontSize={['lg', 'xl']}>High</Text>
         </Box>
         <Box
           display="flex"
           flexDirection="column"
           alignItems="center"
+          justifyContent="center"
           p={2}
           border="1px solid"
           borderColor="#212121"
@@ -106,14 +113,15 @@ const MiniDashboard = ({ weatherData, metric }) => {
           borderRadius="md"
           boxShadow="lg"
           m={1}
-          width={'175px'}
+          width={['100px', '150px', '175px']}
+          textAlign="center"
         >
           <Flex alignItems="center">
-            <Text fontSize="2xl" fontWeight="bold">
+            <Text fontSize={['xl', '2xl']} fontWeight="bold">
               {timePeriod}
             </Text>
           </Flex>
-          <Text fontSize={'xl'}>Time Period</Text>
+          <Text fontSize={['lg', 'xl']}>Time Period</Text>
         </Box>
       </Flex>
     </Box>

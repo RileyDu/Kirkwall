@@ -10,7 +10,7 @@ export default function TempSensors({ weatherData }) {
       <Heading size="xl" textAlign={'center'} mb={'4'}>
         Temperature Sensors
       </Heading>
-      <Box width="100%" ml="4">
+      <Box width="100%">
         <MiniDashboard weatherData={weatherData} metric="temperature" />
       </Box>
       <Flex direction="row" justifyContent="space-between">
