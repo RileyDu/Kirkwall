@@ -41,11 +41,12 @@ const Layout = ({ children, isMinimized, toggleSidebar, isMobileMenuOpen, toggle
   );
 };
 
-const App = () => {
+const MainApp = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation(); // Use useLocation inside MainApp
 
   const toggleSidebar = () => setIsMinimized(!isMinimized);
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -70,84 +71,101 @@ const App = () => {
   }, []);
 
   if (loading) {
-    return <Spinner size="xl" />;
+    return (
+      <Box 
+        display="flex" 
+        justifyContent="center" 
+        alignItems="center" 
+        height="100vh"
+      >
+        <Spinner size="xl" />
+      </Box>
+    );
   }
 
+  return (
+    <Box>
+      {location.pathname !== '/login' && location.pathname !== '/signup' && (
+        <Header toggleMobileMenu={toggleMobileMenu} />
+      )}
+      <Layout
+        isMinimized={isMinimized}
+        toggleSidebar={toggleSidebar}
+        isMobileMenuOpen={isMobileMenuOpen}
+        toggleMobileMenu={toggleMobileMenu}
+      >
+        <Routes>
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <MainContent weatherData={weatherData} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/Sensors"
+            element={
+              <ProtectedRoute>
+                <SensorsMain />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/TempSensors"
+            element={
+              <ProtectedRoute>
+                <TempSensors weatherData={weatherData} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/HumiditySensors"
+            element={
+              <ProtectedRoute>
+                <HumiditySensors weatherData={weatherData} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/SoilMoistureSensors"
+            element={
+              <ProtectedRoute>
+                <SoilSensors weatherData={weatherData} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/WindSensors"
+            element={
+              <ProtectedRoute>
+                <WindSensors weatherData={weatherData} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/RainSensors"
+            element={
+              <ProtectedRoute>
+                <RainSensors weatherData={weatherData} />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Layout>
+      <MobileMenu isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} />
+    </Box>
+  );
+};
+
+const App = () => {
   return (
     <ChakraProvider theme={customTheme}>
       <Router>
         <AuthProvider>
-          <Box>
-            <Header toggleMobileMenu={toggleMobileMenu} />
-            <Layout
-              isMinimized={isMinimized}
-              toggleSidebar={toggleSidebar}
-              isMobileMenuOpen={isMobileMenuOpen}
-              toggleMobileMenu={toggleMobileMenu}
-            >
-              <Routes>
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/login" element={<Login />} />
-                <Route
-                  path="/"
-                  element={
-                    <ProtectedRoute>
-                      <MainContent weatherData={weatherData} />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/Sensors"
-                  element={
-                    <ProtectedRoute>
-                      <SensorsMain />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/TempSensors"
-                  element={
-                    <ProtectedRoute>
-                      <TempSensors weatherData={weatherData} />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/HumiditySensors"
-                  element={
-                    <ProtectedRoute>
-                      <HumiditySensors weatherData={weatherData} />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/SoilMoistureSensors"
-                  element={
-                    <ProtectedRoute>
-                      <SoilSensors weatherData={weatherData} />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/WindSensors"
-                  element={
-                    <ProtectedRoute>
-                      <WindSensors weatherData={weatherData} />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/RainSensors"
-                  element={
-                    <ProtectedRoute>
-                      <RainSensors weatherData={weatherData} />
-                    </ProtectedRoute>
-                  }
-                />
-              </Routes>
-            </Layout>
-          </Box>
-          <MobileMenu isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} />
+          <MainApp />
         </AuthProvider>
       </Router>
     </ChakraProvider>
