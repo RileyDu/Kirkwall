@@ -1,9 +1,8 @@
-import { Box, Icon, Text, Flex } from '@chakra-ui/react';
+import { Box, Text, Flex } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { getWeatherData } from '../../Backend/Graphql_helper';
-import { FaPlus, FaMinus } from 'react-icons/fa';
 
-const getLabelForMetric = metric => {
+const getLabelForMetric = (metric) => {
   switch (metric) {
     case 'temperature':
       return { label: '°F', addSpace: false };
@@ -21,7 +20,6 @@ const getLabelForMetric = metric => {
 const ChartDetails = ({ chartType, metric }) => {
   const [weatherData, setWeatherData] = useState([]);
   const [loading, setLoading] = useState(true);
-  // const [limit, setLimit] = useState(26);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,18 +38,18 @@ const ChartDetails = ({ chartType, metric }) => {
     const intervalId = setInterval(fetchData, 30000);
 
     return () => clearInterval(intervalId);
-  }, []); // Add limit as a dependency to refetch data when it changes
+  }, []);
 
   const reversedData = [...weatherData].reverse();
 
-  const currentData = reversedData.map(data => data[metric]);
+  const currentData = reversedData.map((data) => data[metric]);
 
   const min = currentData.length > 0 ? Math.min(...currentData) : 'N/A';
   const max = currentData.length > 0 ? Math.max(...currentData) : 'N/A';
   const mostRecentValue =
     currentData.length > 0 ? currentData[currentData.length - 1] : 'N/A';
 
-  const calculateTimePeriod = dataLength => {
+  const calculateTimePeriod = (dataLength) => {
     const totalMinutes = dataLength * 5;
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
@@ -61,14 +59,11 @@ const ChartDetails = ({ chartType, metric }) => {
     )}`;
   };
 
-  const timePeriod = calculateTimePeriod(currentData.length - 1); // Subtract 1 to account for the most recent value
+  const timePeriod = calculateTimePeriod(currentData.length - 1);
 
   const { label, addSpace } = getLabelForMetric(metric);
 
-  const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
-
-  // const incrementLimit = () => setLimit(prevLimit => prevLimit + 1);
-  // const decrementLimit = () => setLimit(prevLimit => Math.max(1, prevLimit - 1)); // Ensure limit does not go below 1
+  const formatValue = (value) => `${value}${addSpace ? ' ' : ''}${label}`;
 
   return (
     <Box>
@@ -80,13 +75,14 @@ const ChartDetails = ({ chartType, metric }) => {
             display="flex"
             flexDirection="column"
             alignItems="center"
-            p={2}
+            p={[1, 2, 3]}
             border="1px solid"
             borderColor="#212121"
             borderRadius="md"
             boxShadow="md"
+            mt={[1, 2, 3]}
           >
-            <Text fontSize="2xl" fontWeight="bold">
+            <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">
               {formatValue(mostRecentValue)}
             </Text>
             <Text>Current Value</Text>
@@ -95,14 +91,14 @@ const ChartDetails = ({ chartType, metric }) => {
             display="flex"
             flexDirection="column"
             alignItems="center"
-            p={2}
+            p={[1, 2, 3]}
             border="1px solid"
             borderColor="#212121"
             borderRadius="md"
             boxShadow="md"
-            mt={3}
+            mt={[1, 2, 3]}
           >
-            <Text fontSize="2xl" fontWeight="bold">
+            <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">
               {formatValue(min)}
             </Text>
             <Text>Low</Text>
@@ -111,14 +107,14 @@ const ChartDetails = ({ chartType, metric }) => {
             display="flex"
             flexDirection="column"
             alignItems="center"
-            p={2}
+            p={[1, 2, 3]}
             border="1px solid"
             borderColor="#212121"
             borderRadius="md"
             boxShadow="md"
-            mt={3}
+            mt={[1, 2, 3]}
           >
-            <Text fontSize="2xl" fontWeight="bold">
+            <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">
               {formatValue(max)}
             </Text>
             <Text>High</Text>
@@ -127,19 +123,17 @@ const ChartDetails = ({ chartType, metric }) => {
             display="flex"
             flexDirection="column"
             alignItems="center"
-            p={2}
+            p={[1, 2, 3]}
             border="1px solid"
             borderColor="#212121"
             borderRadius="md"
             boxShadow="md"
-            mt={3}
+            mt={[1, 2, 3]}
           >
             <Flex alignItems="center">
-              {/* <Icon as={FaPlus} color="green.500" mr={2} ml={2} boxSize={5} onClick={incrementLimit} /> */}
-              <Text fontSize="2xl" fontWeight="bold" >
+              <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">
                 {timePeriod}
               </Text>
-              {/* <Icon as={FaMinus} color="red.500" boxSize={5} onClick={decrementLimit} /> */}
             </Flex>
             <Text>Time Period</Text>
           </Box>

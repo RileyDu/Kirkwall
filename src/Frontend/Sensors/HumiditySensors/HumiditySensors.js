@@ -1,10 +1,21 @@
 import React from 'react';
-import { Box, Heading, Divider } from '@chakra-ui/react';
+import { Box, Heading, Divider, Spinner, Text } from '@chakra-ui/react';
 import MiniDashboard from '../../Charts/ChartDashboard';
 import ChartWrapper from '../../Charts/ChartWrapper';
 import { BarChart, LineChart } from '../../Charts/Charts';
 
 export default function HumiditySensors({ weatherData }) {
+
+  if (!weatherData) {
+    console.log('WeatherData is not defined', weatherData);
+    return (
+      <Box p="4" width="100%" height="100%" textAlign="center">
+        <Spinner size="xl" />
+        <Text mt="4">Loading humidity data...</Text>
+      </Box>
+    );
+  }
+
   return (
     <Box p="4" width={'100%'} height={'100%'}>
       <Heading size="xl" textAlign={'center'} mb={'4'}>
