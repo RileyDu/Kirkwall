@@ -7,9 +7,9 @@ import MiniDashboard from '../../Charts/ChartDashboard';
 import WindGauageStyling from './WindGaugeStyling.css';
 
 const getCardinalDirection = (degree) => {
-  const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
-  const index = Math.round((degree % 360) / 22.5);
-  return directions[index];
+  const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+  const index = Math.round((degree % 360) / 45);
+  return directions[index % 8];
 };
 
 export default function WindSensors({ weatherData }) {

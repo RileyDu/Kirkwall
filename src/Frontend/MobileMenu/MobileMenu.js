@@ -21,13 +21,13 @@ const MobileMenu = ({ isOpen, onClose }) => {
           onClick={() => navigate('/')}
           style={{ cursor: 'pointer' }}
         />
-        <IconButton
+        {/* <IconButton
           icon={<CloseIcon />}
           onClick={onClose}
           aria-label="Close Mobile Menu"
           bg="transparent"
           color="white"
-        />
+        /> */}
       </Flex>
       <Stack spacing="8" p="4">
         <Button variant="outline" color="white" leftIcon={<WiThermometer size="30" />} onClick={() => navigate('/TempSensors')}>Temperature Sensors</Button>
