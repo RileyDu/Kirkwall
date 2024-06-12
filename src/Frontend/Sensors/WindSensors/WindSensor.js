@@ -43,7 +43,7 @@ export default function WindSensors({ weatherData }) {
         Wind Sensors
       </Heading>
       <Box width="100%" mb="4">
-        <MiniDashboard metric="wind_speed" />
+        <MiniDashboard metric="wind_speed" weatherData={weatherData}/>
       </Box>
       <Flex
         direction="column"

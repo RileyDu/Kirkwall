@@ -10,15 +10,15 @@ export default function TempSensors({ weatherData }) {
       <Heading size="xl" textAlign={'center'} mb={'4'}>
         Temperature Sensors
       </Heading>
-        <Box width="100%" ml="4">
-          <MiniDashboard metric="temperature" />
-        </Box>
+      <Box width="100%" ml="4">
+        <MiniDashboard weatherData={weatherData} metric="temperature" />
+      </Box>
       <Flex direction="row" justifyContent="space-between">
         <Box width="100%">
           <ChartWrapper title="Temperature Over Time">
             <LineChart data={weatherData} metric="temperature" />
           </ChartWrapper>
-          <Divider my={'8'} borderColor="#212121" borderWidth="4px" borderRadius={"full"}/>
+          <Divider my={'8'} borderColor="#212121" borderWidth="4px" borderRadius={"full"} />
           <ChartWrapper title="Temperature Over Time">
             <BarChart data={weatherData} metric="temperature" />
           </ChartWrapper>

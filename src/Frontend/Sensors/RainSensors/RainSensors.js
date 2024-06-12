@@ -9,7 +9,7 @@ export default function RainSensors({ weatherData }) {
        <Box p="4" width={'100%'} height={'100%'}>
            <Heading size="xl" textAlign={'center'} mb={'4'}>Rain Sensors</Heading>
            <Box width="100%" ml="4">
-          <MiniDashboard metric="rain_15_min_inches" />
+          <MiniDashboard metric="rain_15_min_inches" weatherData={weatherData} />
         </Box>
            <ChartWrapper title="Rain Levels">
                <BarChart data={weatherData} metric="rain_15_min_inches" />
