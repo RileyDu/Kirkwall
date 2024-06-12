@@ -150,7 +150,7 @@ const temperatureChartOptions = {
     y: {
       ...defaultChartOptions.scales.y,
       min: 40,
-      max: 90,
+      max: 100,
     },
   },
   plugins: {
