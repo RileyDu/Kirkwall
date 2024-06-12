@@ -55,7 +55,7 @@ export default function WindSensors({ weatherData }) {
             justify="center"
             p="4"
             textAlign="center"
-            border={'1px'}
+            border={'2px'}
             borderColor="#fd9801"
             borderRadius="md"
             boxShadow="md"
