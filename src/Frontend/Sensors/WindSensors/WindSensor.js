@@ -39,7 +39,7 @@ export default function WindSensors({ weatherData }) {
 
   return (
     <Box width="100%" height="100%" textAlign="center" p={'4'}>
-      <Heading size="xl" py={'4'}>
+      <Heading size="xl" pb={'4'}>
         Wind Sensors
       </Heading>
       <Box width="100%" mb="4">
