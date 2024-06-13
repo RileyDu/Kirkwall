@@ -1,14 +1,25 @@
 import {
-  Box, Button, Flex, Text, IconButton, Popover, PopoverBody,
-  PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Tooltip
+  Box,
+  Button,
+  Flex,
+  Text,
+  IconButton,
+  Popover,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
+  Tooltip,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import { FaCog } from 'react-icons/fa';
 import { BsBarChartFill } from 'react-icons/bs';
-import { FaChartBar, FaChartLine } from "react-icons/fa";
+import { FaChartBar, FaChartLine } from 'react-icons/fa';
 
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import ChartDetails from './ChartDetails';
+import ChartDetails, { getLabelForMetric } from './ChartDetails';
 
 const ChartWrapper = ({ title, children, onChartChange, metric, weatherData }) => {
   const [chartType, setChartType] = useState('bar');
@@ -22,13 +33,28 @@ const ChartWrapper = ({ title, children, onChartChange, metric, weatherData }) =
     }
   };
 
-  const restrictedRoutes = ['/TempSensors', '/HumiditySensors', '/SoilMoistureSensors', '/WindSensors', '/RainSensors']; // Replace with your actual restricted routes
+  const restrictedRoutes = [
+    '/TempSensors',
+    '/HumiditySensors',
+    '/SoilMoistureSensors',
+    '/WindSensors',
+    '/RainSensors',
+  ];
 
   useEffect(() => {
     setShowIcons(!restrictedRoutes.includes(location.pathname));
   }, [location.pathname]);
 
   const iconSize = '24';
+
+  const mostRecentValue =
+    weatherData && weatherData.length > 0 ? weatherData[0][metric] : 'N/A';
+  const { label, addSpace } = getLabelForMetric(metric);
+  const formatValue = (value) =>
+    `${value}${addSpace ? ' ' : ''}${label}`;
+
+  const fontSize = useBreakpointValue({ base: 'sm', md: 'lg' });
+  const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
 
   return (
     <Box
@@ -37,55 +63,133 @@ const ChartWrapper = ({ title, children, onChartChange, metric, weatherData }) =
       borderRadius="md"
       boxShadow="md"
       p="6"
-      pb="12"
+      pb={paddingBottom}
       bg="gray.50"
       h="500px"
       w="100%"
     >
-      <Flex justify="space-between" mb="4">
-        <Box fontSize="xl" fontWeight="bold">
+      <Flex justify="space-between" mb="4" align="center">
+        <Box fontSize={fontSize} fontWeight="bold">
           {title}
         </Box>
         {showIcons && (
-          <Flex>
+          <Flex alignItems="center">
+            <Box
+              border="2px"
+              borderColor="#fd9801"
+              borderRadius="lg"
+              px={2}
+              py={1}
+              mr={2}
+            >
+              <Text fontSize={fontSize}>
+                Current: {formatValue(mostRecentValue)}
+              </Text>
+            </Box>
             <Popover>
-              <Tooltip label="Customize">
-                <PopoverTrigger>
-                  <IconButton
-                    icon={<FaCog />}
-                    variant="outline"
-                    colorScheme="#212121"
-                    size="sm"
-                    mr="2"
-                  />
-                </PopoverTrigger>
-              </Tooltip>
-              <PopoverContent borderColor={'#212121'} mr={2} border={'2px'} borderRadius={'lg'}>
-                <PopoverCloseButton color={'white'} size={"lg"}/>
-                <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'} borderRadius={'md'}>Customize Chart</PopoverHeader>
+              <PopoverTrigger>
+                <Box>
+                  <Tooltip label="Customize">
+                    <IconButton
+                      icon={<FaCog />}
+                      variant="outline"
+                      colorScheme="#212121"
+                      size="sm"
+                      mr="2"
+                    />
+                  </Tooltip>
+                </Box>
+              </PopoverTrigger>
+              <PopoverContent
+                borderColor="#212121"
+                mr={2}
+                border="2px"
+                borderRadius="lg"
+              >
+                <PopoverCloseButton color="white" size="lg" />
+                <PopoverHeader
+                  fontWeight="bold"
+                  fontSize="xl"
+                  bg="#fd9801"
+                  color="white"
+                  borderRadius="md"
+                >
+                  Customize Chart
+                </PopoverHeader>
                 <PopoverBody>
-                  <Text fontWeight="bold" fontSize={'lg'} py={2} textAlign={"center"}>Select Chart Type</Text>
-                  <Button mr={2} mb={2} borderRadius={"md"} border={"1px"} color={"#fd9801"} bg={"white"} borderColor={"#212121"} width={"100%"} onClick={() => changeChartType('line')} leftIcon={<FaChartLine size={iconSize} />}>LINE</Button>
-                  <Button mr={2} borderRadius={"md"} border={"1px"} color={"#fd9801"} bg={"white"} borderColor={"#212121"} width={"100%"} onClick={() => changeChartType('bar')} leftIcon={<FaChartBar size={iconSize} />}>BAR</Button>
+                  <Text
+                    fontWeight="bold"
+                    fontSize="lg"
+                    py={2}
+                    textAlign="center"
+                  >
+                    Select Chart Type
+                  </Text>
+                  <Button
+                    mr={2}
+                    mb={2}
+                    borderRadius="md"
+                    border="1px"
+                    color="#fd9801"
+                    bg="white"
+                    borderColor="#212121"
+                    width="100%"
+                    onClick={() => changeChartType('line')}
+                    leftIcon={<FaChartLine size={iconSize} />}
+                  >
+                    LINE
+                  </Button>
+                  <Button
+                    mr={2}
+                    borderRadius="md"
+                    border="1px"
+                    color="#fd9801"
+                    bg="white"
+                    borderColor="#212121"
+                    width="100%"
+                    onClick={() => changeChartType('bar')}
+                    leftIcon={<FaChartBar size={iconSize} />}
+                  >
+                    BAR
+                  </Button>
                 </PopoverBody>
               </PopoverContent>
             </Popover>
             <Popover>
-              <Tooltip label="Details">
-                <PopoverTrigger>
-                  <IconButton
-                    icon={<BsBarChartFill />}
-                    variant="outline"
-                    colorScheme="#212121"
-                    size="sm"
-                  />
-                </PopoverTrigger>
-              </Tooltip>
-              <PopoverContent borderColor={'#212121'} mr={2} border={'2px'} borderRadius={'lg'}>
-                <PopoverCloseButton color={'white'} size={"lg"}/>
-                <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} color={'white'} borderRadius={'md'}> Chart Details</PopoverHeader>
+              <PopoverTrigger>
+                <Box>
+                  <Tooltip label="Details">
+                    <IconButton
+                      icon={<BsBarChartFill />}
+                      variant="outline"
+                      colorScheme="#212121"
+                      size="sm"
+                    />
+                  </Tooltip>
+                </Box>
+              </PopoverTrigger>
+              <PopoverContent
+                borderColor="#212121"
+                mr={2}
+                border="2px"
+                borderRadius="lg"
+              >
+                <PopoverCloseButton color="white" size="lg" />
+                <PopoverHeader
+                  fontWeight="bold"
+                  fontSize="xl"
+                  bg="#fd9801"
+                  color="white"
+                  borderRadius="md"
+                >
+                  Chart Details
+                </PopoverHeader>
                 <PopoverBody>
-                  <ChartDetails chartType={chartType} metric={metric} weatherData={weatherData} />
+                  <ChartDetails
+                    chartType={chartType}
+                    metric={metric}
+                    weatherData={weatherData}
+                  />
                 </PopoverBody>
               </PopoverContent>
             </Popover>

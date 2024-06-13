@@ -1,12 +1,12 @@
 import { Box, Text, Grid, GridItem, Flex } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 
-const getLabelForMetric = (metric) => {
+export const getLabelForMetric = (metric) => {
   switch (metric) {
     case 'temperature':
       return { label: '°F', addSpace: false };
     case 'percent_humidity':
-      return { label: '% Humidity', addSpace: false };
+      return { label: '%', addSpace: false };
     case 'rain_15_min_inches':
       return { label: 'inches', addSpace: true };
     case 'wind_speed':
@@ -66,7 +66,7 @@ const ChartDetails = ({ chartType, metric, weatherData }) => {
               <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">
                 {formatValue(mostRecentValue)}
               </Text>
-              <Text>Current Value</Text>
+              <Text>Current</Text>
             </Box>
           </GridItem>
           <GridItem>

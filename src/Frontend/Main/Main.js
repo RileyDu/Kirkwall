@@ -37,11 +37,11 @@ const MainContent = ({ weatherData, isMinimized }) => {
   }
 
   return (
-    <Box bg="white" flex="1" p="4" height="100%" width="100%">
+    <Box bg="white" flex="1" p="4" height="100%" width="100%" pb={12}>
       <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap="6">
         <GridItem colSpan={1}>
           <ChartWrapper
-            title="Temperature Over Time (°F)"
+            title="Temperature (°F)"
             onChartChange={handleChartChange(setTempChartType)}
             weatherData={weatherData}
             metric="temperature"
