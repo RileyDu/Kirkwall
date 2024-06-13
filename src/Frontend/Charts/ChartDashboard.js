@@ -47,7 +47,7 @@ const MiniDashboard = ({ weatherData, metric }) => {
           alignItems="center"
           justifyContent="center"
           p={2}
-          border="1px solid"
+          border="2px solid"
           borderColor="#212121"
           bg="#fd9801"
           borderRadius="md"
@@ -59,7 +59,7 @@ const MiniDashboard = ({ weatherData, metric }) => {
           <Text fontSize={['xl', '2xl']} fontWeight="bold" color={'#212121'}>
             {formatValue(mostRecentValue)}
           </Text>
-          <Text fontSize={['lg', 'xl']}>Current Value</Text>
+          <Text fontSize={['lg', 'xl']}>Current</Text>
         </Box>
         <Box
           display="flex"
@@ -67,7 +67,7 @@ const MiniDashboard = ({ weatherData, metric }) => {
           alignItems="center"
           justifyContent="center"
           p={2}
-          border="1px solid"
+          border="2px solid"
           borderColor="#212121"
           bg="#fd9801"
           borderRadius="md"
@@ -87,7 +87,7 @@ const MiniDashboard = ({ weatherData, metric }) => {
           alignItems="center"
           justifyContent="center"
           p={2}
-          border="1px solid"
+          border="2px solid"
           borderColor="#212121"
           bg="#fd9801"
           borderRadius="md"
@@ -107,7 +107,7 @@ const MiniDashboard = ({ weatherData, metric }) => {
           alignItems="center"
           justifyContent="center"
           p={2}
-          border="1px solid"
+          border="2px solid"
           borderColor="#212121"
           bg="#fd9801"
           borderRadius="md"
