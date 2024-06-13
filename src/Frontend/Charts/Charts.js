@@ -80,11 +80,10 @@ const createCustomChartOptions = (metric, dataKey) => {
         },
       },
       y: {
-        min: min - 1,
+        min: min > 1 ? min - 1 : min,
         max: max + 1,
         title: {
-          display: true,
-          text: metric === 'temperature' ? 'Temperature (°F)' : metric,
+          display: false,
         },
       },
     },
@@ -119,7 +118,6 @@ const createCustomChartOptions = (metric, dataKey) => {
       },
       title: {
         display: false,
-        text: `${metric.charAt(0).toUpperCase() + metric.slice(1)} Over Time`,
       },
     },
   };
@@ -153,14 +151,3 @@ export const BarChart = ({ data, metric }) => {
   );
 };
 
-// export const PieChart = ({ data, metric }) => {
-//   const chartData = processWeatherData(data, metric);
-//   if (!chartData) return <Spinner size="xl" />;
-
-//   // Pie charts generally don't use scales, so default options can be applied here
-//   return (
-//     <Box h="100%" w="100%">
-//       <Pie data={chartData} options={defaultChartOptions} />
-//     </Box>
-//   );
-// };
