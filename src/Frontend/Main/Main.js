@@ -56,7 +56,7 @@ const MainContent = ({ weatherData, isMinimized }) => {
         </GridItem>
         <GridItem colSpan={1}>
           <ChartWrapper
-            title="Humidity Percentage Levels"
+            title="Humidity (%)"
             onChartChange={handleChartChange(setHumidityChartType)}
             weatherData={weatherData}
             metric="percent_humidity"
