@@ -185,6 +185,7 @@ const Login = () => {
                           onChange={e => setEmail(e.target.value)}
                           required
                           bg={'white'}
+                          border={'2px solid #fd9801'}
                         />
                       </FormControl>
                       <FormControl>
@@ -198,6 +199,7 @@ const Login = () => {
                           onChange={e => setPassword(e.target.value)}
                           required
                           bg={'white'}
+                          border={'2px solid #fd9801'}
                         />
                       </FormControl>
                     </Stack>
@@ -207,6 +209,7 @@ const Login = () => {
                         type="submit"
                         color="#fd9801"
                         isDisabled={!email || !password}
+                        border={'2px solid #fd9801'}
                       >
                         Sign In
                       </Button>
