@@ -54,7 +54,7 @@ const MainApp = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getWeatherData('25');
+        const response = await getWeatherData('37');
         if (Array.isArray(response.data.weather_data)) {
           setWeatherData(response.data.weather_data);
         } else {
