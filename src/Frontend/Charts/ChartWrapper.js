@@ -21,12 +21,18 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import ChartDetails, { getLabelForMetric } from './ChartDetails';
 
-const ChartWrapper = ({ title, children, onChartChange, metric, weatherData }) => {
+const ChartWrapper = ({
+  title,
+  children,
+  onChartChange,
+  metric,
+  weatherData,
+}) => {
   const [chartType, setChartType] = useState('bar');
   const [showIcons, setShowIcons] = useState(true);
   const location = useLocation();
 
-  const changeChartType = (type) => {
+  const changeChartType = type => {
     setChartType(type);
     if (onChartChange) {
       onChartChange(type);
@@ -50,8 +56,7 @@ const ChartWrapper = ({ title, children, onChartChange, metric, weatherData }) =
   const mostRecentValue =
     weatherData && weatherData.length > 0 ? weatherData[0][metric] : 'N/A';
   const { label, addSpace } = getLabelForMetric(metric);
-  const formatValue = (value) =>
-    `${value}${addSpace ? ' ' : ''}${label}`;
+  const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
 
   const fontSize = useBreakpointValue({ base: 'sm', md: 'lg' });
   const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
@@ -64,7 +69,7 @@ const ChartWrapper = ({ title, children, onChartChange, metric, weatherData }) =
       boxShadow="md"
       p="6"
       pb={paddingBottom}
-      bg="gray.50"
+      bg="#f5f5f5"
       h="500px"
       w="100%"
     >
@@ -81,6 +86,7 @@ const ChartWrapper = ({ title, children, onChartChange, metric, weatherData }) =
               px={2}
               py={1}
               mr={2}
+              bg={'white'}
             >
               <Text fontSize={fontSize}>
                 Current: {formatValue(mostRecentValue)}
@@ -93,9 +99,10 @@ const ChartWrapper = ({ title, children, onChartChange, metric, weatherData }) =
                     <IconButton
                       icon={<FaCog />}
                       variant="outline"
-                      colorScheme="#212121"
+                      colorScheme="#fd9801"
                       size="sm"
                       mr="2"
+                      bg={'white'}
                     />
                   </Tooltip>
                 </Box>
@@ -116,7 +123,7 @@ const ChartWrapper = ({ title, children, onChartChange, metric, weatherData }) =
                 >
                   Customize Chart
                 </PopoverHeader>
-                <PopoverBody>
+                <PopoverBody bg={'#f5f5f5'} borderRadius="md">
                   <Text
                     fontWeight="bold"
                     fontSize="lg"
@@ -164,6 +171,7 @@ const ChartWrapper = ({ title, children, onChartChange, metric, weatherData }) =
                       variant="outline"
                       colorScheme="#212121"
                       size="sm"
+                      bg={'white'}
                     />
                   </Tooltip>
                 </Box>
@@ -184,7 +192,7 @@ const ChartWrapper = ({ title, children, onChartChange, metric, weatherData }) =
                 >
                   Chart Details
                 </PopoverHeader>
-                <PopoverBody>
+                <PopoverBody bg={'#f5f5f5'} borderRadius="md">
                   <ChartDetails
                     chartType={chartType}
                     metric={metric}

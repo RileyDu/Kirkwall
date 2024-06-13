@@ -57,11 +57,12 @@ const ChartDetails = ({ chartType, metric, weatherData }) => {
               flexDirection="column"
               alignItems="center"
               p={[1, 2, 3]}
-              border="1px solid"
+              border="1.5px solid"
               borderColor="#212121"
               borderRadius="md"
               boxShadow="md"
               mt={[1, 2, 3]}
+              bg={'white'}
             >
               <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">
                 {formatValue(mostRecentValue)}
@@ -75,11 +76,12 @@ const ChartDetails = ({ chartType, metric, weatherData }) => {
               flexDirection="column"
               alignItems="center"
               p={[1, 2, 3]}
-              border="1px solid"
+              border="1.5px solid"
               borderColor="#212121"
               borderRadius="md"
               boxShadow="md"
               mt={[1, 2, 3]}
+              bg={'white'}
             >
               <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">
                 {formatValue(min)}
@@ -93,11 +95,12 @@ const ChartDetails = ({ chartType, metric, weatherData }) => {
               flexDirection="column"
               alignItems="center"
               p={[1, 2, 3]}
-              border="1px solid"
+              border="1.5px solid"
               borderColor="#212121"
               borderRadius="md"
               boxShadow="md"
               mt={[1, 2, 3]}
+              bg={'white'}
             >
               <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">
                 {formatValue(max)}
@@ -111,11 +114,12 @@ const ChartDetails = ({ chartType, metric, weatherData }) => {
               flexDirection="column"
               alignItems="center"
               p={[1, 2, 3]}
-              border="1px solid"
+              border="1.5px solid"
               borderColor="#212121"
               borderRadius="md"
               boxShadow="md"
               mt={[1, 2, 3]}
+              bg={'white'}
             >
               <Flex alignItems="center">
                 <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">

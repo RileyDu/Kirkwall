@@ -60,13 +60,14 @@ export default function WindSensors({ weatherData }) {
             borderRadius="md"
             boxShadow="md"
             mb="4"
+            bg={'#f5f5f5'}
           >
-            <Box border={'2px'} borderColor="#212121" borderRadius="md" px={2} mb={2} bg={'#fd9801'}  textAlign="center">
+            <Box border={'2px'} borderColor="#212121" borderRadius="md" px={2} mb={4} bg={'#fd9801'}  textAlign="center">
             <Text fontSize="xxx-large" mb={'6'} mt={'6'} color={'#212121'}>
               Current Wind Speed and Direction: {latestWindSpeed} MPH {getCardinalDirection(latestWindDirection)}
             </Text>
             </Box>
-            <Box mb={'-60px'}>
+            <Box mb={'-180px'}>
               <ReactSpeedometer
                 minValue={0}
                 maxValue={100}
