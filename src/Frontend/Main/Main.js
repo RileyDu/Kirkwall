@@ -86,7 +86,7 @@ const MainContent = ({ weatherData, isMinimized }) => {
         </GridItem>
         <GridItem colSpan={1}>
           <ChartWrapper
-            title="Wind Speed (mph)"
+            title="Wind Speed (MPH)"
             onChartChange={handleChartChange(setWindChartType)}
             weatherData={weatherData}
             metric="wind_speed"

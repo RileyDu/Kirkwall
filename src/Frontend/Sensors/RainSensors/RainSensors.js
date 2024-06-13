@@ -24,7 +24,7 @@ export default function RainSensors({ weatherData }) {
       <Box width="100%">
         <MiniDashboard metric="rain_15_min_inches" weatherData={weatherData} />
       </Box>
-      <ChartWrapper title="Rain Levels">
+      <ChartWrapper title="Rainfall (inches)">
         <BarChart data={weatherData} metric="rain_15_min_inches" />
       </ChartWrapper>
       <Divider
@@ -33,7 +33,7 @@ export default function RainSensors({ weatherData }) {
         borderWidth="4px"
         borderRadius={'full'}
       />
-      <ChartWrapper title="Rain Levels">
+      <ChartWrapper title="Rainfall (inches)">
         <LineChart data={weatherData} metric="rain_15_min_inches" />
       </ChartWrapper>
     </Box>

@@ -26,11 +26,11 @@ export default function TempSensors({ weatherData }) {
       </Box>
       <Flex direction="row" justifyContent="space-between">
         <Box width="100%">
-          <ChartWrapper title="Temperature Over Time">
+          <ChartWrapper title="Temperature (°F)">
             <LineChart data={weatherData} metric="temperature" />
           </ChartWrapper>
           <Divider my={'8'} borderColor="#212121" borderWidth="4px" borderRadius={"full"} />
-          <ChartWrapper title="Temperature Over Time">
+          <ChartWrapper title="Temperature (°F)">
             <BarChart data={weatherData} metric="temperature" />
           </ChartWrapper>
         </Box>

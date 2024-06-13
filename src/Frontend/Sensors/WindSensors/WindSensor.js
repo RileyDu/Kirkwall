@@ -61,9 +61,11 @@ export default function WindSensors({ weatherData }) {
             boxShadow="md"
             mb="4"
           >
-            <Text fontSize="xxx-large" mb={'6'} mt={'6'}>
+            <Box border={'2px'} borderColor="#212121" borderRadius="md" px={2} mb={2} bg={'#fd9801'}  textAlign="center">
+            <Text fontSize="xxx-large" mb={'6'} mt={'6'} color={'#212121'}>
               Current Wind Speed and Direction: {latestWindSpeed} MPH {getCardinalDirection(latestWindDirection)}
             </Text>
+            </Box>
             <Box mb={'-60px'}>
               <ReactSpeedometer
                 minValue={0}
@@ -114,7 +116,7 @@ export default function WindSensors({ weatherData }) {
         </>
       )}
       <Box width="100%" mb="4">
-        <ChartWrapper title="Wind Speed Over Time">
+        <ChartWrapper title="Wind Speed (MPH)">
           <LineChart data={weatherData} metric="wind_speed" />
         </ChartWrapper>
       </Box>
@@ -125,7 +127,7 @@ export default function WindSensors({ weatherData }) {
         borderRadius={'full'}
       />
       <Box width="100%" mb="4">
-        <ChartWrapper title="Wind Speed Distribution">
+        <ChartWrapper title="Wind Speed (MPH)">
           <BarChart data={weatherData} metric="wind_speed" />
         </ChartWrapper>
       </Box>

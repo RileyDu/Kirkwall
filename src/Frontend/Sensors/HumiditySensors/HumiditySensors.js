@@ -24,7 +24,7 @@ export default function HumiditySensors({ weatherData }) {
       <Box width="100%">
         <MiniDashboard metric="percent_humidity" weatherData={weatherData} />
       </Box>
-      <ChartWrapper title="Humidity Levels">
+      <ChartWrapper title="Humidity (%)">
         <BarChart data={weatherData} metric="percent_humidity" />
       </ChartWrapper>
       <Divider
@@ -33,7 +33,7 @@ export default function HumiditySensors({ weatherData }) {
         borderWidth="4px"
         borderRadius={'full'}
       />
-      <ChartWrapper title="Humidity Levels">
+      <ChartWrapper title="Humidity (%)">
         <LineChart data={weatherData} metric="percent_humidity" />
       </ChartWrapper>
     </Box>
