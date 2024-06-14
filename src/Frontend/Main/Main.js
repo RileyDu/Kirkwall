@@ -1,39 +1,53 @@
-import { Box, Grid, GridItem } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import { Box, Center, Flex, Grid, GridItem, Spinner } from '@chakra-ui/react';
 import { LineChart, BarChart } from '../Charts/Charts';
 import ChartWrapper from '../Charts/ChartWrapper';
-import { useState } from 'react';
 
-const MainContent = ({ weatherData }) => {
+const MainContent = ({ weatherData, isMinimized, timePeriod, adjustTimePeriod }) => {
   const [tempChartType, setTempChartType] = useState('line');
   const [humidityChartType, setHumidityChartType] = useState('line');
   const [windChartType, setWindChartType] = useState('bar');
   const [rainfallChartType, setRainfallChartType] = useState('bar');
+  const [isReady, setIsReady] = useState(false);
 
-  const handleTempChartChange = newType => {
-    setTempChartType(newType);
+  useEffect(() => {
+    setIsReady(false);
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, .5); // delay to let layout stabilize
+
+    return () => clearTimeout(timer);
+  }, [isMinimized]);
+
+  const handleChartChange = (setChartType) => (newType) => {
+    setChartType(newType);
   };
 
-  const handleHumidityChartChange = newType => {
-    setHumidityChartType(newType);
-  };
-
-  const handleWindChartChange = newType => {
-    setWindChartType(newType);
-  };
-
-  const handleRainfallChartChange = newType => {
-    setRainfallChartType(newType);
-  };
+  if (!isReady) {
+    return (
+      <Box 
+      display="flex" 
+      justifyContent="center" 
+      alignItems="center" 
+      height="100vh"
+    >
+      {/* <Spinner size="xl" /> */}
+    </Box>
+    );
+  }
 
   return (
-    <Box bg="white" flex="1" p="4">
-      <Grid templateColumns="repeat(2, 1fr)" gap="6">
+    <Box bg="white" flex="1" p="4" height="100%" width="100%" pb={12}>
+      <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap="6">
         <GridItem colSpan={1}>
           <ChartWrapper
-            title="Temperature Over Time (°F)"
-            onChartChange={handleTempChartChange}
-            data={weatherData}
+            title="Temperature (°F)"
+            onChartChange={handleChartChange(setTempChartType)}
+            weatherData={weatherData}
             metric="temperature"
+            flex="1"
+            timePeriod={timePeriod}
+            adjustTimePeriod={adjustTimePeriod}
           >
             {tempChartType === 'line' ? (
               <LineChart data={weatherData} metric="temperature" />
@@ -44,10 +58,13 @@ const MainContent = ({ weatherData }) => {
         </GridItem>
         <GridItem colSpan={1}>
           <ChartWrapper
-            title="Humidity Percentage Levels"
-            onChartChange={handleHumidityChartChange}
-            data={weatherData}
+            title="Humidity (%)"
+            onChartChange={handleChartChange(setHumidityChartType)}
+            weatherData={weatherData}
             metric="percent_humidity"
+            flex="1"
+            timePeriod={timePeriod}
+            adjustTimePeriod={adjustTimePeriod}
           >
             {humidityChartType === 'line' ? (
               <LineChart data={weatherData} metric="percent_humidity" />
@@ -59,9 +76,12 @@ const MainContent = ({ weatherData }) => {
         <GridItem colSpan={1}>
           <ChartWrapper
             title="Rainfall (inches)"
-            onChartChange={handleRainfallChartChange}
-            data={weatherData}
+            onChartChange={handleChartChange(setRainfallChartType)}
+            weatherData={weatherData}
             metric="rain_15_min_inches"
+            flex="1"
+            timePeriod={timePeriod}
+            adjustTimePeriod={adjustTimePeriod}
           >
             {rainfallChartType === 'line' ? (
               <LineChart data={weatherData} metric="rain_15_min_inches" />
@@ -72,10 +92,13 @@ const MainContent = ({ weatherData }) => {
         </GridItem>
         <GridItem colSpan={1}>
           <ChartWrapper
-            title="Wind Speed (mph)"
-            onChartChange={handleWindChartChange}
-            data={weatherData}
+            title="Wind Speed (MPH)"
+            onChartChange={handleChartChange(setWindChartType)}
+            weatherData={weatherData}
             metric="wind_speed"
+            flex="1"
+            timePeriod={timePeriod}
+            adjustTimePeriod={adjustTimePeriod}
           >
             {windChartType === 'line' ? (
               <LineChart data={weatherData} metric="wind_speed" />

@@ -1,17 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../Backend/Firebase';
-import { useMediaQuery, Flex, Box, IconButton, Avatar, Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverCloseButton, PopoverBody, Button } from '@chakra-ui/react';
-import { FaBars } from 'react-icons/fa';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useMediaQuery, Flex, Box, IconButton, Avatar, Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverCloseButton, PopoverBody } from '@chakra-ui/react';
 import Logout from '../../Frontend/AuthComponents/Logout';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import WeatherAlerts from '../Alert/WeatherAlerts';
+import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 
-const Header = () => {
+
+const Header = ({ toggleMobileMenu, isMobileMenuOpen }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
-  const [user] = useAuthState(auth);
   const navigate = useNavigate();
-  const [showAlerts, setShowAlerts] = useState(true); // State to manage WeatherAlerts visibility
+  const [showAlerts, setShowAlerts] = useState(true);
+  const location = useLocation();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    console.log('Sidebar mounted');
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+        // console.log(user);
+      } else {
+        setUser(null);
+        console.log('User is signed out');
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
 
   const toggleAlerts = () => {
     setShowAlerts(!showAlerts);
@@ -29,7 +48,7 @@ const Header = () => {
         position="sticky"
         top="0"
         zIndex="1001"
-        borderBottom={'3px solid #fd9801'}
+        borderBottom="3px solid #fd9801"
       >
         <Box>
           <img
@@ -43,24 +62,20 @@ const Header = () => {
         </Box>
         {isLargerThan768 ? (
           user ? (
-            <Flex fontSize={'2em'} color={'white'} align="center">
-              <Popover >
+            <Flex fontSize="2em" color="white" align="center">
+              <Popover>
                 <PopoverTrigger>
                   <Avatar
                     size="md"
                     name="Grand Farm Logo"
                     src="/GrandFarmLogo.jpg"
                     cursor="pointer"
-                  >
-                  </Avatar>
+                  />
                 </PopoverTrigger>
-                <PopoverContent bg="white" borderColor={'#212121'} zIndex={1005}> 
-                  <PopoverCloseButton size={'lg'} />
-                  <PopoverHeader fontWeight="bold" fontSize={'xl'} bg={'#fd9801'} > Grand Farm </PopoverHeader>
+                <PopoverContent bg="white" borderColor="#212121" zIndex={1005}>
+                  <PopoverCloseButton size="lg" />
+                  <PopoverHeader fontWeight="bold" fontSize="xl" bg="#fd9801" borderRadius={"md"}>Grand Farm</PopoverHeader>
                   <PopoverBody>
-                    <Button onClick={toggleAlerts} w="100%" size={'lg'} borderRadius={'full'} fontSize={'xl'}>
-                      TOGGLE ALERTS
-                    </Button>
                     <Logout />
                   </PopoverBody>
                 </PopoverContent>
@@ -68,10 +83,20 @@ const Header = () => {
             </Flex>
           ) : null
         ) : (
-          <IconButton icon={<FaBars />} bg="transparent" aria-label="Menu" />
+          user && location.pathname !== '/login' && (
+            <IconButton 
+              icon={isMobileMenuOpen ? <CloseIcon color="white" /> : <HamburgerIcon color="#212121" />}
+              onClick={toggleMobileMenu}
+              aria-label="Toggle Mobile Menu"
+              display={{ base: 'block', md: 'none' }}
+              position="fixed"
+              top="1rem"
+              right="1rem"
+            />
+          )
         )}
       </Flex>
-      {showAlerts && <WeatherAlerts isVisible={showAlerts} onClose={toggleAlerts} />} {/* Conditionally render WeatherAlerts */}
+      {/* {showAlerts && <WeatherAlerts isVisible={showAlerts} onClose={toggleAlerts} />} */}
     </>
   );
 };

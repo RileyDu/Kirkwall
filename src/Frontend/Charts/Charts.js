@@ -43,13 +43,15 @@ const processWeatherData = (data, key) => {
         label: key,
         data: reversedData.map(item => item[key]),
         backgroundColor: '#fd9801',
-        borderColor: '#fd9801',
-        borderWidth: 1,
+        borderColor: reversedData.map((item, index) =>
+          index === reversedData.length - 1 ? '#212121' : '#fd9801'
+        ),
+        borderWidth: 2,
         pointBackgroundColor: reversedData.map((item, index) =>
-          index === reversedData.length - 1 ? 'red' : '#fd9801'
+          index === reversedData.length - 1 ? '#212121' : '#fd9801'
         ),
         pointRadius: reversedData.map((item, index) =>
-          index === reversedData.length - 1 ? 6 : 3
+          index === reversedData.length - 1 ? 5 : 3
         ),
       },
     ],
@@ -57,138 +59,76 @@ const processWeatherData = (data, key) => {
   return chartData;
 };
 
-const defaultChartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  scales: {
-    x: {
-      ticks: {
-        maxRotation: 90,
-        minRotation: 45,
-        autoSkip: true,
-        maxTicksLimit: 10,
-      },
-    },
-    y: {
-      beginAtZero: true,
-    },
-  },
-  plugins: {
-    tooltip: {
-      backgroundColor: '#212121', // Background color
-      titleFont: { size: 16 }, // Title font size
-      titleColor: '#ffffff', // Title font color
-      bodyFont: { size: 16 }, // Body font size
-      bodyColor: '#ffffff', // Body font color
-      footerFont: { size: 12 }, // Footer font size
-      footerColor: '#ffffff', // Footer font color
-      padding: 10, // Padding
-      cornerRadius: 4, // Tooltip border radius
-      displayColors: false, // Hide the color box in the tooltip
-    },
-    legend: {
-      display: false,
-    },
-  },
+const getMinMax = (data) => {
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  return { min, max };
 };
 
-const humidityChartOptions = {
-  ...defaultChartOptions,
-  plugins: {
-    ...defaultChartOptions.plugins,
-    tooltip: {
-      ...defaultChartOptions.plugins.tooltip,
-      callbacks: {
-        label: function (context) {
-          const label = '% Humidity'; // Hardcoded label
-          const value = context.raw;
-          return `${value}${label}`;
+const createCustomChartOptions = (metric, dataKey) => {
+  const { min, max } = getMinMax(dataKey);
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        ticks: {
+          maxRotation: 90,
+          minRotation: 45,
+          autoSkip: true,
+          maxTicksLimit: 10,
+        },
+      },
+      y: {
+        min: min > 1 ? min - 1 : min,
+        max: max + 1,
+        title: {
+          display: false,
         },
       },
     },
-  },
-};
-
-const rainfallChartOptions = {
-  ...defaultChartOptions,
-  plugins: {
-    ...defaultChartOptions.plugins,
-    tooltip: {
-      ...defaultChartOptions.plugins.tooltip,
-      callbacks: {
-        label: function (context) {
-          const label = 'inches'; // Hardcoded label
-          const value = context.raw;
-          return `${value} ${label}`;
+    plugins: {
+      tooltip: {
+        backgroundColor: '#212121',
+        titleFont: { size: 16 },
+        titleColor: '#ffffff',
+        bodyFont: { size: 16 },
+        bodyColor: '#ffffff',
+        footerFont: { size: 12 },
+        footerColor: '#ffffff',
+        padding: 10,
+        cornerRadius: 4,
+        displayColors: false,
+        callbacks: {
+          label: function (context) {
+            const labelMap = {
+              'temperature': '°F',
+              'percent_humidity': '% Humidity',
+              'rain_15_min_inches': 'inches',
+              'wind_speed': 'MPH'
+            };
+            const label = labelMap[metric] || '';
+            const value = context.raw;
+            return `${value} ${label}`;
+          }
         },
       },
-    },
-  },
-};
-
-const windSpeedChartOptions = {
-  ...defaultChartOptions,
-  plugins: {
-    ...defaultChartOptions.plugins,
-    tooltip: {
-      ...defaultChartOptions.plugins.tooltip,
-      callbacks: {
-        label: function (context) {
-          const label = 'MPH'; // Hardcoded label
-          const value = context.raw;
-          return `${value} ${label}`;
-        },
+      legend: {
+        display: false,
+      },
+      title: {
+        display: false,
       },
     },
-  },
-};
-
-const temperatureChartOptions = {
-  ...defaultChartOptions,
-  scales: {
-    ...defaultChartOptions.scales,
-    y: {
-      ...defaultChartOptions.scales.y,
-      min: 40,
-      max: 90,
-    },
-  },
-  plugins: {
-    ...defaultChartOptions.plugins,
-    tooltip: {
-      ...defaultChartOptions.plugins.tooltip,
-      callbacks: {
-        label: function (context) {
-          const label = '°F'; // Hardcoded label
-          const value = context.raw;
-          return `${value}${label}`;
-        },
-      },
-    },
-  },
+  };
 };
 
 export const LineChart = ({ data, metric }) => {
   const chartData = processWeatherData(data, metric);
   if (!chartData) return <Spinner size="xl" />;
 
-  let options;
-  switch (metric) {
-    case 'temperature':
-      options = temperatureChartOptions;
-      break;
-    case 'percent_humidity':
-      options = humidityChartOptions;
-      break;
-    case 'rain_15_min_inches':
-      options = rainfallChartOptions;
-      break;
-    case 'wind_speed':
-      options = windSpeedChartOptions;
-      break;
-    default:
-      options = defaultChartOptions;
-  }
+  const dataKey = chartData.datasets[0].data;
+  const options = createCustomChartOptions(metric, dataKey);
 
   return (
     <Box h="100%" w="100%">
@@ -201,23 +141,8 @@ export const BarChart = ({ data, metric }) => {
   const chartData = processWeatherData(data, metric);
   if (!chartData) return <Spinner size="xl" />;
 
-  let options;
-  switch (metric) {
-    case 'temperature':
-      options = temperatureChartOptions;
-      break;
-    case 'percent_humidity':
-      options = humidityChartOptions;
-      break;
-    case 'rain_15_min_inches':
-      options = rainfallChartOptions;
-      break;
-    case 'wind_speed':
-      options = windSpeedChartOptions;
-      break;
-    default:
-      options = defaultChartOptions;
-  }
+  const dataKey = chartData.datasets[0].data;
+  const options = createCustomChartOptions(metric, dataKey);
 
   return (
     <Box h="100%" w="100%">
@@ -226,12 +151,3 @@ export const BarChart = ({ data, metric }) => {
   );
 };
 
-export const PieChart = ({ data, metric }) => {
-  const chartData = processWeatherData(data, metric);
-  if (!chartData) return <Spinner size="xl" />;
-  return (
-    <Box h="100%" w="100%">
-      <Pie data={chartData} options={defaultChartOptions} />
-    </Box>
-  );
-};
