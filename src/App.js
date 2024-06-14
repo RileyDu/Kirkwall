@@ -53,8 +53,13 @@ const MainApp = () => {
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   const adjustTimePeriod = (adjustment) => {
-    setTimePeriod((prevTimePeriod) => prevTimePeriod + adjustment);
+    setTimePeriod((prevTimePeriod) => {
+      const newTimePeriod = prevTimePeriod + adjustment;
+      // Ensure the time period doesn't go below 60 minutes
+      return newTimePeriod < 13 ? 13 : newTimePeriod;
+    });
   };
+  
 
   useEffect(() => {
     const fetchData = async () => {
