@@ -1,5 +1,6 @@
-import { Box, Text, Grid, GridItem, Flex } from '@chakra-ui/react';
+import { Box, Text, Grid, GridItem, Flex, Icon } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
+import { MinusIcon, AddIcon } from '@chakra-ui/icons';
 
 export const getLabelForMetric = (metric) => {
   switch (metric) {
@@ -16,7 +17,7 @@ export const getLabelForMetric = (metric) => {
   }
 };
 
-const ChartDetails = ({ chartType, metric, weatherData }) => {
+const ChartDetails = ({ chartType, metric, weatherData, timePeriod, adjustTimePeriod }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,7 +40,7 @@ const ChartDetails = ({ chartType, metric, weatherData }) => {
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
   };
 
-  const timePeriod = calculateTimePeriod(currentData.length - 1);
+  const timePeriodDisplay = calculateTimePeriod(currentData.length - 1);
 
   const { label, addSpace } = getLabelForMetric(metric);
 
@@ -122,9 +123,25 @@ const ChartDetails = ({ chartType, metric, weatherData }) => {
               bg={'white'}
             >
               <Flex alignItems="center">
+                <MinusIcon
+                  // icon={<MinusIcon />}
+                  onClick={() => adjustTimePeriod(-12)}
+                  aria-label="Decrease time period"
+                  mr={2}
+                  color={'red'}
+                  cursor={'pointer'}
+                />
                 <Text fontSize={['md', 'lg', '2xl']} fontWeight="bold">
-                  {timePeriod}
+                  {timePeriodDisplay}
                 </Text>
+                <AddIcon
+                  // icon={<AddIcon />}
+                  onClick={() => adjustTimePeriod(12)}
+                  aria-label="Increase time period"
+                  ml={2}
+                  color={'green'}
+                  cursor={'pointer'}
+                />
               </Flex>
               <Text>Time Period</Text>
             </Box>

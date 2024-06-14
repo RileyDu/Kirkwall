@@ -3,7 +3,7 @@ import { Box, Center, Flex, Grid, GridItem, Spinner } from '@chakra-ui/react';
 import { LineChart, BarChart } from '../Charts/Charts';
 import ChartWrapper from '../Charts/ChartWrapper';
 
-const MainContent = ({ weatherData, isMinimized }) => {
+const MainContent = ({ weatherData, isMinimized, timePeriod, adjustTimePeriod }) => {
   const [tempChartType, setTempChartType] = useState('line');
   const [humidityChartType, setHumidityChartType] = useState('line');
   const [windChartType, setWindChartType] = useState('bar');
@@ -46,6 +46,8 @@ const MainContent = ({ weatherData, isMinimized }) => {
             weatherData={weatherData}
             metric="temperature"
             flex="1"
+            timePeriod={timePeriod}
+            adjustTimePeriod={adjustTimePeriod}
           >
             {tempChartType === 'line' ? (
               <LineChart data={weatherData} metric="temperature" />
@@ -61,6 +63,8 @@ const MainContent = ({ weatherData, isMinimized }) => {
             weatherData={weatherData}
             metric="percent_humidity"
             flex="1"
+            timePeriod={timePeriod}
+            adjustTimePeriod={adjustTimePeriod}
           >
             {humidityChartType === 'line' ? (
               <LineChart data={weatherData} metric="percent_humidity" />
@@ -76,6 +80,8 @@ const MainContent = ({ weatherData, isMinimized }) => {
             weatherData={weatherData}
             metric="rain_15_min_inches"
             flex="1"
+            timePeriod={timePeriod}
+            adjustTimePeriod={adjustTimePeriod}
           >
             {rainfallChartType === 'line' ? (
               <LineChart data={weatherData} metric="rain_15_min_inches" />
@@ -91,6 +97,8 @@ const MainContent = ({ weatherData, isMinimized }) => {
             weatherData={weatherData}
             metric="wind_speed"
             flex="1"
+            timePeriod={timePeriod}
+            adjustTimePeriod={adjustTimePeriod}
           >
             {windChartType === 'line' ? (
               <LineChart data={weatherData} metric="wind_speed" />

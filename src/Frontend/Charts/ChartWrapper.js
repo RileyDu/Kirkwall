@@ -27,6 +27,8 @@ const ChartWrapper = ({
   onChartChange,
   metric,
   weatherData,
+  timePeriod,
+  adjustTimePeriod
 }) => {
   const [chartType, setChartType] = useState('bar');
   const [showIcons, setShowIcons] = useState(true);
@@ -197,6 +199,8 @@ const ChartWrapper = ({
                     chartType={chartType}
                     metric={metric}
                     weatherData={weatherData}
+                    timePeriod={timePeriod}
+                    adjustTimePeriod={adjustTimePeriod}
                   />
                 </PopoverBody>
               </PopoverContent>
