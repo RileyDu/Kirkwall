@@ -16,7 +16,7 @@ import {
 import { FaCog } from 'react-icons/fa';
 import { BsBarChartFill } from 'react-icons/bs';
 import { FaChartBar, FaChartLine } from 'react-icons/fa';
-
+import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import ChartDetails, { getLabelForMetric } from './ChartDetails';
@@ -81,33 +81,45 @@ const ChartWrapper = ({
         </Box>
         {showIcons && (
           <Flex alignItems="center">
-            <Box
-              border="2px"
-              borderColor="#fd9801"
-              borderRadius="lg"
-              px={2}
-              py={1}
-              mr={2}
-              bg={'white'}
+            <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1 }}
             >
-              <Text fontSize={fontSize}>
-                Current: {formatValue(mostRecentValue)}
-              </Text>
-            </Box>
+              <Box
+                border="2px"
+                borderColor="#fd9801"
+                borderRadius="lg"
+                px={2}
+                py={1}
+                mr={2}
+                bg={'white'}
+              >
+                <Text fontSize={fontSize}>
+                  Current: {formatValue(mostRecentValue)}
+                </Text>
+              </Box>
+            </motion.div>
             <Popover>
               <PopoverTrigger>
-                <Box>
-                  <Tooltip label="Customize">
-                    <IconButton
-                      icon={<FaCog />}
-                      variant="outline"
-                      colorScheme="#fd9801"
-                      size="sm"
-                      mr="2"
-                      bg={'white'}
-                    />
-                  </Tooltip>
-                </Box>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 1, delay: 0.5 }}
+                >
+                  <Box>
+                    <Tooltip label="Customize">
+                      <IconButton
+                        icon={<FaCog />}
+                        variant="outline"
+                        colorScheme="#fd9801"
+                        size="sm"
+                        mr="2"
+                        bg={'white'}
+                      />
+                    </Tooltip>
+                  </Box>
+                </motion.div>
               </PopoverTrigger>
               <PopoverContent
                 borderColor="#212121"
@@ -166,17 +178,23 @@ const ChartWrapper = ({
             </Popover>
             <Popover>
               <PopoverTrigger>
-                <Box>
-                  <Tooltip label="Details">
-                    <IconButton
-                      icon={<BsBarChartFill />}
-                      variant="outline"
-                      colorScheme="#212121"
-                      size="sm"
-                      bg={'white'}
-                    />
-                  </Tooltip>
-                </Box>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 1, delay: 1 }}
+                >
+                  <Box>
+                    <Tooltip label="Details">
+                      <IconButton
+                        icon={<BsBarChartFill />}
+                        variant="outline"
+                        colorScheme="#212121"
+                        size="sm"
+                        bg={'white'}
+                      />
+                    </Tooltip>
+                  </Box>
+                </motion.div>
               </PopoverTrigger>
               <PopoverContent
                 borderColor="#212121"
