@@ -102,21 +102,7 @@ const ChartWrapper = ({
         </Flex>
         {children}
       </Box>
-      <ChartExpandModal isOpen={isOpen} onClose={onClose} title={title}>
-        <Box
-          h="100%"
-          w="100%"
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          bg="gray.50"
-          p="4"
-          borderRadius="md"
-          boxShadow="md"
-        >
-          {children}
-        </Box>
-      </ChartExpandModal>
+      <ChartExpandModal isOpen={isOpen} onClose={onClose} title={title} children={children}/>        
     </>
   );
 };

@@ -8,8 +8,28 @@ const ChartExpandModal = ({ isOpen, onClose, children, title }) => {
         <ModalHeader>{title}</ModalHeader>
         <ModalCloseButton size={"lg"}/>
         <ModalBody>
-
-            {children}
+            <Box display={"flex"}  justifyContent={"space-between"} mb={2}>
+                <Button borderRadius={"full"}>1H</Button>
+                <Button>3H</Button>
+                <Button>6H</Button>
+                <Button>12H</Button>
+                <Button>1D</Button>
+                <Button>3D</Button>
+                <Button>1W</Button>
+            </Box>
+        <Box
+          h="800px"
+          w="100%"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          bg="gray.50"
+          p="4"
+          borderRadius="md"
+          boxShadow="md"
+        >
+          {children}
+        </Box>
         </ModalBody>
         {/* <ModalFooter>
           <Button onClick={onClose}>Close</Button>
