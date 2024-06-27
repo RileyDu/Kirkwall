@@ -87,6 +87,11 @@ const ChartWrapper = ({
                   </Text>
                 </Box>
               </motion.div>
+              <motion.div 
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 0.5 }}
+              >
               <Tooltip label="Expand Chart">
                 <IconButton
                   icon={<FaExpandAlt />}
@@ -95,14 +100,15 @@ const ChartWrapper = ({
                   size="sm"
                   bg={'white'}
                   onClick={onOpen}
-                />
+                  />
               </Tooltip>
+                  </motion.div>
             </Flex>
           )}
         </Flex>
         {children}
       </Box>
-      <ChartExpandModal isOpen={isOpen} onClose={onClose} title={title} children={children} weatherData={weatherData} metric={metric} onChartChange={onChartChange}/>        
+      <ChartExpandModal isOpen={isOpen} onClose={onClose} title={title} children={children} weatherData={weatherData} metric={metric} onChartChange={changeChartType}/>        
     </>
   );
 };
