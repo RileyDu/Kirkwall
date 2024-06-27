@@ -102,7 +102,7 @@ const ChartWrapper = ({
         </Flex>
         {children}
       </Box>
-      <ChartExpandModal isOpen={isOpen} onClose={onClose} title={title} children={children} weatherData={weatherData} metric={metric}/>        
+      <ChartExpandModal isOpen={isOpen} onClose={onClose} title={title} children={children} weatherData={weatherData} metric={metric} onChartChange={onChartChange}/>        
     </>
   );
 };
