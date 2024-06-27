@@ -1,4 +1,4 @@
-import { extendTheme } from '@chakra-ui/react';
+import { border, extendTheme } from '@chakra-ui/react';
 
 
 const customTheme = extendTheme({
@@ -29,6 +29,25 @@ const customTheme = extendTheme({
     fonts: {
       heading: 'Oswald, sans-serif',
       body: 'Oswald, sans-serif',
+    },
+    components: {
+      Button: {
+        variants: {
+        pill: {
+          borderRadius: 'full',
+          border: '2px solid #fd9801',
+          _hover: {
+            bg: 'brand.500',
+            color: 'white',
+          },
+          _active: {
+            bg: 'brand.500',
+            color: 'white',
+          },
+        },
+
+      },
+    },
     },
   });
   export default customTheme

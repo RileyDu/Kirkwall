@@ -5,17 +5,17 @@ const ChartExpandModal = ({ isOpen, onClose, children, title }) => {
     <Modal onClose={onClose} size="full" isOpen={isOpen}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{title}</ModalHeader>
-        <ModalCloseButton size={"lg"}/>
+        <ModalHeader bg={"#212121"} color={"white"} fontSize={"2xl"}>{title}</ModalHeader>
+        <ModalCloseButton size={"lg"} color={"white"}/>
         <ModalBody>
-            <Box display={"flex"}  justifyContent={"space-between"} mb={2}>
-                <Button borderRadius={"full"}>1H</Button>
-                <Button>3H</Button>
-                <Button>6H</Button>
-                <Button>12H</Button>
-                <Button>1D</Button>
-                <Button>3D</Button>
-                <Button>1W</Button>
+            <Box display={"flex"}  justifyContent={"space-between"} my={4}>
+                <Button variant={"pill"}>1H</Button>
+                <Button variant={"pill"}>3H</Button>
+                <Button variant={"pill"}>6H</Button>
+                <Button variant={"pill"}>12H</Button>
+                <Button variant={"pill"}>1D</Button>
+                <Button variant={"pill"}>3D</Button>
+                <Button variant={"pill"}>1W</Button>
             </Box>
         <Box
           h="800px"
@@ -27,6 +27,7 @@ const ChartExpandModal = ({ isOpen, onClose, children, title }) => {
           p="4"
           borderRadius="md"
           boxShadow="md"
+          border={"2px solid #fd9801"}
         >
           {children}
         </Box>
