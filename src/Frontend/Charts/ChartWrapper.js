@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { FaCog } from 'react-icons/fa';
 import { BsBarChartFill } from 'react-icons/bs';
-import { FaChartBar, FaChartLine } from 'react-icons/fa';
+import { FaChartBar, FaChartLine,FaExpandAlt } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -191,6 +191,7 @@ const ChartWrapper = ({
                         colorScheme="#212121"
                         size="sm"
                         bg={'white'}
+                        mr="2"
                       />
                     </Tooltip>
                   </Box>
@@ -223,6 +224,15 @@ const ChartWrapper = ({
                 </PopoverBody>
               </PopoverContent>
             </Popover>
+            <Tooltip label="Expand Chart">
+            <IconButton
+                        icon={<FaExpandAlt />}
+                        variant="outline"
+                        colorScheme="#212121"
+                        size="sm"
+                        bg={'white'}
+                      />
+            </Tooltip>
           </Flex>
         )}
       </Flex>
