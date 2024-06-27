@@ -1,24 +1,9 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Text,
-  IconButton,
-  Popover,
-  PopoverBody,
-  PopoverCloseButton,
-  PopoverContent,
-  PopoverHeader,
-  PopoverTrigger,
-  Tooltip,
-  useBreakpointValue,
-} from '@chakra-ui/react';
-import { FaCog } from 'react-icons/fa';
-import { BsBarChartFill } from 'react-icons/bs';
-import { FaChartBar, FaChartLine,FaExpandAlt } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { Box, Flex, Text, IconButton, Tooltip, useBreakpointValue, useDisclosure } from '@chakra-ui/react';
+import { FaExpandAlt } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import ChartExpandModal from './ChartExpandModal'; // Adjust the path as necessary
 import ChartDetails, { getLabelForMetric } from './ChartDetails';
 
 const ChartWrapper = ({
@@ -33,6 +18,7 @@ const ChartWrapper = ({
   const [chartType, setChartType] = useState('bar');
   const [showIcons, setShowIcons] = useState(true);
   const location = useLocation();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const changeChartType = type => {
     setChartType(type);
@@ -64,180 +50,74 @@ const ChartWrapper = ({
   const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
 
   return (
-    <Box
-      border="2px"
-      borderColor="#fd9801"
-      borderRadius="md"
-      boxShadow="md"
-      p="6"
-      pb={paddingBottom}
-      bg="#f5f5f5"
-      h="500px"
-      w="100%"
-    >
-      <Flex justify="space-between" mb="4" align="center">
-        <Box fontSize={fontSize} fontWeight="bold">
-          {title}
-        </Box>
-        {showIcons && (
-          <Flex alignItems="center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1 }}
-            >
-              <Box
-                border="2px"
-                borderColor="#fd9801"
-                borderRadius="lg"
-                px={2}
-                py={1}
-                mr={2}
-                bg={'white'}
+    <>
+      <Box
+        border="2px"
+        borderColor="#fd9801"
+        borderRadius="md"
+        boxShadow="md"
+        p="6"
+        pb={paddingBottom}
+        bg="#f5f5f5"
+        h="500px"
+        w="100%"
+      >
+        <Flex justify="space-between" mb="4" align="center">
+          <Box fontSize={fontSize} fontWeight="bold">
+            {title}
+          </Box>
+          {showIcons && (
+            <Flex alignItems="center">
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1 }}
               >
-                <Text fontSize={fontSize}>
-                  Current: {formatValue(mostRecentValue)}
-                </Text>
-              </Box>
-            </motion.div>
-            <Popover>
-              <PopoverTrigger>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 1, delay: 0.5 }}
+                <Box
+                  border="2px"
+                  borderColor="#fd9801"
+                  borderRadius="lg"
+                  px={2}
+                  py={1}
+                  mr={2}
+                  bg={'white'}
                 >
-                  <Box>
-                    <Tooltip label="Customize">
-                      <IconButton
-                        icon={<FaCog />}
-                        variant="outline"
-                        colorScheme="#fd9801"
-                        size="sm"
-                        mr="2"
-                        bg={'white'}
-                      />
-                    </Tooltip>
-                  </Box>
-                </motion.div>
-              </PopoverTrigger>
-              <PopoverContent
-                borderColor="#212121"
-                mr={2}
-                border="2px"
-                borderRadius="lg"
-              >
-                <PopoverCloseButton color="white" size="lg" />
-                <PopoverHeader
-                  fontWeight="bold"
-                  fontSize="xl"
-                  bg="#fd9801"
-                  color="white"
-                  borderRadius="md"
-                >
-                  Customize Chart
-                </PopoverHeader>
-                <PopoverBody bg={'#f5f5f5'} borderRadius="md">
-                  <Text
-                    fontWeight="bold"
-                    fontSize="lg"
-                    py={2}
-                    textAlign="center"
-                  >
-                    Select Chart Type
+                  <Text fontSize={fontSize}>
+                    Current: {formatValue(mostRecentValue)}
                   </Text>
-                  <Button
-                    mr={2}
-                    mb={2}
-                    borderRadius="md"
-                    border="1px"
-                    color="#fd9801"
-                    bg="white"
-                    borderColor="#212121"
-                    width="100%"
-                    onClick={() => changeChartType('line')}
-                    leftIcon={<FaChartLine size={iconSize} />}
-                  >
-                    LINE
-                  </Button>
-                  <Button
-                    mr={2}
-                    borderRadius="md"
-                    border="1px"
-                    color="#fd9801"
-                    bg="white"
-                    borderColor="#212121"
-                    width="100%"
-                    onClick={() => changeChartType('bar')}
-                    leftIcon={<FaChartBar size={iconSize} />}
-                  >
-                    BAR
-                  </Button>
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
-            <Popover>
-              <PopoverTrigger>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 1, delay: 1 }}
-                >
-                  <Box>
-                    <Tooltip label="Details">
-                      <IconButton
-                        icon={<BsBarChartFill />}
-                        variant="outline"
-                        colorScheme="#212121"
-                        size="sm"
-                        bg={'white'}
-                        mr="2"
-                      />
-                    </Tooltip>
-                  </Box>
-                </motion.div>
-              </PopoverTrigger>
-              <PopoverContent
-                borderColor="#212121"
-                mr={2}
-                border="2px"
-                borderRadius="lg"
-              >
-                <PopoverCloseButton color="white" size="lg" />
-                <PopoverHeader
-                  fontWeight="bold"
-                  fontSize="xl"
-                  bg="#fd9801"
-                  color="white"
-                  borderRadius="md"
-                >
-                  Chart Details
-                </PopoverHeader>
-                <PopoverBody bg={'#f5f5f5'} borderRadius="md">
-                  <ChartDetails
-                    chartType={chartType}
-                    metric={metric}
-                    weatherData={weatherData}
-                    timePeriod={timePeriod}
-                    adjustTimePeriod={adjustTimePeriod}
-                  />
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
-            <Tooltip label="Expand Chart">
-            <IconButton
-                        icon={<FaExpandAlt />}
-                        variant="outline"
-                        colorScheme="#212121"
-                        size="sm"
-                        bg={'white'}
-                      />
-            </Tooltip>
-          </Flex>
-        )}
-      </Flex>
-      {children}
-    </Box>
+                </Box>
+              </motion.div>
+              <Tooltip label="Expand Chart">
+                <IconButton
+                  icon={<FaExpandAlt />}
+                  variant="outline"
+                  colorScheme="#212121"
+                  size="sm"
+                  bg={'white'}
+                  onClick={onOpen}
+                />
+              </Tooltip>
+            </Flex>
+          )}
+        </Flex>
+        {children}
+      </Box>
+      <ChartExpandModal isOpen={isOpen} onClose={onClose} title={title}>
+        <Box
+          h="100%"
+          w="100%"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          bg="gray.50"
+          p="4"
+          borderRadius="md"
+          boxShadow="md"
+        >
+          {children}
+        </Box>
+      </ChartExpandModal>
+    </>
   );
 };
 

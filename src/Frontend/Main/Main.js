@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Center, Flex, Grid, GridItem, Spinner } from '@chakra-ui/react';
+import { Box, Grid, GridItem } from '@chakra-ui/react';
 import { LineChart, BarChart } from '../Charts/Charts';
 import ChartWrapper from '../Charts/ChartWrapper';
 
@@ -14,7 +14,7 @@ const MainContent = ({ weatherData, isMinimized, timePeriod, adjustTimePeriod })
     setIsReady(false);
     const timer = setTimeout(() => {
       setIsReady(true);
-    }, .5); // delay to let layout stabilize
+    }, 500); // delay to let layout stabilize
 
     return () => clearTimeout(timer);
   }, [isMinimized]);
@@ -26,13 +26,13 @@ const MainContent = ({ weatherData, isMinimized, timePeriod, adjustTimePeriod })
   if (!isReady) {
     return (
       <Box 
-      display="flex" 
-      justifyContent="center" 
-      alignItems="center" 
-      height="100vh"
-    >
-      {/* <Spinner size="xl" /> */}
-    </Box>
+        display="flex" 
+        justifyContent="center" 
+        alignItems="center" 
+        height="100vh"
+      >
+        {/* <Spinner size="xl" /> */}
+      </Box>
     );
   }
 
