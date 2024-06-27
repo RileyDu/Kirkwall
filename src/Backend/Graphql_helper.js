@@ -51,6 +51,90 @@ async function getWeatherData(limit) {
   return executeGraphqlQuery(WeatherDataQuery, { limit });
 }
 
+async function getTempatureData(limit) {
+  const TempatureDataQuery = `
+  query weather_data($limit: Int!) {
+    weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: $limit) {
+      station {
+        name
+        location {
+          srid
+          wkt
+        }
+      }
+      message_timestamp
+      temperature
+      ts
+      stationid
+    }
+  }
+  `;
+  return executeGraphqlQuery(TempatureDataQuery, { limit });
+}
+
+async function getRainData(limit) {
+  const RainDataQuery = `
+  query weather_data($limit: Int!) {
+    weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: $limit) {
+      station {
+        name
+        location {
+          srid
+          wkt
+        }
+      }
+      message_timestamp
+      rain_15_min_inches
+      ts
+      stationid
+    }
+  }
+  `;
+  return executeGraphqlQuery(RainDataQuery, { limit });
+}
+
+async function getHumidityData(limit) {
+  const HumidityDataQuery = `
+  query weather_data($limit: Int!) {
+    weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: $limit) {
+      station {
+        name
+        location {
+          srid
+          wkt
+        }
+      }
+      message_timestamp
+      percent_humidity
+      ts
+      stationid
+    }
+  }
+  `;
+  return executeGraphqlQuery(HumidityDataQuery, { limit });
+}
+
+async function getWindData(limit) {
+  const WindDataQuery = `
+  query weather_data($limit: Int!) {
+    weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: $limit) {
+      station {
+        name
+        location {
+          srid
+          wkt
+        }
+      }
+      message_timestamp
+      wind_speed
+      wind_direction
+      ts
+      stationid
+    }
+  }
+  `;
+  return executeGraphqlQuery(WindDataQuery, { limit });
+}
 
 
 async function editWeatherData(dataid, temperature, humidity, windSpeed, windDirection) {
@@ -93,4 +177,4 @@ async function editWeatherData(dataid, temperature, humidity, windSpeed, windDir
 
 
 // Export the functions to be used elsewhere in the project
-export { getWeatherData,editWeatherData };
+export { getWeatherData,editWeatherData, getTempatureData };
