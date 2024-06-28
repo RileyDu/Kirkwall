@@ -5,8 +5,6 @@ import {
   Text,
   IconButton,
   Tooltip,
-  useBreakpointValue,
-  useDisclosure,
   Button,
   Input,
   Modal,
@@ -19,6 +17,8 @@ import {
   FormControl,
   FormLabel,
   useToast,
+  useBreakpointValue,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { FaExpandAlt, FaChessRook } from 'react-icons/fa';
 import { motion } from 'framer-motion';
@@ -26,6 +26,7 @@ import { useLocation } from 'react-router-dom';
 import ChartExpandModal from './ChartExpandModal'; // Adjust the path as necessary
 import ChartDetails, { getLabelForMetric } from './ChartDetails';
 import { useColorMode } from '@chakra-ui/react';
+import axios from 'axios';
 
 const ChartWrapper = ({
   title,
@@ -42,21 +43,12 @@ const ChartWrapper = ({
   const [phoneNumber, setPhoneNumber] = useState('');
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
+  const [lastAlertTime, setLastAlertTime] = useState(null);
+
   const location = useLocation();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
-
-  const MotionIconButton = motion(IconButton);
   const toast = useToast();
   const { colorMode } = useColorMode();
-
-  const changeChartType = type => {
-    setChartType(type);
-    if (onChartChange) {
-      onChartChange(type);
-    }
-  };
 
   const restrictedRoutes = [
     '/TempSensors',
@@ -80,14 +72,6 @@ const ChartWrapper = ({
   }, [location.pathname, title]);
 
   const iconSize = '24';
-
-  const mostRecentValue =
-    weatherData && weatherData.length > 0 ? weatherData[0][metric] : 'N/A';
-  const { label, addSpace } = getLabelForMetric(metric);
-  const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
-
-  const fontSize = useBreakpointValue({ base: 'sm', md: 'lg' });
-  const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
 
   const getBackgroundColor = colorMode =>
     colorMode === 'light' ? '#f9f9f9' : '#303030';
@@ -116,39 +100,75 @@ const ChartWrapper = ({
       isClosable: true,
     });
 
-    console.log('Phone number:', phoneNumber);
-    console.log('High threshold:', highThreshold);
-    console.log('Low threshold:', lowThreshold);
-
     handleCloseModal();
   };
 
+  const sendSMSAlert = async (to, body) => {
+    try {
+      const response = await axios.post('/send-sms', { to, body });
+      console.log('SMS response:', response.data);
+      toast({
+        title: 'Alert sent.',
+        description: response.data.message,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error('Error sending alert:', error);
+      toast({
+        title: 'Error sending alert.',
+        description: error.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
+  const checkThresholdExceed = () => {
+    const chartSettings = JSON.parse(localStorage.getItem(`chartSettings_${title}`));
+    if (chartSettings) {
+      const { phoneNumber, highThreshold, lowThreshold } = chartSettings;
+      const lastValue = weatherData && weatherData.length > 0 ? weatherData[0][metric] : null;
+      const now = new Date();
 
-// const sendSMSAlert = async (to, body) => {
-//     try {
-//       const response = await axios.post('/send-sms', { to, body });
-//       console.log('SMS response:', response.data);
-//       toast({
-//         title: "Alert sent.",
-//         description: response.data.message,
-//         status: "success",
-//         duration: 3000,
-//         isClosable: true,
-//       });
-//     } catch (error) {
-//       console.error('Error sending alert:', error);
-//       toast({
-//         title: "Error sending alert.",
-//         description: error.message,
-//         status: "error",
-//         duration: 3000,
-//         isClosable: true,
-//       });
-//     }
-//   };
+      if (
+        lastValue &&
+        (lastValue > highThreshold || lastValue < lowThreshold) &&
+        (!lastAlertTime || now - new Date(lastAlertTime) >= 5 * 60 * 1000)
+      ) {
+        const message = `${title} has exceeded the threshold. Current value: ${lastValue}`;
+        sendSMSAlert(phoneNumber, message);
+        setLastAlertTime(now);
+      }
+    }
+  };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      checkThresholdExceed();
+    }, 305000); // 5 minutes
 
+    return () => clearInterval(interval);
+  }, [weatherData, metric, title, lastAlertTime]);
+
+  const mostRecentValue = weatherData && weatherData.length > 0 ? weatherData[0][metric] : 'N/A';
+  const { label, addSpace } = getLabelForMetric(metric);
+  const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
+
+  const fontSize = useBreakpointValue({ base: 'sm', md: 'lg' });
+  const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
+
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+
+  const changeChartType = type => {
+    setChartType(type);
+    if (onChartChange) {
+      onChartChange(type);
+    }
+  };
 
   return (
     <>
@@ -202,7 +222,7 @@ const ChartWrapper = ({
                     size="md"
                     bg={'brand.400'}
                     _hover={{ bg: 'brand.800' }}
-                    onClick={() => handleOpenModal()}
+                    onClick={handleOpenModal}
                     mr={2}
                     border={'2px solid #fd9801'}
                     whileHover={{ scale: 1.1 }}
@@ -290,8 +310,11 @@ const ChartWrapper = ({
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button onClick={handleFormSubmit} variant={'sidebar'}>
-              Submit
+            <Button colorScheme="brand" mr={3} onClick={handleFormSubmit}>
+              Save
+            </Button>
+            <Button variant="ghost" onClick={handleCloseModal}>
+              Cancel
             </Button>
           </ModalFooter>
         </ModalContent>
