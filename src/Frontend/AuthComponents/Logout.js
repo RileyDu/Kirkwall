@@ -22,7 +22,7 @@ const Logout = ({ onLogout }) => {
   if (!user || location.pathname === '/login') return null;
 
   return (
-    <Button onClick={handleLogout} size={'lg'} w="100%" fontSize="x-large" borderRadius={'full'} border={'2px solid #212121'}>
+    <Button onClick={handleLogout} size={'lg'} w="100%" fontSize="x-large" borderRadius={'full'} variant={'sidebar'}>
       LOGOUT
     </Button>
   );

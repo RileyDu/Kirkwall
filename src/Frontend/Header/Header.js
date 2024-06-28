@@ -195,9 +195,9 @@ const Header = () => {
                       ml="4"
                     />
                   </PopoverTrigger>
-                  <PopoverContent bg="white" borderColor="#212121" zIndex={1005}>
-                    <PopoverCloseButton size="lg" />
-                    <PopoverHeader fontWeight="bold" fontSize="xl" bg="#fd9801">Kirkwall</PopoverHeader>
+                  <PopoverContent bg="brand.50" borderColor="#212121"  zIndex={1005}>
+                    <PopoverCloseButton size="lg"  />
+                    <PopoverHeader fontWeight="bold" fontSize="xl" bg="#212121" >Kirkwall</PopoverHeader>
                     <PopoverBody>
                       <Logout />
                     </PopoverBody>
