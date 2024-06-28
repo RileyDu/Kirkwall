@@ -51,7 +51,7 @@ const MainContent = ({
 
   return (
     <Box
-      bg={colorMode === 'light' ? 'white' : 'gray.800'}
+      bg={colorMode === 'light' ? 'brand.300' : 'gray.800'}
       color={colorMode === 'light' ? 'black' : 'white'}
       flex="1"
       p="4"

@@ -18,7 +18,6 @@ import {
   FormControl,
   FormLabel,
   useToast,
-  
 } from '@chakra-ui/react';
 import { FaExpandAlt, FaChessRook } from 'react-icons/fa';
 import { motion } from 'framer-motion';
@@ -69,9 +68,12 @@ const ChartWrapper = ({
   useEffect(() => {
     setShowIcons(!restrictedRoutes.includes(location.pathname));
 
-    const chartSettings = JSON.parse(localStorage.getItem(`chartSettings_${title}`));
+    const chartSettings = JSON.parse(
+      localStorage.getItem(`chartSettings_${title}`)
+    );
     if (chartSettings) {
-      const { phoneNumber, highThreshold, lowThreshold } = chartSettings}
+      const { phoneNumber, highThreshold, lowThreshold } = chartSettings;
+    }
   }, [location.pathname]);
 
   const iconSize = '24';
@@ -88,7 +90,9 @@ const ChartWrapper = ({
     colorMode === 'light' ? '#f9f9f9' : '#303030';
 
   const handleFormSubmit = () => {
-    let formattedPhoneNumber = phoneNumber.startsWith('+1') ? phoneNumber : `+1${phoneNumber}`;
+    let formattedPhoneNumber = phoneNumber.startsWith('+1')
+      ? phoneNumber
+      : `+1${phoneNumber}`;
 
     const chartSettings = {
       phoneNumber: formattedPhoneNumber,
@@ -96,12 +100,15 @@ const ChartWrapper = ({
       lowThreshold: parseFloat(lowThreshold),
     };
 
-    localStorage.setItem(`chartSettings_${title}`, JSON.stringify(chartSettings));
+    localStorage.setItem(
+      `chartSettings_${title}`,
+      JSON.stringify(chartSettings)
+    );
 
     toast({
-      title: "Settings saved.",
-      description: "Your chart settings have been saved successfully.",
-      status: "success",
+      title: 'Settings saved.',
+      description: 'Your chart settings have been saved successfully.',
+      status: 'success',
       duration: 3000,
       isClosable: true,
     });
@@ -121,7 +128,6 @@ const ChartWrapper = ({
         bg={getBackgroundColor(colorMode)}
         h="500px"
         w="100%"
-        
       >
         <Flex justify="space-between" mb="4" align="center">
           <Box fontSize={fontSize} fontWeight="bold">
@@ -141,7 +147,7 @@ const ChartWrapper = ({
                   px={2}
                   py={1}
                   mr={2}
-                  bg={'white'}
+                  bg={'brand.400'}
                   color={'#212121'}
                 >
                   <Text fontSize={fontSize}>
@@ -149,7 +155,7 @@ const ChartWrapper = ({
                   </Text>
                 </Box>
               </motion.div>
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1, delay: 0.2 }}
@@ -160,7 +166,8 @@ const ChartWrapper = ({
                     variant="outline"
                     color="#212121"
                     size="md"
-                    bg={'white'}
+                    bg={'brand.400'}
+                    _hover={{ bg: 'brand.800' }}
                     onClick={() => handleOpenModal()}
                     mr={2}
                     border={'2px solid #fd9801'}
@@ -178,7 +185,8 @@ const ChartWrapper = ({
                     variant="outline"
                     color="#212121"
                     size="md"
-                    bg={'white'}
+                    bg={'brand.400'}
+                    _hover={{ bg: 'brand.800' }}
                     onClick={onOpen}
                     border={'2px solid #fd9801'}
                   />
@@ -208,7 +216,7 @@ const ChartWrapper = ({
               <Input
                 type="text"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={e => setPhoneNumber(e.target.value)}
               />
             </FormControl>
             <FormControl mt={4}>
@@ -216,7 +224,7 @@ const ChartWrapper = ({
               <Input
                 type="number"
                 value={highThreshold}
-                onChange={(e) => setHighThreshold(e.target.value)}
+                onChange={e => setHighThreshold(e.target.value)}
               />
             </FormControl>
             <FormControl mt={4}>
@@ -224,7 +232,7 @@ const ChartWrapper = ({
               <Input
                 type="number"
                 value={lowThreshold}
-                onChange={(e) => setLowThreshold(e.target.value)}
+                onChange={e => setLowThreshold(e.target.value)}
               />
             </FormControl>
           </ModalBody>
