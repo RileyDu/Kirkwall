@@ -67,7 +67,7 @@ const customTheme = extendTheme({
           },
           _active: {
             bg: 'brand.500',
-            color: 'white',
+            color: '#212121',
           },
         },
         sidebar: {
@@ -80,7 +80,7 @@ const customTheme = extendTheme({
           },
           _active: {
             bg: 'brand.500',
-            color: 'white',
+            color: '#212121',
           },
         },
       },

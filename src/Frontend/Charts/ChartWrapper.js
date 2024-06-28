@@ -47,13 +47,10 @@ const ChartWrapper = ({
   const handleCloseModal = () => setIsModalOpen(false);
 
   const MotionIconButton = motion(IconButton);
-
-
   const toast = useToast();
-
   const { colorMode } = useColorMode();
 
-  const changeChartType = type => {
+  const changeChartType = (type) => {
     setChartType(type);
     if (onChartChange) {
       onChartChange(type);
@@ -75,21 +72,23 @@ const ChartWrapper = ({
       localStorage.getItem(`chartSettings_${title}`)
     );
     if (chartSettings) {
-      const { phoneNumber, highThreshold, lowThreshold } = chartSettings;
+      setPhoneNumber(chartSettings.phoneNumber || '');
+      setHighThreshold(chartSettings.highThreshold || '');
+      setLowThreshold(chartSettings.lowThreshold || '');
     }
-  }, [location.pathname]);
+  }, [location.pathname, title]);
 
   const iconSize = '24';
 
   const mostRecentValue =
     weatherData && weatherData.length > 0 ? weatherData[0][metric] : 'N/A';
   const { label, addSpace } = getLabelForMetric(metric);
-  const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
+  const formatValue = (value) => `${value}${addSpace ? ' ' : ''}${label}`;
 
   const fontSize = useBreakpointValue({ base: 'sm', md: 'lg' });
   const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
 
-  const getBackgroundColor = colorMode =>
+  const getBackgroundColor = (colorMode) =>
     colorMode === 'light' ? '#f9f9f9' : '#303030';
 
   const handleFormSubmit = () => {
@@ -223,7 +222,7 @@ const ChartWrapper = ({
               <Input
                 type="text"
                 value={phoneNumber}
-                onChange={e => setPhoneNumber(e.target.value)}
+                onChange={(e) => setPhoneNumber(e.target.value)}
               />
             </FormControl>
             <FormControl mt={4}>
@@ -231,7 +230,7 @@ const ChartWrapper = ({
               <Input
                 type="number"
                 value={highThreshold}
-                onChange={e => setHighThreshold(e.target.value)}
+                onChange={(e) => setHighThreshold(e.target.value)}
               />
             </FormControl>
             <FormControl mt={4}>
@@ -239,7 +238,7 @@ const ChartWrapper = ({
               <Input
                 type="number"
                 value={lowThreshold}
-                onChange={e => setLowThreshold(e.target.value)}
+                onChange={(e) => setLowThreshold(e.target.value)}
               />
             </FormControl>
           </ModalBody>
