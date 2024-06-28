@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../Backend/Firebase';
+import { motion } from 'framer-motion';
 import { 
   useMediaQuery, 
   Flex, 
@@ -43,8 +44,6 @@ import Logout from '../../Frontend/AuthComponents/Logout';
 import { useNavigate } from 'react-router-dom';
 import WeatherAlerts from '../Alert/WeatherAlerts';
 import { useWeatherData } from '../WeatherDataContext';
-
-
 
 const Header = () => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
@@ -118,6 +117,12 @@ const Header = () => {
         { label: 'Average Wind Speed (mph)', value: 'N/A' },
       ];
 
+  const motionProps = {
+    initial: { opacity: 0, x: '-100%' },
+    animate: { opacity: 1, x: 0 },
+    transition: { type: 'spring', stiffness: 50, damping: 10 }
+  };
+
   return (
     <>
       <Flex
@@ -135,71 +140,77 @@ const Header = () => {
         borderBottom="3px solid #fd9801"
         height="64px"
       >
-        <Box>
-          <img
-            src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
-            alt="kirkwall logo"
-            style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
-            onClick={() => navigate('/')}
-          />
-        </Box>
-        <Flex align="center">
-          <Button 
-            onClick={onSummaryToggle} 
-            size="sm" 
-            mr="4"
-            colorScheme="orange"
-          >
-            {isSummaryOpen ? 'Hide Summary' : 'Show Summary'}
-          </Button>
-          <Tooltip label="Toggle Dark Mode">
-            <IconButton
-              icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
-              isRound
-              size="lg"
-              onClick={toggleColorMode}
-              bg="transparent"
-              color="whitesmoke"
-              aria-label="Toggle Dark Mode"
+        <motion.div {...motionProps}>
+          <Box>
+            <img
+              src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
+              alt="kirkwall logo"
+              style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
+              onClick={() => navigate('/')}
             />
-          </Tooltip>
+          </Box>
+        </motion.div>
+        <Flex align="center">
+          <motion.div {...motionProps}>
+            <Button 
+              onClick={onSummaryToggle} 
+              size="sm" 
+              mr="4"
+              colorScheme="orange"
+            >
+              {isSummaryOpen ? 'Hide Summary' : 'Show Summary'}
+            </Button>
+          </motion.div>
+          <motion.div {...motionProps}>
+            <Tooltip label="Toggle Dark Mode">
+              <IconButton
+                icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
+                isRound
+                size="lg"
+                onClick={toggleColorMode}
+                bg="transparent"
+                color="whitesmoke"
+                aria-label="Toggle Dark Mode"
+              />
+            </Tooltip>
+          </motion.div>
           {isLargerThan768 ? (
             user ? (
-              <Popover>
-                <PopoverTrigger>
-                  <Avatar
-                    size="md"
-                    name="Grand Farm Logo"
-                    src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
-                    cursor="pointer"
-                    ml="4"
-                  />
-                </PopoverTrigger>
-                <PopoverContent bg="white" borderColor="#212121" zIndex={1005}>
-                  <PopoverCloseButton size="lg" />
-                  <PopoverHeader fontWeight="bold" fontSize="xl" bg="#fd9801">Kirkwall</PopoverHeader>
-                  <PopoverBody>
-                    {/* <Button onClick={toggleAlerts} w="100%" size="lg" borderRadius="full" fontSize="xl">
-                      TOGGLE ALERTS
-                    </Button> */}
-                    <Logout />
-                  </PopoverBody>
-                </PopoverContent>
-              </Popover>
+              <motion.div {...motionProps}>
+                <Popover>
+                  <PopoverTrigger>
+                    <Avatar
+                      size="md"
+                      name="Grand Farm Logo"
+                      src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
+                      cursor="pointer"
+                      ml="4"
+                    />
+                  </PopoverTrigger>
+                  <PopoverContent bg="white" borderColor="#212121" zIndex={1005}>
+                    <PopoverCloseButton size="lg" />
+                    <PopoverHeader fontWeight="bold" fontSize="xl" bg="#fd9801">Kirkwall</PopoverHeader>
+                    <PopoverBody>
+                      <Logout />
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
+              </motion.div>
             ) : null
           ) : (
-            <IconButton 
-              icon={<FaBars />} 
-              bg="transparent" 
-              color="whitesmoke" 
-              aria-label="Menu" 
-              onClick={openDrawer} 
-              ml="4"
-            />
+            <motion.div {...motionProps}>
+              <IconButton 
+                icon={<FaBars />} 
+                bg="transparent" 
+                color="whitesmoke" 
+                aria-label="Menu" 
+                onClick={openDrawer} 
+                ml="4"
+              />
+            </motion.div>
           )}
         </Flex>
       </Flex>
-      {/* {showAlerts && <WeatherAlerts isVisible={showAlerts} onClose={toggleAlerts} />} Conditionally render WeatherAlerts */}
 
       <Drawer isOpen={!isLargerThan768 && isDrawerOpen} placement="left" onClose={closeDrawer}>
         <DrawerOverlay />
@@ -208,34 +219,42 @@ const Header = () => {
           <DrawerHeader>Menu</DrawerHeader>
           <DrawerBody>
             <Stack spacing={6} direction="column" alignItems="flex-start">
-              <Button
-                leftIcon={<WiThermometer size="24px" />}
-                onClick={() => handleNavigation('/TempSensors')}
-                {...buttonStyleProps}
-              >
-                Temperature Sensors
-              </Button>
-              <Button
-                leftIcon={<WiStrongWind size="24px" />}
-                onClick={() => handleNavigation('/WindSensors')}
-                {...buttonStyleProps}
-              >
-                Wind Sensors
-              </Button>
-              <Button
-                leftIcon={<WiRain size="24px" />}
-                onClick={() => handleNavigation('/RainSensors')}
-                {...buttonStyleProps}
-              >
-                Rain Sensors
-              </Button>
-              <Button
-                leftIcon={<WiHumidity size="24px" />}
-                onClick={() => handleNavigation('/HumiditySensors')}
-                {...buttonStyleProps}
-              >
-                Humidity Sensors
-              </Button>
+              <motion.div {...motionProps}>
+                <Button
+                  leftIcon={<WiThermometer size="24px" />}
+                  onClick={() => handleNavigation('/TempSensors')}
+                  {...buttonStyleProps}
+                >
+                  Temperature Sensors
+                </Button>
+              </motion.div>
+              <motion.div {...motionProps}>
+                <Button
+                  leftIcon={<WiStrongWind size="24px" />}
+                  onClick={() => handleNavigation('/WindSensors')}
+                  {...buttonStyleProps}
+                >
+                  Wind Sensors
+                </Button>
+              </motion.div>
+              <motion.div {...motionProps}>
+                <Button
+                  leftIcon={<WiRain size="24px" />}
+                  onClick={() => handleNavigation('/RainSensors')}
+                  {...buttonStyleProps}
+                >
+                  Rain Sensors
+                </Button>
+              </motion.div>
+              <motion.div {...motionProps}>
+                <Button
+                  leftIcon={<WiHumidity size="24px" />}
+                  onClick={() => handleNavigation('/HumiditySensors')}
+                  {...buttonStyleProps}
+                >
+                  Humidity Sensors
+                </Button>
+              </motion.div>
             </Stack>
           </DrawerBody>
         </DrawerContent>
@@ -254,13 +273,12 @@ const Header = () => {
             ) : error ? (
               <Text color="red.500">{error}</Text>
             ) : (
-              <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+              <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                 {summaryMetrics.map((metric, index) => (
                   <GridItem key={index}>
                     <Stat>
                       <StatLabel>{metric.label}</StatLabel>
                       <StatNumber>{metric.value}</StatNumber>
-                      <StatHelpText>Summary of data</StatHelpText>
                     </Stat>
                   </GridItem>
                 ))}
@@ -269,6 +287,8 @@ const Header = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
+
+      {showAlerts && <WeatherAlerts />}
     </>
   );
 };
