@@ -1,4 +1,6 @@
 import { Box, Text, Flex } from '@chakra-ui/react';
+import { MinusIcon, AddIcon } from '@chakra-ui/icons';
+
 
 const getLabelForMetric = metric => {
   switch (metric) {
@@ -15,7 +17,7 @@ const getLabelForMetric = metric => {
   }
 };
 
-const MiniDashboard = ({ weatherData, metric }) => {
+const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
   const reversedData = [...weatherData]?.reverse();
   const currentData = reversedData.map(data => data[metric]);
 
@@ -117,9 +119,25 @@ const MiniDashboard = ({ weatherData, metric }) => {
           textAlign="center"
         >
           <Flex alignItems="center">
+          <MinusIcon
+                  icon={<MinusIcon />}
+                  onClick={() => adjustTimePeriod(-12)}
+                  aria-label="Decrease time period"
+                  mr={2}
+                  color={'red'}
+                  cursor={'pointer'}
+                />
             <Text fontSize={['xl', '2xl']} fontWeight="bold">
               {timePeriod}
             </Text>
+            <AddIcon
+                  icon={<AddIcon />}
+                  onClick={() => adjustTimePeriod(12)}
+                  aria-label="Increase time period"
+                  ml={2}
+                  color={'green'}
+                  cursor={'pointer'}
+                />
           </Flex>
           <Text fontSize={['lg', 'xl']}>Time Period</Text>
         </Box>

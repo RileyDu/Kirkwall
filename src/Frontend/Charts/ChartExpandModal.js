@@ -4,7 +4,7 @@ import MiniDashboard from './ChartDashboard';
 import { FaChartLine, FaChartBar } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
-const ChartExpandModal = ({ isOpen, onClose, children, title, weatherData, metric, onChartChange }) => {
+const ChartExpandModal = ({ isOpen, onClose, children, title, weatherData, metric, onChartChange, adjustTimePeriod }) => {
   const [chartType, setChartType] = useState('bar');
 
   const MotionButton = motion(Button);
@@ -46,7 +46,7 @@ const ChartExpandModal = ({ isOpen, onClose, children, title, weatherData, metri
         </ModalHeader>
         <ModalCloseButton size="lg" color="white" mt={2} />
         <ModalBody>
-          <Box display="flex" justifyContent="space-between" my={4}>
+          {/* <Box display="flex" justifyContent="space-between" my={4}>
             <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>1H</MotionButton>
             <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>3H</MotionButton>
             <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>6H</MotionButton>
@@ -54,9 +54,9 @@ const ChartExpandModal = ({ isOpen, onClose, children, title, weatherData, metri
             <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>1D</MotionButton>
             <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>3D</MotionButton>
             <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>1W</MotionButton>
-          </Box>
+          </Box> */}
           <Box
-            h="800px"
+            h="900px"
             w="100%"
             display="flex"
             justifyContent="center"
@@ -70,7 +70,7 @@ const ChartExpandModal = ({ isOpen, onClose, children, title, weatherData, metri
           >
             {children}
           </Box>
-          <MiniDashboard metric={metric} weatherData={weatherData} />
+          <MiniDashboard metric={metric} weatherData={weatherData} adjustTimePeriod={adjustTimePeriod} />
         </ModalBody>
       </ModalContent>
     </Modal>

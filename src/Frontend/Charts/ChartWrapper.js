@@ -116,8 +116,39 @@ const ChartWrapper = ({
       isClosable: true,
     });
 
+    console.log('Phone number:', phoneNumber);
+    console.log('High threshold:', highThreshold);
+    console.log('Low threshold:', lowThreshold);
+
     handleCloseModal();
   };
+
+
+
+// const sendSMSAlert = async (to, body) => {
+//     try {
+//       const response = await axios.post('/send-sms', { to, body });
+//       console.log('SMS response:', response.data);
+//       toast({
+//         title: "Alert sent.",
+//         description: response.data.message,
+//         status: "success",
+//         duration: 3000,
+//         isClosable: true,
+//       });
+//     } catch (error) {
+//       console.error('Error sending alert:', error);
+//       toast({
+//         title: "Error sending alert.",
+//         description: error.message,
+//         status: "error",
+//         duration: 3000,
+//         isClosable: true,
+//       });
+//     }
+//   };
+
+
 
   return (
     <>
@@ -212,6 +243,7 @@ const ChartWrapper = ({
         weatherData={weatherData}
         metric={metric}
         onChartChange={changeChartType}
+        adjustTimePeriod={adjustTimePeriod}
       />
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <ModalOverlay />

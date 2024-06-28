@@ -77,24 +77,24 @@ const MainApp = () => {
   const [loading, setLoading] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  // const [timePeriod, setTimePeriod] = useState(37); // Default time period
+  const [timePeriod, setTimePeriod] = useState(37); // Default time period
   const location = useLocation();
 
   const toggleSidebar = () => setIsMinimized(!isMinimized);
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
-  // const adjustTimePeriod = adjustment => {
-  //   setTimePeriod(prevTimePeriod => {
-  //     const newTimePeriod = prevTimePeriod + adjustment;
-  //     // Ensure the time period doesn't go below 60 minutes
-  //     return newTimePeriod < 13 ? 13 : newTimePeriod;
-  //   });
-  // };
+  const adjustTimePeriod = adjustment => {
+    setTimePeriod(prevTimePeriod => {
+      const newTimePeriod = prevTimePeriod + adjustment;
+      // Ensure the time period doesn't go below 60 minutes
+      return newTimePeriod < 13 ? 13 : newTimePeriod;
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getWeatherData('37');
+        const response = await getWeatherData(timePeriod);
         if (Array.isArray(response.data.weather_data)) {
           setWeatherData(response.data.weather_data);
         } else {
@@ -116,7 +116,7 @@ const MainApp = () => {
     
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [timePeriod]);
 
 
   const spin = keyframes`
@@ -161,8 +161,8 @@ return (
                 <MainContent
                   weatherData={weatherData}
                   isMinimized={isMinimized}
-                  // timePeriod={timePeriod}
-                  // adjustTimePeriod={adjustTimePeriod}
+                  timePeriod={timePeriod}
+                  adjustTimePeriod={adjustTimePeriod}
                 />
               </ProtectedRoute>
             }
