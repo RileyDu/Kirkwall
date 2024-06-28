@@ -117,6 +117,9 @@ const Header = () => {
         { label: 'Average Wind Speed (mph)', value: 'N/A' },
       ];
 
+      const MotionIconButton = motion(IconButton);
+      const MotionButton = motion(Button);
+
   const motionProps = {
     initial: { opacity: 0, x: '-100%' },
     animate: { opacity: 1, x: 0 },
@@ -152,18 +155,20 @@ const Header = () => {
         </motion.div>
         <Flex align="center">
           <motion.div {...motionProps}>
-            <Button 
+            <MotionButton 
               onClick={onSummaryToggle} 
               size="sm" 
               mr="4"
-              colorScheme="orange"
+              variant="sidebar"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
             >
               {isSummaryOpen ? 'Hide Summary' : 'Show Summary'}
-            </Button>
+            </MotionButton>
           </motion.div>
           <motion.div {...motionProps}>
             <Tooltip label="Toggle Dark Mode">
-              <IconButton
+              <MotionIconButton
                 icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
                 isRound
                 size="lg"
@@ -171,6 +176,9 @@ const Header = () => {
                 bg="transparent"
                 color="whitesmoke"
                 aria-label="Toggle Dark Mode"
+                _hover={{ bg: 'transparent' }}
+                whileHover={{ scale: 1.4 }}
+                whileTap={{ scale: 0.9 }}
               />
             </Tooltip>
           </motion.div>

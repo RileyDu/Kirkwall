@@ -22,10 +22,10 @@ const buttonStyleProps = {
   fontSize: 'md',
   borderRadius: 'md',
   mb: 4,
-  bg: '#fd9801',
-  color: 'white',
+  bg: 'brand.400',
+  color: '#212121',
   _hover: {
-    bg: '#e38800',
+    bg: 'brand.800',
   },
   boxShadow: 'md',
 };
@@ -85,8 +85,6 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMen
         <MotionIconButton
           icon={isMinimized ? <FaChevronRight /> : <FaChevronLeft />}
           onClick={toggleSidebar}
-          // color="white"
-          // _hover={{ color: 'black' }}
           aria-label={isMinimized ? 'Expand' : 'Minimize'}
           variant={'pill'}
           whileHover={{ scale: 1.1 }}
@@ -102,8 +100,6 @@ const SidebarContent = ({ navigate, colorMode }) => (
   <>
     <MotionButton
       variant="sidebar"
-      // color="#212121"
-      // _hover={{ bg: 'white', color: 'black' }}
       leftIcon={<WiThermometer size="30" />}
       onClick={() => navigate('/TempSensors')}
       justifyContent="flex-start"
@@ -116,7 +112,7 @@ const SidebarContent = ({ navigate, colorMode }) => (
       Temperature Sensors
     </MotionButton>
     <MotionButton
-      variant="outline"
+      variant="sidebar"
       color="white"
       _hover={{ bg: 'white', color: 'black' }}
       leftIcon={<WiStrongWind size="30" />}
@@ -130,7 +126,7 @@ const SidebarContent = ({ navigate, colorMode }) => (
       Wind Sensors
     </MotionButton>
     <MotionButton
-      variant="outline"
+      variant="sidebar"
       color="white"
       _hover={{ bg: 'white', color: 'black' }}
       leftIcon={<WiRain size="30" />}
@@ -144,7 +140,7 @@ const SidebarContent = ({ navigate, colorMode }) => (
       Rain Sensors
     </MotionButton>
     <MotionButton
-      variant="outline"
+      variant="sidebar"
       color="white"
       _hover={{ bg: 'white', color: 'black' }}
       leftIcon={<WiHumidity size="30" />}
@@ -171,7 +167,6 @@ const MinimizedSidebarContent = ({ navigate, toggleSidebar, colorMode }) => (
       bg={'brand.400'}
       border={'2px solid #fd9801'}
       _hover={{ bg: 'brand.800' }}
-      // bg={colorMode === 'light' ? 'brand.400' : 'gray.800'}
       color={colorMode === 'light' ? 'black' : 'black'}
     />
     <MotionIconButton
@@ -210,16 +205,6 @@ const MinimizedSidebarContent = ({ navigate, toggleSidebar, colorMode }) => (
       color={colorMode === 'light' ? 'black' : 'black'}
 
     />
-    {/* <MotionIconButton
-      icon={toggleSidebar ? <FaChevronLeft /> : <FaChevronRight />}
-      onClick={toggleSidebar}
-      color="white"
-      _hover={{ bg: 'white', color: 'black' }}
-      aria-label={toggleSidebar ? 'Minimize' : 'Expand'}
-      variant={'pill'}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.8 }}
-    /> */}
   </MotionStack>
 );
 
