@@ -55,7 +55,7 @@ const MainContent = ({
       color={colorMode === 'light' ? 'black' : 'white'}
       flex="1"
       p="4"
-      pt="70px" // Adjust this value based on your header height
+      pt="74px" // Adjust this value based on your header height
       width="100%"
       minHeight="100vh"
       display="flex"
