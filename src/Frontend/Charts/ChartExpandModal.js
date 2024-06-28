@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, Button, Box } from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, Button, Box, useColorMode } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard';
 import { FaChartLine, FaChartBar } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
+
 const ChartExpandModal = ({ isOpen, onClose, children, title, weatherData, metric, onChartChange, adjustTimePeriod }) => {
   const [chartType, setChartType] = useState('bar');
 
+  const { colorMode } = useColorMode();
   const MotionButton = motion(Button);
 
   const changeChartType = type => {
@@ -15,6 +17,9 @@ const ChartExpandModal = ({ isOpen, onClose, children, title, weatherData, metri
       onChartChange(type);
     }
   };
+
+  const getBackgroundColor = colorMode =>
+    colorMode === 'light' ? '#f9f9f9' : '#303030';
 
   return (
     <Modal onClose={onClose} size="full" isOpen={isOpen}>
@@ -61,7 +66,7 @@ const ChartExpandModal = ({ isOpen, onClose, children, title, weatherData, metri
             display="flex"
             justifyContent="center"
             alignItems="center"
-            bg="gray.50"
+            bg={getBackgroundColor(colorMode)}
             p="4"
             borderRadius="md"
             boxShadow="md"

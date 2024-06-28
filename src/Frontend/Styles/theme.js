@@ -38,7 +38,7 @@ const customTheme = extendTheme({
     global: (props) => ({
       body: {
         bg: props.colorMode === 'light' ? 'white' : 'gray.800',
-        color: props.colorMode === 'light' ? 'gray.800' : 'white',
+        color: props.colorMode === 'light' ? 'gray.800' : 'black',
       },
       a: {
         color: props.colorMode === 'light' ? 'brand.500' : 'brand.200',
