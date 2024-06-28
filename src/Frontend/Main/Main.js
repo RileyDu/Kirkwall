@@ -1,14 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, GridItem } from '@chakra-ui/react';
+import { Box, Grid, GridItem, useColorMode, Flex, Text } from '@chakra-ui/react';
 import { LineChart, BarChart } from '../Charts/Charts';
 import ChartWrapper from '../Charts/ChartWrapper';
+import { FaChessRook } from 'react-icons/fa';
+import { keyframes } from '@emotion/react';
 
-const MainContent = ({ weatherData, isMinimized, timePeriod, adjustTimePeriod }) => {
+
+const MainContent = ({
+  weatherData,
+  isMinimized,
+  timePeriod,
+  adjustTimePeriod,
+}) => {
   const [tempChartType, setTempChartType] = useState('line');
   const [humidityChartType, setHumidityChartType] = useState('line');
   const [windChartType, setWindChartType] = useState('bar');
   const [rainfallChartType, setRainfallChartType] = useState('bar');
   const [isReady, setIsReady] = useState(false);
+  const { colorMode } = useColorMode();
 
   useEffect(() => {
     setIsReady(false);
@@ -19,21 +28,48 @@ const MainContent = ({ weatherData, isMinimized, timePeriod, adjustTimePeriod })
     return () => clearTimeout(timer);
   }, [isMinimized]);
 
-  const handleChartChange = (setChartType) => (newType) => {
+  const handleChartChange = setChartType => newType => {
     setChartType(newType);
   };
 
+  
+      const spin = keyframes`
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    `;
   if (!isReady) {
+
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-        {/* <Spinner size="xl" /> */}
-      </Box>
+      <Flex justify="center" align="center" height="100%">
+      <Box
+        as={FaChessRook}
+        animation={`${spin} infinite 2s linear`}
+        fontSize="6xl"
+        color="black"
+      />
+      {/* <Text mt="4" fontSize="lg" color="teal.500">
+        Loading...
+      </Text> */}
+    </Flex>
     );
   }
 
   return (
-    <Box bg="white" flex="1" p="4" height="100%" width="100%" pb={12}>
-      <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap="6">
+    <Box
+      bg={colorMode === 'light' ? 'white' : 'gray.800'}
+      color={colorMode === 'light' ? 'black' : 'white'}
+      flex="1"
+      p="4"
+      width="100%"
+      pb={12}
+      overflowY="auto"
+      height="calc(100vh - 64px)"
+      mt='10px'
+    >
+      <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
+          gap="6"
+          height="100%"
+          alignItems="start">
         <GridItem colSpan={1}>
           <ChartWrapper
             title="Temperature (°F)"

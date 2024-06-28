@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { ChakraProvider, Box, Spinner, useMediaQuery, Flex } from '@chakra-ui/react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import {
+  ChakraProvider,
+  Box,
+  Spinner,
+  useMediaQuery,
+  Flex,
+} from '@chakra-ui/react';
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useLocation,
+} from 'react-router-dom';
 import { AuthProvider } from './Frontend/AuthComponents/AuthContext';
 import ProtectedRoute from './Frontend/AuthComponents/ProtectedRoute';
 import SignUp from './Frontend/AuthComponents/Signup';
@@ -17,24 +28,44 @@ import WindSensors from './Frontend/Sensors/WindSensors/WindSensor';
 import MobileMenu from './Frontend/MobileMenu/MobileMenu';
 import customTheme from './Frontend/Styles/theme';
 import { getWeatherData } from './Backend/Graphql_helper';
+import { WeatherDataProvider } from './Frontend/WeatherDataContext';
+import { FaChessRook } from 'react-icons/fa';
+import { keyframes } from '@emotion/react';
 
-const Layout = ({ children, isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMenu }) => {
+const Layout = ({
+  children,
+  isMinimized,
+  toggleSidebar,
+  isMobileMenuOpen,
+  toggleMobileMenu,
+}) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const location = useLocation();
 
-  const shouldShowSidebar = location.pathname !== '/login' && location.pathname !== '/signup';
+  const shouldShowSidebar =
+    location.pathname !== '/login' && location.pathname !== '/signup';
 
   return (
     <Flex minH="100vh">
       {isLargerThan768 && shouldShowSidebar && (
-        <Sidebar 
+        <Sidebar
           isMinimized={isMinimized}
           toggleSidebar={toggleSidebar}
           isMobileMenuOpen={isMobileMenuOpen}
           toggleMobileMenu={toggleMobileMenu}
         />
       )}
-      <Box flex="1" overflowY="auto" ml={isLargerThan768 && shouldShowSidebar ? (isMinimized ? '80px' : '250px') : '0'}>
+      <Box
+        flex="1"
+        overflowY="auto"
+        ml={
+          isLargerThan768 && shouldShowSidebar
+            ? isMinimized
+              ? '80px'
+              : '250px'
+            : '0'
+        }
+      >
         {children}
       </Box>
     </Flex>
@@ -46,25 +77,24 @@ const MainApp = () => {
   const [loading, setLoading] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [timePeriod, setTimePeriod] = useState(37); // Default time period
+  // const [timePeriod, setTimePeriod] = useState(37); // Default time period
   const location = useLocation();
 
   const toggleSidebar = () => setIsMinimized(!isMinimized);
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
-  const adjustTimePeriod = (adjustment) => {
-    setTimePeriod((prevTimePeriod) => {
-      const newTimePeriod = prevTimePeriod + adjustment;
-      // Ensure the time period doesn't go below 60 minutes
-      return newTimePeriod < 13 ? 13 : newTimePeriod;
-    });
-  };
-  
+  // const adjustTimePeriod = adjustment => {
+  //   setTimePeriod(prevTimePeriod => {
+  //     const newTimePeriod = prevTimePeriod + adjustment;
+  //     // Ensure the time period doesn't go below 60 minutes
+  //     return newTimePeriod < 13 ? 13 : newTimePeriod;
+  //   });
+  // };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getWeatherData(String(timePeriod));
+        const response = await getWeatherData('37');
         if (Array.isArray(response.data.weather_data)) {
           setWeatherData(response.data.weather_data);
         } else {
@@ -83,21 +113,32 @@ const MainApp = () => {
 
     const intervalId = setInterval(fetchData, 30000);
 
-    return () => clearInterval(intervalId);
-  }, [timePeriod]);
+    
 
-  if (loading) {
-    return (
-      <Box 
-        display="flex" 
-        justifyContent="center" 
-        alignItems="center" 
-        height="100vh"
-      >
-        <Spinner size="xl" />
-      </Box>
-    );
-  }
+    return () => clearInterval(intervalId);
+  }, []);
+
+
+  const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+if (loading) {
+
+return (
+  <Flex justify="center" align="center" height="100vh" width="100vw">
+  <Box
+    as={FaChessRook}
+    animation={`${spin} infinite 2s linear`}
+    fontSize="6xl"
+    color="black"
+  />
+  {/* <Text mt="4" fontSize="lg" color="teal.500">
+    Loading...
+  </Text> */}
+</Flex>
+);
+}
 
   return (
     <Box>
@@ -117,7 +158,12 @@ const MainApp = () => {
             path="/"
             element={
               <ProtectedRoute>
-                <MainContent weatherData={weatherData} isMinimized={isMinimized} timePeriod={timePeriod} adjustTimePeriod={adjustTimePeriod} />
+                <MainContent
+                  weatherData={weatherData}
+                  isMinimized={isMinimized}
+                  // timePeriod={timePeriod}
+                  // adjustTimePeriod={adjustTimePeriod}
+                />
               </ProtectedRoute>
             }
           />
@@ -168,13 +214,14 @@ const MainApp = () => {
   );
 };
 
-
 const App = () => {
   return (
     <ChakraProvider theme={customTheme}>
       <Router>
         <AuthProvider>
-          <MainApp />
+          <WeatherDataProvider>
+            <MainApp />
+          </WeatherDataProvider>
         </AuthProvider>
       </Router>
     </ChakraProvider>

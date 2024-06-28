@@ -1,20 +1,19 @@
-import { border, extendTheme } from '@chakra-ui/react';
-
+import { extendTheme } from '@chakra-ui/react';
 
 const customTheme = extendTheme({
   colors: {
     brand: {
-      50: "#fef4e5", // Lightest tint
-      100: "#feeaec", 
+      50: "#fef4e5",
+      100: "#feeaec",
       200: "#fee0b2",
       300: "#fed599",
       400: "#fdcb80",
-      500: "#fdc166", // Default brand color
+      500: "#fdc166",
       600: "#fdb64d",
       700: "#fdac33",
       800: "#fda21a",
-      900: "#fd9801", // Darkest tint
-      950: "#e38800", 
+      900: "#fd9801",
+      950: "#e38800",
       1000: "#ca7900",
       1100: "#b16a00",
       1200: "#975b00",
@@ -23,19 +22,44 @@ const customTheme = extendTheme({
       1500: "#4b2d00",
       1600: "#321e00",
       1700: "#190f00",
-      1800: "#000000", // Black
+      1800: "#000000",
     },
   },
-    fonts: {
-      heading: 'Oswald, sans-serif',
-      body: 'Oswald, sans-serif',
-    },
-    components: {
-      Button: {
-        variants: {
+  fonts: {
+    heading: 'Oswald, sans-serif',
+    body: 'Oswald, sans-serif',
+  },
+  config: {
+    initialColorMode: 'light',
+    useSystemColorMode: false,
+  },
+  styles: {
+    global: (props) => ({
+      body: {
+        bg: props.colorMode === 'light' ? 'white' : 'gray.800',
+        color: props.colorMode === 'light' ? 'gray.800' : 'white',
+      },
+      a: {
+        color: props.colorMode === 'light' ? 'brand.500' : 'brand.200',
+        _hover: {
+          textDecoration: 'underline',
+        },
+      },
+    }),
+  },
+  components: {
+    Button: {
+      baseStyle: (props) => ({
+        bg: props.colorMode === 'light' ? 'brand.500' : 'brand.700',
+        color: 'white',
+        _hover: {
+          bg: props.colorMode === 'light' ? 'brand.600' : 'brand.800',
+        },
+      }),
+      variants: {
         pill: {
           borderRadius: 'full',
-          border: '2px solid #fd9801',
+          border: '2px solid #FD9801',
           _hover: {
             bg: 'brand.500',
             color: 'white',
@@ -45,9 +69,9 @@ const customTheme = extendTheme({
             color: 'white',
           },
         },
-
       },
     },
-    },
-  });
-  export default customTheme
+  },
+});
+
+export default customTheme;

@@ -1,10 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Flex, Text, IconButton, Tooltip, useBreakpointValue, useDisclosure } from '@chakra-ui/react';
-import { FaExpandAlt } from 'react-icons/fa';
+import {
+  Box,
+  Flex,
+  Text,
+  IconButton,
+  Tooltip,
+  useBreakpointValue,
+  useDisclosure,
+  Button,
+  Input,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  FormControl,
+  FormLabel,
+  useToast,
+  
+} from '@chakra-ui/react';
+import { FaExpandAlt, FaChessRook } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import ChartExpandModal from './ChartExpandModal'; // Adjust the path as necessary
 import ChartDetails, { getLabelForMetric } from './ChartDetails';
+import { useColorMode } from '@chakra-ui/react';
 
 const ChartWrapper = ({
   title,
@@ -13,12 +34,22 @@ const ChartWrapper = ({
   metric,
   weatherData,
   timePeriod,
-  adjustTimePeriod
+  adjustTimePeriod,
 }) => {
   const [chartType, setChartType] = useState('bar');
   const [showIcons, setShowIcons] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [highThreshold, setHighThreshold] = useState('');
+  const [lowThreshold, setLowThreshold] = useState('');
   const location = useLocation();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+
+  const toast = useToast();
+
+  const { colorMode } = useColorMode();
 
   const changeChartType = type => {
     setChartType(type);
@@ -37,6 +68,10 @@ const ChartWrapper = ({
 
   useEffect(() => {
     setShowIcons(!restrictedRoutes.includes(location.pathname));
+
+    const chartSettings = JSON.parse(localStorage.getItem(`chartSettings_${title}`));
+    if (chartSettings) {
+      const { phoneNumber, highThreshold, lowThreshold } = chartSettings}
   }, [location.pathname]);
 
   const iconSize = '24';
@@ -49,6 +84,31 @@ const ChartWrapper = ({
   const fontSize = useBreakpointValue({ base: 'sm', md: 'lg' });
   const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
 
+  const getBackgroundColor = colorMode =>
+    colorMode === 'light' ? '#f9f9f9' : '#303030';
+
+  const handleFormSubmit = () => {
+    let formattedPhoneNumber = phoneNumber.startsWith('+1') ? phoneNumber : `+1${phoneNumber}`;
+
+    const chartSettings = {
+      phoneNumber: formattedPhoneNumber,
+      highThreshold: parseFloat(highThreshold),
+      lowThreshold: parseFloat(lowThreshold),
+    };
+
+    localStorage.setItem(`chartSettings_${title}`, JSON.stringify(chartSettings));
+
+    toast({
+      title: "Settings saved.",
+      description: "Your chart settings have been saved successfully.",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+
+    handleCloseModal();
+  };
+
   return (
     <>
       <Box
@@ -58,9 +118,10 @@ const ChartWrapper = ({
         boxShadow="md"
         p="6"
         pb={paddingBottom}
-        bg="#f5f5f5"
+        bg={getBackgroundColor(colorMode)}
         h="500px"
         w="100%"
+        
       >
         <Flex justify="space-between" mb="4" align="center">
           <Box fontSize={fontSize} fontWeight="bold">
@@ -81,6 +142,7 @@ const ChartWrapper = ({
                   py={1}
                   mr={2}
                   bg={'white'}
+                  color={'#212121'}
                 >
                   <Text fontSize={fontSize}>
                     Current: {formatValue(mostRecentValue)}
@@ -90,25 +152,85 @@ const ChartWrapper = ({
               <motion.div 
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 0.2 }}
+              >
+                <Tooltip label="Thresholds">
+                  <IconButton
+                    icon={<FaChessRook />}
+                    variant="outline"
+                    color="#212121"
+                    size="sm"
+                    bg={'white'}
+                    onClick={() => handleOpenModal()}
+                  />
+                </Tooltip>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1, delay: 0.5 }}
               >
-              <Tooltip label="Expand Chart">
-                <IconButton
-                  icon={<FaExpandAlt />}
-                  variant="outline"
-                  colorScheme="#212121"
-                  size="sm"
-                  bg={'white'}
-                  onClick={onOpen}
+                <Tooltip label="Expand Chart">
+                  <IconButton
+                    icon={<FaExpandAlt />}
+                    variant="outline"
+                    color="#212121"
+                    size="sm"
+                    bg={'white'}
+                    onClick={onOpen}
+
                   />
-              </Tooltip>
-                  </motion.div>
+                </Tooltip>
+              </motion.div>
             </Flex>
           )}
         </Flex>
         {children}
       </Box>
-      <ChartExpandModal isOpen={isOpen} onClose={onClose} title={title} children={children} weatherData={weatherData} metric={metric} onChartChange={changeChartType}/>        
+      <ChartExpandModal
+        isOpen={isOpen}
+        onClose={onClose}
+        title={title}
+        children={children}
+        weatherData={weatherData}
+        metric={metric}
+        onChartChange={changeChartType}
+      />
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add Thresholds for {title}</ModalHeader>
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Phone Number</FormLabel>
+              <Input
+                type="text"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>High Threshold</FormLabel>
+              <Input
+                type="number"
+                value={highThreshold}
+                onChange={(e) => setHighThreshold(e.target.value)}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Low Threshold</FormLabel>
+              <Input
+                type="number"
+                value={lowThreshold}
+                onChange={(e) => setLowThreshold(e.target.value)}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={handleFormSubmit}>Submit</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 };

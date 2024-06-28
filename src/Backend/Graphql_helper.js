@@ -177,4 +177,4 @@ async function editWeatherData(dataid, temperature, humidity, windSpeed, windDir
 
 
 // Export the functions to be used elsewhere in the project
-export { getWeatherData,editWeatherData, getTempatureData };
+export { getWeatherData,editWeatherData, getTempatureData, getRainData, getHumidityData, getWindData };
