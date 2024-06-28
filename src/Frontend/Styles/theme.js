@@ -61,7 +61,7 @@ const customTheme = extendTheme({
           borderRadius: 'full',
           border: '2px solid #FD9801',
           _hover: {
-            bg: 'brand.500',
+            bg: 'brand.800',
             color: 'white',
           },
           _active: {
