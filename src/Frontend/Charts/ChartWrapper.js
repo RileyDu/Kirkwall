@@ -159,7 +159,7 @@ const ChartWrapper = ({
                     icon={<FaChessRook />}
                     variant="outline"
                     color="#212121"
-                    size="sm"
+                    size="md"
                     bg={'white'}
                     onClick={() => handleOpenModal()}
                     mr={2}
@@ -177,7 +177,7 @@ const ChartWrapper = ({
                     icon={<FaExpandAlt />}
                     variant="outline"
                     color="#212121"
-                    size="sm"
+                    size="md"
                     bg={'white'}
                     onClick={onOpen}
                     border={'2px solid #fd9801'}
