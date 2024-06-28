@@ -170,6 +170,8 @@ const ChartWrapper = ({
     }
   };
 
+  const MotionIconButton = motion(IconButton);
+
   return (
     <>
       <Box
@@ -310,10 +312,10 @@ const ChartWrapper = ({
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="brand" mr={3} onClick={handleFormSubmit}>
+            <Button variant='sidebar' mr={3} onClick={handleFormSubmit}>
               Save
             </Button>
-            <Button variant="ghost" onClick={handleCloseModal}>
+            <Button variant="sidebar" onClick={handleCloseModal}>
               Cancel
             </Button>
           </ModalFooter>
