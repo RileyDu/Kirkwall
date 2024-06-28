@@ -270,9 +270,12 @@ const Header = () => {
 
       <Modal isOpen={isSummaryOpen} onClose={onSummaryToggle}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Weather Summary</ModalHeader>
-          <ModalCloseButton />
+        <ModalContent sx={{
+            border: '2px solid black',
+            bg: 'brand.50',
+          }}>
+          <ModalHeader bg={'#212121'} color={'white'}>Weather Summary</ModalHeader>
+          <ModalCloseButton color={'white'} size={'lg'} mt={1}/>
           <ModalBody>
             {loading ? (
               <Flex justify="center" align="center" height="100%">
