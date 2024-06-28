@@ -46,6 +46,9 @@ const ChartWrapper = ({
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
+  const MotionIconButton = motion(IconButton);
+
+
   const toast = useToast();
 
   const { colorMode } = useColorMode();
@@ -161,7 +164,7 @@ const ChartWrapper = ({
                 transition={{ duration: 1, delay: 0.2 }}
               >
                 <Tooltip label="Thresholds">
-                  <IconButton
+                  <MotionIconButton
                     icon={<FaChessRook />}
                     variant="outline"
                     color="#212121"
@@ -171,6 +174,8 @@ const ChartWrapper = ({
                     onClick={() => handleOpenModal()}
                     mr={2}
                     border={'2px solid #fd9801'}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                   />
                 </Tooltip>
               </motion.div>
@@ -180,7 +185,7 @@ const ChartWrapper = ({
                 transition={{ duration: 1, delay: 0.5 }}
               >
                 <Tooltip label="Expand Chart">
-                  <IconButton
+                  <MotionIconButton
                     icon={<FaExpandAlt />}
                     variant="outline"
                     color="#212121"
@@ -189,6 +194,8 @@ const ChartWrapper = ({
                     _hover={{ bg: 'brand.800' }}
                     onClick={onOpen}
                     border={'2px solid #fd9801'}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                   />
                 </Tooltip>
               </motion.div>

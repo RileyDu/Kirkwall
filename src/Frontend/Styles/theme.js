@@ -1,4 +1,5 @@
 import { extendTheme } from '@chakra-ui/react';
+import { color } from 'chart.js/helpers';
 
 const customTheme = extendTheme({
   colors: {
@@ -59,10 +60,23 @@ const customTheme = extendTheme({
       variants: {
         pill: {
           borderRadius: 'full',
-          border: '2px solid #FD9801',
+          border: '3px solid #FD9801',
           _hover: {
             bg: 'brand.800',
+            // color: 'white',
+          },
+          _active: {
+            bg: 'brand.500',
             color: 'white',
+          },
+        },
+        sidebar: {
+          borderRadius: 'full',
+          border: '3px solid #FD9801',
+          color: '#212121',
+          _hover: {
+            bg: 'brand.800',
+            // color: 'white',
           },
           _active: {
             bg: 'brand.500',

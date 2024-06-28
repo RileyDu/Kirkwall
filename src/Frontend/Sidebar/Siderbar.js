@@ -80,13 +80,15 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMen
         </Stack>
       </Box>
       <Box mt="auto" p="4" justifyContent={'center'} display={'flex'}>
-        <IconButton
+        <MotionIconButton
           icon={isMinimized ? <FaChevronRight /> : <FaChevronLeft />}
           onClick={toggleSidebar}
-          color="white"
+          // color="white"
           // _hover={{ color: 'black' }}
           aria-label={isMinimized ? 'Expand' : 'Minimize'}
           variant={'pill'}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
         />
       </Box>
     </MotionFlex>
@@ -96,9 +98,9 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMen
 const SidebarContent = ({ navigate }) => (
   <>
     <MotionButton
-      variant="outline"
-      color="white"
-      _hover={{ bg: 'white', color: 'black' }}
+      variant="sidebar"
+      // color="#212121"
+      // _hover={{ bg: 'white', color: 'black' }}
       leftIcon={<WiThermometer size="30" />}
       onClick={() => navigate('/TempSensors')}
       justifyContent="flex-start"
