@@ -15,6 +15,7 @@ import {
   ModalHeader,
   ModalFooter,
   ModalBody,
+  ModalCloseButton,
   FormControl,
   FormLabel,
   useToast,
@@ -50,7 +51,7 @@ const ChartWrapper = ({
   const toast = useToast();
   const { colorMode } = useColorMode();
 
-  const changeChartType = (type) => {
+  const changeChartType = type => {
     setChartType(type);
     if (onChartChange) {
       onChartChange(type);
@@ -83,12 +84,12 @@ const ChartWrapper = ({
   const mostRecentValue =
     weatherData && weatherData.length > 0 ? weatherData[0][metric] : 'N/A';
   const { label, addSpace } = getLabelForMetric(metric);
-  const formatValue = (value) => `${value}${addSpace ? ' ' : ''}${label}`;
+  const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
 
   const fontSize = useBreakpointValue({ base: 'sm', md: 'lg' });
   const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
 
-  const getBackgroundColor = (colorMode) =>
+  const getBackgroundColor = colorMode =>
     colorMode === 'light' ? '#f9f9f9' : '#303030';
 
   const handleFormSubmit = () => {
@@ -214,15 +215,25 @@ const ChartWrapper = ({
       />
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Add Thresholds for {title}</ModalHeader>
+        <ModalContent
+          sx={{
+            border: '2px solid black',
+            bg: 'brand.50',
+          }}
+        >
+          <ModalHeader bg={'#212121'} color={'white'}>
+            Add Thresholds for {title}
+          </ModalHeader>
+          <ModalCloseButton color={'white'} size={'lg'} mt={1} />
           <ModalBody>
             <FormControl>
               <FormLabel>Phone Number</FormLabel>
               <Input
                 type="text"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={e => setPhoneNumber(e.target.value)}
+                bg={'white'}
+                border={'2px solid #fd9801'}
               />
             </FormControl>
             <FormControl mt={4}>
@@ -230,7 +241,9 @@ const ChartWrapper = ({
               <Input
                 type="number"
                 value={highThreshold}
-                onChange={(e) => setHighThreshold(e.target.value)}
+                onChange={e => setHighThreshold(e.target.value)}
+                bg={'white'}
+                border={'2px solid #fd9801'}
               />
             </FormControl>
             <FormControl mt={4}>
@@ -238,12 +251,16 @@ const ChartWrapper = ({
               <Input
                 type="number"
                 value={lowThreshold}
-                onChange={(e) => setLowThreshold(e.target.value)}
+                onChange={e => setLowThreshold(e.target.value)}
+                bg={'white'}
+                border={'2px solid #fd9801'}
               />
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button onClick={handleFormSubmit}>Submit</Button>
+            <Button onClick={handleFormSubmit} variant={'sidebar'}>
+              Submit
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
