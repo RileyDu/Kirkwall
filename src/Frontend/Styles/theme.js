@@ -50,8 +50,8 @@ const customTheme = extendTheme({
   components: {
     Button: {
       baseStyle: (props) => ({
-        bg: props.colorMode === 'light' ? 'brand.500' : 'brand.700',
-        color: 'white',
+        bg: props.colorMode === 'light' ? 'brand.400' : 'brand.700',
+        color: '#212121',
         _hover: {
           bg: props.colorMode === 'light' ? 'brand.600' : 'brand.800',
         },
