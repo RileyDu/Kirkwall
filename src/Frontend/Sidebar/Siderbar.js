@@ -1,4 +1,4 @@
-import { Flex, Stack, Button, Box, IconButton } from '@chakra-ui/react';
+import { Flex, Stack, Button, Box, IconButton, useColorMode } from '@chakra-ui/react';
 import {
   WiThermometer,
   WiStrongWind,
@@ -13,6 +13,7 @@ const MotionFlex = motion(Flex);
 const MotionStack = motion(Stack);
 const MotionIconButton = motion(IconButton);
 const MotionButton = motion(Button);
+
 
 const buttonStyleProps = {
   justifyContent: 'flex-start',
@@ -31,6 +32,7 @@ const buttonStyleProps = {
 
 const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMenu }) => {
   const navigate = useNavigate();
+  const { colorMode } = useColorMode();
 
   const sidebarVariants = {
     collapsed: {
@@ -73,9 +75,9 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMen
           justifyContent="flex-start"
         >
           {isMinimized ? (
-            <MinimizedSidebarContent navigate={navigate} toggleSidebar={toggleSidebar} />
+            <MinimizedSidebarContent navigate={navigate} toggleSidebar={toggleSidebar} colorMode={colorMode}/>
           ) : (
-            <SidebarContent navigate={navigate} />
+            <SidebarContent navigate={navigate} colorMode={colorMode} />
           )}
         </Stack>
       </Box>
@@ -89,13 +91,14 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMen
           variant={'pill'}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
+          bg={'brand.400'}
         />
       </Box>
     </MotionFlex>
   );
 };
 
-const SidebarContent = ({ navigate }) => (
+const SidebarContent = ({ navigate, colorMode }) => (
   <>
     <MotionButton
       variant="sidebar"
@@ -157,7 +160,7 @@ const SidebarContent = ({ navigate }) => (
   </>
 );
 
-const MinimizedSidebarContent = ({ navigate, toggleSidebar }) => (
+const MinimizedSidebarContent = ({ navigate, toggleSidebar, colorMode }) => (
   <MotionStack spacing="4" mt={16}>
     <MotionIconButton
       icon={<WiThermometer size="30" />}
@@ -165,6 +168,11 @@ const MinimizedSidebarContent = ({ navigate, toggleSidebar }) => (
       aria-label="Temperature Sensors"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
+      bg={'brand.400'}
+      border={'2px solid #fd9801'}
+      _hover={{ bg: 'brand.800' }}
+      // bg={colorMode === 'light' ? 'brand.400' : 'gray.800'}
+      color={colorMode === 'light' ? 'black' : 'black'}
     />
     <MotionIconButton
       icon={<WiStrongWind size="30" />}
@@ -172,6 +180,11 @@ const MinimizedSidebarContent = ({ navigate, toggleSidebar }) => (
       aria-label="Wind Sensors"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
+      bg={'brand.400'}
+      border={'2px solid #fd9801'}
+      _hover={{ bg: 'brand.800' }}
+      color={colorMode === 'light' ? 'black' : 'black'}
+
     />
     <MotionIconButton
       icon={<WiRain size="30" />}
@@ -179,6 +192,11 @@ const MinimizedSidebarContent = ({ navigate, toggleSidebar }) => (
       aria-label="Rain Sensors"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
+      bg={'brand.400'}
+      border={'2px solid #fd9801'}
+      _hover={{ bg: 'brand.800' }}
+      color={colorMode === 'light' ? 'black' : 'black'}
+
     />
     <MotionIconButton
       icon={<WiHumidity size="30" />}
@@ -186,6 +204,11 @@ const MinimizedSidebarContent = ({ navigate, toggleSidebar }) => (
       aria-label="Humidity Sensors"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
+      bg={'brand.400'}
+      border={'2px solid #fd9801'}
+      _hover={{ bg: 'brand.800' }}
+      color={colorMode === 'light' ? 'black' : 'black'}
+
     />
     {/* <MotionIconButton
       icon={toggleSidebar ? <FaChevronLeft /> : <FaChevronRight />}
