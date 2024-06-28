@@ -44,6 +44,8 @@ import { useNavigate } from 'react-router-dom';
 import WeatherAlerts from '../Alert/WeatherAlerts';
 import { useWeatherData } from '../WeatherDataContext';
 
+
+
 const Header = () => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const [user] = useAuthState(auth);
@@ -168,18 +170,18 @@ const Header = () => {
                   <Avatar
                     size="md"
                     name="Grand Farm Logo"
-                    src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
+                    src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
                     cursor="pointer"
                     ml="4"
                   />
                 </PopoverTrigger>
                 <PopoverContent bg="white" borderColor="#212121" zIndex={1005}>
                   <PopoverCloseButton size="lg" />
-                  <PopoverHeader fontWeight="bold" fontSize="xl" bg="#fd9801">Grand Farm</PopoverHeader>
+                  <PopoverHeader fontWeight="bold" fontSize="xl" bg="#fd9801">Kirkwall</PopoverHeader>
                   <PopoverBody>
-                    <Button onClick={toggleAlerts} w="100%" size="lg" borderRadius="full" fontSize="xl">
+                    {/* <Button onClick={toggleAlerts} w="100%" size="lg" borderRadius="full" fontSize="xl">
                       TOGGLE ALERTS
-                    </Button>
+                    </Button> */}
                     <Logout />
                   </PopoverBody>
                 </PopoverContent>
