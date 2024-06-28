@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, Button, Box } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard';
 import { FaChartLine, FaChartBar } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 const ChartExpandModal = ({ isOpen, onClose, children, title, weatherData, metric, onChartChange }) => {
   const [chartType, setChartType] = useState('bar');
+
+  const MotionButton = motion(Button);
 
   const changeChartType = type => {
     setChartType(type);
@@ -19,34 +22,38 @@ const ChartExpandModal = ({ isOpen, onClose, children, title, weatherData, metri
       <ModalContent>
         <ModalHeader bg="#212121" color="white" fontSize="2xl">
           {title}
-          <Button
+          <MotionButton
             variant={'pill'}
             onClick={() => changeChartType('line')}
             leftIcon={<FaChartLine />}
             mx={2}
             ml={4}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
             LINE
-          </Button>
-          <Button
+          </MotionButton>
+          <MotionButton
             variant={'pill'}
             onClick={() => changeChartType('bar')}
             leftIcon={<FaChartBar />}
             mx={2}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
             BAR
-          </Button>
+          </MotionButton>
         </ModalHeader>
         <ModalCloseButton size="lg" color="white" mt={2} />
         <ModalBody>
           <Box display="flex" justifyContent="space-between" my={4}>
-            <Button variant="pill">1H</Button>
-            <Button variant="pill">3H</Button>
-            <Button variant="pill">6H</Button>
-            <Button variant="pill">12H</Button>
-            <Button variant="pill">1D</Button>
-            <Button variant="pill">3D</Button>
-            <Button variant="pill">1W</Button>
+            <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>1H</MotionButton>
+            <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>3H</MotionButton>
+            <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>6H</MotionButton>
+            <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>12H</MotionButton>
+            <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>1D</MotionButton>
+            <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>3D</MotionButton>
+            <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>1W</MotionButton>
           </Box>
           <Box
             h="800px"
