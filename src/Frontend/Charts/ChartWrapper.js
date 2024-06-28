@@ -100,6 +100,10 @@ const ChartWrapper = ({
       isClosable: true,
     });
 
+    console.log('phone number', phoneNumber)
+    console.log('high threshold', highThreshold);
+    console.log('low threshold', lowThreshold)
+
     handleCloseModal();
   };
 

@@ -299,7 +299,7 @@ const Header = () => {
         </ModalContent>
       </Modal>
 
-      {showAlerts && <WeatherAlerts />}
+      {/* {showAlerts && <WeatherAlerts />} */}
     </>
   );
 };
