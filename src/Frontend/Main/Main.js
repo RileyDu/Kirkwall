@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, GridItem, useColorMode, Flex, Text } from '@chakra-ui/react';
+import { Box, Grid, GridItem, useColorMode, Flex } from '@chakra-ui/react';
 import { LineChart, BarChart } from '../Charts/Charts';
 import ChartWrapper from '../Charts/ChartWrapper';
 import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
-
 
 const MainContent = ({
   weatherData,
@@ -32,25 +31,21 @@ const MainContent = ({
     setChartType(newType);
   };
 
-  
-      const spin = keyframes`
+  const spin = keyframes`
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     `;
-  if (!isReady) {
 
+  if (!isReady) {
     return (
       <Flex justify="center" align="center" height="100%">
-      <Box
-        as={FaChessRook}
-        animation={`${spin} infinite 2s linear`}
-        fontSize="6xl"
-        color="black"
-      />
-      {/* <Text mt="4" fontSize="lg" color="teal.500">
-        Loading...
-      </Text> */}
-    </Flex>
+        <Box
+          as={FaChessRook}
+          animation={`${spin} infinite 2s linear`}
+          fontSize="6xl"
+          color="black"
+        />
+      </Flex>
     );
   }
 
@@ -60,17 +55,18 @@ const MainContent = ({
       color={colorMode === 'light' ? 'black' : 'white'}
       flex="1"
       p="4"
+      pt="70px" // Adjust this value based on your header height
       width="100%"
-      pb={12}
-      overflowY="auto"
-      height="calc(100vh - 64px)"
-      mt='10px'
+      minHeight="100vh"
+      display="flex"
+      flexDirection="column"
     >
-      <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
-          gap="6"
-          height="100%"
-          alignItems="start">
-        <GridItem colSpan={1}>
+      <Grid
+        templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }}
+        gap="6"
+        flex="1"
+      >
+        <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
             title="Temperature (°F)"
             onChartChange={handleChartChange(setTempChartType)}
@@ -79,15 +75,17 @@ const MainContent = ({
             flex="1"
             timePeriod={timePeriod}
             adjustTimePeriod={adjustTimePeriod}
+            display="flex"
+            flexDirection="column"
           >
             {tempChartType === 'line' ? (
-              <LineChart data={weatherData} metric="temperature" />
+              <LineChart data={weatherData} metric="temperature" style={{ flex: 1 }} />
             ) : (
-              <BarChart data={weatherData} metric="temperature" />
+              <BarChart data={weatherData} metric="temperature" style={{ flex: 1 }} />
             )}
           </ChartWrapper>
         </GridItem>
-        <GridItem colSpan={1}>
+        <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
             title="Humidity (%)"
             onChartChange={handleChartChange(setHumidityChartType)}
@@ -96,15 +94,17 @@ const MainContent = ({
             flex="1"
             timePeriod={timePeriod}
             adjustTimePeriod={adjustTimePeriod}
+            display="flex"
+            flexDirection="column"
           >
             {humidityChartType === 'line' ? (
-              <LineChart data={weatherData} metric="percent_humidity" />
+              <LineChart data={weatherData} metric="percent_humidity" style={{ flex: 1 }} />
             ) : (
-              <BarChart data={weatherData} metric="percent_humidity" />
+              <BarChart data={weatherData} metric="percent_humidity" style={{ flex: 1 }} />
             )}
           </ChartWrapper>
         </GridItem>
-        <GridItem colSpan={1}>
+        <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
             title="Rainfall (inches)"
             onChartChange={handleChartChange(setRainfallChartType)}
@@ -113,15 +113,17 @@ const MainContent = ({
             flex="1"
             timePeriod={timePeriod}
             adjustTimePeriod={adjustTimePeriod}
+            display="flex"
+            flexDirection="column"
           >
             {rainfallChartType === 'line' ? (
-              <LineChart data={weatherData} metric="rain_15_min_inches" />
+              <LineChart data={weatherData} metric="rain_15_min_inches" style={{ flex: 1 }} />
             ) : (
-              <BarChart data={weatherData} metric="rain_15_min_inches" />
+              <BarChart data={weatherData} metric="rain_15_min_inches" style={{ flex: 1 }} />
             )}
           </ChartWrapper>
         </GridItem>
-        <GridItem colSpan={1}>
+        <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
             title="Wind Speed (MPH)"
             onChartChange={handleChartChange(setWindChartType)}
@@ -130,11 +132,13 @@ const MainContent = ({
             flex="1"
             timePeriod={timePeriod}
             adjustTimePeriod={adjustTimePeriod}
+            display="flex"
+            flexDirection="column"
           >
             {windChartType === 'line' ? (
-              <LineChart data={weatherData} metric="wind_speed" />
+              <LineChart data={weatherData} metric="wind_speed" style={{ flex: 1 }} />
             ) : (
-              <BarChart data={weatherData} metric="wind_speed" />
+              <BarChart data={weatherData} metric="wind_speed" style={{ flex: 1 }} />
             )}
           </ChartWrapper>
         </GridItem>

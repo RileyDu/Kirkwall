@@ -162,6 +162,8 @@ const ChartWrapper = ({
                     size="sm"
                     bg={'white'}
                     onClick={() => handleOpenModal()}
+                    mr={2}
+                    border={'2px solid #fd9801'}
                   />
                 </Tooltip>
               </motion.div>
@@ -178,7 +180,7 @@ const ChartWrapper = ({
                     size="sm"
                     bg={'white'}
                     onClick={onOpen}
-
+                    border={'2px solid #fd9801'}
                   />
                 </Tooltip>
               </motion.div>
