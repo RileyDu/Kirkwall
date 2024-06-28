@@ -84,7 +84,7 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMen
           icon={isMinimized ? <FaChevronRight /> : <FaChevronLeft />}
           onClick={toggleSidebar}
           color="white"
-          _hover={{ bg: 'white', color: 'black' }}
+          // _hover={{ color: 'black' }}
           aria-label={isMinimized ? 'Expand' : 'Minimize'}
           variant={'pill'}
         />
@@ -105,6 +105,8 @@ const SidebarContent = ({ navigate }) => (
       fontSize={'md'}
       mt={16}
       {...buttonStyleProps}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
     >
       Temperature Sensors
     </MotionButton>
@@ -117,6 +119,8 @@ const SidebarContent = ({ navigate }) => (
       justifyContent="flex-start"
       fontSize={'md'}
       {...buttonStyleProps}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
     >
       Wind Sensors
     </MotionButton>
@@ -129,6 +133,8 @@ const SidebarContent = ({ navigate }) => (
       justifyContent="flex-start"
       fontSize={'md'}
       {...buttonStyleProps}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
     >
       Rain Sensors
     </MotionButton>
@@ -141,6 +147,8 @@ const SidebarContent = ({ navigate }) => (
       justifyContent="flex-start"
       fontSize={'md'}
       {...buttonStyleProps}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
     >
       Humidity Sensors
     </MotionButton>
