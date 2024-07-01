@@ -74,9 +74,10 @@ const MainContent = ({
             metric="temperature"
             flex="1"
             timePeriod={timePeriod}
-            adjustTimePeriod={adjustTimePeriod}
+            // adjustTimePeriod={adjustTimePeriod}
             display="flex"
             flexDirection="column"
+            key={tempChartType} // Add this key to ensure re-render
           >
             {tempChartType === 'line' ? (
               <LineChart data={weatherData} metric="temperature" style={{ flex: 1 }} />
@@ -93,9 +94,10 @@ const MainContent = ({
             metric="percent_humidity"
             flex="1"
             timePeriod={timePeriod}
-            adjustTimePeriod={adjustTimePeriod}
+            // adjustTimePeriod={adjustTimePeriod}
             display="flex"
             flexDirection="column"
+            key={humidityChartType} // Add this key to ensure re-render
           >
             {humidityChartType === 'line' ? (
               <LineChart data={weatherData} metric="percent_humidity" style={{ flex: 1 }} />
@@ -112,9 +114,10 @@ const MainContent = ({
             metric="rain_15_min_inches"
             flex="1"
             timePeriod={timePeriod}
-            adjustTimePeriod={adjustTimePeriod}
+            // adjustTimePeriod={adjustTimePeriod}
             display="flex"
             flexDirection="column"
+            key={rainfallChartType} // Add this key to ensure re-render
           >
             {rainfallChartType === 'line' ? (
               <LineChart data={weatherData} metric="rain_15_min_inches" style={{ flex: 1 }} />
@@ -134,6 +137,7 @@ const MainContent = ({
             adjustTimePeriod={adjustTimePeriod}
             display="flex"
             flexDirection="column"
+            key={windChartType} // Add this key to ensure re-render
           >
             {windChartType === 'line' ? (
               <LineChart data={weatherData} metric="wind_speed" style={{ flex: 1 }} />

@@ -83,18 +83,18 @@ const MainApp = () => {
   const toggleSidebar = () => setIsMinimized(!isMinimized);
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
-  const adjustTimePeriod = adjustment => {
-    setTimePeriod(prevTimePeriod => {
-      const newTimePeriod = prevTimePeriod + adjustment;
-      // Ensure the time period doesn't go below 60 minutes
-      return newTimePeriod < 13 ? 13 : newTimePeriod;
-    });
-  };
+  // const adjustTimePeriod = adjustment => {
+  //   setTimePeriod(prevTimePeriod => {
+  //     const newTimePeriod = prevTimePeriod + adjustment;
+  //     // Ensure the time period doesn't go below 60 minutes
+  //     return newTimePeriod < 13 ? 13 : newTimePeriod;
+  //   });
+  // };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getWeatherData(timePeriod);
+        const response = await getWeatherData('all', timePeriod);
         if (Array.isArray(response.data.weather_data)) {
           setWeatherData(response.data.weather_data);
         } else {
@@ -162,7 +162,7 @@ return (
                   weatherData={weatherData}
                   isMinimized={isMinimized}
                   timePeriod={timePeriod}
-                  adjustTimePeriod={adjustTimePeriod}
+                  // adjustTimePeriod={adjustTimePeriod}
                 />
               </ProtectedRoute>
             }

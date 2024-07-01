@@ -269,7 +269,7 @@ const ChartWrapper = ({
         weatherData={weatherData}
         metric={metric}
         onChartChange={changeChartType}
-        adjustTimePeriod={adjustTimePeriod}
+        // adjustTimePeriod={adjustTimePeriod}
       />
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <ModalOverlay />
