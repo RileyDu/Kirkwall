@@ -48,3 +48,4 @@ yarn-error.log*
 src/Backend/venv
 .vercel
 src/Backend/server.js
+.env
