@@ -119,25 +119,25 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
           textAlign="center"
         >
           <Flex alignItems="center">
-          <MinusIcon
+          {/* <MinusIcon
                   icon={<MinusIcon />}
                   onClick={() => adjustTimePeriod(-12)}
                   aria-label="Decrease time period"
                   mr={2}
                   color={'red'}
                   cursor={'pointer'}
-                />
+                /> */}
             <Text fontSize={['xl', '2xl']} fontWeight="bold">
               {timePeriod}
             </Text>
-            <AddIcon
+            {/* <AddIcon
                   icon={<AddIcon />}
                   onClick={() => adjustTimePeriod(12)}
                   aria-label="Increase time period"
                   ml={2}
                   color={'green'}
                   cursor={'pointer'}
-                />
+                /> */}
           </Flex>
           <Text fontSize={['lg', 'xl']}>Time Period</Text>
         </Box>

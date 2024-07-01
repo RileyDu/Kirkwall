@@ -51,7 +51,7 @@ const ChartExpandModal = ({ isOpen, onClose, children, title, weatherData, metri
         </ModalHeader>
         <ModalCloseButton size="lg" color="white" mt={2} />
         <ModalBody>
-          {/* <Box display="flex" justifyContent="space-between" my={4}>
+          <Box display="flex" justifyContent="space-between" my={4}>
             <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>1H</MotionButton>
             <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>3H</MotionButton>
             <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>6H</MotionButton>
@@ -59,9 +59,9 @@ const ChartExpandModal = ({ isOpen, onClose, children, title, weatherData, metri
             <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>1D</MotionButton>
             <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>3D</MotionButton>
             <MotionButton variant="pill" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>1W</MotionButton>
-          </Box> */}
+          </Box>
           <Box
-            h="900px"
+            h="825px"
             w="100%"
             display="flex"
             justifyContent="center"
