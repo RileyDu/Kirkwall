@@ -42,7 +42,7 @@ import { FaBars, FaSun, FaMoon } from 'react-icons/fa';
 import { WiThermometer, WiStrongWind, WiRain, WiHumidity } from 'react-icons/wi';
 import Logout from '../../Frontend/AuthComponents/Logout';
 import { useNavigate } from 'react-router-dom';
-import WeatherAlerts from '../Alert/WeatherAlerts';
+// import WeatherAlerts from '../Alert/WeatherAlerts';
 import { useWeatherData } from '../WeatherDataContext';
 
 const Header = () => {

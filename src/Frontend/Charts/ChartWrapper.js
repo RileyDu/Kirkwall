@@ -77,12 +77,12 @@ const ChartWrapper = ({
     colorMode === 'light' ? '#f9f9f9' : '#303030';
 
   const handleFormSubmit = () => {
-    let formattedPhoneNumber = phoneNumber.startsWith('+1')
-      ? phoneNumber
-      : `+1${phoneNumber}`;
+    // let formattedPhoneNumber = phoneNumber.startsWith('+1')
+    //   ? phoneNumber
+    //   : `+1${phoneNumber}`;
 
     const chartSettings = {
-      phoneNumber: formattedPhoneNumber,
+      phoneNumber: phoneNumber,
       highThreshold: parseFloat(highThreshold),
       lowThreshold: parseFloat(lowThreshold),
     };
@@ -150,11 +150,11 @@ const ChartWrapper = ({
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      checkThresholdExceed();
-    }, 305000); // 5 minutes
+    // const interval = setInterval(() => {
+    //   checkThresholdExceed();
+    // }, 305000); // 5 minutes
 
-    return () => clearInterval(interval);
+    // return () => clearInterval(interval);
   }, [weatherData, metric, title, lastAlertTime]);
 
   const mostRecentValue = weatherData && weatherData.length > 0 ? weatherData[0][metric] : 'N/A';
