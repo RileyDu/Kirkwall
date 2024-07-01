@@ -1,5 +1,5 @@
 import React from 'react';
-import { Line, Bar, Pie } from 'react-chartjs-2';
+import { Line, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,7 +12,7 @@ import {
   Legend,
   ArcElement,
 } from 'chart.js';
-import { Box, Spinner } from '@chakra-ui/react';
+import { Box, Spinner, useColorMode } from '@chakra-ui/react';
 
 ChartJS.register(
   CategoryScale,
@@ -26,8 +26,13 @@ ChartJS.register(
   Legend
 );
 
-const processWeatherData = (data, key) => {
+// Process weather data function now takes color mode as a parameter
+const processWeatherData = (data, key, colorMode) => {
   if (!data) return null;
+  
+  const getColorOfLastValue = (colorMode) => {
+    return colorMode === 'light' ? '#212121' : 'white';
+  };
 
   const reversedData = [...data].reverse();
 
@@ -44,11 +49,11 @@ const processWeatherData = (data, key) => {
         data: reversedData.map(item => item[key]),
         backgroundColor: '#fd9801',
         borderColor: reversedData.map((item, index) =>
-          index === reversedData.length - 1 ? '#212121' : '#fd9801'
+          index === reversedData.length - 1 ? getColorOfLastValue(colorMode) : '#fd9801'
         ),
         borderWidth: 2,
         pointBackgroundColor: reversedData.map((item, index) =>
-          index === reversedData.length - 1 ? '#212121' : '#fd9801'
+          index === reversedData.length - 1 ? getColorOfLastValue(colorMode) : '#fd9801'
         ),
         pointRadius: reversedData.map((item, index) =>
           index === reversedData.length - 1 ? 5 : 3
@@ -124,7 +129,8 @@ const createCustomChartOptions = (metric, dataKey) => {
 };
 
 export const LineChart = ({ data, metric }) => {
-  const chartData = processWeatherData(data, metric);
+  const { colorMode } = useColorMode();  // Get color mode here
+  const chartData = processWeatherData(data, metric, colorMode);
   if (!chartData) return <Spinner size="xl" />;
 
   const dataKey = chartData.datasets[0].data;
@@ -138,7 +144,8 @@ export const LineChart = ({ data, metric }) => {
 };
 
 export const BarChart = ({ data, metric }) => {
-  const chartData = processWeatherData(data, metric);
+  const { colorMode } = useColorMode();  // Get color mode here
+  const chartData = processWeatherData(data, metric, colorMode);
   if (!chartData) return <Spinner size="xl" />;
 
   const dataKey = chartData.datasets[0].data;
@@ -150,4 +157,3 @@ export const BarChart = ({ data, metric }) => {
     </Box>
   );
 };
-
