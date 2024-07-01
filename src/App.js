@@ -73,8 +73,8 @@ const Layout = ({
 };
 
 const MainApp = () => {
-  const [weatherData, setWeatherData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [weatherData, setWeatherData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [timePeriod, setTimePeriod] = useState(37); // Default time period
@@ -91,32 +91,34 @@ const MainApp = () => {
   //   });
   // };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getWeatherData('all', timePeriod);
-        if (Array.isArray(response.data.weather_data)) {
-          setWeatherData(response.data.weather_data);
-        } else {
-          setWeatherData([]);
-          console.error('Fetched weather data is not an array');
-        }
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching weather data:', error);
-        setWeatherData([]);
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await getWeatherData('all', timePeriod);
+  //       if (Array.isArray(response.data.weather_data)) {
+  //         setWeatherData(response.data.weather_data);
+  //       } else {
+  //         setWeatherData([]);
+  //         console.error('Fetched weather data is not an array');
+  //       }
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.error('Error fetching weather data:', error);
+  //       setWeatherData([]);
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchData();
+  //   fetchData();
 
-    const intervalId = setInterval(fetchData, 30000);
+  //   const intervalId = setInterval(fetchData, 30000);
 
     
 
-    return () => clearInterval(intervalId);
-  }, [timePeriod]);
+  //   return () => clearInterval(intervalId);
+  // }, [timePeriod]);
+
+  
 
 
   const spin = keyframes`
@@ -159,7 +161,7 @@ return (
             element={
               <ProtectedRoute>
                 <MainContent
-                  weatherData={weatherData}
+                  // weatherData={weatherData}
                   isMinimized={isMinimized}
                   timePeriod={timePeriod}
                   // adjustTimePeriod={adjustTimePeriod}
@@ -171,7 +173,7 @@ return (
             path="/TempSensors"
             element={
               <ProtectedRoute>
-                <TempSensors weatherData={weatherData} />
+                <TempSensors />
               </ProtectedRoute>
             }
           />
@@ -179,7 +181,7 @@ return (
             path="/HumiditySensors"
             element={
               <ProtectedRoute>
-                <HumiditySensors weatherData={weatherData} />
+                <HumiditySensors  />
               </ProtectedRoute>
             }
           />
@@ -187,7 +189,7 @@ return (
             path="/SoilMoistureSensors"
             element={
               <ProtectedRoute>
-                <SoilSensors weatherData={weatherData} />
+                <SoilSensors  />
               </ProtectedRoute>
             }
           />
@@ -195,7 +197,7 @@ return (
             path="/WindSensors"
             element={
               <ProtectedRoute>
-                <WindSensors weatherData={weatherData} />
+                <WindSensors  />
               </ProtectedRoute>
             }
           />
@@ -203,7 +205,7 @@ return (
             path="/RainSensors"
             element={
               <ProtectedRoute>
-                <RainSensors weatherData={weatherData} />
+                <RainSensors  />
               </ProtectedRoute>
             }
           />

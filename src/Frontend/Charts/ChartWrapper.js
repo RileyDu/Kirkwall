@@ -36,6 +36,7 @@ const ChartWrapper = ({
   weatherData,
   timePeriod,
   adjustTimePeriod,
+  handleTimePeriodChange,
 }) => {
   const [chartType, setChartType] = useState('bar');
   const [showIcons, setShowIcons] = useState(true);
@@ -270,6 +271,7 @@ const ChartWrapper = ({
         metric={metric}
         onChartChange={changeChartType}
         // adjustTimePeriod={adjustTimePeriod}
+        handleTimePeriodChange={handleTimePeriodChange}
       />
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <ModalOverlay />
