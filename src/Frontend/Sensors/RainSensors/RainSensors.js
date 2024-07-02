@@ -3,10 +3,13 @@ import { Box, Heading, Divider, Spinner, Text } from '@chakra-ui/react';
 import MiniDashboard from '../../Charts/ChartDashboard';
 import ChartWrapper from '../../Charts/ChartWrapper';
 import { BarChart, LineChart } from '../../Charts/Charts';
+import { useWeatherData } from '../../WeatherDataContext';
 
-export default function RainSensors({ weatherData }) {
+export default function RainSensors() {
 
-  if (!weatherData) {
+  const { weatherData, rainfallData } = useWeatherData();
+
+  if (!weatherData && !rainfallData) {
     console.log('WeatherData is not defined', weatherData);
     return (
       <Box p="4" width="100%" height="100%" textAlign="center">
@@ -22,10 +25,10 @@ export default function RainSensors({ weatherData }) {
         Rain Sensors
       </Heading>
       <Box width="100%">
-        <MiniDashboard metric="rain_15_min_inches" weatherData={weatherData} />
+        <MiniDashboard metric="rain_15_min_inches" weatherData={rainfallData || weatherData} />
       </Box>
-      <ChartWrapper title="Rainfall (inches)">
-        <BarChart data={weatherData} metric="rain_15_min_inches" />
+      <ChartWrapper title="Rainfall (inches)" weatherData={rainfallData || weatherData}>
+        <BarChart data={rainfallData || weatherData} metric="rain_15_min_inches" />
       </ChartWrapper>
       <Divider
         my={'8'}
@@ -33,8 +36,8 @@ export default function RainSensors({ weatherData }) {
         borderWidth="4px"
         borderRadius={'full'}
       />
-      <ChartWrapper title="Rainfall (inches)">
-        <LineChart data={weatherData} metric="rain_15_min_inches" />
+      <ChartWrapper title="Rainfall (inches)" weatherData={rainfallData || weatherData}>
+        <LineChart data={rainfallData || weatherData} metric="rain_15_min_inches" />
       </ChartWrapper>
     </Box>
   );
