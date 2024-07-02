@@ -70,8 +70,8 @@ const getMinMax = (data) => {
   return { min, max };
 };
 
-const createCustomChartOptions = (metric, dataKey) => {
-  const { min, max } = getMinMax(dataKey);
+const createCustomChartOptions = (metric, data) => {
+  const { min, max } = getMinMax(data);
   return {
     responsive: true,
     maintainAspectRatio: false,
@@ -86,7 +86,7 @@ const createCustomChartOptions = (metric, dataKey) => {
       },
       y: {
         min: min > 1 ? min - 1 : min,
-        max: max + 1,
+        max: max > 1 ? Math.round(max + 1) : max,
         title: {
           display: false,
         },
