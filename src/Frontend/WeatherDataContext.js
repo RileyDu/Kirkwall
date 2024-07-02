@@ -69,7 +69,7 @@ export const WeatherDataProvider = ({ children }) => {
     }
   }, [dataLoaded, selectedTimePeriodTemp, selectedTimePeriodHumidity, selectedTimePeriodWind, selectedTimePeriodRainfall]);
 
-  const handleTimePeriodChange = (metric, timePeriod) => {
+  const handleTimePeriodChange = async (metric, timePeriod) => {
     switch (metric) {
       case 'temperature':
         setSelectedTimePeriodTemp(timePeriod);
@@ -90,8 +90,9 @@ export const WeatherDataProvider = ({ children }) => {
       default:
         break;
     }
-    fetchSpecificData(metric, timePeriod);
+    return fetchSpecificData(metric, timePeriod); // Return the promise
   };
+  
 
   const determineLimitBasedOnTimePeriod = (timePeriod) => {
     console.log('Determining limit for time period:', timePeriod);

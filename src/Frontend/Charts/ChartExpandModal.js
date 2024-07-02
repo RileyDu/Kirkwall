@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard';
 import { FaChartLine, FaChartBar } from 'react-icons/fa';
-import { m, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const ChartExpandModal = ({
   isOpen,
@@ -39,6 +39,7 @@ const ChartExpandModal = ({
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
 
   const showLoadingToast = () => {
+    console.log("showLoadingToast called");
     toast({
       title: 'Loading Data',
       description: 'We are fetching the latest data for you.',
@@ -49,17 +50,24 @@ const ChartExpandModal = ({
   };
 
   const handleTimeButtonClick = async (timePeriod) => {
+    console.log("handleTimeButtonClick called with timePeriod:", timePeriod);
     showLoadingToast();
     setLoading(true);
-
+    console.log("loading state set to true");
+  
     try {
-      await handleTimePeriodChange(metric, timePeriod);
+      const result = await handleTimePeriodChange(metric, timePeriod);
+      console.log("handleTimePeriodChange result:", result);
+    } catch (error) {
+      console.error("Error in handleTimePeriodChange:", error);
     } finally {
       setLoading(false);
+      console.log("loading state set to false");
     }
   };
 
   useEffect(() => {
+    console.log("useEffect called with loading:", loading);
     if (!loading) {
       toast.closeAll(); // Close all toasts when loading is complete
     }
