@@ -25,11 +25,13 @@ const ChartExpandModal = ({
   onChartChange,
   handleTimePeriodChange,
   weatherData,
+  currentTimePeriod,
+  setCurrentTimePeriod
 }) => {
   const { colorMode } = useColorMode();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
-  const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
+  // const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
 
   const MotionButton = motion(Button);
 

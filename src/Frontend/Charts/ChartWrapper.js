@@ -441,6 +441,8 @@ const ChartWrapper = ({
         onChartChange={onChartChange}
         // adjustTimePeriod={adjustTimePeriod}
         handleTimePeriodChange={handleTimePeriodChange}
+        currentTimePeriod={currentTimePeriod}
+        setCurrentTimePeriod={setCurrentTimePeriod}
       />
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <ModalOverlay />
