@@ -5,6 +5,7 @@ import ChartWrapper from '../../Charts/ChartWrapper';
 import { BarChart, LineChart } from '../../Charts/Charts';
 import MiniDashboard from '../../Charts/ChartDashboard';
 import WindGauageStyling from './WindGaugeStyling.css';
+import { useWeatherData } from '../../WeatherDataContext';
 
 const getCardinalDirection = (degree) => {
   const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
@@ -12,10 +13,15 @@ const getCardinalDirection = (degree) => {
   return directions[index % 8];
 };
 
-export default function WindSensors({ weatherData }) {
+
+
+export default function WindSensors() {
   const [isMobile] = useMediaQuery("(max-width: 767px)");
 
-  if (!weatherData) {
+  const { weatherData, windData } = useWeatherData();
+
+
+  if (!weatherData && !windData) {
     console.log('WeatherData is not defined', weatherData);
     return (
       <Box p="4" width="100%" height="100%" textAlign="center">
@@ -117,8 +123,8 @@ export default function WindSensors({ weatherData }) {
         </>
       )}
       <Box width="100%" mb="4">
-        <ChartWrapper title="Wind Speed (MPH)">
-          <LineChart data={weatherData} metric="wind_speed" />
+        <ChartWrapper title="Wind Speed (MPH)" weatherData={windData || weatherData}>
+          <LineChart data={windData || weatherData} metric="wind_speed" />
         </ChartWrapper>
       </Box>
       <Divider
@@ -128,8 +134,8 @@ export default function WindSensors({ weatherData }) {
         borderRadius={'full'}
       />
       <Box width="100%" mb="4">
-        <ChartWrapper title="Wind Speed (MPH)">
-          <BarChart data={weatherData} metric="wind_speed" />
+        <ChartWrapper title="Wind Speed (MPH)" weatherData={windData || weatherData}>
+          <BarChart data={windData || weatherData} metric="wind_speed" />
         </ChartWrapper>
       </Box>
     </Box>
