@@ -38,6 +38,7 @@ const ChartExpandModal = ({
 
   const fontSize = useBreakpointValue({ base: 'sm', md: 'lg' });
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
+  const closeSize = useBreakpointValue({ base: 'sm', md: 'lg' });
 
   const showLoadingToast = () => {
     toast({
@@ -122,7 +123,7 @@ const ChartExpandModal = ({
             BAR
           </MotionButton>
         </ModalHeader>
-        <ModalCloseButton size="lg" color="white"/>
+        <ModalCloseButton size={closeSize} color="white" mt={[3, 2]}/>
         <ModalBody>
           <Box display="flex" justifyContent="space-between" my={1}>
             {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map(timePeriod => (
@@ -140,7 +141,7 @@ const ChartExpandModal = ({
             ))}
           </Box>
           <Box
-            h={['300px', '600px', '650px']}
+            h={['400px','500px', '600px', '650px']}
             w="100%"
             display="flex"
             justifyContent="center"
