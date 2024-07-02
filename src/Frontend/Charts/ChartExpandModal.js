@@ -5,7 +5,7 @@ import { FaChartLine, FaChartBar } from 'react-icons/fa';
 import { m, motion } from 'framer-motion';
 import { getWeatherData } from '../../Backend/Graphql_helper';
 
-const ChartExpandModal = ({ isOpen, onClose, children, title, metric, onChartChange, handleTimePeriodChange }) => {
+const ChartExpandModal = ({ isOpen, onClose, children, title, metric, onChartChange, handleTimePeriodChange, weatherData }) => {
   const [chartType, setChartType] = useState('bar');
   const [data, setData] = useState([]);
 
@@ -129,7 +129,7 @@ const ChartExpandModal = ({ isOpen, onClose, children, title, metric, onChartCha
           </Box>
           <MiniDashboard
             metric={metric}
-            weatherData={data}
+            weatherData={weatherData}
           />
         </ModalBody>
       </ModalContent>

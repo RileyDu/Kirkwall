@@ -104,35 +104,35 @@ const MainContent = ({
 
   useEffect(() => {
     let intervalId;
-    if (tempData) {
+    if (specificChartMetric === 'temperature') {
       intervalId = setupInterval('temperature', selectedTimePeriodTemp, setTempData);
     }
     return () => clearInterval(intervalId);
-  }, [tempData, selectedTimePeriodTemp]);
+  }, [specificChartMetric, selectedTimePeriodTemp]);
 
   useEffect(() => {
     let intervalId;
-    if (humidityData) {
-    intervalId = setupInterval('humidity', selectedTimePeriodHumidity, setHumidityData);
+    if (specificChartMetric === 'percent_humidity') {
+      intervalId = setupInterval('humidity', selectedTimePeriodHumidity, setHumidityData);
     }
     return () => clearInterval(intervalId);
-  }, [humidityData, selectedTimePeriodHumidity]);
+  }, [specificChartMetric, selectedTimePeriodHumidity]);
 
   useEffect(() => {
     let intervalId;
-    if (windData) {
+    if (specificChartMetric === 'wind_speed') {
       intervalId = setupInterval('wind', selectedTimePeriodWind, setWindData);
     }
     return () => clearInterval(intervalId);
-  }, [windData, selectedTimePeriodWind]);
+  }, [specificChartMetric, selectedTimePeriodWind]);
 
   useEffect(() => {
     let intervalId;
-    if (rainfallData) {
+    if (specificChartMetric === 'rain_15_min_inches') {
       intervalId = setupInterval('rain', selectedTimePeriodRainfall, setRainfallData);
     }
     return () => clearInterval(intervalId);
-  }, [rainfallData, selectedTimePeriodRainfall]);
+  }, [specificChartMetric, selectedTimePeriodRainfall]);
 
   const determineLimitBasedOnTimePeriod = (timePeriod) => {
     console.log('Determining limit for time period:', timePeriod); // Log the time period
