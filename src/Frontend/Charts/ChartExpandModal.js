@@ -7,7 +7,6 @@ import { getWeatherData } from '../../Backend/Graphql_helper';
 
 const ChartExpandModal = ({ isOpen, onClose, children, title, metric, onChartChange, handleTimePeriodChange }) => {
   const [chartType, setChartType] = useState('bar');
-  // const [selectedTimePeriod, setSelectedTimePeriod] = useState('3H'); // Default time period
   const [data, setData] = useState([]);
 
   const { colorMode } = useColorMode();
@@ -20,47 +19,10 @@ const ChartExpandModal = ({ isOpen, onClose, children, title, metric, onChartCha
     }
   };
 
-  // const handleTimePeriodChange = (timePeriod) => {
-  //   setSelectedTimePeriod(timePeriod);
-  // };
-
   const getBackgroundColor = (colorMode) =>
     colorMode === 'light' ? '#f9f9f9' : '#303030';
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const limit = determineLimitBasedOnTimePeriod(selectedTimePeriod);
-  //       const result = await getWeatherData(metric, limit);
-  //       setData(result.data.weather_data); // Adjust according to your API response structure
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [metric, selectedTimePeriod]); // Trigger fetchData when metric or selectedTimePeriod changes
-
-  // const determineLimitBasedOnTimePeriod = (timePeriod) => {
-  //   switch (timePeriod) {
-  //     case '1H':
-  //       return 13; // Example limit for 1 hour
-  //     case '3H':
-  //       return 37; // Example limit for 3 hours
-  //     case '6H':
-  //       return 73; // Example limit for 6 hours
-  //     case '12H':
-  //       return 145; // Example limit for 12 hours
-  //     case '1D':
-  //       return 289; // Example limit for 1 day
-  //     case '3D':
-  //       return 865; // Example limit for 3 days
-  //     case '1W':
-  //       return 2017; // Example limit for 1 week
-  //     default:
-  //       return 37; // Default limit
-  //   }
-  // };
+  
 
   return (
     <Modal onClose={onClose} size="full" isOpen={isOpen}>
@@ -151,7 +113,7 @@ const ChartExpandModal = ({ isOpen, onClose, children, title, metric, onChartCha
             </MotionButton>
           </Box>
           <Box
-            h="825px"
+            h={['500px', '600px', '700px', '825px']} 
             w="100%"
             display="flex"
             justifyContent="center"
