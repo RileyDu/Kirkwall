@@ -26,9 +26,13 @@ import {
   PopoverCloseButton,
   PopoverHeader,
   PopoverBody,
-  
 } from '@chakra-ui/react';
-import { FaExpandAlt, FaChessRook, FaChartBar, FaChartLine } from 'react-icons/fa';
+import {
+  FaExpandAlt,
+  FaChessRook,
+  FaChartBar,
+  FaChartLine,
+} from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import ChartExpandModal from './ChartExpandModal'; // Adjust the path as necessary
@@ -51,6 +55,8 @@ const ChartWrapper = ({
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
   const [lastAlertTime, setLastAlertTime] = useState(null);
+  const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
+  const [loading, setLoading] = useState(false);
 
   const location = useLocation();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -77,7 +83,6 @@ const ChartWrapper = ({
       setLowThreshold(chartSettings.lowThreshold || '');
     }
   }, [location.pathname, title]);
-
 
   const getBackgroundColor = colorMode =>
     colorMode === 'light' ? '#f9f9f9' : '#303030';
@@ -106,9 +111,9 @@ const ChartWrapper = ({
       isClosable: true,
     });
 
-    console.log('phone number', phoneNumber)
+    console.log('phone number', phoneNumber);
     console.log('high threshold', highThreshold);
-    console.log('low threshold', lowThreshold)
+    console.log('low threshold', lowThreshold);
 
     handleCloseModal();
   };
@@ -137,10 +142,13 @@ const ChartWrapper = ({
   };
 
   const checkThresholdExceed = () => {
-    const chartSettings = JSON.parse(localStorage.getItem(`chartSettings_${title}`));
+    const chartSettings = JSON.parse(
+      localStorage.getItem(`chartSettings_${title}`)
+    );
     if (chartSettings) {
       const { phoneNumber, highThreshold, lowThreshold } = chartSettings;
-      const lastValue = weatherData && weatherData.length > 0 ? weatherData[0][metric] : null;
+      const lastValue =
+        weatherData && weatherData.length > 0 ? weatherData[0][metric] : null;
       const now = new Date();
 
       if (
@@ -159,17 +167,19 @@ const ChartWrapper = ({
     // const interval = setInterval(() => {
     //   checkThresholdExceed();
     // }, 305000); // 5 minutes
-
     // return () => clearInterval(interval);
   }, [weatherData, metric, title, lastAlertTime]);
 
-  const mostRecentValue = weatherData && weatherData.length > 0 ? weatherData[0][metric] : 'N/A';
+  const mostRecentValue =
+    weatherData && weatherData.length > 0 ? weatherData[0][metric] : 'N/A';
   const { label, addSpace } = getLabelForMetric(metric);
   const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
 
   const fontSize = useBreakpointValue({ base: 'xs', md: 'lg' });
   const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
+  const closeSize = useBreakpointValue({ base: 'sm', md: 'lg' });
+
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -177,12 +187,14 @@ const ChartWrapper = ({
   const calculateTimePeriod = dataLength => {
     const totalMinutes = dataLength * 5;
     const totalHours = Math.floor(totalMinutes / 60);
-  
+
     if (totalHours < 24) {
       return `${totalHours} hour${totalHours !== 1 ? 's' : ''}`;
-    } else if (totalHours < 72) { // Less than 3 days
+    } else if (totalHours < 72) {
+      // Less than 3 days
       return '1 day';
-    } else if (totalHours < 168) { // Less than 1 week
+    } else if (totalHours < 168) {
+      // Less than 1 week
       return '3 days';
     } else {
       return '1 week';
@@ -205,10 +217,44 @@ const ChartWrapper = ({
         return <FaChartBar />;
     }
   };
-  
+
+  const showLoadingToast = () => {
+    toast({
+      title: 'Loading Data',
+      description: 'We are fetching the latest data for you.',
+      status: 'info',
+      duration: null, // Keeps the toast open until manually closed
+      isClosable: true,
+      size: 'lg',
+      position: 'top',
+    });
+  };
+
+  const handleTimeButtonClick = async timePeriod => {
+    if (timePeriod === currentTimePeriod) return; // Prevent fetching if the time period is already selected
+
+    showLoadingToast();
+    setLoading(true);
+
+    try {
+      const result = await handleTimePeriodChange(metric, timePeriod);
+      setCurrentTimePeriod(timePeriod); // Update the current time period after successful fetch
+    } catch (error) {
+      // Handle error
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!loading) {
+      toast.closeAll(); // Close all toasts when loading is complete
+    }
+  }, [loading, toast]);
 
   const timeOfGraph = calculateTimePeriod(weatherData.length - 1);
 
+  const MotionButton = motion(Button);
 
   const MotionIconButton = motion(IconButton);
 
@@ -267,31 +313,55 @@ const ChartWrapper = ({
                   color={'#212121'}
                 >
                   <Popover
-                    trigger="hover"
-                    placement="bottom"
-                    closeOnBlur
-                    closeOnEsc
-                  >
-                    <PopoverTrigger>
-                      <Text fontSize={fontSize}>Time: {timeOfGraph}</Text>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      bg="brand.50"
-                      color="white"
-                      borderRadius="md"
-                      border="2px solid #212121"
-                    >
-                      <PopoverArrow bg="#212121" />
-                      {/* <PopoverCloseButton /> */}
-                      <PopoverHeader bg={'#212121'} fontWeight={'bold'}>
-                        TIME SELECTOR
-                      </PopoverHeader>
-                      <PopoverBody>
-                        TIME SELECTOR here
-                      </PopoverBody>
-                    </PopoverContent>
-                  </Popover>
-                  
+      trigger="hover"
+      placement="bottom"
+      closeOnBlur
+      closeOnEsc
+    >
+      <PopoverTrigger>
+        <Text fontSize={fontSize}>Time: {timeOfGraph}</Text>
+      </PopoverTrigger>
+      <PopoverContent
+        bg="brand.50"
+        color="white"
+        borderRadius="md"
+        border="2px solid #212121"
+        p={0} // Remove padding to ensure the content uses full space
+        w="auto" // Ensure width adapts to content
+      >
+        <PopoverArrow bg="#212121" border={'2px solid #212121'}/>
+        <PopoverHeader bg="#212121" fontWeight="bold" color="white">
+          TIME SELECTOR
+        </PopoverHeader>
+        <PopoverCloseButton size={closeSize} color="white" mt={[1,-1]}/>
+        <PopoverBody color="#212121" p={0}> {/* Remove padding for full width use */}
+          <Box
+            display="flex"
+            flexWrap="wrap" // Allows buttons to wrap if they don't fit in one line
+            gap={0.5}
+            p={2} // Add some padding inside the Box for spacing
+            w="100%" // Ensure the Box takes full width
+          >
+            {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map(timePeriod => (
+              <MotionButton
+                key={timePeriod}
+                variant="pill"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => handleTimeButtonClick(timePeriod)}
+                bg={currentTimePeriod === timePeriod ? 'brand.800' : 'gray.100'}
+                color="black"
+                fontSize={fontSize}
+                flex="1 1 0" // Ensures buttons take equal space and grow
+                m={0} // Remove margin
+              >
+                {timePeriod}
+              </MotionButton>
+            ))}
+          </Box>
+        </PopoverBody>
+      </PopoverContent>
+    </Popover>
                 </Box>
               </motion.div>
               {/* <motion.div
@@ -417,7 +487,7 @@ const ChartWrapper = ({
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button variant='sidebar' mr={3} onClick={handleFormSubmit}>
+            <Button variant="sidebar" mr={3} onClick={handleFormSubmit}>
               Save
             </Button>
             <Button variant="sidebar" onClick={handleCloseModal}>
