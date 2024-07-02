@@ -83,44 +83,6 @@ const MainApp = () => {
   const toggleSidebar = () => setIsMinimized(!isMinimized);
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
-  // const adjustTimePeriod = adjustment => {
-  //   setTimePeriod(prevTimePeriod => {
-  //     const newTimePeriod = prevTimePeriod + adjustment;
-  //     // Ensure the time period doesn't go below 60 minutes
-  //     return newTimePeriod < 13 ? 13 : newTimePeriod;
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await getWeatherData('all', timePeriod);
-  //       if (Array.isArray(response.data.weather_data)) {
-  //         setWeatherData(response.data.weather_data);
-  //       } else {
-  //         setWeatherData([]);
-  //         console.error('Fetched weather data is not an array');
-  //       }
-  //       setLoading(false);
-  //     } catch (error) {
-  //       console.error('Error fetching weather data:', error);
-  //       setWeatherData([]);
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchData();
-
-  //   const intervalId = setInterval(fetchData, 30000);
-
-    
-
-  //   return () => clearInterval(intervalId);
-  // }, [timePeriod]);
-
-  
-
-
   const spin = keyframes`
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
