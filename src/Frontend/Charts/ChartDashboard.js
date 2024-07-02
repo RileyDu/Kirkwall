@@ -26,15 +26,21 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
   const mostRecentValue =
     currentData.length > 0 ? currentData[currentData.length - 1] : 'N/A';
 
-  const calculateTimePeriod = dataLength => {
-    const totalMinutes = dataLength * 5;
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(
-      2,
-      '0'
-    )}`;
-  };
+    const calculateTimePeriod = dataLength => {
+      const totalMinutes = dataLength * 5;
+      const totalHours = Math.floor(totalMinutes / 60);
+    
+      if (totalHours < 24) {
+        return `${totalHours} hour${totalHours !== 1 ? 's' : ''}`;
+      } else if (totalHours < 72) { // Less than 3 days
+        return '1 day';
+      } else if (totalHours < 168) { // Less than 1 week
+        return '3 days';
+      } else {
+        return '1 week';
+      }
+    };
+    
 
   const timePeriod = calculateTimePeriod(currentData.length - 1);
   const { label, addSpace } = getLabelForMetric(metric);

@@ -20,11 +20,12 @@ import {
   useBreakpointValue,
   useDisclosure,
 } from '@chakra-ui/react';
-import { FaExpandAlt, FaChessRook } from 'react-icons/fa';
+import { FaExpandAlt,  } from 'react-icons/fa';
+import { FaChartLine, FaChartBar } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import ChartExpandModal from './ChartExpandModal'; // Adjust the path as necessary
-import ChartDetails, { getLabelForMetric } from './ChartDetails';
+import { getLabelForMetric } from './ChartDetails';
 import { useColorMode } from '@chakra-ui/react';
 import axios from 'axios';
 
@@ -78,10 +79,6 @@ const ChartWrapper = ({
     colorMode === 'light' ? '#f9f9f9' : '#303030';
 
   const handleFormSubmit = () => {
-    // let formattedPhoneNumber = phoneNumber.startsWith('+1')
-    //   ? phoneNumber
-    //   : `+1${phoneNumber}`;
-
     const chartSettings = {
       phoneNumber: phoneNumber,
       highThreshold: parseFloat(highThreshold),
@@ -168,14 +165,43 @@ const ChartWrapper = ({
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
-  // const changeChartType = type => {
-  //   setChartType(type);
-  //   if (onChartChange) {
-  //     onChartChange(type);
-  //   }
-  // };
+  const calculateTimePeriod = dataLength => {
+    const totalMinutes = dataLength * 5;
+    const totalHours = Math.floor(totalMinutes / 60);
+  
+    if (totalHours < 24) {
+      return `${totalHours} hour${totalHours !== 1 ? 's' : ''}`;
+    } else if (totalHours < 72) { // Less than 3 days
+      return '1 day';
+    } else if (totalHours < 168) { // Less than 1 week
+      return '3 days';
+    } else {
+      return '1 week';
+    }
+  };
+  
+
+  const timeOfGraph = calculateTimePeriod(weatherData.length - 1);
+
 
   const MotionIconButton = motion(IconButton);
+
+  const handleChartTypeChange = () => {
+    const newChartType = chartType === 'bar' ? 'line' : 'bar';
+    setChartType(newChartType);
+    onChartChange(newChartType);
+  };
+
+  const getChartIcon = () => {
+    switch (chartType) {
+      case 'bar':
+        return <FaChartBar />;
+      case 'line':
+        return <FaChartLine />;
+      default:
+        return <FaChartBar />;
+    }
+  };
 
   return (
     <>
@@ -216,44 +242,64 @@ const ChartWrapper = ({
                   </Text>
                 </Box>
               </motion.div>
-              {/* <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, delay: 0.2 }}
-              >
-                <Tooltip label="Thresholds">
-                  <MotionIconButton
-                    icon={<FaChessRook />}
-                    variant="outline"
-                    color="#212121"
-                    size="md"
-                    bg={'brand.400'}
-                    _hover={{ bg: 'brand.800' }}
-                    onClick={handleOpenModal}
-                    mr={2}
-                    border={'2px solid #fd9801'}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  />
-                </Tooltip>
-              </motion.div> */}
               <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, delay: 0.5 }}
+                transition={{ duration: 1, delay: 0.25 }}
+              >
+                <Box
+                  border="2px"
+                  borderColor="#fd9801"
+                  borderRadius="lg"
+                  px={2}
+                  py={1}
+                  mr={2}
+                  bg={'brand.400'}
+                  color={'#212121'}
+                >
+                  <Text fontSize={fontSize}>
+                    Time Period: {timeOfGraph}
+                  </Text>
+                </Box>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 0.35 }}
+              >
+                <Tooltip label="Change Chart Type">
+                  <MotionIconButton
+                    icon={getChartIcon()}
+                    variant="outline"
+                    color="#212121"
+                    aria-label="Change Chart Type"
+                    onClick={handleChartTypeChange}
+                    whileTap={{ scale: 0.9 }}
+                    mr={2}
+                    bg={'brand.400'}
+                    _hover={{ bg: 'brand.800' }}
+                    border={'2px solid #fd9801'}
+                    whileHover={{ scale: 1.1 }}
+                  />
+                </Tooltip>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 0.45 }}
               >
                 <Tooltip label="Expand Chart">
-                  <MotionIconButton
+                  <IconButton
                     icon={<FaExpandAlt />}
                     variant="outline"
                     color="#212121"
-                    size="md"
+                    aria-label="Expand Chart"
+                    onClick={handleOpenModal}
+                    mr={2}
                     bg={'brand.400'}
                     _hover={{ bg: 'brand.800' }}
-                    onClick={onOpen}
                     border={'2px solid #fd9801'}
                     whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                   />
                 </Tooltip>
               </motion.div>
@@ -262,71 +308,58 @@ const ChartWrapper = ({
         </Flex>
         {children}
       </Box>
-      <ChartExpandModal
-        isOpen={isOpen}
-        onClose={onClose}
-        title={title}
-        children={children}
-        weatherData={weatherData}
-        metric={metric}
-        onChartChange={onChartChange}
-        // adjustTimePeriod={adjustTimePeriod}
-        handleTimePeriodChange={handleTimePeriodChange}
-      />
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <ModalOverlay />
-        <ModalContent
-          sx={{
-            border: '2px solid black',
-            bg: 'brand.50',
-          }}
-        >
-          <ModalHeader bg={'#212121'} color={'white'}>
-            Add Thresholds for {title}
-          </ModalHeader>
-          <ModalCloseButton color={'white'} size={'lg'} mt={1} />
+        <ModalContent>
+          <ModalHeader>Chart Settings</ModalHeader>
+          <ModalCloseButton />
           <ModalBody>
-            <FormControl>
+            <FormControl id="phoneNumber">
               <FormLabel>Phone Number</FormLabel>
               <Input
-                type="text"
+                type="tel"
                 value={phoneNumber}
-                onChange={e => setPhoneNumber(e.target.value)}
-                bg={'white'}
-                border={'2px solid #fd9801'}
+                onChange={(e) => setPhoneNumber(e.target.value)}
               />
             </FormControl>
-            <FormControl mt={4}>
+            <FormControl mt={4} id="highThreshold">
               <FormLabel>High Threshold</FormLabel>
               <Input
                 type="number"
+                step="0.01"
                 value={highThreshold}
-                onChange={e => setHighThreshold(e.target.value)}
-                bg={'white'}
-                border={'2px solid #fd9801'}
+                onChange={(e) => setHighThreshold(e.target.value)}
               />
             </FormControl>
-            <FormControl mt={4}>
+            <FormControl mt={4} id="lowThreshold">
               <FormLabel>Low Threshold</FormLabel>
               <Input
                 type="number"
+                step="0.01"
                 value={lowThreshold}
-                onChange={e => setLowThreshold(e.target.value)}
-                bg={'white'}
-                border={'2px solid #fd9801'}
+                onChange={(e) => setLowThreshold(e.target.value)}
               />
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button variant='sidebar' mr={3} onClick={handleFormSubmit}>
+            <Button colorScheme="blue" mr={3} onClick={handleFormSubmit}>
               Save
             </Button>
-            <Button variant="sidebar" onClick={handleCloseModal}>
+            <Button variant="ghost" onClick={handleCloseModal}>
               Cancel
             </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <ChartExpandModal
+        isOpen={isOpen}
+        onClose={onClose}
+        title={title}
+        chartType={chartType}
+        timePeriod={timePeriod}
+        adjustTimePeriod={adjustTimePeriod}
+        handleTimePeriodChange={handleTimePeriodChange}
+      />
     </>
   );
 };
