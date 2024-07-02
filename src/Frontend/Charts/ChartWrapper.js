@@ -168,12 +168,12 @@ const ChartWrapper = ({
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
-  const changeChartType = type => {
-    setChartType(type);
-    if (onChartChange) {
-      onChartChange(type);
-    }
-  };
+  // const changeChartType = type => {
+  //   setChartType(type);
+  //   if (onChartChange) {
+  //     onChartChange(type);
+  //   }
+  // };
 
   const MotionIconButton = motion(IconButton);
 
@@ -269,7 +269,7 @@ const ChartWrapper = ({
         children={children}
         weatherData={weatherData}
         metric={metric}
-        onChartChange={changeChartType}
+        onChartChange={onChartChange}
         // adjustTimePeriod={adjustTimePeriod}
         handleTimePeriodChange={handleTimePeriodChange}
       />

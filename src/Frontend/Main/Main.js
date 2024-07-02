@@ -1,3 +1,4 @@
+// MainContent.jsx
 import React, { useEffect, useState } from 'react';
 import { Box, Grid, GridItem, useColorMode, Flex } from '@chakra-ui/react';
 import { LineChart, BarChart } from '../Charts/Charts';
@@ -5,6 +6,7 @@ import ChartWrapper from '../Charts/ChartWrapper';
 import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { getWeatherData } from '../../Backend/Graphql_helper';
+import { handleChartChange } from '../Charts/ChartUtils';
 
 const MainContent = ({
   isMinimized,
@@ -32,7 +34,7 @@ const MainContent = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log('Fetching data for time period:', timePeriod); // Log the time period
+        console.log('Fetching data for time period:', timePeriod);
         const response = await getWeatherData('all', timePeriod);
         if (Array.isArray(response.data.weather_data)) {
           setWeatherData(response.data.weather_data);
@@ -63,7 +65,7 @@ const MainContent = ({
   }, [weatherData]);
 
   const handleTimePeriodChange = (metric, timePeriod) => {
-    console.log('Handle Time Period Change:', metric, timePeriod); // Log metric and timePeriod
+    console.log('Handle Time Period Change:', metric, timePeriod);
     switch (metric) {
       case 'temperature':
         setSelectedTimePeriodTemp(timePeriod);
@@ -81,14 +83,14 @@ const MainContent = ({
         break;
     }
     setSpecificChartMetric(metric);
-    console.log('Selected specific chart metric:', specificChartMetric); // Log the updated metric
+    console.log('Selected specific chart metric:', specificChartMetric);
   };
 
   const setupInterval = (metric, selectedTimePeriod, setData) => {
     const fetchData = async () => {
       try {
         const limit = determineLimitBasedOnTimePeriod(selectedTimePeriod);
-        console.log(`Fetching ${metric} data with limit:`, limit); // Log the limit
+        console.log(`Fetching ${metric} data with limit:`, limit);
         const result = await getWeatherData(metric, limit);
         setData(result.data.weather_data);
       } catch (error) {
@@ -135,7 +137,7 @@ const MainContent = ({
   }, [specificChartMetric, selectedTimePeriodRainfall]);
 
   const determineLimitBasedOnTimePeriod = (timePeriod) => {
-    console.log('Determining limit for time period:', timePeriod); // Log the time period
+    console.log('Determining limit for time period:', timePeriod);
     switch (timePeriod) {
       case '1H':
         return 13;
@@ -154,10 +156,6 @@ const MainContent = ({
       default:
         return 37;
     }
-  };
-
-  const handleChartChange = setChartType => newType => {
-    setChartType(newType);
   };
 
   const spin = keyframes`
@@ -257,7 +255,7 @@ const MainContent = ({
         </GridItem>
         <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
-            title="Rainfall (inches)"
+            title="Rainfall (in)"
             onChartChange={handleChartChange(setRainfallChartType)}
             weatherData={rainfallData || weatherData}
             metric="rain_15_min_inches"

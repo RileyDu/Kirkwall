@@ -3,21 +3,12 @@ import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, Modal
 import MiniDashboard from './ChartDashboard';
 import { FaChartLine, FaChartBar } from 'react-icons/fa';
 import { m, motion } from 'framer-motion';
-import { getWeatherData } from '../../Backend/Graphql_helper';
 
 const ChartExpandModal = ({ isOpen, onClose, children, title, metric, onChartChange, handleTimePeriodChange, weatherData }) => {
-  const [chartType, setChartType] = useState('bar');
-  const [data, setData] = useState([]);
 
   const { colorMode } = useColorMode();
   const MotionButton = motion(Button);
 
-  const changeChartType = (type) => {
-    setChartType(type);
-    if (onChartChange) {
-      onChartChange(type);
-    }
-  };
 
   const getBackgroundColor = (colorMode) =>
     colorMode === 'light' ? '#f9f9f9' : '#303030';
@@ -32,7 +23,7 @@ const ChartExpandModal = ({ isOpen, onClose, children, title, metric, onChartCha
           {title}
           <MotionButton
             variant={'pill'}
-            onClick={() => changeChartType('line')}
+            onClick={() => onChartChange('line')}
             leftIcon={<FaChartLine />}
             mx={2}
             ml={4}
@@ -43,7 +34,7 @@ const ChartExpandModal = ({ isOpen, onClose, children, title, metric, onChartCha
           </MotionButton>
           <MotionButton
             variant={'pill'}
-            onClick={() => changeChartType('bar')}
+            onClick={() => onChartChange('bar')}
             leftIcon={<FaChartBar />}
             mx={2}
             whileHover={{ scale: 1.1 }}
