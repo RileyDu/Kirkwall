@@ -1,4 +1,3 @@
-// WeatherDataProvider.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getWeatherData } from '../Backend/Graphql_helper';
 
@@ -18,14 +17,19 @@ export const WeatherDataProvider = ({ children }) => {
   const [tempData, setTempData] = useState(null);
   const [humidityData, setHumidityData] = useState(null);
   const [windData, setWindData] = useState(null);
-  const [rainfallData, setRainfallData] = useState(null); 
+  const [rainfallData, setRainfallData] = useState(null);
+  const [dataLoaded, setDataLoaded] = useState({
+    temperature: false,
+    humidity: false,
+    wind: false,
+    rainfall: false
+  });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await getWeatherData('all', '37'); // default time period
         if (Array.isArray(response.data.weather_data)) {
-          console.log('this is weather data retrieved on intial load',response.data.weather_data);
           setWeatherData(response.data.weather_data);
         } else {
           setWeatherData([]);
@@ -45,19 +49,43 @@ export const WeatherDataProvider = ({ children }) => {
     return () => clearInterval(intervalId);
   }, []);
 
+  useEffect(() => {
+    if (Object.values(dataLoaded).some(loaded => loaded)) {
+      const intervalId = setInterval(() => {
+        if (dataLoaded.temperature) {
+          fetchSpecificData('temperature', selectedTimePeriodTemp);
+        }
+        if (dataLoaded.humidity) {
+          fetchSpecificData('percent_humidity', selectedTimePeriodHumidity);
+        }
+        if (dataLoaded.wind) {
+          fetchSpecificData('wind_speed', selectedTimePeriodWind);
+        }
+        if (dataLoaded.rainfall) {
+          fetchSpecificData('rain_15_min_inches', selectedTimePeriodRainfall);
+        }
+      }, 30000);
+      return () => clearInterval(intervalId);
+    }
+  }, [dataLoaded, selectedTimePeriodTemp, selectedTimePeriodHumidity, selectedTimePeriodWind, selectedTimePeriodRainfall]);
+
   const handleTimePeriodChange = (metric, timePeriod) => {
     switch (metric) {
       case 'temperature':
         setSelectedTimePeriodTemp(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, temperature: true }));
         break;
       case 'percent_humidity':
         setSelectedTimePeriodHumidity(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, humidity: true }));
         break;
       case 'wind_speed':
         setSelectedTimePeriodWind(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, wind: true }));
         break;
       case 'rain_15_min_inches':
         setSelectedTimePeriodRainfall(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, rainfall: true }));
         break;
       default:
         break;
