@@ -76,7 +76,7 @@ const MainContent = ({
       case 'wind_speed':
         setSelectedTimePeriodWind(timePeriod);
         break;
-      case 'rainfall':
+      case 'rain_15_min_inches':
         setSelectedTimePeriodRainfall(timePeriod);
         break;
       default:
@@ -149,7 +149,7 @@ const MainContent = ({
       }
     };
 
-    if (specificChartMetric === 'rainfall') {
+    if (specificChartMetric === 'rain_15_min_inches') {
       fetchData();
     }
   }, [specificChartMetric, selectedTimePeriodRainfall]);
@@ -280,7 +280,7 @@ const MainContent = ({
             title="Rainfall (in)"
             onChartChange={handleChartChange(setRainfallChartType)}
             weatherData={rainfallData || weatherData}
-            metric="rainfall"
+            metric="rain_15_min_inches"
             flex="1"
             timePeriod={timePeriod}
             display="flex"
@@ -289,9 +289,9 @@ const MainContent = ({
             handleTimePeriodChange={handleTimePeriodChange}
           >
             {rainfallChartType === 'line' ? (
-              <LineChart data={rainfallData || weatherData} metric="rainfall" style={{ flex: 1 }} />
+              <LineChart data={rainfallData || weatherData} metric="rain_15_min_inches" style={{ flex: 1 }} />
             ) : (
-              <BarChart data={rainfallData || weatherData} metric="rainfall" style={{ flex: 1 }} />
+              <BarChart data={rainfallData || weatherData} metric="rain_15_min_inches" style={{ flex: 1 }} />
             )}
           </ChartWrapper>
         </GridItem>
