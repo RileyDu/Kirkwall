@@ -203,7 +203,7 @@ const MainContent = ({
             timePeriod={timePeriod}
             display="flex"
             flexDirection="column"
-            key={tempChartType}
+            // key={tempChartType}
             handleTimePeriodChange={handleTimePeriodChange}
           >
             {tempChartType === 'line' ? (
@@ -223,7 +223,7 @@ const MainContent = ({
             timePeriod={timePeriod}
             display="flex"
             flexDirection="column"
-            key={humidityChartType}
+            // key={humidityChartType}
             handleTimePeriodChange={handleTimePeriodChange}
           >
             {humidityChartType === 'line' ? (
@@ -243,7 +243,7 @@ const MainContent = ({
             timePeriod={timePeriod}
             display="flex"
             flexDirection="column"
-            key={windChartType}
+            // key={windChartType}
             handleTimePeriodChange={handleTimePeriodChange}
           >
             {windChartType === 'line' ? (
@@ -263,7 +263,7 @@ const MainContent = ({
             timePeriod={timePeriod}
             display="flex"
             flexDirection="column"
-            key={rainfallChartType}
+            // key={rainfallChartType}
             handleTimePeriodChange={handleTimePeriodChange}
           >
             {rainfallChartType === 'line' ? (
