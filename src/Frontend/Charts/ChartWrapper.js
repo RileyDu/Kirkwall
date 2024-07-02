@@ -291,7 +291,7 @@ const ChartWrapper = ({
               >
                 <Tooltip label="Change Chart Type">
                   <MotionIconButton
-                    icon={<FaChartBar />}
+                    icon={getChartIcon()}
                     variant="outline"
                     color="#212121"
                     size={iconSize}
