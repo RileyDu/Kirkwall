@@ -9,6 +9,7 @@ import {
   Button,
   Box,
   useColorMode,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard';
 import { FaChartLine, FaChartBar } from 'react-icons/fa';
@@ -29,6 +30,9 @@ const ChartExpandModal = ({
 
   const getBackgroundColor = colorMode =>
     colorMode === 'light' ? '#f9f9f9' : '#303030';
+
+  const fontSize = useBreakpointValue({ base: 'sm', md: 'lg' });
+  const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
 
   return (
     <Modal onClose={onClose} isOpen={isOpen}>
@@ -53,12 +57,13 @@ const ChartExpandModal = ({
           maxHeight: '100%', // Ensure the modal doesn't exceed the viewport height
         }}
       >
-        <ModalHeader bg="#212121" color="white" fontSize="2xl" borderTopRadius={'md'}>
+        <ModalHeader bg="#212121" color="white" fontSize={fontSize} borderTopRadius={'md'}>
           {title}
           <MotionButton
             variant={'pill'}
             onClick={() => onChartChange('line')}
             leftIcon={<FaChartLine />}
+            size={iconSize}
             mx={2}
             ml={4}
             whileHover={{ scale: 1.1 }}
@@ -73,6 +78,7 @@ const ChartExpandModal = ({
             mx={2}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
+            size={iconSize}
           >
             BAR
           </MotionButton>
