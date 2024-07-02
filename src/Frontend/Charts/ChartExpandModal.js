@@ -29,6 +29,7 @@ const ChartExpandModal = ({
   const { colorMode } = useColorMode();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
+  const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
 
   const MotionButton = motion(Button);
 
@@ -39,35 +40,34 @@ const ChartExpandModal = ({
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
 
   const showLoadingToast = () => {
-    console.log("showLoadingToast called");
     toast({
       title: 'Loading Data',
       description: 'We are fetching the latest data for you.',
       status: 'info',
       duration: null, // Keeps the toast open until manually closed
       isClosable: true,
+      size: 'lg',
+      position: 'top',
     });
   };
 
   const handleTimeButtonClick = async (timePeriod) => {
-    console.log("handleTimeButtonClick called with timePeriod:", timePeriod);
+    if (timePeriod === currentTimePeriod) return; // Prevent fetching if the time period is already selected
+
     showLoadingToast();
     setLoading(true);
-    console.log("loading state set to true");
-  
+
     try {
       const result = await handleTimePeriodChange(metric, timePeriod);
-      console.log("handleTimePeriodChange result:", result);
+      setCurrentTimePeriod(timePeriod); // Update the current time period after successful fetch
     } catch (error) {
-      console.error("Error in handleTimePeriodChange:", error);
+      // Handle error
     } finally {
       setLoading(false);
-      console.log("loading state set to false");
     }
   };
 
   useEffect(() => {
-    console.log("useEffect called with loading:", loading);
     if (!loading) {
       toast.closeAll(); // Close all toasts when loading is complete
     }
@@ -125,62 +125,19 @@ const ChartExpandModal = ({
         <ModalCloseButton size="lg" color="white"/>
         <ModalBody>
           <Box display="flex" justifyContent="space-between" my={1}>
-            <MotionButton
-              variant="pill"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => handleTimeButtonClick('1H')}
-            >
-              1H
-            </MotionButton>
-            <MotionButton
-              variant="pill"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => handleTimeButtonClick('3H')}
-            >
-              3H
-            </MotionButton>
-            <MotionButton
-              variant="pill"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => handleTimeButtonClick('6H')}
-            >
-              6H
-            </MotionButton>
-            <MotionButton
-              variant="pill"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => handleTimeButtonClick('12H')}
-            >
-              12H
-            </MotionButton>
-            <MotionButton
-              variant="pill"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => handleTimeButtonClick('1D')}
-            >
-              1D
-            </MotionButton>
-            <MotionButton
-              variant="pill"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => handleTimeButtonClick('3D')}
-            >
-              3D
-            </MotionButton>
-            <MotionButton
-              variant="pill"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => handleTimeButtonClick('1W')}
-            >
-              1W
-            </MotionButton>
+            {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map(timePeriod => (
+              <MotionButton
+                key={timePeriod}
+                variant="pill"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => handleTimeButtonClick(timePeriod)}
+                bg={currentTimePeriod === timePeriod ? 'brand.800' : 'gray.100'}
+                color={currentTimePeriod === timePeriod ? 'white' : 'black'}
+              >
+                {timePeriod}
+              </MotionButton>
+            ))}
           </Box>
           <Box
             h={['300px', '600px', '650px']}
