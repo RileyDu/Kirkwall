@@ -3,10 +3,13 @@ import { Box, Heading, Divider, Spinner, Text } from '@chakra-ui/react';
 import MiniDashboard from '../../Charts/ChartDashboard';
 import ChartWrapper from '../../Charts/ChartWrapper';
 import { BarChart, LineChart } from '../../Charts/Charts';
+import { useWeatherData } from '../../WeatherDataContext';
 
-export default function HumiditySensors({ weatherData }) {
+export default function HumiditySensors() {
 
-  if (!weatherData) {
+  const { weatherData, humidityData } = useWeatherData();
+
+  if (!weatherData && !humidityData) {
     console.log('WeatherData is not defined', weatherData);
     return (
       <Box p="4" width="100%" height="100%" textAlign="center">
@@ -22,10 +25,10 @@ export default function HumiditySensors({ weatherData }) {
         Humidity Sensors
       </Heading>
       <Box width="100%">
-        <MiniDashboard metric="percent_humidity" weatherData={weatherData} />
+        <MiniDashboard metric="percent_humidity" weatherData={humidityData || weatherData} />
       </Box>
-      <ChartWrapper title="Humidity (%)">
-        <BarChart data={weatherData} metric="percent_humidity" />
+      <ChartWrapper title="Humidity (%)" weatherData={humidityData || weatherData}>
+        <BarChart data={humidityData || weatherData} metric="percent_humidity" />
       </ChartWrapper>
       <Divider
         my={'8'}
@@ -33,8 +36,8 @@ export default function HumiditySensors({ weatherData }) {
         borderWidth="4px"
         borderRadius={'full'}
       />
-      <ChartWrapper title="Humidity (%)">
-        <LineChart data={weatherData} metric="percent_humidity" />
+      <ChartWrapper title="Humidity (%)" weatherData={humidityData || weatherData}>
+        <LineChart data={humidityData || weatherData} metric="percent_humidity" />
       </ChartWrapper>
     </Box>
   );
