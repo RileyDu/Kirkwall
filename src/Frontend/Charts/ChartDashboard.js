@@ -1,8 +1,7 @@
 import { Box, Text, Flex } from '@chakra-ui/react';
 import { MinusIcon, AddIcon } from '@chakra-ui/icons';
 
-
-const getLabelForMetric = metric => {
+const getLabelForMetric = (metric) => {
   switch (metric) {
     case 'temperature':
       return { label: '°F', addSpace: false };
@@ -19,36 +18,35 @@ const getLabelForMetric = metric => {
 
 const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
   const reversedData = [...weatherData]?.reverse();
-  const currentData = reversedData.map(data => data[metric]);
+  const currentData = reversedData.map((data) => data[metric]);
 
   const min = currentData.length > 0 ? Math.min(...currentData) : 'N/A';
   const max = currentData.length > 0 ? Math.max(...currentData) : 'N/A';
   const mostRecentValue =
     currentData.length > 0 ? currentData[currentData.length - 1] : 'N/A';
 
-    const calculateTimePeriod = dataLength => {
-      const totalMinutes = dataLength * 5;
-      const totalHours = Math.floor(totalMinutes / 60);
-    
-      if (totalHours < 24) {
-        return `${totalHours} hour${totalHours !== 1 ? 's' : ''}`;
-      } else if (totalHours < 72) { // Less than 3 days
-        return '1 day';
-      } else if (totalHours < 168) { // Less than 1 week
-        return '3 days';
-      } else {
-        return '1 week';
-      }
-    };
-    
+  const calculateTimePeriod = (dataLength) => {
+    const totalMinutes = dataLength * 5;
+    const totalHours = Math.floor(totalMinutes / 60);
+
+    if (totalHours < 24) {
+      return `${totalHours} hour${totalHours !== 1 ? 's' : ''}`;
+    } else if (totalHours < 72) {
+      return '1 day';
+    } else if (totalHours < 168) {
+      return '3 days';
+    } else {
+      return '1 week';
+    }
+  };
 
   const timePeriod = calculateTimePeriod(currentData.length - 1);
   const { label, addSpace } = getLabelForMetric(metric);
-  const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
+  const formatValue = (value) => `${value}${addSpace ? ' ' : ''}${label}`;
 
   return (
     <Box>
-      <Flex justifyContent="space-evenly" mb={4} flexWrap="wrap">
+      <Flex justifyContent="space-evenly" mb={4} >
         <Box
           display="flex"
           flexDirection="column"
@@ -61,13 +59,13 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
           borderRadius="md"
           boxShadow="lg"
           m={1}
-          width={['100px', '150px', '175px']}
+          width={['70px', '100px', '150px', '175px']}
           textAlign="center"
         >
-          <Text fontSize={['xl', '2xl']} fontWeight="bold" color={'#212121'}>
+          <Text fontSize={['sm', 'md', 'xl', '2xl']} fontWeight="bold" color={'#212121'}>
             {formatValue(mostRecentValue)}
           </Text>
-          <Text fontSize={['lg', 'xl']}>Current</Text>
+          <Text fontSize={['xs', 'sm', 'lg', 'xl']}>Current</Text>
         </Box>
         <Box
           display="flex"
@@ -81,13 +79,13 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
           borderRadius="md"
           boxShadow="lg"
           m={1}
-          width={['100px', '150px', '175px']}
+          width={['70px', '100px', '150px', '175px']}
           textAlign="center"
         >
-          <Text fontSize={['xl', '2xl']} fontWeight="bold">
+          <Text fontSize={['sm', 'md', 'xl', '2xl']} fontWeight="bold">
             {formatValue(min)}
           </Text>
-          <Text fontSize={['lg', 'xl']}>Low</Text>
+          <Text fontSize={['xs', 'sm', 'lg', 'xl']}>Low</Text>
         </Box>
         <Box
           display="flex"
@@ -101,13 +99,13 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
           borderRadius="md"
           boxShadow="lg"
           m={1}
-          width={['100px', '150px', '175px']}
+          width={['70px', '100px', '150px', '175px']}
           textAlign="center"
         >
-          <Text fontSize={['xl', '2xl']} fontWeight="bold">
+          <Text fontSize={['sm', 'md', 'xl', '2xl']} fontWeight="bold">
             {formatValue(max)}
           </Text>
-          <Text fontSize={['lg', 'xl']}>High</Text>
+          <Text fontSize={['xs', 'sm', 'lg', 'xl']}>High</Text>
         </Box>
         <Box
           display="flex"
@@ -121,31 +119,15 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
           borderRadius="md"
           boxShadow="lg"
           m={1}
-          width={['100px', '150px', '175px']}
+          width={['70px', '100px', '150px', '175px']}
           textAlign="center"
         >
           <Flex alignItems="center">
-          {/* <MinusIcon
-                  icon={<MinusIcon />}
-                  onClick={() => adjustTimePeriod(-12)}
-                  aria-label="Decrease time period"
-                  mr={2}
-                  color={'red'}
-                  cursor={'pointer'}
-                /> */}
-            <Text fontSize={['xl', '2xl']} fontWeight="bold">
+            <Text fontSize={['sm', 'md', 'xl', '2xl']} fontWeight="bold">
               {timePeriod}
             </Text>
-            {/* <AddIcon
-                  icon={<AddIcon />}
-                  onClick={() => adjustTimePeriod(12)}
-                  aria-label="Increase time period"
-                  ml={2}
-                  color={'green'}
-                  cursor={'pointer'}
-                /> */}
           </Flex>
-          <Text fontSize={['lg', 'xl']}>Time Period</Text>
+          <Text fontSize={['xs', 'sm', 'lg', 'xl']}>Time Period</Text>
         </Box>
       </Flex>
     </Box>

@@ -10,6 +10,7 @@ import {
   Box,
   useColorMode,
   useBreakpointValue,
+  useToast
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard';
 import { FaChartLine, FaChartBar } from 'react-icons/fa';
@@ -26,6 +27,9 @@ const ChartExpandModal = ({
   weatherData,
 }) => {
   const { colorMode } = useColorMode();
+  const toast = useToast();
+  const [loading, setLoading] = useState(false);
+
   const MotionButton = motion(Button);
 
   const getBackgroundColor = colorMode =>
@@ -34,27 +38,54 @@ const ChartExpandModal = ({
   const fontSize = useBreakpointValue({ base: 'sm', md: 'lg' });
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
 
+  const showLoadingToast = () => {
+    toast({
+      title: 'Loading Data',
+      description: 'We are fetching the latest data for you.',
+      status: 'info',
+      duration: null, // Keeps the toast open until manually closed
+      isClosable: true,
+    });
+  };
+
+  const handleTimeButtonClick = async (timePeriod) => {
+    showLoadingToast();
+    setLoading(true);
+
+    try {
+      await handleTimePeriodChange(metric, timePeriod);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!loading) {
+      toast.closeAll(); // Close all toasts when loading is complete
+    }
+  }, [loading, toast]);
+
   return (
     <Modal onClose={onClose} isOpen={isOpen}>
       <ModalOverlay />
       <ModalContent
         sx={{
           width: {
-            base: '90%', // 90% width for small screens
-            sm: '80%', // 80% width for small devices
-            md: '70%', // 70% width for medium devices
-            lg: '60%', // 60% width for large devices
-            xl: '60%', // 50% width for extra large devices
+            base: '90%',
+            sm: '80%',
+            md: '70%',
+            lg: '60%',
+            xl: '60%',
           },
-          maxWidth: '100%', // Ensure the modal doesn't exceed the viewport width
+          maxWidth: '100%',
           height: {
-            base: 'auto', // Auto height for small screens
-            sm: 'auto', // Auto height for small devices
-            md: '70vh', // 70% of viewport height for medium devices
-            lg: '70vh', // 70% of viewport height for large devices
-            xl: '85vh', // 60% of viewport height for extra large devices
+            base: 'auto',
+            sm: 'auto',
+            md: '70vh',
+            lg: '70vh',
+            xl: '90vh',
           },
-          maxHeight: '100%', // Ensure the modal doesn't exceed the viewport height
+          maxHeight: '100%',
         }}
       >
         <ModalHeader bg="#212121" color="white" fontSize={fontSize} borderTopRadius={'md'}>
@@ -83,14 +114,14 @@ const ChartExpandModal = ({
             BAR
           </MotionButton>
         </ModalHeader>
-        <ModalCloseButton size="lg" color="white" mt={2} />
+        <ModalCloseButton size="lg" color="white"/>
         <ModalBody>
-          <Box display="flex" justifyContent="space-between" my={4}>
+          <Box display="flex" justifyContent="space-between" my={1}>
             <MotionButton
               variant="pill"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              onClick={() => handleTimePeriodChange(metric, '1H')}
+              onClick={() => handleTimeButtonClick('1H')}
             >
               1H
             </MotionButton>
@@ -98,7 +129,7 @@ const ChartExpandModal = ({
               variant="pill"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              onClick={() => handleTimePeriodChange(metric, '3H')}
+              onClick={() => handleTimeButtonClick('3H')}
             >
               3H
             </MotionButton>
@@ -106,7 +137,7 @@ const ChartExpandModal = ({
               variant="pill"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              onClick={() => handleTimePeriodChange(metric, '6H')}
+              onClick={() => handleTimeButtonClick('6H')}
             >
               6H
             </MotionButton>
@@ -114,7 +145,7 @@ const ChartExpandModal = ({
               variant="pill"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              onClick={() => handleTimePeriodChange(metric, '12H')}
+              onClick={() => handleTimeButtonClick('12H')}
             >
               12H
             </MotionButton>
@@ -122,7 +153,7 @@ const ChartExpandModal = ({
               variant="pill"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              onClick={() => handleTimePeriodChange(metric, '1D')}
+              onClick={() => handleTimeButtonClick('1D')}
             >
               1D
             </MotionButton>
@@ -130,7 +161,7 @@ const ChartExpandModal = ({
               variant="pill"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              onClick={() => handleTimePeriodChange(metric, '3D')}
+              onClick={() => handleTimeButtonClick('3D')}
             >
               3D
             </MotionButton>
@@ -138,13 +169,13 @@ const ChartExpandModal = ({
               variant="pill"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              onClick={() => handleTimePeriodChange(metric, '1W')}
+              onClick={() => handleTimeButtonClick('1W')}
             >
               1W
             </MotionButton>
           </Box>
           <Box
-            h={['500px', '600px', '650px']}
+            h={['300px', '600px', '650px']}
             w="100%"
             display="flex"
             justifyContent="center"
@@ -154,7 +185,7 @@ const ChartExpandModal = ({
             borderRadius="md"
             boxShadow="md"
             border="2px solid #fd9801"
-            mb={4}
+            mb={2}
           >
             {children}
           </Box>
