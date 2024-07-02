@@ -75,7 +75,7 @@ const Layout = ({
 const MainApp = () => {
   // const [weatherData, setWeatherData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [timePeriod, setTimePeriod] = useState(37); // Default time period
   const location = useLocation();
