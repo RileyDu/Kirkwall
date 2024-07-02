@@ -29,7 +29,6 @@ import {
   Stat,
   StatLabel,
   StatNumber,
-  StatHelpText,
   Popover,
   PopoverCloseButton,
   PopoverTrigger,
@@ -42,7 +41,6 @@ import { FaBars, FaSun, FaMoon } from 'react-icons/fa';
 import { WiThermometer, WiStrongWind, WiRain, WiHumidity } from 'react-icons/wi';
 import Logout from '../../Frontend/AuthComponents/Logout';
 import { useNavigate } from 'react-router-dom';
-// import WeatherAlerts from '../Alert/WeatherAlerts';
 import { useWeatherData } from '../WeatherDataContext';
 
 const Header = () => {
@@ -53,7 +51,7 @@ const Header = () => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isSummaryOpen, setSummaryOpen] = useState(false); // State to manage the summary modal visibility
   const { colorMode, toggleColorMode } = useColorMode();
-  const { weatherData, loading, error } = useWeatherData();
+  const { weatherData, loading, error, tempData, humidityData, windData, rainfallData } = useWeatherData();
 
   const toggleAlerts = () => {
     setShowAlerts(!showAlerts);
@@ -91,34 +89,43 @@ const Header = () => {
     boxShadow: 'md',
   };
 
-  const summaryMetrics = weatherData
-    ? [
-        {
-          label: 'Average Temperature (°F)',
-          value: (weatherData.reduce((sum, data) => sum + data.temperature, 0) / weatherData.length).toFixed(2),
-        },
-        {
-          label: 'Total Rainfall (inches)',
-          value: weatherData.reduce((sum, data) => sum + data.rain_15_min_inches, 0).toFixed(2),
-        },
-        {
-          label: 'Average Humidity (%)',
-          value: (weatherData.reduce((sum, data) => sum + data.percent_humidity, 0) / weatherData.length).toFixed(2),
-        },
-        {
-          label: 'Average Wind Speed (mph)',
-          value: (weatherData.reduce((sum, data) => sum + data.wind_speed, 0) / weatherData.length).toFixed(2),
-        },
-      ]
-    : [
-        { label: 'Average Temperature (°F)', value: 'N/A' },
-        { label: 'Total Rainfall (inches)', value: 'N/A' },
-        { label: 'Average Humidity (%)', value: 'N/A' },
-        { label: 'Average Wind Speed (mph)', value: 'N/A' },
-      ];
+  const summaryMetrics = [
+    {
+      label: 'Average Temperature (°F)',
+      value: tempData
+        ? (tempData.reduce((sum, data) => sum + data.temperature, 0) / tempData.length).toFixed(2)
+        : weatherData
+          ? (weatherData.reduce((sum, data) => sum + data.temperature, 0) / weatherData.length).toFixed(2)
+          : 'N/A',
+    },
+    {
+      label: 'Total Rainfall (inches)',
+      value: rainfallData
+        ? rainfallData.reduce((sum, data) => sum + data.rain_15_min_inches, 0).toFixed(2)
+        : weatherData
+          ? weatherData.reduce((sum, data) => sum + data.rain_15_min_inches, 0).toFixed(2)
+          : 'N/A',
+    },
+    {
+      label: 'Average Humidity (%)',
+      value: humidityData
+        ? (humidityData.reduce((sum, data) => sum + data.percent_humidity, 0) / humidityData.length).toFixed(2)
+        : weatherData
+          ? (weatherData.reduce((sum, data) => sum + data.percent_humidity, 0) / weatherData.length).toFixed(2)
+          : 'N/A',
+    },
+    {
+      label: 'Average Wind Speed (mph)',
+      value: windData
+        ? (windData.reduce((sum, data) => sum + data.wind_speed, 0) / windData.length).toFixed(2)
+        : weatherData
+          ? (weatherData.reduce((sum, data) => sum + data.wind_speed, 0) / weatherData.length).toFixed(2)
+          : 'N/A',
+    },
+  ];
 
-      const MotionIconButton = motion(IconButton);
-      const MotionButton = motion(Button);
+  const MotionIconButton = motion(IconButton);
+  const MotionButton = motion(Button);
 
   const motionProps = {
     initial: { opacity: 0, x: '-100%' },
@@ -263,6 +270,17 @@ const Header = () => {
                   Humidity Sensors
                 </Button>
               </motion.div>
+              {user && (
+                <motion.div {...motionProps}>
+                  <Button
+                    leftIcon={<Avatar size="sm" name="Grand Farm Logo" src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`} />}
+                    {...buttonStyleProps}
+                    onClick={() => handleNavigation('/logout')}
+                  >
+                    Logout
+                  </Button>
+                </motion.div>
+              )}
             </Stack>
           </DrawerBody>
         </DrawerContent>
@@ -271,11 +289,11 @@ const Header = () => {
       <Modal isOpen={isSummaryOpen} onClose={onSummaryToggle}>
         <ModalOverlay />
         <ModalContent sx={{
-            border: '2px solid black',
-            bg: 'brand.50',
-          }}>
+          border: '2px solid black',
+          bg: 'brand.50',
+        }}>
           <ModalHeader bg={'#212121'} color={'white'}>Weather Summary</ModalHeader>
-          <ModalCloseButton color={'white'} size={'lg'} mt={1}/>
+          <ModalCloseButton color={'white'} size={'lg'} mt={1} />
           <ModalBody>
             {loading ? (
               <Flex justify="center" align="center" height="100%">
@@ -298,8 +316,6 @@ const Header = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-
-      {/* {showAlerts && <WeatherAlerts />} */}
     </>
   );
 };
