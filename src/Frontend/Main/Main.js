@@ -15,7 +15,7 @@ const MainContent = ({
   const [humidityChartType, setHumidityChartType] = useState('line');
   const [windChartType, setWindChartType] = useState('bar');
   const [rainfallChartType, setRainfallChartType] = useState('bar');
-  const [isReady, setIsReady] = useState(false);
+  const [isReady, setIsReady] = useState(true);
   const [weatherData, setWeatherData] = useState([]);
   const [tempData, setTempData] = useState(null);
   const [humidityData, setHumidityData] = useState(null);
@@ -59,10 +59,10 @@ const MainContent = ({
     setIsReady(false);
     const timer = setTimeout(() => {
       setIsReady(true);
-    }, 1000); // delay to let layout stabilize
+    }, 500); // delay to let layout stabilize
 
     return () => clearTimeout(timer);
-  }, [isMinimized]);
+  }, []);
 
   const handleTimePeriodChange = (metric, timePeriod) => {
     console.log('Handle Time Period Change:', metric, timePeriod); // Log metric and timePeriod
