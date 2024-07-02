@@ -20,12 +20,11 @@ import {
   useBreakpointValue,
   useDisclosure,
 } from '@chakra-ui/react';
-import { FaExpandAlt,  } from 'react-icons/fa';
-import { FaChartLine, FaChartBar } from 'react-icons/fa';
+import { FaExpandAlt, FaChessRook, FaChartBar, FaChartLine } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import ChartExpandModal from './ChartExpandModal'; // Adjust the path as necessary
-import { getLabelForMetric } from './ChartDetails';
+import ChartDetails, { getLabelForMetric } from './ChartDetails';
 import { useColorMode } from '@chakra-ui/react';
 import axios from 'axios';
 
@@ -35,8 +34,6 @@ const ChartWrapper = ({
   onChartChange,
   metric,
   weatherData,
-  timePeriod,
-  adjustTimePeriod,
   handleTimePeriodChange,
 }) => {
   const [chartType, setChartType] = useState('bar');
@@ -73,12 +70,15 @@ const ChartWrapper = ({
     }
   }, [location.pathname, title]);
 
-  const iconSize = '24';
 
   const getBackgroundColor = colorMode =>
     colorMode === 'light' ? '#f9f9f9' : '#303030';
 
   const handleFormSubmit = () => {
+    // let formattedPhoneNumber = phoneNumber.startsWith('+1')
+    //   ? phoneNumber
+    //   : `+1${phoneNumber}`;
+
     const chartSettings = {
       phoneNumber: phoneNumber,
       highThreshold: parseFloat(highThreshold),
@@ -159,8 +159,9 @@ const ChartWrapper = ({
   const { label, addSpace } = getLabelForMetric(metric);
   const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
 
-  const fontSize = useBreakpointValue({ base: 'sm', md: 'lg' });
+  const fontSize = useBreakpointValue({ base: 'xs', md: 'lg' });
   const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
+  const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -179,12 +180,6 @@ const ChartWrapper = ({
       return '1 week';
     }
   };
-  
-
-  const timeOfGraph = calculateTimePeriod(weatherData.length - 1);
-
-
-  const MotionIconButton = motion(IconButton);
 
   const handleChartTypeChange = () => {
     const newChartType = chartType === 'bar' ? 'line' : 'bar';
@@ -202,6 +197,12 @@ const ChartWrapper = ({
         return <FaChartBar />;
     }
   };
+  
+
+  const timeOfGraph = calculateTimePeriod(weatherData.length - 1);
+
+
+  const MotionIconButton = motion(IconButton);
 
   return (
     <>
@@ -258,10 +259,31 @@ const ChartWrapper = ({
                   color={'#212121'}
                 >
                   <Text fontSize={fontSize}>
-                    Time Period: {timeOfGraph}
+                    Time: {timeOfGraph}
                   </Text>
                 </Box>
               </motion.div>
+              {/* <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 0.2 }}
+              >
+                <Tooltip label="Thresholds">
+                  <MotionIconButton
+                    icon={<FaChessRook />}
+                    variant="outline"
+                    color="#212121"
+                    size="md"
+                    bg={'brand.400'}
+                    _hover={{ bg: 'brand.800' }}
+                    onClick={handleOpenModal}
+                    mr={2}
+                    border={'2px solid #fd9801'}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  />
+                </Tooltip>
+              </motion.div> */}
               <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -269,37 +291,37 @@ const ChartWrapper = ({
               >
                 <Tooltip label="Change Chart Type">
                   <MotionIconButton
-                    icon={getChartIcon()}
+                    icon={<FaChartBar />}
                     variant="outline"
                     color="#212121"
-                    aria-label="Change Chart Type"
-                    onClick={handleChartTypeChange}
-                    whileTap={{ scale: 0.9 }}
-                    mr={2}
+                    size={iconSize}
                     bg={'brand.400'}
                     _hover={{ bg: 'brand.800' }}
+                    onClick={handleChartTypeChange}
                     border={'2px solid #fd9801'}
                     whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    mr={2}
                   />
                 </Tooltip>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, delay: 0.45 }}
+                transition={{ duration: 1, delay: 0.5 }}
               >
                 <Tooltip label="Expand Chart">
-                  <IconButton
+                  <MotionIconButton
                     icon={<FaExpandAlt />}
                     variant="outline"
                     color="#212121"
-                    aria-label="Expand Chart"
-                    onClick={handleOpenModal}
-                    mr={2}
+                    size={iconSize}
                     bg={'brand.400'}
                     _hover={{ bg: 'brand.800' }}
+                    onClick={onOpen}
                     border={'2px solid #fd9801'}
                     whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                   />
                 </Tooltip>
               </motion.div>
@@ -308,58 +330,71 @@ const ChartWrapper = ({
         </Flex>
         {children}
       </Box>
+      <ChartExpandModal
+        isOpen={isOpen}
+        onClose={onClose}
+        title={title}
+        children={children}
+        weatherData={weatherData}
+        metric={metric}
+        onChartChange={onChartChange}
+        // adjustTimePeriod={adjustTimePeriod}
+        handleTimePeriodChange={handleTimePeriodChange}
+      />
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Chart Settings</ModalHeader>
-          <ModalCloseButton />
+        <ModalContent
+          sx={{
+            border: '2px solid black',
+            bg: 'brand.50',
+          }}
+        >
+          <ModalHeader bg={'#212121'} color={'white'}>
+            Add Thresholds for {title}
+          </ModalHeader>
+          <ModalCloseButton color={'white'} size={'lg'} mt={1} />
           <ModalBody>
-            <FormControl id="phoneNumber">
+            <FormControl>
               <FormLabel>Phone Number</FormLabel>
               <Input
-                type="tel"
+                type="text"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={e => setPhoneNumber(e.target.value)}
+                bg={'white'}
+                border={'2px solid #fd9801'}
               />
             </FormControl>
-            <FormControl mt={4} id="highThreshold">
+            <FormControl mt={4}>
               <FormLabel>High Threshold</FormLabel>
               <Input
                 type="number"
-                step="0.01"
                 value={highThreshold}
-                onChange={(e) => setHighThreshold(e.target.value)}
+                onChange={e => setHighThreshold(e.target.value)}
+                bg={'white'}
+                border={'2px solid #fd9801'}
               />
             </FormControl>
-            <FormControl mt={4} id="lowThreshold">
+            <FormControl mt={4}>
               <FormLabel>Low Threshold</FormLabel>
               <Input
                 type="number"
-                step="0.01"
                 value={lowThreshold}
-                onChange={(e) => setLowThreshold(e.target.value)}
+                onChange={e => setLowThreshold(e.target.value)}
+                bg={'white'}
+                border={'2px solid #fd9801'}
               />
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleFormSubmit}>
+            <Button variant='sidebar' mr={3} onClick={handleFormSubmit}>
               Save
             </Button>
-            <Button variant="ghost" onClick={handleCloseModal}>
+            <Button variant="sidebar" onClick={handleCloseModal}>
               Cancel
             </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <ChartExpandModal
-        isOpen={isOpen}
-        onClose={onClose}
-        title={title}
-        chartType={chartType}
-        timePeriod={timePeriod}
-        adjustTimePeriod={adjustTimePeriod}
-        handleTimePeriodChange={handleTimePeriodChange}
-      />
     </>
   );
 };

@@ -19,8 +19,8 @@ const MainContent = ({ timePeriod }) => {
     handleTimePeriodChange,
   } = useWeatherData();
 
-  const [tempChartType, setTempChartType] = useState('line');
-  const [humidityChartType, setHumidityChartType] = useState('line');
+  const [tempChartType, setTempChartType] = useState('bar');
+  const [humidityChartType, setHumidityChartType] = useState('bar');
   const [windChartType, setWindChartType] = useState('bar');
   const [rainfallChartType, setRainfallChartType] = useState('bar');
   const [isReady, setIsReady] = useState(false);
@@ -108,7 +108,7 @@ const MainContent = ({ timePeriod }) => {
         </GridItem>
         <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
-            title="Wind Speed (mph)"
+            title="Wind (mph)"
             onChartChange={handleChartChange(setWindChartType)}
             weatherData={windData || weatherData}
             metric="wind_speed"
