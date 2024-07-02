@@ -84,73 +84,55 @@ const MainContent = ({
     console.log('Selected specific chart metric:', specificChartMetric); // Log the updated metric
   };
 
-  useEffect(() => {
+  const setupInterval = (metric, selectedTimePeriod, setData) => {
     const fetchData = async () => {
       try {
-        const limit = determineLimitBasedOnTimePeriod(selectedTimePeriodTemp);
-        console.log('Fetching temperature data with limit:', limit); // Log the limit
-        const result = await getWeatherData('temperature', limit);
-        setTempData(result.data.weather_data);
+        const limit = determineLimitBasedOnTimePeriod(selectedTimePeriod);
+        console.log(`Fetching ${metric} data with limit:`, limit); // Log the limit
+        const result = await getWeatherData(metric, limit);
+        setData(result.data.weather_data);
       } catch (error) {
-        console.error('Error fetching temperature data:', error);
+        console.error(`Error fetching ${metric} data:`, error);
       }
     };
 
-    if (specificChartMetric === 'temperature') {
-      fetchData();
-    }
-  }, [specificChartMetric, selectedTimePeriodTemp]);
+    fetchData();
+    const intervalId = setInterval(fetchData, 30000);
+
+    return intervalId;
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const limit = determineLimitBasedOnTimePeriod(selectedTimePeriodHumidity);
-        console.log('Fetching humidity data with limit:', limit); // Log the limit
-        const result = await getWeatherData('humidity', limit);
-        setHumidityData(result.data.weather_data);
-      } catch (error) {
-        console.error('Error fetching humidity data:', error);
-      }
-    };
-
-    if (specificChartMetric === 'percent_humidity') {
-      fetchData();
+    let intervalId;
+    if (tempData) {
+      intervalId = setupInterval('temperature', selectedTimePeriodTemp, setTempData);
     }
-  }, [specificChartMetric, selectedTimePeriodHumidity]);
+    return () => clearInterval(intervalId);
+  }, [tempData, selectedTimePeriodTemp]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const limit = determineLimitBasedOnTimePeriod(selectedTimePeriodWind);
-        console.log('Fetching wind data with limit:', limit); // Log the limit
-        const result = await getWeatherData('wind', limit);
-        setWindData(result.data.weather_data);
-      } catch (error) {
-        console.error('Error fetching wind data:', error);
-      }
-    };
-
-    if (specificChartMetric === 'wind_speed') {
-      fetchData();
+    let intervalId;
+    if (humidityData) {
+    intervalId = setupInterval('humidity', selectedTimePeriodHumidity, setHumidityData);
     }
-  }, [specificChartMetric, selectedTimePeriodWind]);
+    return () => clearInterval(intervalId);
+  }, [humidityData, selectedTimePeriodHumidity]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const limit = determineLimitBasedOnTimePeriod(selectedTimePeriodRainfall);
-        console.log('Fetching rainfall data with limit:', limit); // Log the limit
-        const result = await getWeatherData('rain', limit);
-        setRainfallData(result.data.weather_data);
-      } catch (error) {
-        console.error('Error fetching rainfall data:', error);
-      }
-    };
-
-    if (specificChartMetric === 'rain_15_min_inches') {
-      fetchData();
+    let intervalId;
+    if (windData) {
+      intervalId = setupInterval('wind', selectedTimePeriodWind, setWindData);
     }
-  }, [specificChartMetric, selectedTimePeriodRainfall]);
+    return () => clearInterval(intervalId);
+  }, [windData, selectedTimePeriodWind]);
+
+  useEffect(() => {
+    let intervalId;
+    if (rainfallData) {
+      intervalId = setupInterval('rain', selectedTimePeriodRainfall, setRainfallData);
+    }
+    return () => clearInterval(intervalId);
+  }, [rainfallData, selectedTimePeriodRainfall]);
 
   const determineLimitBasedOnTimePeriod = (timePeriod) => {
     console.log('Determining limit for time period:', timePeriod); // Log the time period
@@ -275,7 +257,7 @@ const MainContent = ({
         </GridItem>
         <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
-            title="Rainfall (in)"
+            title="Rainfall (inches)"
             onChartChange={handleChartChange(setRainfallChartType)}
             weatherData={rainfallData || weatherData}
             metric="rain_15_min_inches"
