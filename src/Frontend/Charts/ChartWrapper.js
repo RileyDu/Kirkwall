@@ -19,6 +19,14 @@ import {
   useToast,
   useBreakpointValue,
   useDisclosure,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverBody,
+  
 } from '@chakra-ui/react';
 import { FaExpandAlt, FaChessRook, FaChartBar, FaChartLine } from 'react-icons/fa';
 import { motion } from 'framer-motion';
@@ -258,9 +266,32 @@ const ChartWrapper = ({
                   bg={'brand.400'}
                   color={'#212121'}
                 >
-                  <Text fontSize={fontSize}>
-                    Time: {timeOfGraph}
-                  </Text>
+                  <Popover
+                    trigger="hover"
+                    placement="bottom"
+                    closeOnBlur
+                    closeOnEsc
+                  >
+                    <PopoverTrigger>
+                      <Text fontSize={fontSize}>Time: {timeOfGraph}</Text>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      bg="brand.50"
+                      color="white"
+                      borderRadius="md"
+                      border="2px solid #212121"
+                    >
+                      <PopoverArrow bg="#212121" />
+                      {/* <PopoverCloseButton /> */}
+                      <PopoverHeader bg={'#212121'} fontWeight={'bold'}>
+                        TIME SELECTOR
+                      </PopoverHeader>
+                      <PopoverBody>
+                        TIME SELECTOR here
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                  
                 </Box>
               </motion.div>
               {/* <motion.div
