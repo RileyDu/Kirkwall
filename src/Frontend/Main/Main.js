@@ -130,6 +130,25 @@ const MainContent = ({ timePeriod }) => {
         </GridItem>
         <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
+            title="Rainfall at Grand Farm (in)"
+            onChartChange={handleChartChange(setRainfallChartType)}
+            weatherData={rainfallData || weatherData}
+            metric="rain_15_min_inches"
+            flex="1"
+            timePeriod={timePeriod}
+            display="flex"
+            flexDirection="column"
+            handleTimePeriodChange={handleTimePeriodChange}
+          >
+            {rainfallChartType === 'line' ? (
+              <LineChart data={rainfallData || weatherData} metric="rain_15_min_inches" style={{ flex: 1 }} />
+            ) : (
+              <BarChart data={rainfallData || weatherData} metric="rain_15_min_inches" style={{ flex: 1 }} />
+            )}
+          </ChartWrapper>
+        </GridItem>
+        <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
+          <ChartWrapper
             title="Temperature in Garage (°F)"
             onChartChange={handleChartChange(setWatchdogTempChartType)}
             weatherData={watchdogData}
@@ -166,25 +185,7 @@ const MainContent = ({ timePeriod }) => {
             )}
           </ChartWrapper>
         </GridItem>
-        <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
-          <ChartWrapper
-            title="Rainfall at Grand Farm (in)"
-            onChartChange={handleChartChange(setRainfallChartType)}
-            weatherData={rainfallData || weatherData}
-            metric="rain_15_min_inches"
-            flex="1"
-            timePeriod={timePeriod}
-            display="flex"
-            flexDirection="column"
-            handleTimePeriodChange={handleTimePeriodChange}
-          >
-            {rainfallChartType === 'line' ? (
-              <LineChart data={rainfallData || weatherData} metric="rain_15_min_inches" style={{ flex: 1 }} />
-            ) : (
-              <BarChart data={rainfallData || weatherData} metric="rain_15_min_inches" style={{ flex: 1 }} />
-            )}
-          </ChartWrapper>
-        </GridItem>
+
       </Grid>
     </Box>
   );

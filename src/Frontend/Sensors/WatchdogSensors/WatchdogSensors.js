@@ -44,6 +44,8 @@ export default function WatchdogSensors() {
           bg={waterDetected ? 'red.100' : 'green.100'}
           color={waterDetected ? 'red.600' : 'green.600'}
           fontWeight="bold"
+          borderColor={waterDetected ? 'red.600' : 'green.600'}
+          borderWidth="2px"
         >
           {waterDetected ? 'Water Detected' : 'No Water Detected'}
         </Text>
