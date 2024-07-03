@@ -125,7 +125,7 @@ async function getWeatherData(type, limit) {
 async function getWatchdogData() {
   const query = `
     query {
-      watchdog_data(limit: 30) {
+      watchdog_data(limit: 13) {
         hum
         temp
         water
