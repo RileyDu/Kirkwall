@@ -73,7 +73,7 @@ const MainContent = ({ timePeriod }) => {
       >
         <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
-            title="Temperature (°F)"
+            title="Temperature at Grand Farm (°F)"
             onChartChange={handleChartChange(setTempChartType)}
             weatherData={tempData || weatherData}
             metric="temperature"
@@ -92,7 +92,7 @@ const MainContent = ({ timePeriod }) => {
         </GridItem>
         <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
-            title="Humidity (%)"
+            title="Humidity at Grand Farm (%)"
             onChartChange={handleChartChange(setHumidityChartType)}
             weatherData={humidityData || weatherData}
             metric="percent_humidity"
@@ -111,7 +111,7 @@ const MainContent = ({ timePeriod }) => {
         </GridItem>
         <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
-            title="Wind (mph)"
+            title="Wind at Grand Farm (mph)"
             onChartChange={handleChartChange(setWindChartType)}
             weatherData={windData || weatherData}
             metric="wind_speed"
@@ -168,7 +168,7 @@ const MainContent = ({ timePeriod }) => {
         </GridItem>
         <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
-            title="Rainfall (in)"
+            title="Rainfall at Grand Farm (in)"
             onChartChange={handleChartChange(setRainfallChartType)}
             weatherData={rainfallData || weatherData}
             metric="rain_15_min_inches"
