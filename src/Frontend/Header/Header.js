@@ -51,7 +51,7 @@ const Header = () => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isSummaryOpen, setSummaryOpen] = useState(false); // State to manage the summary modal visibility
   const { colorMode, toggleColorMode } = useColorMode();
-  const { weatherData, loading, error, tempData, humidityData, windData, rainfallData, watchdogData } = useWeatherData();
+  const { weatherData, loading, error, tempData, humidityData, windData, rainfallData, watchdogData, watchdogTempData, watchdogHumData } = useWeatherData();
 
   const toggleAlerts = () => {
     setShowAlerts(!showAlerts);
@@ -91,7 +91,7 @@ const Header = () => {
 
   const summaryMetrics = [
     {
-      label: 'Average Temperature @ GF (°F)',
+      label: 'Average Temp @ GF (°F)',
       value: tempData
         ? (tempData.reduce((sum, data) => sum + data.temperature, 0) / tempData.length).toFixed(2)
         : weatherData
@@ -122,14 +122,18 @@ const Header = () => {
           ? (weatherData.reduce((sum, data) => sum + data.wind_speed, 0) / weatherData.length).toFixed(2)
           : 'N/A',
     },
-    // {
-    //   label: 'Average Temperature @ Garage (mph)',
-    //   value: watchdogData
-    //     ? (windData.reduce((sum, data) => sum + data.temp, 0) / windData.length).toFixed(2)
-    //     : watchdogData
-    //       ? (watchdogData.reduce((sum, data) => sum + data.temp, 0) / watchdogData.length).toFixed(2)
-    //       : 'N/A',
-    // },
+    {
+      label: 'Average Temp @ Garage (°F)',
+      value: watchdogTempData
+        ? (watchdogTempData.reduce((sum, data) => sum + data.temp, 0) / watchdogTempData.length).toFixed(2)
+        : watchdogData ? (watchdogData.reduce((sum, data) => sum + data.temp, 0) / watchdogData.length).toFixed(2) : 'N/A',
+    },
+    {
+      label: 'Average Humidity @ Garage (%)',
+      value: watchdogHumData
+        ? (watchdogHumData.reduce((sum, data) => sum + data.hum, 0) / watchdogHumData.length).toFixed(2)
+        : watchdogData ? (watchdogData.reduce((sum, data) => sum + data.hum, 0) / watchdogData.length).toFixed(2) : 'N/A',
+    },
   ];
 
   const MotionIconButton = motion(IconButton);
