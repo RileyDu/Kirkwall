@@ -176,7 +176,7 @@ const ChartWrapper = ({
   const { label, addSpace } = getLabelForMetric(metric);
   const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
 
-  const fontSize = useBreakpointValue({ base: 'xs', md: 'lg' });
+  const fontSize = useBreakpointValue({ base: 'xs', md: 'md', lg: 'md', xl: 'lg', xxl: 'lg' });
   const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
   const closeSize = useBreakpointValue({ base: 'sm', md: 'lg' });

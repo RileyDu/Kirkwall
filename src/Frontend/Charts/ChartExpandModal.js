@@ -9,7 +9,6 @@ import {
   Button,
   Box,
   useColorMode,
-  useBreakpointValue,
   useToast
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard';
@@ -77,8 +76,10 @@ const ChartExpandModal = ({
       <ModalContent
         width="90%"
         maxWidth="100%"
-        height="60%"
+        height="90vh"
         maxHeight="90vh"
+        display="flex"
+        flexDirection="column"
       >
         <ModalHeader bg="#212121" color="white" fontSize="lg" borderTopRadius={'md'}>
           {title}
@@ -107,7 +108,7 @@ const ChartExpandModal = ({
           </MotionButton>
         </ModalHeader>
         <ModalCloseButton size="lg" color="white" mt={2} />
-        <ModalBody>
+        <ModalBody display="flex" flexDirection="column" flexGrow={1}>
           <Box display="flex" justifyContent="space-between" mb={2}>
             {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map(timePeriod => (
               <MotionButton
@@ -124,8 +125,7 @@ const ChartExpandModal = ({
             ))}
           </Box>
           <Box
-            height="75%"
-            width="100%"
+            flexGrow={1}
             display="flex"
             justifyContent="center"
             alignItems="center"
@@ -138,7 +138,9 @@ const ChartExpandModal = ({
           >
             {children}
           </Box>
-          <MiniDashboard metric={metric} weatherData={weatherData} />
+          <Box flexGrow={1}>
+            <MiniDashboard metric={metric} weatherData={weatherData} />
+          </Box>
         </ModalBody>
       </ModalContent>
     </Modal>
