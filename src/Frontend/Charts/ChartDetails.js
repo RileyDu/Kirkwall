@@ -8,6 +8,8 @@ export const getLabelForMetric = (metric) => {
       return { label: '°F', addSpace: false };
     case 'temp':
       return { label: '°F', addSpace: false };
+    case 'hum':
+      return { label: '%', addSpace: false };
     case 'percent_humidity':
       return { label: '%', addSpace: false };
     case 'rain_15_min_inches':

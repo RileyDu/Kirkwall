@@ -25,10 +25,10 @@ export default function WatchdogSensors() {
           <ChartWrapper title="Temperature (°F)" weatherData={watchdogData} metric={'temp'}>
             <LineChart data={watchdogData} metric="temp" />
           </ChartWrapper>
-          {/* <Divider my={'8'} borderColor="#212121" borderWidth="4px" borderRadius={"full"} /> */}
-          {/* <ChartWrapper title="Temperature (°F)" weatherData={watchdogData.temp}> */}
-            {/* <BarChart data={watchdogData} metric="temperature" /> */}
-          {/* </ChartWrapper> */}
+          <Divider my={'8'} borderColor="#212121" borderWidth="4px" borderRadius={"full"} />
+          <ChartWrapper title="Humidity (%)" weatherData={watchdogData} metric={'hum'}>
+            <BarChart data={watchdogData} metric="hum" />
+          </ChartWrapper>
         </Box>
       </Flex>
             {watchdogData.map((entry) => (
