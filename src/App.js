@@ -31,6 +31,7 @@ import { getWeatherData } from './Backend/Graphql_helper';
 import { WeatherDataProvider } from './Frontend/WeatherDataContext';
 import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
+import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors';
 
 const Layout = ({
   children,
@@ -168,6 +169,14 @@ return (
             element={
               <ProtectedRoute>
                 <RainSensors  />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/WatchdogSensors"
+            element={
+              <ProtectedRoute>
+                <WatchdogSensors  />
               </ProtectedRoute>
             }
           />

@@ -46,7 +46,7 @@ export default function WindSensors() {
   }
 
   return (
-    <Box width="100%" height="100%" textAlign="center" p={'4'}>
+    <Box width="100%" height="100%" textAlign="center" p={'4'} pt={'64px'}>
       <Heading size="xl" pb={'4'}>
         Wind Sensors
       </Heading>

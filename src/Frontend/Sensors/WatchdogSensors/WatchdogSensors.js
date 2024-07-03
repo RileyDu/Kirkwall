@@ -9,8 +9,8 @@ export default function WatchdogSensors() {
     const { watchdogData } = useWeatherData();
 
     return (
-        <Box p="4" width={'100%'} height={'100%'}>
-            <Heading size="xl" textAlign={'center'} mb={'4'}>
+        <Box p="4" width={'100%'} height={'100%'} pt={'64px'}>
+            <Heading  textAlign={'center'} mb={'4'}>
                 Watchdog Sensors
             </Heading>
             {/* <Box width="100%">

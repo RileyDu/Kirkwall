@@ -19,7 +19,7 @@ export default function TempSensors({  }) {
   }
 
   return (
-    <Box p="4" width={'100%'} height={'100%'}>
+    <Box p="4" width={'100%'} height={'100%'} pt={'64px'}>
       <Heading size="xl" textAlign={'center'} mb={'4'}>
         Temperature Sensors
       </Heading>
