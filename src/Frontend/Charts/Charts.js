@@ -28,6 +28,7 @@ ChartJS.register(
 
 // Process weather data function now takes color mode as a parameter
 const processWeatherData = (data, key, colorMode) => {
+  console.log('this is the data in processWeatherData',data);
   if (!data) return null;
   
   const getColorOfLastValue = (colorMode) => {
@@ -35,6 +36,7 @@ const processWeatherData = (data, key, colorMode) => {
   };
 
   const reversedData = [...data].reverse();
+  console.log('this is the reversed data',reversedData);
 
   const chartData = {
     labels: reversedData.map(item =>
@@ -110,7 +112,10 @@ const createCustomChartOptions = (metric, data) => {
               'temperature': '°F',
               'percent_humidity': '% Humidity',
               'rain_15_min_inches': 'inches',
-              'wind_speed': 'MPH'
+              'wind_speed': 'MPH',
+              'temp' : '°F',
+              'hum' : '% Humidity',
+              
             };
             const label = labelMap[metric] || '';
             const value = context.raw;
@@ -146,7 +151,9 @@ export const LineChart = ({ data, metric }) => {
 export const BarChart = ({ data, metric }) => {
   const { colorMode } = useColorMode();  // Get color mode here
   const chartData = processWeatherData(data, metric, colorMode);
+  console.log('this is the chart data in BarChart', chartData);
   if (!chartData) return <Spinner size="xl" />;
+
 
   const dataKey = chartData.datasets[0].data;
   const options = createCustomChartOptions(metric, dataKey);
