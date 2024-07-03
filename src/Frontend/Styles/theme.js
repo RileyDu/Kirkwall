@@ -1,4 +1,4 @@
-import { extendTheme } from '@chakra-ui/react';
+import { Divider, Heading, extendTheme } from '@chakra-ui/react';
 import { color } from 'chart.js/helpers';
 
 const customTheme = extendTheme({
@@ -84,6 +84,16 @@ const customTheme = extendTheme({
           },
         },
       },
+    },
+    Heading: {
+      baseStyle: (props) => ({
+        color: props.colorMode === 'light' ? '#212121' : 'white',
+      }),
+    },
+    Divider: {
+      baseStyle: (props) => ({
+        borderColor: props.colorMode === 'light' ? '#212121' : 'white',
+      }),
     },
   },
 });

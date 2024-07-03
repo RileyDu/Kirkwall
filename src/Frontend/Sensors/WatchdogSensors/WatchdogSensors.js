@@ -54,7 +54,7 @@ export default function WatchdogSensors() {
 
   return (
     <Box p="4" width="100%" height="100%" pt="64px">
-      <Heading textAlign="center" mb="4">
+      <Heading textAlign="center" mb="4" >
         Watchdog Sensors
       </Heading>
       <Box textAlign="center" mb="4">
@@ -87,7 +87,7 @@ export default function WatchdogSensors() {
           </ChartWrapper>
           <Divider
             my="8"
-            borderColor="#212121"
+            // borderColor="#212121"
             borderWidth="4px"
             borderRadius="full"
           />
@@ -103,14 +103,14 @@ export default function WatchdogSensors() {
           </ChartWrapper>
         </Box>
       </Flex>
-      <Divider
+      {/* <Divider
         my="8"
-        borderColor="#212121"
         borderWidth="4px"
         borderRadius="full"
-      />
+        bg={'brand.600'}
+      /> */}
 
-      <Grid
+      {/* <Grid
         templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
         gap={6}
         mt={8}
@@ -151,7 +151,7 @@ export default function WatchdogSensors() {
             </Box>
           </GridItem>
         ))}
-      </Grid>
+      </Grid> */}
     </Box>
   );
 }
