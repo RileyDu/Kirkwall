@@ -40,7 +40,7 @@ const processWeatherData = (data, key, colorMode) => {
 
   const chartData = {
     labels: reversedData.map(item =>
-      new Date(item.message_timestamp).toLocaleTimeString([], {
+      new Date(item.message_timestamp || item.reading_time).toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',
       })
@@ -115,7 +115,7 @@ const createCustomChartOptions = (metric, data) => {
               'wind_speed': 'MPH',
               'temp' : '°F',
               'hum' : '% Humidity',
-              
+
             };
             const label = labelMap[metric] || '';
             const value = context.raw;
