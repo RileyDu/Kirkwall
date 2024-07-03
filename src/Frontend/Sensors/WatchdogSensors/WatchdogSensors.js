@@ -40,7 +40,8 @@ export default function WatchdogSensors() {
                             <Text><strong>Temperature:</strong> {entry.temp}°F</Text>
                             <Text color={entry.hum > 90 ? 'red.500' : 'green.500'}><strong>Humidity:</strong> {entry.hum}%</Text>
                             <Text color={entry.water === 'no' ? 'green.500' : 'red.500'}><strong>Water Level:</strong> {entry.water}</Text>
-                            <Text><strong>Reading Time:</strong> {new Date(entry.reading_time).toLocaleTimeString()}</Text>
+                            <Text><strong>Reading Time:</strong> {new Date(entry.reading_time).toLocaleString()}</Text>
+                            {/* <Text><strong>Reading Time:</strong> {entry.reading_time}</Text> */}
                             <Divider my="4" />
                             <Text><strong>API Name:</strong> {entry.api.apiname}</Text>
                             <Text><strong>Customer Name:</strong> {entry.api.customer.name}</Text>

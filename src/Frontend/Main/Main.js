@@ -17,6 +17,7 @@ const MainContent = ({ timePeriod }) => {
     rainfallData,
     loading,
     handleTimePeriodChange,
+    watchdogData
   } = useWeatherData();
 
   const [tempChartType, setTempChartType] = useState('bar');
@@ -122,6 +123,25 @@ const MainContent = ({ timePeriod }) => {
               <LineChart data={windData || weatherData} metric="wind_speed" style={{ flex: 1 }} />
             ) : (
               <BarChart data={windData || weatherData} metric="wind_speed" style={{ flex: 1 }} />
+            )}
+          </ChartWrapper>
+        </GridItem>
+        <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
+          <ChartWrapper
+            title="Rainfall (in)"
+            onChartChange={handleChartChange(setRainfallChartType)}
+            weatherData={rainfallData || weatherData}
+            metric="rain_15_min_inches"
+            flex="1"
+            timePeriod={timePeriod}
+            display="flex"
+            flexDirection="column"
+            handleTimePeriodChange={handleTimePeriodChange}
+          >
+            {rainfallChartType === 'line' ? (
+              <LineChart data={rainfallData || weatherData} metric="rain_15_min_inches" style={{ flex: 1 }} />
+            ) : (
+              <BarChart data={rainfallData || weatherData} metric="rain_15_min_inches" style={{ flex: 1 }} />
             )}
           </ChartWrapper>
         </GridItem>
