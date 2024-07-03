@@ -90,6 +90,11 @@ const customTheme = extendTheme({
         color: props.colorMode === 'light' ? '#212121' : 'white',
       }),
     },
+    Box: {
+      baseStyle: (props) => ({
+        color: props.colorMode === 'light' ? '#212121' : 'white',
+      }),
+    },
     Divider: {
       baseStyle: (props) => ({
         borderColor: props.colorMode === 'light' ? '#212121' : 'white',
