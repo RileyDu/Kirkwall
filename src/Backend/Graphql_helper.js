@@ -122,29 +122,53 @@ async function getWeatherData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
-async function getWatchdogData() {
-  const query = `
-    query {
-      watchdog_data(limit: 19) {
-        hum
-        temp
-        water
-        dataid
-        device_location
-        reading_time
-        apiid
-        api {
-          apiname
-          customer {
-            customerid
-            name
+// Generalized function to get watchdog data based on requested type
+async function getWatchdogData(type, limit) {
+  const queryMap = {
+    all: `
+      query watchdog_data($limit: Int!) {
+        watchdog_data(ordering: "reading_time desc", limit: $limit) {
+          hum
+          temp
+          water
+          dataid
+          device_location
+          reading_time
+          apiid
+          api {
+            apiname
+            customer {
+              customerid
+              name
+            }
           }
         }
       }
-    }
-  `;
+    `,
+    temp: `
+      query watchdog_data($limit: Int!) {
+        watchdog_data(ordering: "reading_time desc", limit: $limit) {
+          temp
+          dataid
+          device_location
+          reading_time
+        }
+      }
+    `,
+    hum: `
+      query watchdog_data($limit: Int!) {
+        watchdog_data(ordering: "reading_time desc", limit: $limit) {
+          hum
+          dataid
+          device_location
+          reading_time
+        }
+      }
+    `
+  };
 
-  return executeGraphqlQuery(query);
+  const query = queryMap[type] || queryMap.all; // Default to 'all' if type is invalid
+  return executeGraphqlQuery(query, { limit });
 }
 
 // Function to edit weather data

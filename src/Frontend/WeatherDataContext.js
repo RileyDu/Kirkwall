@@ -54,7 +54,7 @@ export const WeatherDataProvider = ({ children }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getWatchdogData();
+        const response = await getWatchdogData('all', '6');
         if (Array.isArray(response.data.watchdog_data)) {
           setWatchdogData(response.data.watchdog_data);
         } else {
@@ -67,6 +67,10 @@ export const WeatherDataProvider = ({ children }) => {
     };
 
     fetchData();
+
+    const intervalId = setInterval(fetchData, 30000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
