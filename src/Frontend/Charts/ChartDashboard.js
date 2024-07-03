@@ -131,7 +131,7 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
               {timePeriod}
             </Text>
           </Flex>
-          <Text fontSize={['xs', 'sm', 'lg', 'xl']}>Time Period</Text>
+          <Text fontSize={['xs', 'sm', 'lg', 'xl']}>Time</Text>
         </Box>
       </Flex>
     </Box>

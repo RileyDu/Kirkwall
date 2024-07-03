@@ -3,6 +3,7 @@ import { Box, Stack, Button, Flex } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { WiThermometer, WiStrongWind, WiRain, WiHumidity } from 'react-icons/wi';
 import Logout from '../AuthComponents/Logout';
+import { FaDog } from "react-icons/fa";
 
 const MobileMenu = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
         <Button variant="outline" color="white" leftIcon={<WiStrongWind size="30" />} onClick={() => handleNavigate('/WindSensors')}>Wind Sensors</Button>
         <Button variant="outline" color="white" leftIcon={<WiRain size="30" />} onClick={() => handleNavigate('/RainSensors')}>Rain Sensors</Button>
         <Button variant="outline" color="white" leftIcon={<WiHumidity size="30" />} onClick={() => handleNavigate('/HumiditySensors')}>Humidity Sensors</Button>
+        <Button variant="outline" color="white" leftIcon={<FaDog size="30" />} onClick={() => handleNavigate('/WatchdogSensors')}>Watchdog Sensors</Button>
         <Logout onLogout={onClose} />
       </Stack>
     </Box>

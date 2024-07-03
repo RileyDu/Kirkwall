@@ -37,7 +37,7 @@ import {
   PopoverBody,
   Text
 } from '@chakra-ui/react';
-import { FaBars, FaSun, FaMoon } from 'react-icons/fa';
+import { FaBars, FaSun, FaMoon, FaDog } from 'react-icons/fa';
 import { WiThermometer, WiStrongWind, WiRain, WiHumidity } from 'react-icons/wi';
 import Logout from '../../Frontend/AuthComponents/Logout';
 import { useNavigate } from 'react-router-dom';
@@ -269,6 +269,16 @@ const Header = () => {
                 >
                   Humidity Sensors
                 </Button>
+                <motion.div {...motionProps}>
+                <Button
+                  leftIcon={<FaDog size="24px" />}
+                  onClick={() => handleNavigation('/WatchdogSensors')}
+                  {...buttonStyleProps}
+                  mt={6}
+                >
+                  Watchdog Sensors
+                </Button>
+                </motion.div>
               </motion.div>
               {user && (
                 <motion.div {...motionProps}>
