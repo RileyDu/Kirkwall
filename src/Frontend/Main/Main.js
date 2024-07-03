@@ -73,7 +73,7 @@ const MainContent = ({ timePeriod }) => {
       >
         <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
-            title="Temperature at Grand Farm (°F)"
+            title="Temperature (°F)"
             onChartChange={handleChartChange(setTempChartType)}
             weatherData={tempData || weatherData}
             metric="temperature"
@@ -92,7 +92,7 @@ const MainContent = ({ timePeriod }) => {
         </GridItem>
         <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
-            title="Humidity at Grand Farm (%)"
+            title="Humidity (%)"
             onChartChange={handleChartChange(setHumidityChartType)}
             weatherData={humidityData || weatherData}
             metric="percent_humidity"
@@ -111,7 +111,7 @@ const MainContent = ({ timePeriod }) => {
         </GridItem>
         <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
-            title="Wind at Grand Farm (mph)"
+            title="Wind (mph)"
             onChartChange={handleChartChange(setWindChartType)}
             weatherData={windData || weatherData}
             metric="wind_speed"
@@ -130,7 +130,7 @@ const MainContent = ({ timePeriod }) => {
         </GridItem>
         <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
-            title="Rainfall at Grand Farm (in)"
+            title="Rainfall (in)"
             onChartChange={handleChartChange(setRainfallChartType)}
             weatherData={rainfallData || weatherData}
             metric="rain_15_min_inches"
@@ -149,7 +149,7 @@ const MainContent = ({ timePeriod }) => {
         </GridItem>
         <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
-            title="Temperature in Garage (°F)"
+            title="Temperature (°F)"
             onChartChange={handleChartChange(setWatchdogTempChartType)}
             weatherData={watchdogData}
             metric="temp"
@@ -168,7 +168,7 @@ const MainContent = ({ timePeriod }) => {
         </GridItem>
         <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
-            title="Humidity in Garage (%)"
+            title="Humidity (%)"
             onChartChange={handleChartChange(setWatchdogHumidityChartType)}
             weatherData={watchdogData}
             metric="hum"

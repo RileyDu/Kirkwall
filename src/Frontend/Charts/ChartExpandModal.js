@@ -9,7 +9,8 @@ import {
   Button,
   Box,
   useColorMode,
-  useToast
+  useToast,
+  useBreakpointValue
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard';
 import { FaChartLine, FaChartBar } from 'react-icons/fa';
@@ -70,6 +71,9 @@ const ChartExpandModal = ({
     }
   }, [loading, toast]);
 
+  const fontSize = useBreakpointValue({ base: 'xs', md: 'md', lg: 'md', xl: 'lg', xxl: 'lg' });
+
+
   return (
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
       <ModalOverlay />
@@ -81,17 +85,18 @@ const ChartExpandModal = ({
         display="flex"
         flexDirection="column"
       >
-        <ModalHeader bg="#212121" color="white" fontSize="lg" borderTopRadius={'md'}>
+        <ModalHeader bg="#212121" color="white" fontSize={fontSize} borderTopRadius={'md'}>
           {title}
           <MotionButton
             variant={'pill'}
             onClick={() => onChartChange('line')}
             leftIcon={<FaChartLine />}
-            size="md"
+            size={['sm', 'lg']}
             mx={2}
             ml={4}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
+            
           >
             LINE
           </MotionButton>
@@ -102,7 +107,7 @@ const ChartExpandModal = ({
             mx={2}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            size="md"
+            size={['sm', 'lg']}
           >
             BAR
           </MotionButton>
