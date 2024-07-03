@@ -5,6 +5,7 @@ import {
   WiRain,
   WiHumidity,
 } from 'react-icons/wi';
+import { FaDog } from "react-icons/fa";
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -153,6 +154,20 @@ const SidebarContent = ({ navigate, colorMode }) => (
     >
       Humidity Sensors
     </MotionButton>
+    <MotionButton
+      variant="sidebar"
+      color="white"
+      _hover={{ bg: 'white', color: 'black' }}
+      leftIcon={<FaDog size="30" />}
+      onClick={() => navigate('/WatchdogSensors')}
+      justifyContent="flex-start"
+      fontSize={'md'}
+      {...buttonStyleProps}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+    >
+      Watchdog Sensors
+    </MotionButton>
   </>
 );
 
@@ -197,6 +212,18 @@ const MinimizedSidebarContent = ({ navigate, toggleSidebar, colorMode }) => (
       icon={<WiHumidity size="30" />}
       onClick={() => navigate('/HumiditySensors')}
       aria-label="Humidity Sensors"
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      bg={'brand.400'}
+      border={'2px solid #fd9801'}
+      _hover={{ bg: 'brand.800' }}
+      color={colorMode === 'light' ? 'black' : 'black'}
+
+    />
+        <MotionIconButton
+      icon={<FaDog size="30" />}
+      onClick={() => navigate('/WatchdogSensors')}
+      aria-label="Watchdog Sensors"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       bg={'brand.400'}
