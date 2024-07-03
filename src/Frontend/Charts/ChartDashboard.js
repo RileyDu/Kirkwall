@@ -30,7 +30,7 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
     currentData.length > 0 ? currentData[currentData.length - 1] : 'N/A';
 
   const calculateTimePeriod = (dataLength) => {
-    const totalMinutes = dataLength * 5;
+    const totalMinutes = metric === 'temp' || metric === 'hum' ? dataLength * 10 : dataLength * 5;
     const totalHours = Math.floor(totalMinutes / 60);
 
     if (totalHours < 24) {
