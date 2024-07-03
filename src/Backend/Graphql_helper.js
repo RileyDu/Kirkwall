@@ -124,28 +124,25 @@ async function getWeatherData(type, limit) {
 
 async function getWatchdogData() {
   const query = `
-  watchdog_data {
-    hum
-    temp
-    water
-    dataid
-    device_location
-    reading_time
-    apiid
-    dataid
-    
-    api{
-      apiname
-      customer{
-        customerid
-        name
-        
+    query {
+      watchdog_data(limit: 30) {
+        hum
+        temp
+        water
+        dataid
+        device_location
+        reading_time
+        apiid
+        api {
+          apiname
+          customer {
+            customerid
+            name
+          }
+        }
       }
-      
     }
-    
-  }
-  `
+  `;
 
   return executeGraphqlQuery(query);
 }
