@@ -3,18 +3,39 @@ import ChartWrapper from '../../Charts/ChartWrapper';
 import { BarChart, LineChart } from '../../Charts/Charts';
 import MiniDashboard from '../../Charts/ChartDashboard';
 import { useWeatherData } from '../../WeatherDataContext';
+import { FaChessRook } from 'react-icons/fa';
+import { keyframes } from '@emotion/react';
+import { useEffect, useState } from 'react';
 
 export default function TempSensors({  }) {
 
-  const { weatherData, tempData } = useWeatherData();
+  const { weatherData, tempData, loading } = useWeatherData();
 
-  if (!weatherData && !tempData) {
-    console.log('WeatherData is not defined', weatherData);
+  const [isReady, setIsReady] = useState(false);
+
+
+  useEffect(() => {
+    setIsReady(false);
+    if (weatherData.length > 0) {
+      setIsReady(true);
+    }
+  }, [weatherData]);
+
+  const spin = keyframes`
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  `;
+
+  if (loading) {
     return (
-      <Box p="4" width="100%" height="100%" textAlign="center">
-        <Spinner size="xl" />
-        <Text mt="4">Loading temperature data...</Text>
-      </Box>
+      <Flex justify="center" align="center" height="100%">
+        <Box
+          as={FaChessRook}
+          animation={`${spin} infinite 2s linear`}
+          fontSize="6xl"
+          color="black"
+        />
+      </Flex>
     );
   }
 
