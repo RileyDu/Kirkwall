@@ -125,7 +125,7 @@ const Login = () => {
             </Flex>
           </Flex>
         </Box>
-        <Center flex="1" bg={'white'}>
+        <Center flex="1" bg={'brand.50'}>
           <Container
             maxW="lg"
             py={{ base: '12', md: '48' }}
