@@ -122,6 +122,34 @@ async function getWeatherData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
+async function getWatchdogData() {
+  const query = `
+  watchdog_data {
+    hum
+    temp
+    water
+    dataid
+    device_location
+    reading_time
+    apiid
+    dataid
+    
+    api{
+      apiname
+      customer{
+        customerid
+        name
+        
+      }
+      
+    }
+    
+  }
+  `
+
+  return executeGraphqlQuery(query);
+}
+
 // Function to edit weather data
 async function editWeatherData(dataid, temperature, humidity, windSpeed, windDirection) {
   const editWeatherMutation = `
@@ -158,4 +186,4 @@ async function editWeatherData(dataid, temperature, humidity, windSpeed, windDir
 }
 
 // Export the functions to be used elsewhere in the project
-export { getWeatherData, editWeatherData };
+export { getWeatherData, editWeatherData, getWatchdogData };

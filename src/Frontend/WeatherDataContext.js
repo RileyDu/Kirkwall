@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getWeatherData } from '../Backend/Graphql_helper';
+import { getWeatherData, getWatchdogData } from '../Backend/Graphql_helper';
+
 
 const WeatherDataContext = createContext();
 
@@ -18,6 +19,7 @@ export const WeatherDataProvider = ({ children }) => {
   const [humidityData, setHumidityData] = useState(null);
   const [windData, setWindData] = useState(null);
   const [rainfallData, setRainfallData] = useState(null);
+  const [watchdogData, setWatchdogData] = useState([]);
   const [dataLoaded, setDataLoaded] = useState({
     temperature: false,
     humidity: false,
@@ -47,6 +49,24 @@ export const WeatherDataProvider = ({ children }) => {
     const intervalId = setInterval(fetchData, 30000);
 
     return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getWatchdogData();
+        if (Array.isArray(response.data.watchdog_data)) {
+          setWatchdogData(response.data.watchdog_data);
+        } else {
+          setWatchdogData([]);
+        }
+      } catch (error) {
+        console.error('Error fetching watchdog data:', error);
+        setWatchdogData([]);
+      }
+    };
+
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -150,6 +170,7 @@ export const WeatherDataProvider = ({ children }) => {
         rainfallData,
         loading,
         handleTimePeriodChange,
+        watchdogData
       }}
     >
       {children}
