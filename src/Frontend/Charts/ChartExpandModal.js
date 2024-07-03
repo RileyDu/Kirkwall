@@ -31,16 +31,11 @@ const ChartExpandModal = ({
   const { colorMode } = useColorMode();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
-  // const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
 
   const MotionButton = motion(Button);
 
   const getBackgroundColor = colorMode =>
     colorMode === 'light' ? '#f9f9f9' : '#303030';
-
-  const fontSize = useBreakpointValue({ base: 'sm', md: 'lg' });
-  const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
-  const closeSize = useBreakpointValue({ base: 'sm', md: 'lg' });
 
   const showLoadingToast = () => {
     toast({
@@ -77,35 +72,21 @@ const ChartExpandModal = ({
   }, [loading, toast]);
 
   return (
-    <Modal onClose={onClose} isOpen={isOpen}>
+    <Modal onClose={onClose} isOpen={isOpen} isCentered>
       <ModalOverlay />
       <ModalContent
-        sx={{
-          width: {
-            base: '90%',
-            sm: '80%',
-            md: '70%',
-            lg: '60%',
-            xl: '60%',
-          },
-          maxWidth: '100%',
-          height: {
-            base: 'auto',
-            sm: 'auto',
-            md: '70vh',
-            lg: '70vh',
-            xl: '90vh',
-          },
-          maxHeight: '100%',
-        }}
+        width="90%"
+        maxWidth="100%"
+        height="60%"
+        maxHeight="90vh"
       >
-        <ModalHeader bg="#212121" color="white" fontSize={fontSize} borderTopRadius={'md'}>
+        <ModalHeader bg="#212121" color="white" fontSize="lg" borderTopRadius={'md'}>
           {title}
           <MotionButton
             variant={'pill'}
             onClick={() => onChartChange('line')}
             leftIcon={<FaChartLine />}
-            size={iconSize}
+            size="md"
             mx={2}
             ml={4}
             whileHover={{ scale: 1.1 }}
@@ -120,14 +101,14 @@ const ChartExpandModal = ({
             mx={2}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            size={iconSize}
+            size="md"
           >
             BAR
           </MotionButton>
         </ModalHeader>
-        <ModalCloseButton size={closeSize} color="white" mt={[3, 2]}/>
+        <ModalCloseButton size="lg" color="white" mt={2} />
         <ModalBody>
-          <Box display="flex" justifyContent="space-between" my={1}>
+          <Box display="flex" justifyContent="space-between" mb={2}>
             {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map(timePeriod => (
               <MotionButton
                 key={timePeriod}
@@ -143,8 +124,8 @@ const ChartExpandModal = ({
             ))}
           </Box>
           <Box
-            h={['400px','500px', '600px', '650px']}
-            w="100%"
+            height="75%"
+            width="100%"
             display="flex"
             justifyContent="center"
             alignItems="center"
@@ -153,7 +134,7 @@ const ChartExpandModal = ({
             borderRadius="md"
             boxShadow="md"
             border="2px solid #fd9801"
-            mb={2}
+            mb={6}
           >
             {children}
           </Box>
