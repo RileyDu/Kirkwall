@@ -25,6 +25,7 @@ const MainContent = ({ timePeriod }) => {
   const [windChartType, setWindChartType] = useState('bar');
   const [rainfallChartType, setRainfallChartType] = useState('bar');
   const [watchdogTempChartType, setWatchdogTempChartType] = useState('bar');
+  const [watchdogHumidityChartType, setWatchdogHumidityChartType] = useState('bar');
   const [isReady, setIsReady] = useState(false);
   const { colorMode } = useColorMode();
 
@@ -143,6 +144,25 @@ const MainContent = ({ timePeriod }) => {
               <LineChart data={watchdogData} metric="temp" style={{ flex: 1 }} />
             ) : (
               <BarChart data={watchdogData} metric="temp" style={{ flex: 1 }} />
+            )}
+          </ChartWrapper>
+        </GridItem>
+        <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
+          <ChartWrapper
+            title="Humidity in Garage (%)"
+            onChartChange={handleChartChange(setWatchdogHumidityChartType)}
+            weatherData={watchdogData}
+            metric="hum"
+            flex="1"
+            timePeriod={timePeriod}
+            display="flex"
+            flexDirection="column"
+            handleTimePeriodChange={handleTimePeriodChange}
+          >
+            {watchdogHumidityChartType === 'line' ? (
+              <LineChart data={watchdogData} metric="hum" style={{ flex: 1 }} />
+            ) : (
+              <BarChart data={watchdogData} metric="hum" style={{ flex: 1 }} />
             )}
           </ChartWrapper>
         </GridItem>
