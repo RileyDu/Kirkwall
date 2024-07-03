@@ -22,9 +22,9 @@ export default function WatchdogSensors() {
             </Heading>
             <Flex direction="row" justifyContent="space-between">
         <Box width="100%">
-          {/* <ChartWrapper title="Temperature (°F)" weatherData={watchdogData.temp}> */}
+          <ChartWrapper title="Temperature (°F)" weatherData={watchdogData} metric={'temp'}>
             <LineChart data={watchdogData} metric="temp" />
-          {/* </ChartWrapper> */}
+          </ChartWrapper>
           {/* <Divider my={'8'} borderColor="#212121" borderWidth="4px" borderRadius={"full"} /> */}
           {/* <ChartWrapper title="Temperature (°F)" weatherData={watchdogData.temp}> */}
             {/* <BarChart data={watchdogData} metric="temperature" /> */}

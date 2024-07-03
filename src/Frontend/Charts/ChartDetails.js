@@ -6,6 +6,8 @@ export const getLabelForMetric = (metric) => {
   switch (metric) {
     case 'temperature':
       return { label: '°F', addSpace: false };
+    case 'temp':
+      return { label: '°F', addSpace: false };
     case 'percent_humidity':
       return { label: '%', addSpace: false };
     case 'rain_15_min_inches':
