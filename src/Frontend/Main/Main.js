@@ -24,6 +24,7 @@ const MainContent = ({ timePeriod }) => {
   const [humidityChartType, setHumidityChartType] = useState('bar');
   const [windChartType, setWindChartType] = useState('bar');
   const [rainfallChartType, setRainfallChartType] = useState('bar');
+  const [watchdogTempChartType, setWatchdogTempChartType] = useState('bar');
   const [isReady, setIsReady] = useState(false);
   const { colorMode } = useColorMode();
 
@@ -128,20 +129,20 @@ const MainContent = ({ timePeriod }) => {
         </GridItem>
         <GridItem colSpan={{ base: 1, lg: 2 }} display="flex">
           <ChartWrapper
-            title="Rainfall (in)"
-            onChartChange={handleChartChange(setRainfallChartType)}
-            weatherData={rainfallData || weatherData}
-            metric="rain_15_min_inches"
+            title="Temperature in Garage (°F)"
+            onChartChange={handleChartChange(setWatchdogTempChartType)}
+            weatherData={watchdogData}
+            metric="temp"
             flex="1"
             timePeriod={timePeriod}
             display="flex"
             flexDirection="column"
             handleTimePeriodChange={handleTimePeriodChange}
           >
-            {rainfallChartType === 'line' ? (
-              <LineChart data={rainfallData || weatherData} metric="rain_15_min_inches" style={{ flex: 1 }} />
+            {watchdogTempChartType === 'line' ? (
+              <LineChart data={watchdogData} metric="temp" style={{ flex: 1 }} />
             ) : (
-              <BarChart data={rainfallData || weatherData} metric="rain_15_min_inches" style={{ flex: 1 }} />
+              <BarChart data={watchdogData} metric="temp" style={{ flex: 1 }} />
             )}
           </ChartWrapper>
         </GridItem>
