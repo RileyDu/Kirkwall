@@ -57,7 +57,7 @@ export const WeatherDataProvider = ({ children }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getWatchdogData('all', '7');
+        const response = await getWatchdogData('all', '13');
         if (Array.isArray(response.data.watchdog_data)) {
           setWatchdogData(response.data.watchdog_data);
         } else {
@@ -142,8 +142,12 @@ export const WeatherDataProvider = ({ children }) => {
     return fetchSpecificData(metric, timePeriod); // Return the promise
   };
 
+  const weatherMetrics = ['temperature', 'percent_humidity', 'wind_speed', 'rain_15_min_inches'];
+  const watchdogMetrics = ['temp', 'hum'];
+  
+
   const determineLimitBasedOnTimePeriod = timePeriod => {
-    console.log('Determining limit for time period:', timePeriod);
+    console.log('Determining limit for time period (weatherData):', timePeriod);
     switch (timePeriod) {
       case '1H':
         return 13;
@@ -165,6 +169,7 @@ export const WeatherDataProvider = ({ children }) => {
   };
 
   const watchdogDetermineLimitBasedOnTimePeriod = timePeriod => {
+    console.log('Determining limit for time period (watchdogData):', timePeriod);
     switch (timePeriod) {
       case '1H':
         return 7;
@@ -187,31 +192,38 @@ export const WeatherDataProvider = ({ children }) => {
 
   const fetchSpecificData = async (metric, timePeriod) => {
     try {
-      const response = metric.includes('temp' || 'hum')
-        ? await getWatchdogData(metric, watchdogDetermineLimitBasedOnTimePeriod(timePeriod))
-        : await getWeatherData(metric, determineLimitBasedOnTimePeriod(timePeriod));
-
-      switch (metric) {
-        case 'temperature':
-          setTempData(response.data.weather_data);
-          break;
-        case 'temp':
-          setWatchdogTempData(response.data.watchdog_data);
-          break;
-        case 'percent_humidity':
-          setHumidityData(response.data.weather_data);
-          break;
-        case 'hum':
-          setWatchdogHumData(response.data.watchdog_data);
-          break;
-        case 'wind_speed':
-          setWindData(response.data.weather_data);
-          break;
-        case 'rain_15_min_inches':
-          setRainfallData(response.data.weather_data);
-          break;
-        default:
-          break;
+      if (watchdogMetrics.includes(metric)) {
+        const response = await getWatchdogData(metric, watchdogDetermineLimitBasedOnTimePeriod(timePeriod));
+        switch (metric) {
+          case 'temp':
+            setWatchdogTempData(response.data.watchdog_data);
+            break;
+          case 'hum':
+            setWatchdogHumData(response.data.watchdog_data);
+            break;
+          default:
+            break;
+        }
+      } else if (weatherMetrics.includes(metric)) {
+        const response = await getWeatherData(metric, determineLimitBasedOnTimePeriod(timePeriod));
+        switch (metric) {
+          case 'temperature':
+            setTempData(response.data.weather_data);
+            break;
+          case 'percent_humidity':
+            setHumidityData(response.data.weather_data);
+            break;
+          case 'wind_speed':
+            setWindData(response.data.weather_data);
+            break;
+          case 'rain_15_min_inches':
+            setRainfallData(response.data.weather_data);
+            break;
+          default:
+            break;
+        }
+      } else {
+        console.warn(`Unknown metric: ${metric}`);
       }
     } catch (error) {
       console.error(`Error fetching ${metric} data:`, error);

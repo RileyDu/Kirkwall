@@ -17,7 +17,9 @@ const MainContent = ({ timePeriod }) => {
     rainfallData,
     loading,
     handleTimePeriodChange,
-    watchdogData
+    watchdogData,
+    watchdogTempData,
+    watchdogHumData,
   } = useWeatherData();
 
   const [tempChartType, setTempChartType] = useState('bar');
@@ -151,7 +153,7 @@ const MainContent = ({ timePeriod }) => {
           <ChartWrapper
             title="Temperature (°F)"
             onChartChange={handleChartChange(setWatchdogTempChartType)}
-            weatherData={watchdogData}
+            weatherData={watchdogTempData || watchdogData}
             metric="temp"
             flex="1"
             timePeriod={timePeriod}
@@ -160,9 +162,9 @@ const MainContent = ({ timePeriod }) => {
             handleTimePeriodChange={handleTimePeriodChange}
           >
             {watchdogTempChartType === 'line' ? (
-              <LineChart data={watchdogData} metric="temp" style={{ flex: 1 }} />
+              <LineChart data={watchdogTempData || watchdogData} metric="temp" style={{ flex: 1 }} />
             ) : (
-              <BarChart data={watchdogData} metric="temp" style={{ flex: 1 }} />
+              <BarChart data={watchdogTempData || watchdogData} metric="temp" style={{ flex: 1 }} />
             )}
           </ChartWrapper>
         </GridItem>
@@ -170,7 +172,7 @@ const MainContent = ({ timePeriod }) => {
           <ChartWrapper
             title="Humidity (%)"
             onChartChange={handleChartChange(setWatchdogHumidityChartType)}
-            weatherData={watchdogData}
+            weatherData={watchdogHumData || watchdogData}
             metric="hum"
             flex="1"
             timePeriod={timePeriod}
@@ -179,9 +181,9 @@ const MainContent = ({ timePeriod }) => {
             handleTimePeriodChange={handleTimePeriodChange}
           >
             {watchdogHumidityChartType === 'line' ? (
-              <LineChart data={watchdogData} metric="hum" style={{ flex: 1 }} />
+              <LineChart data={watchdogHumData || watchdogData} metric="hum" style={{ flex: 1 }} />
             ) : (
-              <BarChart data={watchdogData} metric="hum" style={{ flex: 1 }} />
+              <BarChart data={watchdogHumData || watchdogData} metric="hum" style={{ flex: 1 }} />
             )}
           </ChartWrapper>
         </GridItem>
