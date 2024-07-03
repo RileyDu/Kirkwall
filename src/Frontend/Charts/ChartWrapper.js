@@ -69,6 +69,7 @@ const ChartWrapper = ({
     '/SoilMoistureSensors',
     '/WindSensors',
     '/RainSensors',
+    '/WatchdogSensors',
   ];
 
   useEffect(() => {
