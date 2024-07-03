@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getWeatherData, getWatchdogData } from '../Backend/Graphql_helper';
 
-
 const WeatherDataContext = createContext();
 
 export const useWeatherData = () => {
@@ -15,16 +14,20 @@ export const WeatherDataProvider = ({ children }) => {
   const [selectedTimePeriodHumidity, setSelectedTimePeriodHumidity] = useState('3H');
   const [selectedTimePeriodWind, setSelectedTimePeriodWind] = useState('3H');
   const [selectedTimePeriodRainfall, setSelectedTimePeriodRainfall] = useState('3H');
+  const [selectedTimePeriodWDTemp, setSelectedTimePeriodWDTemp] = useState('3H');
+  const [selectedTimePeriodWDHum, setSelectedTimePeriodWDHum] = useState('3H');
   const [tempData, setTempData] = useState(null);
   const [humidityData, setHumidityData] = useState(null);
   const [windData, setWindData] = useState(null);
   const [rainfallData, setRainfallData] = useState(null);
   const [watchdogData, setWatchdogData] = useState([]);
+  const [watchdogTempData, setWatchdogTempData] = useState(null);
+  const [watchdogHumData, setWatchdogHumData] = useState(null);
   const [dataLoaded, setDataLoaded] = useState({
     temperature: false,
     humidity: false,
     wind: false,
-    rainfall: false
+    rainfall: false,
   });
 
   useEffect(() => {
@@ -88,10 +91,24 @@ export const WeatherDataProvider = ({ children }) => {
         if (dataLoaded.rainfall) {
           fetchSpecificData('rain_15_min_inches', selectedTimePeriodRainfall);
         }
+        if (dataLoaded.watchdogTemp) {
+          fetchSpecificData('temp', selectedTimePeriodWDTemp);
+        }
+        if (dataLoaded.watchdogHum) {
+          fetchSpecificData('hum', selectedTimePeriodWDHum);
+        }
       }, 30000);
       return () => clearInterval(intervalId);
     }
-  }, [dataLoaded, selectedTimePeriodTemp, selectedTimePeriodHumidity, selectedTimePeriodWind, selectedTimePeriodRainfall]);
+  }, [
+    dataLoaded,
+    selectedTimePeriodTemp,
+    selectedTimePeriodHumidity,
+    selectedTimePeriodWind,
+    selectedTimePeriodRainfall,
+    selectedTimePeriodWDTemp,
+    selectedTimePeriodWDHum,
+  ]);
 
   const handleTimePeriodChange = async (metric, timePeriod) => {
     switch (metric) {
@@ -111,14 +128,21 @@ export const WeatherDataProvider = ({ children }) => {
         setSelectedTimePeriodRainfall(timePeriod);
         setDataLoaded(prevState => ({ ...prevState, rainfall: true }));
         break;
+      case 'temp':
+        setSelectedTimePeriodWDTemp(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, watchdogTemp: true }));
+        break;
+      case 'hum':
+        setSelectedTimePeriodWDHum(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, watchdogHum: true }));
+        break;
       default:
         break;
     }
     return fetchSpecificData(metric, timePeriod); // Return the promise
   };
-  
 
-  const determineLimitBasedOnTimePeriod = (timePeriod) => {
+  const determineLimitBasedOnTimePeriod = timePeriod => {
     console.log('Determining limit for time period:', timePeriod);
     switch (timePeriod) {
       case '1H':
@@ -140,15 +164,45 @@ export const WeatherDataProvider = ({ children }) => {
     }
   };
 
+  const watchdogDetermineLimitBasedOnTimePeriod = timePeriod => {
+    switch (timePeriod) {
+      case '1H':
+        return 7;
+      case '3H':
+        return 19;
+      case '6H':
+        return 37;
+      case '12H':
+        return 73;
+      case '1D':
+        return 145;
+      case '3D':
+        return 217;
+      case '1W':
+        return 1009;
+      default:
+        return 37;
+    }
+  };
+
   const fetchSpecificData = async (metric, timePeriod) => {
     try {
-      const response = await getWeatherData(metric, determineLimitBasedOnTimePeriod(timePeriod));
+      const response = metric.includes('temp' || 'hum')
+        ? await getWatchdogData(metric, watchdogDetermineLimitBasedOnTimePeriod(timePeriod))
+        : await getWeatherData(metric, determineLimitBasedOnTimePeriod(timePeriod));
+
       switch (metric) {
         case 'temperature':
           setTempData(response.data.weather_data);
           break;
+        case 'temp':
+          setWatchdogTempData(response.data.watchdog_data);
+          break;
         case 'percent_humidity':
           setHumidityData(response.data.weather_data);
+          break;
+        case 'hum':
+          setWatchdogHumData(response.data.watchdog_data);
           break;
         case 'wind_speed':
           setWindData(response.data.weather_data);
@@ -174,7 +228,9 @@ export const WeatherDataProvider = ({ children }) => {
         rainfallData,
         loading,
         handleTimePeriodChange,
-        watchdogData
+        watchdogData,
+        watchdogTempData,
+        watchdogHumData,
       }}
     >
       {children}
