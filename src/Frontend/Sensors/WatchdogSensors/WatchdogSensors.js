@@ -33,13 +33,13 @@ export default function WatchdogSensors() {
             <Grid templateColumns="repeat(auto-fill, minmax(300px, 1fr))" gap={6} mt={8}>
                 {watchdogData.map((entry) => (
                     <GridItem key={entry.dataid}>
-                        <Box borderWidth="1px" borderRadius="lg" overflow="hidden" p="6" bg={'brand.50'}>
+                        <Box border="2px solid #212121" borderRadius="lg" overflow="hidden" p="6" bg={'brand.50'} boxShadow={'lg'}>
                             <Heading size="lg" mb="2">
                                  Location: {entry.device_location}
                             </Heading>
                             <Text><strong>Temperature:</strong> {entry.temp}°F</Text>
-                            <Text><strong>Humidity:</strong> {entry.hum}%</Text>
-                            <Text><strong>Water Level:</strong> {entry.water}</Text>
+                            <Text color={entry.hum > 90 ? 'red.500' : 'green.500'}><strong>Humidity:</strong> {entry.hum}%</Text>
+                            <Text color={entry.water === 'no' ? 'green.500' : 'red.500'}><strong>Water Level:</strong> {entry.water}</Text>
                             <Text><strong>Reading Time:</strong> {new Date(entry.reading_time).toLocaleTimeString()}</Text>
                             <Divider my="4" />
                             <Text><strong>API Name:</strong> {entry.api.apiname}</Text>
