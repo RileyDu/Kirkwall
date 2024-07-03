@@ -57,7 +57,7 @@ export const WeatherDataProvider = ({ children }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getWatchdogData('all', '13');
+        const response = await getWatchdogData('all', '19');
         if (Array.isArray(response.data.watchdog_data)) {
           setWatchdogData(response.data.watchdog_data);
         } else {
