@@ -51,7 +51,7 @@ const Header = () => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isSummaryOpen, setSummaryOpen] = useState(false); // State to manage the summary modal visibility
   const { colorMode, toggleColorMode } = useColorMode();
-  const { weatherData, loading, error, tempData, humidityData, windData, rainfallData } = useWeatherData();
+  const { weatherData, loading, error, tempData, humidityData, windData, rainfallData, watchdogData } = useWeatherData();
 
   const toggleAlerts = () => {
     setShowAlerts(!showAlerts);
@@ -91,7 +91,7 @@ const Header = () => {
 
   const summaryMetrics = [
     {
-      label: 'Average Temperature (°F)',
+      label: 'Average Temperature @ GF (°F)',
       value: tempData
         ? (tempData.reduce((sum, data) => sum + data.temperature, 0) / tempData.length).toFixed(2)
         : weatherData
@@ -99,7 +99,7 @@ const Header = () => {
           : 'N/A',
     },
     {
-      label: 'Total Rainfall (inches)',
+      label: 'Total Rainfall @ GF (inches)',
       value: rainfallData
         ? rainfallData.reduce((sum, data) => sum + data.rain_15_min_inches, 0).toFixed(2)
         : weatherData
@@ -107,7 +107,7 @@ const Header = () => {
           : 'N/A',
     },
     {
-      label: 'Average Humidity (%)',
+      label: 'Average Humidity @ GF (%)',
       value: humidityData
         ? (humidityData.reduce((sum, data) => sum + data.percent_humidity, 0) / humidityData.length).toFixed(2)
         : weatherData
@@ -115,13 +115,21 @@ const Header = () => {
           : 'N/A',
     },
     {
-      label: 'Average Wind Speed (mph)',
+      label: 'Average Wind Speed @ GF (mph)',
       value: windData
         ? (windData.reduce((sum, data) => sum + data.wind_speed, 0) / windData.length).toFixed(2)
         : weatherData
           ? (weatherData.reduce((sum, data) => sum + data.wind_speed, 0) / weatherData.length).toFixed(2)
           : 'N/A',
     },
+    // {
+    //   label: 'Average Temperature @ Garage (mph)',
+    //   value: watchdogData
+    //     ? (windData.reduce((sum, data) => sum + data.temp, 0) / windData.length).toFixed(2)
+    //     : watchdogData
+    //       ? (watchdogData.reduce((sum, data) => sum + data.temp, 0) / watchdogData.length).toFixed(2)
+    //       : 'N/A',
+    // },
   ];
 
   const MotionIconButton = motion(IconButton);
