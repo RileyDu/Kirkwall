@@ -53,7 +53,6 @@ export default function HumiditySensors() {
       </ChartWrapper>
       <Divider
         my={'8'}
-        borderColor="#212121"
         borderWidth="4px"
         borderRadius={'full'}
       />

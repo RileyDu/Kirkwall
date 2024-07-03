@@ -52,7 +52,7 @@ export default function TempSensors({  }) {
           <ChartWrapper title="Temperature (°F)" weatherData={tempData || weatherData}>
             <LineChart data={tempData || weatherData} metric="temperature" />
           </ChartWrapper>
-          <Divider my={'8'} borderColor="#212121" borderWidth="4px" borderRadius={"full"} />
+          <Divider my={'8'} borderWidth="4px" borderRadius={"full"} />
           <ChartWrapper title="Temperature (°F)" weatherData={tempData || weatherData}>
             <BarChart data={ tempData || weatherData} metric="temperature" />
           </ChartWrapper>

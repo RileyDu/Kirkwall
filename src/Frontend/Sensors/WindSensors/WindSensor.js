@@ -137,7 +137,6 @@ export default function WindSensors() {
           </Flex>
           <Divider
             my={'8'}
-            borderColor="#212121"
             borderWidth="4px"
             borderRadius={'full'}
           />
@@ -150,7 +149,6 @@ export default function WindSensors() {
       </Box>
       <Divider
         my={'8'}
-        borderColor="#212121"
         borderWidth="4px"
         borderRadius={'full'}
       />
