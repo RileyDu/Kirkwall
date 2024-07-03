@@ -6,6 +6,9 @@ import { BarChart, LineChart } from '../../Charts/Charts';
 import MiniDashboard from '../../Charts/ChartDashboard';
 import WindGauageStyling from './WindGaugeStyling.css';
 import { useWeatherData } from '../../WeatherDataContext';
+import { FaChessRook } from 'react-icons/fa';
+import { keyframes } from '@emotion/react';
+import { useEffect, useState } from 'react';
 
 const getCardinalDirection = (degree) => {
   const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
@@ -18,16 +21,34 @@ const getCardinalDirection = (degree) => {
 export default function WindSensors() {
   const [isMobile] = useMediaQuery("(max-width: 767px)");
 
-  const { weatherData, windData } = useWeatherData();
+  const { weatherData, windData, loading } = useWeatherData();
 
 
-  if (!weatherData && !windData) {
-    console.log('WeatherData is not defined', weatherData);
+  const [isReady, setIsReady] = useState(false);
+
+
+  useEffect(() => {
+    setIsReady(false);
+    if (weatherData.length > 0) {
+      setIsReady(true);
+    }
+  }, [weatherData]);
+
+  const spin = keyframes`
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  `;
+
+  if (loading) {
     return (
-      <Box p="4" width="100%" height="100%" textAlign="center">
-        <Spinner size="xl" />
-        <Text mt="4">Loading wind data...</Text>
-      </Box>
+      <Flex justify="center" align="center" height="100%">
+        <Box
+          as={FaChessRook}
+          animation={`${spin} infinite 2s linear`}
+          fontSize="6xl"
+          color="black"
+        />
+      </Flex>
     );
   }
 
