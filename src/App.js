@@ -32,6 +32,7 @@ import { WeatherDataProvider } from './Frontend/WeatherDataContext';
 import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors';
+import MapComponent from './Frontend/Maps/Map';
 
 const Layout = ({
   children,
@@ -177,6 +178,14 @@ return (
             element={
               <ProtectedRoute>
                 <WatchdogSensors  />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/map"
+            element={
+              <ProtectedRoute>
+                <MapComponent />
               </ProtectedRoute>
             }
           />
