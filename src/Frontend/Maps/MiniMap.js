@@ -21,7 +21,7 @@ const MiniMap = () => {
 
   const mapContainerStyles = {
     width: isMobile ? '90%' : '100%',
-    height: isMobile ? '600px' : '400px',
+    height: isMobile ? '400px' : '400px',
     margin: '0 auto',
     borderRadius: '5px',
     boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
