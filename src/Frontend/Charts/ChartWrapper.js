@@ -32,6 +32,7 @@ import {
   FaChessRook,
   FaChartBar,
   FaChartLine,
+  FaMap,
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
@@ -39,6 +40,7 @@ import ChartExpandModal from './ChartExpandModal'; // Adjust the path as necessa
 import ChartDetails, { getLabelForMetric } from './ChartDetails';
 import { useColorMode } from '@chakra-ui/react';
 import axios from 'axios';
+import MiniMap from '../Maps/MiniMap';
 
 const ChartWrapper = ({
   title,
@@ -57,11 +59,17 @@ const ChartWrapper = ({
   const [lastAlertTime, setLastAlertTime] = useState(null);
   const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
   const [loading, setLoading] = useState(false);
+  const [showMap, setShowMap] = useState(false); // State to toggle between map and chart
+
 
   const location = useLocation();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const { colorMode } = useColorMode();
+
+  const toggleMap = () => {
+    setShowMap(!showMap);
+  };
 
   const restrictedRoutes = [
     '/TempSensors',
@@ -391,6 +399,27 @@ const ChartWrapper = ({
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1, delay: 0.35 }}
               >
+                <Tooltip label="Map / Graph">
+                  <MotionIconButton
+                    icon={<FaMap />}
+                    variant="outline"
+                    color="#212121"
+                    size={iconSize}
+                    bg={'brand.400'}
+                    _hover={{ bg: 'brand.800' }}
+                    onClick={toggleMap}
+                    border={'2px solid #fd9801'}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    mr={2}
+                  />
+                </Tooltip>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 0.35 }}
+              >
                 <Tooltip label="Change Chart Type">
                   <MotionIconButton
                     icon={getChartIcon()}
@@ -430,7 +459,15 @@ const ChartWrapper = ({
             </Flex>
           )}
         </Flex>
+        {showMap && (
+          <MiniMap
+          />
+        )}
+        {!showMap && (
+          <>
         {children}
+          </>
+        )}
       </Box>
       <ChartExpandModal
         isOpen={isOpen}

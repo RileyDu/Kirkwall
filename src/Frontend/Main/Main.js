@@ -228,12 +228,13 @@ const MainContent = ({ timePeriod }) => {
               {watchdogHumidityChartType === 'line' ? (
                 <LineChart data={watchdogHumData || watchdogData} metric="hum" style={{ flex: 1 }} />
               ) : (
-                <MiniMap />
+                <BarChart data={watchdogHumData || watchdogData} metric="hum" style={{ flex: 1 }} />
               )}
             </ChartWrapper>
           </GridItem>
         </Grid>
       </MotionBox>
+      {/* <MapComponent /> */}
     </Box>
   );
 };
