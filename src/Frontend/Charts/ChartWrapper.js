@@ -460,13 +460,32 @@ const ChartWrapper = ({
           )}
         </Flex>
         {showMap && (
-          <MiniMap
-          />
+              <motion.div
+              initial={{ opacity: 0, scale: 0, rotate: -90 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ duration: .5, type: "linear", stiffness: 50 }}
+              // whileHover={{
+              //   scale: 1.2,
+              //   rotate: 10,
+              //   transition: { duration: 0.3 },
+              // }}
+              // whileTap={{
+              //   scale: 0.9,
+              //   rotate: -10,
+              //   borderRadius: "50%",
+              //   transition: { duration: 0.3 },
+              // }}
+            >
+              <MiniMap />
+            </motion.div>
         )}
         {!showMap && (
-          <>
+          <motion.div
+          initial={{ opacity: 0, scale: 0, rotate: 45 }}
+          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          transition={{ duration: .5, type: "linear", stiffness: 50 }}>
         {children}
-          </>
+          </motion.div>
         )}
       </Box>
       <ChartExpandModal

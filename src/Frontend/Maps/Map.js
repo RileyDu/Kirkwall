@@ -1,6 +1,13 @@
 import { useState } from 'react';
-import { APIProvider, Map, AdvancedMarker, InfoWindow, Pin, Marker } from '@vis.gl/react-google-maps';
-import { Heading, Box, useMediaQuery } from '@chakra-ui/react';
+import {
+  APIProvider,
+  Map,
+  AdvancedMarker,
+  InfoWindow,
+  Pin,
+  Marker,
+} from '@vis.gl/react-google-maps';
+import { Heading, Box, useMediaQuery, useColorMode } from '@chakra-ui/react';
 
 const center = {
   lat: 46.877186,
@@ -8,8 +15,20 @@ const center = {
 };
 
 const locations = [
-  { lat: 46.948580, lng: -97.262730, info: 'Grand Farm', details: 'Temp, Humidity, Rainfall & Wind', dataReading: 'Sends data every 5 minutes'  },
-  { lat: 46.904340, lng: -96.810500, info: 'Incubator (Garage)', details: 'Temp, Humidity & Water Detection', dataReading: 'Sends data every 10 minutes' },
+  {
+    lat: 46.94858,
+    lng: -97.26273,
+    info: 'Grand Farm',
+    details: 'Temp, Humidity, Rainfall & Wind',
+    dataReading: 'Sends data every 5 minutes',
+  },
+  {
+    lat: 46.90434,
+    lng: -96.8105,
+    info: 'Incubator (Garage)',
+    details: 'Temp, Humidity & Water Detection',
+    dataReading: 'Sends data every 10 minutes',
+  },
 ];
 
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
@@ -18,6 +37,8 @@ const mapID = process.env.REACT_APP_GOOGLE_MAPS_MAP_ID;
 const MapComponent = () => {
   const [openInfoIndex, setOpenInfoIndex] = useState(null);
   const [isMobile] = useMediaQuery('(max-width: 767px)');
+
+  const { colorMode } = useColorMode();
 
   const mapContainerStyles = {
     width: isMobile ? '90%' : '60%',
@@ -40,11 +61,16 @@ const MapComponent = () => {
     fullscreenControl: false, // Disable the fullscreen control
     gestureHandling: 'greedy', // Allow gestures on the map
   };
-  
 
   return (
     <APIProvider apiKey={apiKey}>
-      <Box width="100%" textAlign="center" p={'4'} pt={'64px'}>
+      <Box
+        width="100%"
+        textAlign="center"
+        p={'4'}
+        pt={'64px'}
+        color={colorMode === 'light' ? 'black' : 'white'}
+      >
         <Heading size="xl" pb={'4'}>
           Sensor Map
         </Heading>
@@ -62,17 +88,35 @@ const MapComponent = () => {
               position={{ lat: location.lat, lng: location.lng }}
               onClick={() => setOpenInfoIndex(index)}
             >
-              <Pin background={'#fd9801'} borderColor={'#212121'} glyphColor={'#212121'} />
+              <Pin
+                background={'#fd9801'}
+                borderColor={'#212121'}
+                glyphColor={'#212121'}
+              />
               {openInfoIndex === index && (
                 <InfoWindow
                   position={{ lat: location.lat, lng: location.lng }}
                   onCloseClick={() => setOpenInfoIndex(null)}
                   background={'#fd9801'}
                   pixelOffset={[0, -30]}
-                  headerContent={<div style={{ color: '#212121', fontWeight: 'bold', fontSize: '20px' }}>{location.info}</div>}
+                  headerContent={
+                    <div
+                      style={{
+                        color: '#212121',
+                        fontWeight: 'bold',
+                        fontSize: '20px',
+                      }}
+                    >
+                      {location.info}
+                    </div>
+                  }
                 >
-                  <div style={{ color: '#212121', fontSize: '14px' }}><em>Sensors:</em> {location.details}</div>
-                  <div style={{ color: '#212121', fontSize: '14px' }}><em>Data:</em> {location.dataReading}</div>
+                  <div style={{ color: '#212121', fontSize: '14px' }}>
+                    <em>Sensors:</em> {location.details}
+                  </div>
+                  <div style={{ color: '#212121', fontSize: '14px' }}>
+                    <em>Data:</em> {location.dataReading}
+                  </div>
                 </InfoWindow>
               )}
             </AdvancedMarker>
