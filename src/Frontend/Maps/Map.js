@@ -1,16 +1,6 @@
-// src/MapComponent.js
 import { useState } from 'react';
-import { APIProvider, Map, AdvancedMarker, Pin, InfoWindow } from '@vis.gl/react-google-maps';
-import { Heading, Box } from '@chakra-ui/react';
-
-const mapStyles = {
-  width: '60%',
-  height: '800px',
-  margin: '0 auto',
-  borderRadius: '10px',
-  boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
-  border: '3px solid #212121',
-};
+import { APIProvider, Map, AdvancedMarker, InfoWindow, Pin } from '@vis.gl/react-google-maps';
+import { Heading, Box, useMediaQuery } from '@chakra-ui/react';
 
 const center = {
   lat: 46.877186,
@@ -27,6 +17,34 @@ const mapID = process.env.REACT_APP_GOOGLE_MAPS_MAP_ID;
 
 const MapComponent = () => {
   const [openInfoIndex, setOpenInfoIndex] = useState(null);
+  const [isMobile] = useMediaQuery('(max-width: 767px)');
+
+  const mapContainerStyles = {
+    width: '60%',
+    height: isMobile ? '400px' : '800px',
+    margin: '0 auto',
+    borderRadius: '10px',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+    border: '3px solid #212121',
+  };
+
+  const mapOptions = {
+    center: { lat: 37.7749, lng: -122.4194 },
+    zoom: 12,
+    mapTypeId: 'satellite', // Always show the satellite view
+    disableDefaultUI: true, // Disable all default UI controls
+    // scrollwheel: false, // Disable zooming with the mouse wheelc
+    zoomControl: true, // Enable the zoom control
+    mapTypeControl: false, // Disable the map type control
+    streetViewControl: false, // Disable the Street View control
+    fullscreenControl: false, // Disable the fullscreen control
+    gestureHandling: 'greedy', // Allow gestures on the map
+    styles: [
+      { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] } // Custom style example
+    ],
+    backgroundColor: '#f0f0f0', // Set the background color
+  };
+  
 
   return (
     <APIProvider apiKey={apiKey}>
@@ -35,14 +53,18 @@ const MapComponent = () => {
           Sensor Map
         </Heading>
       </Box>
-      <div className="map-container" style={mapStyles}>
-        <Map defaultCenter={center} defaultZoom={10} mapId={mapID} borderRadius="10px">
+      <div className="map-container" style={mapContainerStyles}>
+        <Map
+          defaultCenter={center}
+          defaultZoom={10}
+          mapId={mapID}
+          options={mapOptions} // Pass the options prop
+        >
           {locations.map((location, index) => (
             <AdvancedMarker
               key={index}
               position={{ lat: location.lat, lng: location.lng }}
               onClick={() => setOpenInfoIndex(index)}
-            //   icon=
             >
               <Pin background={'#fd9801'} borderColor={'#212121'} glyphColor={'#212121'} />
               {openInfoIndex === index && (
