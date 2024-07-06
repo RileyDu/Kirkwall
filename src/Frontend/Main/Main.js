@@ -7,6 +7,7 @@ import { keyframes } from '@emotion/react';
 import { useWeatherData } from '../WeatherDataContext'; // Adjust the import based on your file structure
 import { handleChartChange } from '../Charts/ChartUtils';
 import { motion } from 'framer-motion'; // Import Framer Motion
+import MiniMap from '../Maps/MiniMap';
 
 const MotionBox = motion(Box);
 
@@ -34,6 +35,14 @@ const MainContent = ({ timePeriod }) => {
   const [showGrandFarm, setShowGrandFarm] = useState(true);
   const [showGarage, setShowGarage] = useState(true);
   const { colorMode } = useColorMode();
+
+    // State to manage which charts have maps enabled
+    const [showTempMap, setShowTempMap] = useState(false);
+    const [showHumidityMap, setShowHumidityMap] = useState(false);
+    const [showWindMap, setShowWindMap] = useState(false);
+    const [showRainfallMap, setShowRainfallMap] = useState(false);
+    const [showWatchdogTempMap, setShowWatchdogTempMap] = useState(false);
+    const [showWatchdogHumidityMap, setShowWatchdogHumidityMap] = useState(false);
 
   useEffect(() => {
     setIsReady(false);
@@ -219,7 +228,7 @@ const MainContent = ({ timePeriod }) => {
               {watchdogHumidityChartType === 'line' ? (
                 <LineChart data={watchdogHumData || watchdogData} metric="hum" style={{ flex: 1 }} />
               ) : (
-                <BarChart data={watchdogHumData || watchdogData} metric="hum" style={{ flex: 1 }} />
+                <MiniMap />
               )}
             </ChartWrapper>
           </GridItem>
