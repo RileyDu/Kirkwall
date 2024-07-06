@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { APIProvider, Map, AdvancedMarker, InfoWindow, Pin } from '@vis.gl/react-google-maps';
+import { APIProvider, Map, AdvancedMarker, InfoWindow, Pin, Marker } from '@vis.gl/react-google-maps';
 import { Heading, Box, useMediaQuery } from '@chakra-ui/react';
 
 const center = {
@@ -8,8 +8,8 @@ const center = {
 };
 
 const locations = [
-  { lat: 46.948580, lng: -97.262730, info: 'Grand Farm' },
-  { lat: 46.904340, lng: -96.810500, info: 'Incubator (Garage)' },
+  { lat: 46.948580, lng: -97.262730, info: 'Grand Farm', details: 'Temp, Humidity, Rainfall & Wind', dataReading: 'Sends data every 5 minutes'  },
+  { lat: 46.904340, lng: -96.810500, info: 'Incubator (Garage)', details: 'Temp, Humidity & Water Detection', dataReading: 'Sends data every 10 minutes' },
 ];
 
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
@@ -23,26 +23,22 @@ const MapComponent = () => {
     width: isMobile ? '90%' : '60%',
     height: isMobile ? '600px' : '800px',
     margin: '0 auto',
-    borderRadius: '10px',
+    borderRadius: '5px',
     boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
-    border: '3px solid #212121',
+    border: '3px solid #fd9801',
   };
 
   const mapOptions = {
     center: { lat: 37.7749, lng: -122.4194 },
     zoom: 12,
-    mapTypeId: 'satellite', // Always show the satellite view
+    mapTypeId: 'terrain', // Always show the satellite view
     disableDefaultUI: true, // Disable all default UI controls
-    // scrollwheel: false, // Disable zooming with the mouse wheelc
+    scrollwheel: false, // Disable zooming with the mouse wheelc
     zoomControl: true, // Enable the zoom control
     mapTypeControl: false, // Disable the map type control
     streetViewControl: false, // Disable the Street View control
     fullscreenControl: false, // Disable the fullscreen control
     gestureHandling: 'greedy', // Allow gestures on the map
-    styles: [
-      { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] } // Custom style example
-    ],
-    backgroundColor: '#f0f0f0', // Set the background color
   };
   
 
@@ -72,8 +68,11 @@ const MapComponent = () => {
                   position={{ lat: location.lat, lng: location.lng }}
                   onCloseClick={() => setOpenInfoIndex(null)}
                   background={'#fd9801'}
+                  pixelOffset={[0, -30]}
+                  headerContent={<div style={{ color: '#212121', fontWeight: 'bold', fontSize: '20px' }}>{location.info}</div>}
                 >
-                  <div style={{ color: '#212121', fontWeight: 'bold', fontSize: '16px' }}>{location.info}</div>
+                  <div style={{ color: '#212121', fontSize: '14px' }}><em>Sensors:</em> {location.details}</div>
+                  <div style={{ color: '#212121', fontSize: '14px' }}><em>Data:</em> {location.dataReading}</div>
                 </InfoWindow>
               )}
             </AdvancedMarker>
