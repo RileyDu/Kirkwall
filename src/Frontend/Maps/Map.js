@@ -20,8 +20,8 @@ const MapComponent = () => {
   const [isMobile] = useMediaQuery('(max-width: 767px)');
 
   const mapContainerStyles = {
-    width: '60%',
-    height: isMobile ? '400px' : '800px',
+    width: isMobile ? '90%' : '60%',
+    height: isMobile ? '600px' : '800px',
     margin: '0 auto',
     borderRadius: '10px',
     boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
