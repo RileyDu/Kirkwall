@@ -42,6 +42,7 @@ import { WiThermometer, WiStrongWind, WiRain, WiHumidity } from 'react-icons/wi'
 import Logout from '../../Frontend/AuthComponents/Logout';
 import { useNavigate } from 'react-router-dom';
 import { useWeatherData } from '../WeatherDataContext';
+import WeatherAlerts from '../Alert/WeatherAlerts';
 
 const Header = () => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
@@ -351,7 +352,8 @@ const Header = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-    </>
+      {showAlerts && <WeatherAlerts isVisible={showAlerts} onClose={toggleAlerts} />}
+          </>
   );
 };
 

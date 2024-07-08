@@ -93,6 +93,7 @@ const MainContent = ({ timePeriod }) => {
       display="flex"
       flexDirection="column"
     >
+      
       <Flex justify="space-between" mb="4" alignItems="center">
         <Heading size="xl">Dashboard</Heading>
         <Menu>
