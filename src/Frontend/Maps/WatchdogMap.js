@@ -3,8 +3,8 @@ import { APIProvider, Map, AdvancedMarker, InfoWindow, Pin } from '@vis.gl/react
 import { useMediaQuery } from '@chakra-ui/react';
 
 const center = {
-  lat: 46.877186,
-  lng: -96.789803,
+  lat: 46.904340,
+  lng: -96.810500,
 };
 
 const locations = [
@@ -30,7 +30,6 @@ const WatchdogMap = () => {
 
   const mapOptions = {
     center: { lat: 37.7749, lng: -122.4194 },
-    zoom: 12,
     mapTypeId: 'terrain', // Always show the satellite view
     disableDefaultUI: true, // Disable all default UI controls
     scrollwheel: false, // Disable zooming with the mouse wheelc
@@ -47,7 +46,7 @@ const WatchdogMap = () => {
       <div className="map-container" style={mapContainerStyles}>
         <Map
           defaultCenter={center}
-          defaultZoom={10}
+          defaultZoom={11}
           mapId={mapID}
           options={mapOptions} // Pass the options prop
         >
