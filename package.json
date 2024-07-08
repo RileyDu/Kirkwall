@@ -4,14 +4,19 @@
   "private": true,
   "homepage": "https://kirkwall-demo.vercel.app", 
   "dependencies": {
+    "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@react-google-maps/api": "^2.19.3",
+    "@react-hook/resize-observer": "^2.0.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.5.2",
+    "@vis.gl/react-google-maps": "^1.1.0",
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",
+    "dotenv": "^16.4.5",
     "firebase": "^10.12.2",
     "framer-motion": "^6.5.1",
     "react": "^18.3.1",
@@ -22,6 +27,7 @@
     "react-icons": "^3.11.0",
     "react-router-dom": "^6.23.1",
     "react-scripts": "5.0.1",
+    "twilio": "^5.2.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
