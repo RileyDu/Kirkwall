@@ -66,7 +66,7 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
           width={['70px', '100px', '150px', '175px']}
           textAlign="center"
         >
-          <Text fontSize={['sm', 'md', 'xl', '2xl']} fontWeight="bold" color={'#212121'}>
+          <Text fontSize={['sm', 'md', 'xl', '2xl']} fontWeight="bold">
             {formatValue(mostRecentValue)}
           </Text>
           <Text fontSize={['xs', 'sm', 'lg', 'xl']}>Current</Text>

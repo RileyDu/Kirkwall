@@ -1,5 +1,4 @@
-import { Divider, Heading, extendTheme } from '@chakra-ui/react';
-import { color } from 'chart.js/helpers';
+import { extendTheme } from '@chakra-ui/react';
 
 const customTheme = extendTheme({
   colors: {
@@ -38,10 +37,10 @@ const customTheme = extendTheme({
     global: (props) => ({
       body: {
         bg: props.colorMode === 'light' ? 'brand.50' : 'gray.800',
-        color: props.colorMode === 'light' ? 'gray.800' : 'black',
+        color: props.colorMode === 'light' ? 'gray.800' : 'white',
       },
       a: {
-        color: props.colorMode === 'light' ? 'brand.500' : 'brand.200',
+        color: props.colorMode === 'light' ? 'brand.900' : 'brand.50',
         _hover: {
           textDecoration: 'underline',
         },
@@ -63,7 +62,6 @@ const customTheme = extendTheme({
           border: '3px solid #FD9801',
           _hover: {
             bg: 'brand.800',
-            // color: 'white',
           },
           _active: {
             bg: 'brand.500',
@@ -76,7 +74,6 @@ const customTheme = extendTheme({
           color: '#212121',
           _hover: {
             bg: 'brand.800',
-            // color: 'white',
           },
           _active: {
             bg: 'brand.500',
@@ -98,6 +95,29 @@ const customTheme = extendTheme({
     Divider: {
       baseStyle: (props) => ({
         borderColor: props.colorMode === 'light' ? '#212121' : 'white',
+      }),
+    },
+    Modal: {
+      baseStyle: (props) => ({
+        dialog: {
+          bg: props.colorMode === 'light' ? 'brand.50' : 'gray.800',
+          color: props.colorMode === 'light' ? 'gray.800' : 'white',
+        },
+      }),
+    },
+    Input: {
+      baseStyle: (props) => ({
+        field: {
+          bg: 'white',
+          border: '2px solid #fd9801',
+          _hover: {
+            borderColor: '#fd9801',
+          },
+          _focus: {
+            borderColor: '#fd9801',
+            boxShadow: '0 0 0 1px #fd9801',
+          },
+        },
       }),
     },
   },
