@@ -47,9 +47,9 @@ const Header = () => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
-  const [showAlerts, setShowAlerts] = useState(true); // State to manage WeatherAlerts visibility
+  const [showAlerts, setShowAlerts] = useState(true);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [isSummaryOpen, setSummaryOpen] = useState(false); // State to manage the summary modal visibility
+  const [isSummaryOpen, setSummaryOpen] = useState(false);
   const { colorMode, toggleColorMode } = useColorMode();
   const { weatherData, loading, error, tempData, humidityData, windData, rainfallData, watchdogData, watchdogTempData, watchdogHumData } = useWeatherData();
 
@@ -81,10 +81,10 @@ const Header = () => {
     fontSize: 'md',
     borderRadius: 'md',
     mb: 4,
-    bg: '#fd9801',
+    bg: '#F4B860',
     color: 'white',
     _hover: {
-      bg: '#e38800',
+      bg: '#d7a247',
     },
     boxShadow: 'md',
   };
@@ -159,7 +159,7 @@ const Header = () => {
         left="0"
         width="100%"
         zIndex="1001"
-        borderBottom="3px solid #fd9801"
+        borderBottom="3px solid #F4B860"
         height="64px"
       >
         <motion.div {...motionProps}>
@@ -176,13 +176,16 @@ const Header = () => {
           <motion.div {...motionProps}>
             <MotionButton 
               onClick={onSummaryToggle} 
-              size="sm" 
+              size={{ base: 'xs', md: 'md' }}
+              px={{ base: 4, md: 6 }}
               mr="4"
               variant="sidebar"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
+              bg="#F4B860"
+              color="black"
             >
-              {isSummaryOpen ? 'Hide Summary' : 'Show Summary'}
+              {isSummaryOpen ? 'Hide Summary' : ' Weather Summary'}
             </MotionButton>
           </motion.div>
           <motion.div {...motionProps}>
@@ -214,9 +217,9 @@ const Header = () => {
                       ml="4"
                     />
                   </PopoverTrigger>
-                  <PopoverContent bg="brand.50" borderColor="#212121"  zIndex={1005}>
-                    <PopoverCloseButton size="lg"  />
-                    <PopoverHeader fontWeight="bold" fontSize="xl" bg="#212121" >Kirkwall</PopoverHeader>
+                  <PopoverContent bg="#2D3748" borderColor="#F4B860" zIndex={1005}>
+                    <PopoverCloseButton size="lg" />
+                    <PopoverHeader fontWeight="bold" fontSize="xl" bg="#212121" color="white">Kirkwall</PopoverHeader>
                     <PopoverBody>
                       <Logout />
                     </PopoverBody>
@@ -241,9 +244,9 @@ const Header = () => {
 
       <Drawer isOpen={!isLargerThan768 && isDrawerOpen} placement="left" onClose={closeDrawer}>
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent bg="#2D3748" color="white">
           <DrawerCloseButton />
-          <DrawerHeader>Menu</DrawerHeader>
+          <DrawerHeader borderBottomWidth="1px" borderBottomColor="#F4B860">Menu</DrawerHeader>
           <DrawerBody>
             <Stack spacing={6} direction="column" alignItems="flex-start">
               <motion.div {...motionProps}>
@@ -281,7 +284,8 @@ const Header = () => {
                 >
                   Humidity Sensors
                 </Button>
-                <motion.div {...motionProps}>
+              </motion.div>
+              <motion.div {...motionProps}>
                 <Button
                   leftIcon={<FaDog size="24px" />}
                   onClick={() => handleNavigation('/WatchdogSensors')}
@@ -290,8 +294,8 @@ const Header = () => {
                 >
                   Watchdog Sensors
                 </Button>
-                </motion.div>
-                <motion.div {...motionProps}>
+              </motion.div>
+              <motion.div {...motionProps}>
                 <Button
                   leftIcon={<FaGlobe size="24px" />}
                   onClick={() => handleNavigation('/map')}
@@ -300,7 +304,6 @@ const Header = () => {
                 >
                   Sensor Map
                 </Button>
-                </motion.div>
               </motion.div>
               {user && (
                 <motion.div {...motionProps}>
@@ -322,7 +325,7 @@ const Header = () => {
         <ModalOverlay />
         <ModalContent sx={{
           border: '2px solid black',
-          bg: 'brand.50',
+          bg: '#2D3748',
         }}>
           <ModalHeader bg={'#212121'} color={'white'}>Weather Summary</ModalHeader>
           <ModalCloseButton color={'white'} size={'lg'} mt={1} />
@@ -338,8 +341,8 @@ const Header = () => {
                 {summaryMetrics.map((metric, index) => (
                   <GridItem key={index}>
                     <Stat>
-                      <StatLabel>{metric.label}</StatLabel>
-                      <StatNumber>{metric.value}</StatNumber>
+                      <StatLabel color="white">{metric.label}</StatLabel>
+                      <StatNumber color="white">{metric.value}</StatNumber>
                     </Stat>
                   </GridItem>
                 ))}
