@@ -67,6 +67,7 @@ const Layout = ({
               : '250px'
             : '0'
         }
+        mt={!isLargerThan768 ? '70px' : '0'}
       >
         
         {children}
