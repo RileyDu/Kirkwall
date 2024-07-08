@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Heading, Divider, Spinner, Text, Flex } from '@chakra-ui/react';
+import { Box, Heading, Divider, Spinner, Text, Flex, useColorMode } from '@chakra-ui/react';
 import MiniDashboard from '../../Charts/ChartDashboard';
 import ChartWrapper from '../../Charts/ChartWrapper';
 import { BarChart, LineChart } from '../../Charts/Charts';
@@ -14,6 +14,7 @@ export default function HumiditySensors() {
 
   const [isReady, setIsReady] = useState(false);
 
+  const { colorMode } = useColorMode();
 
   useEffect(() => {
     setIsReady(false);
@@ -48,17 +49,21 @@ export default function HumiditySensors() {
       <Box width="100%">
         <MiniDashboard metric="percent_humidity" weatherData={humidityData || weatherData} />
       </Box>
+      <Box color={colorMode === 'light' ? 'black' : 'white'}>
       <ChartWrapper title="Humidity (%)" weatherData={humidityData || weatherData}>
         <BarChart data={humidityData || weatherData} metric="percent_humidity" />
       </ChartWrapper>
+      </Box>
       <Divider
         my={'8'}
         borderWidth="4px"
         borderRadius={'full'}
       />
+      <Box color={colorMode === 'light' ? 'black' : 'white'}>
       <ChartWrapper title="Humidity (%)" weatherData={humidityData || weatherData}>
         <LineChart data={humidityData || weatherData} metric="percent_humidity" />
       </ChartWrapper>
+      </Box>
     </Box>
   );
 }
