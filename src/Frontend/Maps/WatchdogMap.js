@@ -8,14 +8,14 @@ const center = {
 };
 
 const locations = [
-  { lat: 46.948580, lng: -97.262730, info: 'Grand Farm', details: 'Temp, Humidity, Rainfall & Wind', dataReading: 'Sends data every 5 minutes'  },
-  // { lat: 46.904340, lng: -96.810500, info: 'Incubator (Garage)', details: 'Temp, Humidity & Water Detection', dataReading: 'Sends data every 10 minutes' },
+//   { lat: 46.948580, lng: -97.262730, info: 'Grand Farm', details: 'Temp, Humidity, Rainfall & Wind', dataReading: 'Sends data every 5 minutes'  },
+  { lat: 46.904340, lng: -96.810500, info: 'Incubator (Garage)', details: 'Temp, Humidity & Water Detection', dataReading: 'Sends data every 10 minutes' },
 ];
 
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const mapID = process.env.REACT_APP_GOOGLE_MAPS_MAP_ID;
 
-const MiniMap = () => {
+const WatchdogMap = () => {
   const [openInfoIndex, setOpenInfoIndex] = useState(null);
   const [isMobile] = useMediaQuery('(max-width: 767px)');
 
@@ -78,4 +78,4 @@ const MiniMap = () => {
   );
 };
 
-export default MiniMap;
+export default WatchdogMap;

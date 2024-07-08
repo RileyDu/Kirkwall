@@ -41,6 +41,7 @@ import ChartDetails, { getLabelForMetric } from './ChartDetails';
 import { useColorMode } from '@chakra-ui/react';
 import axios from 'axios';
 import MiniMap from '../Maps/MiniMap';
+import WatchdogMap from '../Maps/WatchdogMap';
 
 const ChartWrapper = ({
   title,
@@ -59,7 +60,8 @@ const ChartWrapper = ({
   const [lastAlertTime, setLastAlertTime] = useState(null);
   const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
   const [loading, setLoading] = useState(false);
-  const [showMap, setShowMap] = useState(false); // State to toggle between map and chart
+  const [showMap, setShowMap] = useState(false);
+  const [sensorMap, setSensorMap] = useState('grandfarm'); // State to toggle between map and chart
 
 
   const location = useLocation();
@@ -70,6 +72,28 @@ const ChartWrapper = ({
   const toggleMap = () => {
     setShowMap(!showMap);
   };
+  const setMapToDisplay = (metric) => {
+    switch (metric) {
+      case 'temperature':
+      case 'percent_humidity':
+      case 'wind_speed':
+      case 'rain_15_min_inches':
+        setSensorMap('grandfarm');
+        break;
+      case 'temp':
+      case 'hum':
+        setSensorMap('garage');
+        break;
+      default:
+        console.error(`Unknown metric: ${metric}`);
+    }
+  };
+
+  // setMapToDisplay(metric);
+
+  useEffect(() => {
+    setMapToDisplay(metric);
+  }, [metric]);
 
   const restrictedRoutes = [
     '/TempSensors',
@@ -266,6 +290,8 @@ const ChartWrapper = ({
   const MotionButton = motion(Button);
 
   const MotionIconButton = motion(IconButton);
+
+  
 
   return (
     <>
@@ -476,7 +502,7 @@ const ChartWrapper = ({
               //   transition: { duration: 0.3 },
               // }}
             >
-              <MiniMap />
+              {sensorMap === 'grandfarm' ? <MiniMap /> : <WatchdogMap /> }
             </motion.div>
         )}
         {!showMap && (
