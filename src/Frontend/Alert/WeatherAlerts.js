@@ -101,6 +101,15 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
     setIsChangeStateCodeModalOpen(false);
   };
 
+  const handleFontSizePerAlert = () => {
+    if (alerts.length > 0 && alerts.length < 15) {
+      return 'md';
+    } else {
+      return 'xs';
+    }
+  };
+  
+
   if (!isVisible) return null; // Return null if the component is not visible
 
   return user ? (
@@ -158,7 +167,7 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
                   textAlign={'center'}
                 >
                   <Tooltip label={`Location: ${alert.properties.areaDesc}`} aria-label="Area Description">
-                    <AlertDescription px={1} fontSize="md" color="red.500">
+                    <AlertDescription px={1} fontSize={handleFontSizePerAlert()} color="red.500">
                       {alert.properties.event}
                     </AlertDescription>
                   </Tooltip>
