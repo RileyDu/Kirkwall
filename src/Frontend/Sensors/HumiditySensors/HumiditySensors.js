@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Heading, Divider, Spinner, Text, Flex, useColorMode } from '@chakra-ui/react';
+import { Box, Heading, Divider, Flex, useColorMode } from '@chakra-ui/react';
 import MiniDashboard from '../../Charts/ChartDashboard';
 import ChartWrapper from '../../Charts/ChartWrapper';
 import { BarChart, LineChart } from '../../Charts/Charts';

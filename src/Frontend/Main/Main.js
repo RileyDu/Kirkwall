@@ -7,7 +7,7 @@ import { keyframes } from '@emotion/react';
 import { useWeatherData } from '../WeatherDataContext'; // Adjust the import based on your file structure
 import { handleChartChange } from '../Charts/ChartUtils';
 import { motion } from 'framer-motion'; // Import Framer Motion
-import MiniMap from '../Maps/MiniMap';
+// import MiniMap from '../Maps/MiniMap';
 
 const MotionBox = motion(Box);
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { APIProvider, Map, AdvancedMarker, InfoWindow, Pin, Marker } from '@vis.gl/react-google-maps';
-import { Heading, Box, useMediaQuery } from '@chakra-ui/react';
+import { APIProvider, Map, AdvancedMarker, InfoWindow, Pin } from '@vis.gl/react-google-maps';
+import { useMediaQuery } from '@chakra-ui/react';
 
 const center = {
   lat: 46.877186,
