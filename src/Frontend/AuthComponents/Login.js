@@ -14,7 +14,12 @@ import {
   Center,
   Divider,
   useBreakpointValue,
+  FormErrorMessage,
+  Image,
+  Link,
+  Spinner,
 } from '@chakra-ui/react';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 const errorMessages = {
@@ -28,21 +33,53 @@ const errorMessages = {
   'auth/invalid-credential': 'Your password or email is invalid.',
 };
 
+const MotionBox = motion(Box);
+const MotionHeading = motion(Heading);
+const MotionText = motion(Text);
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const showMobileLogo = useBreakpointValue({ base: true, md: false });
   const logoSrc = useBreakpointValue({
-    base: '/kirkwall_logo_1_white.png', // Mobile logo
-    md: '/kirkwall_logo_1_white.png', // Desktop logo
+    base: '/kirkwall_logo_1_white.png',
+    md: '/kirkwall_logo_1_white.png',
   });
+
+  const validateEmail = (email) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+  };
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    if (!email || !password) {
-      setError('Please fill in both the email and password fields.');
+    setIsLoading(true);
+    let hasError = false;
+
+    if (!email) {
+      setEmailError('Email is required.');
+      hasError = true;
+    } else if (!validateEmail(email)) {
+      setEmailError('Email is not valid.');
+      hasError = true;
+    } else {
+      setEmailError('');
+    }
+
+    if (!password) {
+      setPasswordError('Password is required.');
+      hasError = true;
+    } else {
+      setPasswordError('');
+    }
+
+    if (hasError) {
+      setIsLoading(false);
       return;
     }
 
@@ -53,10 +90,9 @@ const Login = () => {
       navigate('/');
     } catch (error) {
       const errorCode = error.code;
-      const errorMessage =
-        errorMessages[errorCode] ||
-        'An unexpected error occurred. Please try again.';
+      const errorMessage = errorMessages[errorCode] || 'An unexpected error occurred. Please try again.';
       setError(errorMessage);
+      setIsLoading(false);
     }
   };
 
@@ -73,154 +109,83 @@ const Login = () => {
   }, [email, password]);
 
   return (
-    <Flex minH={{ base: 'auto', md: '100vh' }} bg="#212121">
-      <Flex mx="auto" width="full">
-        <Box flex="1" display={{ base: 'none', md: 'block' }}>
-          <Flex
-            direction="column"
-            px={{ base: '4', md: '8' }}
-            height="full"
-            color="fg.accent.default"
-          >
-            <Flex flex="1" align="center">
-              <Stack spacing="8">
-                <Stack spacing="6">
-                  <Flex align="center">
-                    <Box
-                      border={'2px'}
-                      borderColor={'#fd9801'}
-                      borderRadius={'md'}
-                      p={2}
-                      bg={'black'}
-                      mt={16}
-                    >
-                      <img
-                        src={logoSrc}
-                        alt="kirkwall logo"
-                        style={{ width: '450px', height: 'auto' }}
-                      />
-                    </Box>
-                  </Flex>
-                  <Heading size={{ md: 'lg', xl: 'xl' }} color={'white'}>
-                    Securing the Sky | Defending the Prairie
-                  </Heading>
-                  <Text
-                    fontSize="2xl"
-                    maxW="md"
-                    fontWeight="light"
-                    color="white"
-                    width={'600px'}
-                  >
-                    Log in to access comprehensive monitoring of your sensors,
-                    receive real-time updates, and be promptly alerted to any
-                    and every detected issue.
-                  </Text>
-                </Stack>
-              </Stack>
-            </Flex>
-            <Flex align="center" h="24">
-              <Text color="white" textStyle="sm">
-                © 2024 Kirkwall. All rights reserved
-              </Text>
-            </Flex>
-          </Flex>
-        </Box>
-        <Center flex="1" bg={'brand.50'}>
-          <Container
-            maxW="lg"
-            py={{ base: '12', md: '48' }}
-            px={{ base: '4', sm: '8' }}
-          >
-            <Stack spacing="8">
-              {showMobileLogo && (
-                <Center flexDirection="column" textAlign="center">
-                  <Box
-                    border={'2px'}
-                    borderColor={'#fd9801'}
-                    borderRadius={'md'}
-                    p={2}
-                    bg={'black'}
-                  >
-                    <img
-                      src={logoSrc}
-                      alt="kirkwall logo"
-                      style={{ width: '250px', height: 'auto' }}
-                    />
-                  </Box>
-                  <Divider borderColor={'#fd9801'} width={'300px'} mt={4} borderWidth={2} borderRadius={'full'} />
-                  <Heading size={{ base: 'md', md: 'md' }} color={'black'} my={4}>
-                    Securing the Sky | Defending the Prairie
-                  </Heading>
-                </Center>
+    <Flex minH="100vh" bg="#1A202C" color="white" direction="column" justify="center" align="center">
+      <Container maxW="md" py={{ base: '12', md: '24' }} px={{ base: '4', sm: '8' }} borderRadius="xl" boxShadow="2xl" bg="#2D3748">
+        <Stack spacing="8">
+          <Box textAlign="center">
+            <Image src={logoSrc} alt="Kirkwall logo" boxSize="200px" mx="auto" mb="4" objectFit="contain" />
+            <Heading size="lg" color="white">Login</Heading>
+            <Text color="gray.400">Please sign in to continue.</Text>
+          </Box>
+          <form onSubmit={handleLogin}>
+            <Stack spacing="4">
+              <FormControl isInvalid={emailError}>
+                <FormLabel htmlFor="email" color="gray.400">Email</FormLabel>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  bg="#2D3748"
+                  border="2px solid"
+                  borderColor="#F4B860"
+                  _hover={{ borderColor: '#F4B860' }}
+                  _focus={{ borderColor: '#F4B860', bg: 'white', color: 'black' }}
+                  focusBorderColor="#F4B860"
+                  color="white"
+                />
+                <FormErrorMessage>{emailError}</FormErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={passwordError}>
+                <FormLabel htmlFor="password" color="gray.400">Password</FormLabel>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  bg="#2D3748"
+                  border="2px solid"
+                  borderColor="#F4B860"
+                  _hover={{ borderColor: '#F4B860' }}
+                  _focus={{ borderColor: '#F4B860', bg: 'white', color: 'black' }}
+                  focusBorderColor="#F4B860"
+                  color="white"
+                />
+                <FormErrorMessage>{passwordError}</FormErrorMessage>
+              </FormControl>
+              {error && (
+                <MotionText color="red.500" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.5 }}>
+                  {error}
+                </MotionText>
               )}
-              <Stack spacing="6">
-                <Stack spacing={{ base: '1', md: '2' }} textAlign="center">
-                  <Heading size={{ base: 'lg', md: 'lg' }} mt={'-20px'}>
-                    Log in to your account
-                  </Heading>
-                </Stack>
-              </Stack>
-              <form onSubmit={handleLogin}>
-                <Box
-                  py={{ base: '4', sm: '8' }}
-                  px={{ base: '4', sm: '10' }}
-                  m={'2'}
-                  bg="#212121"
-                  borderRadius="lg"
-                  boxShadow="lg"
-                  zIndex={1}
-                  position="relative"
-                  border={'2px solid #fd9801'}
-                >
-                  <Stack spacing="6">
-                    <Stack spacing="5">
-                      <FormControl>
-                        <FormLabel htmlFor="email" color={'white'}>
-                          Email
-                        </FormLabel>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={email}
-                          onChange={e => setEmail(e.target.value)}
-                          required
-                          bg={'white'}
-                          border={'2px solid #fd9801'}
-                        />
-                      </FormControl>
-                      <FormControl>
-                        <FormLabel htmlFor="password" color={'white'}>
-                          Password
-                        </FormLabel>
-                        <Input
-                          id="password"
-                          type="password"
-                          value={password}
-                          onChange={e => setPassword(e.target.value)}
-                          required
-                          bg={'white'}
-                          border={'2px solid #fd9801'}
-                        />
-                      </FormControl>
-                    </Stack>
-                    {error && <Text color="red.500">{error}</Text>}
-                    <Stack spacing="6">
-                      <Button
-                        type="submit"
-                        color="#fd9801"
-                        isDisabled={!email || !password}
-                        border={'2px solid #fd9801'}
-                      >
-                        Sign In
-                      </Button>
-                    </Stack>
-                  </Stack>
-                </Box>
-              </form>
+              <Button
+                type="submit"
+                colorScheme="yellow"
+                size="lg"
+                fontSize="md"
+                borderRadius="full"
+                bg="#F4B860"
+                color="black"
+                _hover={{ bg: '#d7a247' }}
+                isLoading={isLoading}
+                loadingText="Logging in"
+              >
+                Login
+              </Button>
+              {/* <Link color="#F4B860" textAlign="center">Forgot Password?</Link> */}
             </Stack>
-          </Container>
-        </Center>
-      </Flex>
+          </form>
+          {/* <Divider my="4" /> */}
+          {/* <Text color="gray.400" textAlign="center">
+            Don't have an account? <Link color="#F4B860">Sign up</Link>
+          </Text> */}
+        </Stack>
+      </Container>
+      <Center py={4}>
+        <Text color="gray.600">&copy; 2024 Kirkwall. All rights reserved.</Text>
+      </Center>
     </Flex>
   );
 };
