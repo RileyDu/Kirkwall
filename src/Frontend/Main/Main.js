@@ -1,13 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, GridItem, useColorMode, Flex, Button, Heading } from '@chakra-ui/react';
+import {
+  Box,
+  Grid,
+  GridItem,
+  useColorMode,
+  Flex,
+  Heading,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Button,
+  Text,
+} from '@chakra-ui/react';
 import { LineChart, BarChart } from '../Charts/Charts';
 import ChartWrapper from '../Charts/ChartWrapper';
-import { FaChessRook } from 'react-icons/fa';
+import { FaChessRook, FaChevronDown } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
-import { useWeatherData } from '../WeatherDataContext'; // Adjust the import based on your file structure
+import { useWeatherData } from '../WeatherDataContext';
 import { handleChartChange } from '../Charts/ChartUtils';
-import { motion } from 'framer-motion'; // Import Framer Motion
-// import MiniMap from '../Maps/MiniMap';
+import { motion } from 'framer-motion';
 
 const MotionBox = motion(Box);
 
@@ -24,18 +36,19 @@ const MainContent = ({ timePeriod }) => {
     watchdogTempData,
     watchdogHumData,
   } = useWeatherData();
-
   const [tempChartType, setTempChartType] = useState('bar');
   const [humidityChartType, setHumidityChartType] = useState('bar');
   const [windChartType, setWindChartType] = useState('bar');
   const [rainfallChartType, setRainfallChartType] = useState('bar');
   const [watchdogTempChartType, setWatchdogTempChartType] = useState('bar');
-  const [watchdogHumidityChartType, setWatchdogHumidityChartType] = useState('bar');
+  const [watchdogHumidityChartType, setWatchdogHumidityChartType] =
+    useState('bar');
   const [isReady, setIsReady] = useState(false);
-  const [showGrandFarm, setShowGrandFarm] = useState(true);
-  const [showGarage, setShowGarage] = useState(true);
+  const [showSections, setShowSections] = useState({
+    grandFarm: true,
+    garage: true,
+  });
   const { colorMode } = useColorMode();
-
 
   useEffect(() => {
     setIsReady(false);
@@ -49,6 +62,13 @@ const MainContent = ({ timePeriod }) => {
     100% { transform: rotate(360deg); }
   `;
 
+  const toggleSection = section => {
+    setShowSections(prevState => ({
+      ...prevState,
+      [section]: !prevState[section],
+    }));
+  };
+
   if (loading) {
     return (
       <Flex justify="center" align="center" height="100%">
@@ -61,7 +81,6 @@ const MainContent = ({ timePeriod }) => {
       </Flex>
     );
   }
-
   return (
     <Box
       bg={colorMode === 'light' ? 'brand.50' : 'gray.800'}
@@ -74,25 +93,45 @@ const MainContent = ({ timePeriod }) => {
       display="flex"
       flexDirection="column"
     >
-      {/* Grand Farm Sensors Section */}
-      <Box display="flex" justifyContent="space-evenly">
-      <Button onClick={() => setShowGrandFarm(!showGrandFarm)} variant={'pill'} size={'md'}>
-        {showGrandFarm ? 'Hide Grand Farm Sensors' : 'Show Grand Farm Sensors'}
-      </Button>
-      <Button onClick={() => setShowGarage(!showGarage)}  variant={'pill'} size={'md'}>
-        {showGarage ? 'Hide Garage Sensors' : 'Show Garage Sensors'}
-      </Button>
-      </Box>
+      <Flex justify="space-between" mb="4" alignItems="center">
+        <Heading size="xl">Dashboard</Heading>
+        <Menu>
+          <MenuButton
+            as={Button}
+            rightIcon={<FaChevronDown />}
+            bg="brand.400"
+            color="black"
+            _hover={{ bg: '#d7a247' }}
+          >
+            Toggle Sections
+          </MenuButton>
+          <MenuList>
+            <MenuItem onClick={() => toggleSection('grandFarm')}>
+              {showSections.grandFarm ? 'Hide' : 'Show'} Grand Farm Sensors
+            </MenuItem>
+            <MenuItem onClick={() => toggleSection('garage')}>
+              {showSections.garage ? 'Hide' : 'Show'} Garage Sensors
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      </Flex>
       <MotionBox
         initial={{ opacity: 0, height: 0 }}
-        animate={{ opacity: showGrandFarm ? 1 : 0, height: showGrandFarm ? 'auto' : 0 }}
+        animate={{
+          opacity: showSections.grandFarm ? 1 : 0,
+          height: showSections.grandFarm ? 'auto' : 0,
+        }}
         transition={{ duration: 0.5 }}
       >
-        <Heading size="xl" textAlign={'center'} mb={'4'}>
+        <Heading size="lg" textAlign="center" mb="4">
           Grand Farm Sensors
         </Heading>
         <Grid
-          templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(2, 1fr)' }}
+          templateColumns={{
+            base: '1fr',
+            md: 'repeat(2, 1fr)',
+            lg: 'repeat(2, 1fr)',
+          }}
           gap="6"
         >
           <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
@@ -108,9 +147,17 @@ const MainContent = ({ timePeriod }) => {
               handleTimePeriodChange={handleTimePeriodChange}
             >
               {tempChartType === 'line' ? (
-                <LineChart data={tempData || weatherData} metric="temperature" style={{ flex: 1 }} />
+                <LineChart
+                  data={tempData || weatherData}
+                  metric="temperature"
+                  style={{ flex: 1 }}
+                />
               ) : (
-                <BarChart data={tempData || weatherData} metric="temperature" style={{ flex: 1 }} />
+                <BarChart
+                  data={tempData || weatherData}
+                  metric="temperature"
+                  style={{ flex: 1 }}
+                />
               )}
             </ChartWrapper>
           </GridItem>
@@ -127,9 +174,17 @@ const MainContent = ({ timePeriod }) => {
               handleTimePeriodChange={handleTimePeriodChange}
             >
               {humidityChartType === 'line' ? (
-                <LineChart data={humidityData || weatherData} metric="percent_humidity" style={{ flex: 1 }} />
+                <LineChart
+                  data={humidityData || weatherData}
+                  metric="percent_humidity"
+                  style={{ flex: 1 }}
+                />
               ) : (
-                <BarChart data={humidityData || weatherData} metric="percent_humidity" style={{ flex: 1 }} />
+                <BarChart
+                  data={humidityData || weatherData}
+                  metric="percent_humidity"
+                  style={{ flex: 1 }}
+                />
               )}
             </ChartWrapper>
           </GridItem>
@@ -146,9 +201,17 @@ const MainContent = ({ timePeriod }) => {
               handleTimePeriodChange={handleTimePeriodChange}
             >
               {windChartType === 'line' ? (
-                <LineChart data={windData || weatherData} metric="wind_speed" style={{ flex: 1 }} />
+                <LineChart
+                  data={windData || weatherData}
+                  metric="wind_speed"
+                  style={{ flex: 1 }}
+                />
               ) : (
-                <BarChart data={windData || weatherData} metric="wind_speed" style={{ flex: 1 }} />
+                <BarChart
+                  data={windData || weatherData}
+                  metric="wind_speed"
+                  style={{ flex: 1 }}
+                />
               )}
             </ChartWrapper>
           </GridItem>
@@ -165,26 +228,39 @@ const MainContent = ({ timePeriod }) => {
               handleTimePeriodChange={handleTimePeriodChange}
             >
               {rainfallChartType === 'line' ? (
-                <LineChart data={rainfallData || weatherData} metric="rain_15_min_inches" style={{ flex: 1 }} />
+                <LineChart
+                  data={rainfallData || weatherData}
+                  metric="rain_15_min_inches"
+                  style={{ flex: 1 }}
+                />
               ) : (
-                <BarChart data={rainfallData || weatherData} metric="rain_15_min_inches" style={{ flex: 1 }} />
+                <BarChart
+                  data={rainfallData || weatherData}
+                  metric="rain_15_min_inches"
+                  style={{ flex: 1 }}
+                />
               )}
             </ChartWrapper>
           </GridItem>
         </Grid>
       </MotionBox>
-
-      {/* Garage Sensors Section */}
       <MotionBox
         initial={{ opacity: 0, height: 0 }}
-        animate={{ opacity: showGarage ? 1 : 0, height: showGarage ? 'auto' : 0 }}
+        animate={{
+          opacity: showSections.garage ? 1 : 0,
+          height: showSections.garage ? 'auto' : 0,
+        }}
         transition={{ duration: 0.5 }}
       >
-        <Heading size="xl" textAlign={'center'} my={'4'} mt={'8'}>
+        <Heading size="lg" textAlign="center" my="4" mt="8">
           Garage Sensors
         </Heading>
         <Grid
-          templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(2, 1fr)' }}
+          templateColumns={{
+            base: '1fr',
+            md: 'repeat(2, 1fr)',
+            lg: 'repeat(2, 1fr)',
+          }}
           gap="6"
         >
           <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
@@ -200,9 +276,17 @@ const MainContent = ({ timePeriod }) => {
               handleTimePeriodChange={handleTimePeriodChange}
             >
               {watchdogTempChartType === 'line' ? (
-                <LineChart data={watchdogTempData || watchdogData} metric="temp" style={{ flex: 1 }} />
+                <LineChart
+                  data={watchdogTempData || watchdogData}
+                  metric="temp"
+                  style={{ flex: 1 }}
+                />
               ) : (
-                <BarChart data={watchdogTempData || watchdogData} metric="temp" style={{ flex: 1 }} />
+                <BarChart
+                  data={watchdogTempData || watchdogData}
+                  metric="temp"
+                  style={{ flex: 1 }}
+                />
               )}
             </ChartWrapper>
           </GridItem>
@@ -219,15 +303,22 @@ const MainContent = ({ timePeriod }) => {
               handleTimePeriodChange={handleTimePeriodChange}
             >
               {watchdogHumidityChartType === 'line' ? (
-                <LineChart data={watchdogHumData || watchdogData} metric="hum" style={{ flex: 1 }} />
+                <LineChart
+                  data={watchdogHumData || watchdogData}
+                  metric="hum"
+                  style={{ flex: 1 }}
+                />
               ) : (
-                <BarChart data={watchdogHumData || watchdogData} metric="hum" style={{ flex: 1 }} />
+                <BarChart
+                  data={watchdogHumData || watchdogData}
+                  metric="hum"
+                  style={{ flex: 1 }}
+                />
               )}
             </ChartWrapper>
           </GridItem>
         </Grid>
       </MotionBox>
-      {/* <MapComponent /> */}
     </Box>
   );
 };
