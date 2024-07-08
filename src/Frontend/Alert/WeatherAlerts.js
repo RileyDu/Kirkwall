@@ -114,7 +114,7 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
 
   return user ? (
     <Center>
-      <Box p={0} width="100%" zIndex={999} pt={'64px'} ml={!isMinimized ? '250px' : '84px'}>
+      <Box p={0} width="100%" zIndex={999} pt={'64px'} ml={!isMinimized ? '250px' : '74px'}>
         {error && !alerts.length && (
           <Alert
             status="error"
