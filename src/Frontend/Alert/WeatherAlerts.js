@@ -189,7 +189,7 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
       {selectedAlert && (
         <Modal isOpen={!!selectedAlert} onClose={handleModalClose}>
           <ModalOverlay />
-          <ModalContent border="2px solid black" bg="#2D3748">
+          <ModalContent border="2px solid black" bg="#2D3748" color={'white'}>
             <ModalHeader bg={'#212121'} color={'white'}>
               {selectedAlert.properties.event}
             </ModalHeader>
