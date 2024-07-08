@@ -94,7 +94,7 @@ export default function WindSensors() {
               Current Wind Speed and Direction: {latestWindSpeed} MPH {getCardinalDirection(latestWindDirection)}
             </Text>
             </Box>
-            <Box mb={'-180px'}>
+            <Box mb={'-180px'} pb={'-180px'} >
               <ReactSpeedometer
                 minValue={0}
                 maxValue={100}
@@ -127,11 +127,11 @@ export default function WindSensors() {
                 needleColor="#000000"
                 needleTransitionDuration={1000}
                 needleTransition="easeElastic"
-                textColor="black"
                 valueTextShadowColor="black"
                 currentValueText=" "
                 width={800}
                 height={600}
+                textColor='grey'
               />
             </Box>
           </Flex>
