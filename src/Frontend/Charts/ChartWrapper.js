@@ -399,7 +399,7 @@ const ChartWrapper = ({
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1, delay: 0.35 }}
               >
-                <Tooltip label="Map / Graph">
+                <Tooltip label="Map">
                   <MotionIconButton
                     icon={<FaMap />}
                     variant="outline"
