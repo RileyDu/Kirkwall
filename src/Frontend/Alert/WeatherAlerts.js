@@ -59,7 +59,7 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
         setError(''); // Clear any previous error message
       } else {
         setAlerts([]);
-        setError('No weather alerts in your area.');
+        setError(`No weather alerts in your state (${stateCode})`);
       }
     } catch (err) {
       console.error('Error fetching weather alerts:', err);
