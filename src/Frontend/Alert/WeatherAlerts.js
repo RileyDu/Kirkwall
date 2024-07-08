@@ -18,13 +18,14 @@ import {
   ModalFooter,
   Button,
   Icon,
+  Tooltip,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../Backend/Firebase';
 import { FaChevronDown } from 'react-icons/fa';
 
-function WeatherAlerts({ isVisible, onClose }) {
+function WeatherAlerts({ isVisible, onClose, isMinimized }) {
   const [alerts, setAlerts] = useState([]);
   const [error, setError] = useState('');
   const [selectedAlert, setSelectedAlert] = useState(null);
@@ -61,7 +62,7 @@ function WeatherAlerts({ isVisible, onClose }) {
     fetchWeatherAlerts();
   }, []);
 
-  const handleAlertClick = alert => {
+  const handleAlertClick = (alert) => {
     setSelectedAlert(alert);
     setShowDescription(false); // Reset the show description state
   };
@@ -78,7 +79,7 @@ function WeatherAlerts({ isVisible, onClose }) {
 
   return user ? (
     <Center>
-      <Box p={0} width="100%" zIndex={999} pt={'64px'} ml={'250px'}>
+      <Box p={0} width="100%" zIndex={999} pt={'64px'} ml={!isMinimized ? '250px' : '84px'}>
         {error && !alerts.length && (
           <Alert
             status="error"
@@ -109,7 +110,7 @@ function WeatherAlerts({ isVisible, onClose }) {
             >
               <AlertIcon color="white" />
               {alerts.length > 0 ? (
-                alerts.map(alert => (
+                alerts.map((alert) => (
                   <Box
                     border="2px"
                     borderColor="black"
@@ -125,9 +126,11 @@ function WeatherAlerts({ isVisible, onClose }) {
                     justifyContent="center"
                     textAlign={'center'}
                   >
-                    <AlertDescription px={4} fontSize="md" color="red.500">
-                      {alert.properties.event}
-                    </AlertDescription>
+                    <Tooltip label={`Location: ${alert.properties.areaDesc}`} aria-label="Area Description">
+                      <AlertDescription px={4} fontSize="sm" color="red.500">
+                        {alert.properties.event}
+                      </AlertDescription>
+                    </Tooltip>
                   </Box>
                 ))
               ) : !error ? (
@@ -145,15 +148,12 @@ function WeatherAlerts({ isVisible, onClose }) {
           )}
         </Flex>
       </Box>
-
       {selectedAlert && (
         <Modal isOpen={!!selectedAlert} onClose={handleModalClose}>
           <ModalOverlay />
-          <ModalContent border='2px solid black'
-          bg='#2D3748'>
+          <ModalContent border="2px solid black" bg="#2D3748">
             <ModalHeader bg={'#212121'} color={'white'}>
               {selectedAlert.properties.event}
-              
             </ModalHeader>
             <ModalCloseButton />
             <ModalBody fontSize={'lg'}>
@@ -184,15 +184,7 @@ function WeatherAlerts({ isVisible, onClose }) {
               )}
             </ModalBody>
             <ModalFooter>
-              {/* <Button onClick={toggleDescription} mr={3} variant={'sidebar'}>
-                {showDescription ? 'Hide Description' : 'Show Description'}
-              </Button> */}
-              {/* <Button variant={'sidebar'} onClick={handleModalClose}>
-                Close
-              </Button> */}
-              <FaChevronDown
-                onClick={toggleDescription}
-              />
+              <FaChevronDown onClick={toggleDescription} mr={3} cursor={'pointer'} />
             </ModalFooter>
           </ModalContent>
         </Modal>

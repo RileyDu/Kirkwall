@@ -110,7 +110,7 @@ return (
   return (
     <Box>
       {location.pathname !== '/login' && location.pathname !== '/signup' && (
-        <Header toggleMobileMenu={toggleMobileMenu} />
+        <Header toggleMobileMenu={toggleMobileMenu} isMinimized={isMinimized} />
       )}
       <Layout
         isMinimized={isMinimized}

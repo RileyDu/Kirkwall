@@ -44,7 +44,7 @@ import { useNavigate } from 'react-router-dom';
 import { useWeatherData } from '../WeatherDataContext';
 import WeatherAlerts from '../Alert/WeatherAlerts';
 
-const Header = () => {
+const Header = ({ isMinimized }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
@@ -352,7 +352,7 @@ const Header = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-      {showAlerts && <WeatherAlerts isVisible={showAlerts} onClose={toggleAlerts} />}
+      {showAlerts && <WeatherAlerts isVisible={showAlerts} onClose={toggleAlerts} isMinimized={isMinimized} />}
           </>
   );
 };
