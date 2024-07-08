@@ -44,19 +44,19 @@ import { useNavigate } from 'react-router-dom';
 import { useWeatherData } from '../WeatherDataContext';
 import WeatherAlerts from '../Alert/WeatherAlerts';
 
-const Header = ({ isMinimized }) => {
+const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
-  const [showAlerts, setShowAlerts] = useState(true);
+  // const [showAlerts, setShowAlerts] = useState(true);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isSummaryOpen, setSummaryOpen] = useState(false);
   const { colorMode, toggleColorMode } = useColorMode();
   const { weatherData, loading, error, tempData, humidityData, windData, rainfallData, watchdogData, watchdogTempData, watchdogHumData } = useWeatherData();
 
-  const toggleAlerts = () => {
-    setShowAlerts(!showAlerts);
-  };
+  // const toggleAlerts = () => {
+  //   setShowAlerts(!showAlerts);
+  // };
 
   const openDrawer = () => {
     setDrawerOpen(true);
@@ -352,7 +352,7 @@ const Header = ({ isMinimized }) => {
           </ModalBody>
         </ModalContent>
       </Modal>
-      {showAlerts && <WeatherAlerts isVisible={showAlerts} onClose={toggleAlerts} isMinimized={isMinimized} />}
+      {isVisible && <WeatherAlerts isVisible={isVisible} onClose={toggleAlerts} isMinimized={isMinimized} />}
           </>
   );
 };

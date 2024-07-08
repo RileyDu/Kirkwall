@@ -109,15 +109,16 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
               width="100%"
             >
               <AlertIcon color="white" />
+              <AlertTitle>Weather Alerts</AlertTitle>
               {alerts.length > 0 ? (
                 alerts.map((alert) => (
                   <Box
                     border="2px"
                     borderColor="black"
-                    borderRadius="lg"
-                    p="2"
+                    borderRadius="xl"
+                    p="1"
                     bg="gray.50"
-                    mx={2}
+                    mx={1}
                     cursor="pointer"
                     key={alert.id}
                     onClick={() => handleAlertClick(alert)}
@@ -127,7 +128,7 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
                     textAlign={'center'}
                   >
                     <Tooltip label={`Location: ${alert.properties.areaDesc}`} aria-label="Area Description">
-                      <AlertDescription px={4} fontSize="sm" color="red.500">
+                      <AlertDescription px={4} fontSize="md" color="red.500">
                         {alert.properties.event}
                       </AlertDescription>
                     </Tooltip>

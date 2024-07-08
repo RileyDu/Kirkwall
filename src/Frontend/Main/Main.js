@@ -23,7 +23,7 @@ import { motion } from 'framer-motion';
 
 const MotionBox = motion(Box);
 
-const MainContent = ({ timePeriod }) => {
+const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const {
     weatherData,
     tempData,
@@ -87,7 +87,7 @@ const MainContent = ({ timePeriod }) => {
       color={colorMode === 'light' ? 'black' : 'white'}
       flex="1"
       p="4"
-      pt="74px"
+      pt={statusOfAlerts ? "10px" : "74px"}
       width="100%"
       minHeight="100vh"
       display="flex"

@@ -82,7 +82,12 @@ const MainApp = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [timePeriod, setTimePeriod] = useState(37); // Default time period
   const location = useLocation();
+  const [showAlerts, setShowAlerts] = useState(true);
 
+
+  const toggleAlerts = () => {
+    setShowAlerts(!showAlerts);
+  };
   const toggleSidebar = () => setIsMinimized(!isMinimized);
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
@@ -110,7 +115,7 @@ return (
   return (
     <Box>
       {location.pathname !== '/login' && location.pathname !== '/signup' && (
-        <Header toggleMobileMenu={toggleMobileMenu} isMinimized={isMinimized} />
+        <Header toggleMobileMenu={toggleMobileMenu} isMinimized={isMinimized} isVisible={showAlerts} toggleAlerts={toggleAlerts}/>
       )}
       <Layout
         isMinimized={isMinimized}
@@ -130,6 +135,7 @@ return (
                   isMinimized={isMinimized}
                   timePeriod={timePeriod}
                   // adjustTimePeriod={adjustTimePeriod}
+                  statusOfAlerts={showAlerts}
                 />
               </ProtectedRoute>
             }
