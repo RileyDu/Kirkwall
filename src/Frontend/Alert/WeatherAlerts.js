@@ -37,7 +37,10 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
   const [user] = useAuthState(auth);
 
   // State for managing the state code
-  const [stateCode, setStateCode] = useState('ND');
+  const [stateCode, setStateCode] = useState(() => {
+    // Retrieve stateCode from localStorage or default to 'ND'
+    return localStorage.getItem('stateCode') || 'ND';
+  });
 
   // State for the state code change modal
   const [isChangeStateCodeModalOpen, setIsChangeStateCodeModalOpen] = useState(false);
@@ -70,6 +73,16 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
     fetchWeatherAlerts();
   }, [stateCode]);
 
+  // Sync newStateCode with stateCode when the modal opens
+  useEffect(() => {
+    setNewStateCode(stateCode);
+  }, [isChangeStateCodeModalOpen, stateCode]);
+
+  // Save stateCode to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('stateCode', stateCode);
+  }, [stateCode]);
+
   const handleAlertClick = (alert) => {
     setSelectedAlert(alert);
     setShowDescription(false); // Reset the show description state
@@ -93,11 +106,6 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
   return user ? (
     <Center>
       <Box p={0} width="100%" zIndex={999} pt={'64px'} ml={!isMinimized ? '250px' : '84px'}>
-        {/* Always visible InfoIcon */}
-        {/* <Tooltip label="Change State">
-          <Icon as={InfoIcon} ml={2} cursor="pointer" onClick={() => setIsChangeStateCodeModalOpen(true)} />
-        </Tooltip> */}
-
         {error && !alerts.length && (
           <Alert
             status="error"
@@ -109,8 +117,8 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
             <AlertIcon />
             <AlertTitle mr={2}>{error}</AlertTitle>
             <Tooltip label="Change State">
-          <Icon as={InfoIcon} ml={2} cursor="pointer" onClick={() => setIsChangeStateCodeModalOpen(true)} />
-        </Tooltip>
+              <Icon as={InfoIcon} ml={2} cursor="pointer" onClick={() => setIsChangeStateCodeModalOpen(true)} position={'absolute'} right={'50px'} />
+            </Tooltip>
             <CloseButton
               position="absolute"
               right="8px"
@@ -128,8 +136,8 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
               bgColor="red.500"
               color="white"
               width="100%"
-            //   position={'relative'}
-            //   overflow={'auto'}
+              //   position={'relative'}
+              //   overflow={'auto'}
             >
               <AlertIcon color="white" />
               <AlertTitle>{stateCode} Weather Alerts:</AlertTitle>
@@ -157,8 +165,8 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
                 </Box>
               ))}
               <Tooltip label="Change State">
-          <Icon as={InfoIcon} ml={2} cursor="pointer" onClick={() => setIsChangeStateCodeModalOpen(true)} />
-        </Tooltip>
+                <Icon as={InfoIcon} ml={2} cursor="pointer" onClick={() => setIsChangeStateCodeModalOpen(true)} position={'absolute'} right={'50px'} />
+              </Tooltip>
               <CloseButton
                 position="absolute"
                 right="8px"
