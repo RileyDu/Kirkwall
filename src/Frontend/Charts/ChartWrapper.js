@@ -480,12 +480,12 @@ const ChartWrapper = ({
             </motion.div>
         )}
         {!showMap && (
-          <motion.div
-          initial={{ opacity: 0, scale: 0, rotate: 45 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          transition={{ duration: .5, type: "linear", stiffness: 50 }}>
-        {children}
-          </motion.div>
+          // <motion.div
+          // initial={{ opacity: 0, scale: 0, rotate: 45 }}
+          // animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          // transition={{ duration: .5, type: "linear", stiffness: 50 }}>
+        children
+          // {/* </motion.div> */}
         )}
       </Box>
       <ChartExpandModal
