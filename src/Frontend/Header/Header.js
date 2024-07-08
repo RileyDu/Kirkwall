@@ -84,7 +84,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     borderRadius: 'md',
     mb: 4,
     bg: '#F4B860',
-    color: 'white',
+    color: '#212121',
     _hover: {
       bg: '#d7a247',
     },
@@ -267,7 +267,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         <DrawerContent bg="#2D3748" color="white">
           <DrawerCloseButton />
           <DrawerHeader borderBottomWidth="1px" borderBottomColor="#F4B860">Menu</DrawerHeader>
-          <DrawerBody>
+          <DrawerBody color={'#212121'}>
             <Stack spacing={6} direction="column" alignItems="flex-start">
               <motion.div {...motionProps}>
                 <Button
@@ -310,7 +310,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                   leftIcon={<FaDog size="24px" />}
                   onClick={() => handleNavigation('/WatchdogSensors')}
                   {...buttonStyleProps}
-                  mt={6}
                 >
                   Watchdog Sensors
                 </Button>
@@ -320,7 +319,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                   leftIcon={<FaGlobe size="24px" />}
                   onClick={() => handleNavigation('/map')}
                   {...buttonStyleProps}
-                  mt={6}
                 >
                   Sensor Map
                 </Button>
