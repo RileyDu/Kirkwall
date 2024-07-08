@@ -232,14 +232,16 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
         <ModalOverlay />
         <ModalContent border="2px solid black" bg="#2D3748">
           <ModalHeader bg={'#212121'} color={'white'}>Change State Code</ModalHeader>
-          <ModalCloseButton size={'lg'} mt={1}/>
+          <ModalCloseButton size={'lg'} mt={1} color={'white'}/>
           <ModalBody>
             <FormControl id="state-code">
-              <FormLabel>New State Code</FormLabel>
+              <FormLabel color={'white'}>New State Code</FormLabel>
               <Input
                 value={newStateCode}
                 onChange={(e) => setNewStateCode(e.target.value.toUpperCase())}
                 maxLength={2}
+                minLength={2}
+                color={'white'}
               />
             </FormControl>
           </ModalBody>
