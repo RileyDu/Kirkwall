@@ -7,6 +7,7 @@ import {
   Text,
   Grid,
   GridItem,
+  useColorMode
 } from '@chakra-ui/react';
 import { useWeatherData } from '../../WeatherDataContext';
 import ChartWrapper from '../../Charts/ChartWrapper';
@@ -20,6 +21,7 @@ export default function WatchdogSensors() {
   const { watchdogData, loading } = useWeatherData();
   const [isReady, setIsReady] = useState(false);
 
+  const { colorMode } = useColorMode();
 
   useEffect(() => {
     setIsReady(false);
@@ -78,6 +80,7 @@ export default function WatchdogSensors() {
 
       <Flex direction="row" justifyContent="space-between">
         <Box width="100%">
+          <Box color={colorMode === 'light' ? 'black' : 'white'}>
           <ChartWrapper
             title="Temperature in Garage (°F)"
             weatherData={watchdogData}
@@ -85,6 +88,7 @@ export default function WatchdogSensors() {
           >
             <LineChart data={watchdogData} metric="temp" />
           </ChartWrapper>
+          </Box>
           <Divider
             my="8"
             // borderColor="#212121"
@@ -94,6 +98,7 @@ export default function WatchdogSensors() {
           <Box width="100%">
             <MiniDashboard weatherData={watchdogData} metric="hum" />
           </Box>
+          <Box color={colorMode === 'light' ? 'black' : 'white'}>
           <ChartWrapper
             title="Humidity in Garage (%)"
             weatherData={watchdogData}
@@ -101,6 +106,7 @@ export default function WatchdogSensors() {
           >
             <BarChart data={watchdogData} metric="hum" />
           </ChartWrapper>
+          </Box>
         </Box>
       </Flex>
       {/* <Divider
