@@ -26,17 +26,14 @@ ChartJS.register(
   Legend
 );
 
-// Process weather data function now takes color mode as a parameter
 const processWeatherData = (data, key, colorMode) => {
-  // console.log('this is the data in processWeatherData',data);
   if (!data) return null;
-  
+
   const getColorOfLastValue = (colorMode) => {
     return colorMode === 'light' ? '#212121' : 'white';
   };
 
   const reversedData = [...data].reverse();
-  // console.log('this is the reversed data',reversedData);
 
   const chartData = {
     labels: reversedData.map(item =>
@@ -72,8 +69,9 @@ const getMinMax = (data) => {
   return { min, max };
 };
 
-const createCustomChartOptions = (metric, data) => {
+const createCustomChartOptions = (metric, data, colorMode) => {
   const { min, max } = getMinMax(data);
+  const labelColor = colorMode === 'light' ? '#000000' : '#FFFFFF';
   return {
     responsive: true,
     maintainAspectRatio: false,
@@ -84,11 +82,15 @@ const createCustomChartOptions = (metric, data) => {
           minRotation: 45,
           autoSkip: true,
           maxTicksLimit: 10,
+          color: labelColor,  // Set label color based on color mode
         },
       },
       y: {
         min: min > 1 ? min - 1 : min,
         max: max > 1 ? Math.round(max + 1) : max,
+        ticks: {
+          color: labelColor,  // Set label color based on color mode
+        },
         title: {
           display: false,
         },
@@ -115,7 +117,6 @@ const createCustomChartOptions = (metric, data) => {
               'wind_speed': 'MPH',
               'temp' : '°F',
               'hum' : '% Humidity',
-
             };
             const label = labelMap[metric] || '';
             const value = context.raw;
@@ -134,12 +135,12 @@ const createCustomChartOptions = (metric, data) => {
 };
 
 export const LineChart = ({ data, metric }) => {
-  const { colorMode } = useColorMode();  // Get color mode here
+  const { colorMode } = useColorMode();
   const chartData = processWeatherData(data, metric, colorMode);
   if (!chartData) return <Spinner size="xl" />;
 
   const dataKey = chartData.datasets[0].data;
-  const options = createCustomChartOptions(metric, dataKey);
+  const options = createCustomChartOptions(metric, dataKey, colorMode);
 
   return (
     <Box h="100%" w="100%">
@@ -149,14 +150,12 @@ export const LineChart = ({ data, metric }) => {
 };
 
 export const BarChart = ({ data, metric }) => {
-  const { colorMode } = useColorMode();  // Get color mode here
+  const { colorMode } = useColorMode();
   const chartData = processWeatherData(data, metric, colorMode);
-  // console.log('this is the chart data in BarChart', chartData);
   if (!chartData) return <Spinner size="xl" />;
 
-
   const dataKey = chartData.datasets[0].data;
-  const options = createCustomChartOptions(metric, dataKey);
+  const options = createCustomChartOptions(metric, dataKey, colorMode);
 
   return (
     <Box h="100%" w="100%">
