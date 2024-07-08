@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Heading, Text, Spinner, Flex, Divider, useMediaQuery } from '@chakra-ui/react';
+import { Box, Heading, Text, Spinner, Flex, Divider, useMediaQuery, useColorMode } from '@chakra-ui/react';
 import ReactSpeedometer from 'react-d3-speedometer';
 import ChartWrapper from '../../Charts/ChartWrapper';
 import { BarChart, LineChart } from '../../Charts/Charts';
@@ -23,9 +23,9 @@ export default function WindSensors() {
 
   const { weatherData, windData, loading } = useWeatherData();
 
+  const { colorMode } = useColorMode();
 
   const [isReady, setIsReady] = useState(false);
-
 
   useEffect(() => {
     setIsReady(false);
@@ -87,9 +87,9 @@ export default function WindSensors() {
             borderRadius="md"
             boxShadow="md"
             mb="4"
-            bg={'#f5f5f5'}
+            bg={colorMode === 'light' ? '#f9f9f9' : '#303030'}
           >
-            <Box border={'2px'} borderColor="#212121" borderRadius="md" px={2} mb={4} bg={'#fd9801'}  textAlign="center">
+            <Box border={'4px'} borderColor="brand.800" borderRadius="lg" px={2} mb={4} bg={'brand.400'}  textAlign="center">
             <Text fontSize="xxx-large" mb={'6'} mt={'6'} color={'#212121'}>
               Current Wind Speed and Direction: {latestWindSpeed} MPH {getCardinalDirection(latestWindDirection)}
             </Text>
@@ -142,7 +142,8 @@ export default function WindSensors() {
           />
         </>
       )}
-      <Box width="100%" mb="4">
+      <Box width="100%" mb="4"       color={colorMode === 'light' ? 'black' : 'white'}
+>
         <ChartWrapper title="Wind Speed (MPH)" weatherData={windData || weatherData}>
           <LineChart data={windData || weatherData} metric="wind_speed" />
         </ChartWrapper>
@@ -152,7 +153,7 @@ export default function WindSensors() {
         borderWidth="4px"
         borderRadius={'full'}
       />
-      <Box width="100%" mb="4">
+      <Box width="100%" mb="4" color={colorMode === 'light' ? 'black' : 'white'}>
         <ChartWrapper title="Wind Speed (MPH)" weatherData={windData || weatherData}>
           <BarChart data={windData || weatherData} metric="wind_speed" />
         </ChartWrapper>
