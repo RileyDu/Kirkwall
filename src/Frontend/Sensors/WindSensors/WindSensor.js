@@ -4,7 +4,7 @@ import ReactSpeedometer from 'react-d3-speedometer';
 import ChartWrapper from '../../Charts/ChartWrapper';
 import { BarChart, LineChart } from '../../Charts/Charts';
 import MiniDashboard from '../../Charts/ChartDashboard';
-import WindGauageStyling from './WindGaugeStyling.css';
+// import WindGauageStyling from './WindGaugeStyling.css';
 import { useWeatherData } from '../../WeatherDataContext';
 import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
