@@ -66,8 +66,8 @@ const MiniMap = () => {
                   pixelOffset={[0, -30]}
                   headerContent={<div style={{ color: '#212121', fontWeight: 'bold', fontSize: '20px' }}>{location.info}</div>}
                 >
-                  <div style={{ color: '#212121', fontSize: '14px' }}><em>Sensors:</em> {location.details}</div>
-                  <div style={{ color: '#212121', fontSize: '14px' }}><em>Data:</em> {location.dataReading}</div>
+                  <div style={{ color: '#212121', fontSize: '14px' }}><strong>Sensors:</strong> {location.details}</div>
+                  <div style={{ color: '#212121', fontSize: '14px' }}><strong>Data:</strong> {location.dataReading}</div>
                 </InfoWindow>
               )}
             </AdvancedMarker>

@@ -1,4 +1,4 @@
-import { Box, Divider, Heading, Flex, Spinner, Text } from '@chakra-ui/react';
+import { Box, Divider, Heading, Flex, Spinner, Text, useColorMode } from '@chakra-ui/react';
 import ChartWrapper from '../../Charts/ChartWrapper';
 import { BarChart, LineChart } from '../../Charts/Charts';
 import MiniDashboard from '../../Charts/ChartDashboard';
@@ -7,12 +7,12 @@ import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
 
-export default function TempSensors({  }) {
-
+export default function TempSensors({}) {
   const { weatherData, tempData, loading } = useWeatherData();
 
-  const [isReady, setIsReady] = useState(false);
+  const { colorMode } = useColorMode();
 
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     setIsReady(false);
@@ -45,16 +45,29 @@ export default function TempSensors({  }) {
         Temperature Sensors
       </Heading>
       <Box width="100%">
-        <MiniDashboard weatherData={tempData || weatherData} metric="temperature" />
+        <MiniDashboard
+          weatherData={tempData || weatherData}
+          metric="temperature"
+        />
       </Box>
-      <Flex direction="row" justifyContent="space-between">
+      <Flex
+        direction="row"
+        justifyContent="space-between"
+        color={colorMode === 'light' ? 'black' : 'white'}
+      >
         <Box width="100%">
-          <ChartWrapper title="Temperature (°F)" weatherData={tempData || weatherData}>
+          <ChartWrapper
+            title="Temperature (°F)"
+            weatherData={tempData || weatherData}
+          >
             <LineChart data={tempData || weatherData} metric="temperature" />
           </ChartWrapper>
-          <Divider my={'8'} borderWidth="4px" borderRadius={"full"} />
-          <ChartWrapper title="Temperature (°F)" weatherData={tempData || weatherData}>
-            <BarChart data={ tempData || weatherData} metric="temperature" />
+          <Divider my={'8'} borderWidth="4px" borderRadius={'full'} />
+          <ChartWrapper
+            title="Temperature (°F)"
+            weatherData={tempData || weatherData}
+          >
+            <BarChart data={tempData || weatherData} metric="temperature" />
           </ChartWrapper>
         </Box>
       </Flex>

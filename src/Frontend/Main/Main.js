@@ -36,13 +36,6 @@ const MainContent = ({ timePeriod }) => {
   const [showGarage, setShowGarage] = useState(true);
   const { colorMode } = useColorMode();
 
-    // State to manage which charts have maps enabled
-    const [showTempMap, setShowTempMap] = useState(false);
-    const [showHumidityMap, setShowHumidityMap] = useState(false);
-    const [showWindMap, setShowWindMap] = useState(false);
-    const [showRainfallMap, setShowRainfallMap] = useState(false);
-    const [showWatchdogTempMap, setShowWatchdogTempMap] = useState(false);
-    const [showWatchdogHumidityMap, setShowWatchdogHumidityMap] = useState(false);
 
   useEffect(() => {
     setIsReady(false);
