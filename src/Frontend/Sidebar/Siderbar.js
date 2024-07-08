@@ -5,10 +5,7 @@ import {
   WiRain,
   WiHumidity,
 } from 'react-icons/wi';
-import { FaDog } from "react-icons/fa";
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { FaGlobe } from 'react-icons/fa';
-
+import { FaDog, FaChevronLeft, FaChevronRight, FaGlobe } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,7 +14,6 @@ const MotionStack = motion(Stack);
 const MotionIconButton = motion(IconButton);
 const MotionButton = motion(Button);
 
-
 const buttonStyleProps = {
   justifyContent: 'flex-start',
   width: '100%',
@@ -25,10 +21,10 @@ const buttonStyleProps = {
   fontSize: 'md',
   borderRadius: 'md',
   mb: 4,
-  bg: 'brand.400',
-  color: '#212121',
+  bg: '#F4B860',
+  color: 'black',
   _hover: {
-    bg: 'brand.800',
+    bg: '#d7a247',
   },
   boxShadow: 'md',
 };
@@ -67,6 +63,7 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMen
       flexShrink={0}
       flexDirection="column"
       display={{ base: isMobileMenuOpen ? 'flex' : 'none', md: 'flex' }}
+      pt={isMinimized ? '0' : '64px'}  // Add padding to prevent overlap with header
     >
       <Box overflowY="auto" height="100%">
         <Stack
@@ -78,7 +75,7 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMen
           justifyContent="flex-start"
         >
           {isMinimized ? (
-            <MinimizedSidebarContent navigate={navigate} toggleSidebar={toggleSidebar} colorMode={colorMode}/>
+            <MinimizedSidebarContent navigate={navigate} toggleSidebar={toggleSidebar} colorMode={colorMode} />
           ) : (
             <SidebarContent navigate={navigate} colorMode={colorMode} />
           )}
@@ -89,10 +86,10 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMen
           icon={isMinimized ? <FaChevronRight /> : <FaChevronLeft />}
           onClick={toggleSidebar}
           aria-label={isMinimized ? 'Expand' : 'Minimize'}
-          variant={'pill'}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          bg={'brand.400'}
+          bg="#F4B860"
+          color="black"
         />
       </Box>
     </MotionFlex>
@@ -102,12 +99,8 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, toggleMobileMen
 const SidebarContent = ({ navigate, colorMode }) => (
   <>
     <MotionButton
-      variant="sidebar"
       leftIcon={<WiThermometer size="30" />}
       onClick={() => navigate('/TempSensors')}
-      justifyContent="flex-start"
-      fontSize={'md'}
-      mt={16}
       {...buttonStyleProps}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
@@ -115,13 +108,8 @@ const SidebarContent = ({ navigate, colorMode }) => (
       Temperature Sensors
     </MotionButton>
     <MotionButton
-      variant="sidebar"
-      color="white"
-      _hover={{ bg: 'white', color: 'black' }}
       leftIcon={<WiStrongWind size="30" />}
       onClick={() => navigate('/WindSensors')}
-      justifyContent="flex-start"
-      fontSize={'md'}
       {...buttonStyleProps}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
@@ -129,13 +117,8 @@ const SidebarContent = ({ navigate, colorMode }) => (
       Wind Sensors
     </MotionButton>
     <MotionButton
-      variant="sidebar"
-      color="white"
-      _hover={{ bg: 'white', color: 'black' }}
       leftIcon={<WiRain size="30" />}
       onClick={() => navigate('/RainSensors')}
-      justifyContent="flex-start"
-      fontSize={'md'}
       {...buttonStyleProps}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
@@ -143,13 +126,8 @@ const SidebarContent = ({ navigate, colorMode }) => (
       Rain Sensors
     </MotionButton>
     <MotionButton
-      variant="sidebar"
-      color="white"
-      _hover={{ bg: 'white', color: 'black' }}
       leftIcon={<WiHumidity size="30" />}
       onClick={() => navigate('/HumiditySensors')}
-      justifyContent="flex-start"
-      fontSize={'md'}
       {...buttonStyleProps}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
@@ -157,13 +135,8 @@ const SidebarContent = ({ navigate, colorMode }) => (
       Humidity Sensors
     </MotionButton>
     <MotionButton
-      variant="sidebar"
-      color="white"
-      _hover={{ bg: 'white', color: 'black' }}
       leftIcon={<FaDog size="30" />}
       onClick={() => navigate('/WatchdogSensors')}
-      justifyContent="flex-start"
-      fontSize={'md'}
       {...buttonStyleProps}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
@@ -171,13 +144,8 @@ const SidebarContent = ({ navigate, colorMode }) => (
       Watchdog Sensors
     </MotionButton>
     <MotionButton
-      variant="sidebar"
-      color="white"
-      _hover={{ bg: 'white', color: 'black' }}
       leftIcon={<FaGlobe size="30" />}
       onClick={() => navigate('/map')}
-      justifyContent="flex-start"
-      fontSize={'md'}
       {...buttonStyleProps}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
@@ -195,10 +163,9 @@ const MinimizedSidebarContent = ({ navigate, toggleSidebar, colorMode }) => (
       aria-label="Temperature Sensors"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
-      bg={'brand.400'}
-      border={'2px solid #fd9801'}
-      _hover={{ bg: 'brand.800' }}
-      color={colorMode === 'light' ? 'black' : 'black'}
+      bg="#F4B860"
+      color="black"
+      _hover={{ bg: '#d7a247' }}
     />
     <MotionIconButton
       icon={<WiStrongWind size="30" />}
@@ -206,11 +173,9 @@ const MinimizedSidebarContent = ({ navigate, toggleSidebar, colorMode }) => (
       aria-label="Wind Sensors"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
-      bg={'brand.400'}
-      border={'2px solid #fd9801'}
-      _hover={{ bg: 'brand.800' }}
-      color={colorMode === 'light' ? 'black' : 'black'}
-
+      bg="#F4B860"
+      color="black"
+      _hover={{ bg: '#d7a247' }}
     />
     <MotionIconButton
       icon={<WiRain size="30" />}
@@ -218,11 +183,9 @@ const MinimizedSidebarContent = ({ navigate, toggleSidebar, colorMode }) => (
       aria-label="Rain Sensors"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
-      bg={'brand.400'}
-      border={'2px solid #fd9801'}
-      _hover={{ bg: 'brand.800' }}
-      color={colorMode === 'light' ? 'black' : 'black'}
-
+      bg="#F4B860"
+      color="black"
+      _hover={{ bg: '#d7a247' }}
     />
     <MotionIconButton
       icon={<WiHumidity size="30" />}
@@ -230,23 +193,19 @@ const MinimizedSidebarContent = ({ navigate, toggleSidebar, colorMode }) => (
       aria-label="Humidity Sensors"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
-      bg={'brand.400'}
-      border={'2px solid #fd9801'}
-      _hover={{ bg: 'brand.800' }}
-      color={colorMode === 'light' ? 'black' : 'black'}
-
+      bg="#F4B860"
+      color="black"
+      _hover={{ bg: '#d7a247' }}
     />
-        <MotionIconButton
+    <MotionIconButton
       icon={<FaDog size="30" />}
       onClick={() => navigate('/WatchdogSensors')}
       aria-label="Watchdog Sensors"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
-      bg={'brand.400'}
-      border={'2px solid #fd9801'}
-      _hover={{ bg: 'brand.800' }}
-      color={colorMode === 'light' ? 'black' : 'black'}
-
+      bg="#F4B860"
+      color="black"
+      _hover={{ bg: '#d7a247' }}
     />
     <MotionIconButton
       icon={<FaGlobe size="30" />}
@@ -254,11 +213,9 @@ const MinimizedSidebarContent = ({ navigate, toggleSidebar, colorMode }) => (
       aria-label="Sensor Map"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
-      bg={'brand.400'}
-      border={'2px solid #fd9801'}
-      _hover={{ bg: 'brand.800' }}
-      color={colorMode === 'light' ? 'black' : 'black'}
-
+      bg="#F4B860"
+      color="black"
+      _hover={{ bg: '#d7a247' }}
     />
   </MotionStack>
 );
