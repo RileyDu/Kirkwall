@@ -8,7 +8,7 @@ import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
 
-export default function HumiditySensors() {
+export default function HumiditySensors({ statusOfAlerts }) {
 
   const { weatherData, humidityData, loading } = useWeatherData();
 
@@ -42,7 +42,7 @@ export default function HumiditySensors() {
   }
 
   return (
-    <Box p="4" width={'100%'} height={'100%'} pt={'64px'}>
+    <Box p="4" width={'100%'} height={'100%'} pt={statusOfAlerts ? "10px" : "74px"}>
       <Heading size="xl" textAlign={'center'} mb={'4'}>
         Humidity Sensors
       </Heading>

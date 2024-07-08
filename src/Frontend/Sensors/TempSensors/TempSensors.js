@@ -7,7 +7,7 @@ import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
 
-export default function TempSensors({}) {
+export default function TempSensors({ statusOfAlerts }) {
   const { weatherData, tempData, loading } = useWeatherData();
 
   const { colorMode } = useColorMode();
@@ -40,7 +40,7 @@ export default function TempSensors({}) {
   }
 
   return (
-    <Box p="4" width={'100%'} height={'100%'} pt={'64px'}>
+    <Box p="4" width={'100%'} height={'100%'} pt={statusOfAlerts ? "10px" : "74px"}>
       <Heading size="xl" textAlign={'center'} mb={'4'}>
         Temperature Sensors
       </Heading>

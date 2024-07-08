@@ -144,7 +144,7 @@ return (
             path="/TempSensors"
             element={
               <ProtectedRoute>
-                <TempSensors />
+                <TempSensors statusOfAlerts={showAlerts}/>
               </ProtectedRoute>
             }
           />
@@ -152,7 +152,7 @@ return (
             path="/HumiditySensors"
             element={
               <ProtectedRoute>
-                <HumiditySensors  />
+                <HumiditySensors statusOfAlerts={showAlerts} />
               </ProtectedRoute>
             }
           />
@@ -168,7 +168,7 @@ return (
             path="/WindSensors"
             element={
               <ProtectedRoute>
-                <WindSensors  />
+                <WindSensors statusOfAlerts={showAlerts} />
               </ProtectedRoute>
             }
           />
@@ -176,7 +176,7 @@ return (
             path="/RainSensors"
             element={
               <ProtectedRoute>
-                <RainSensors  />
+                <RainSensors statusOfAlerts={showAlerts} />
               </ProtectedRoute>
             }
           />
@@ -184,7 +184,7 @@ return (
             path="/WatchdogSensors"
             element={
               <ProtectedRoute>
-                <WatchdogSensors  />
+                <WatchdogSensors statusOfAlerts={showAlerts}  />
               </ProtectedRoute>
             }
           />
@@ -192,7 +192,7 @@ return (
             path="/map"
             element={
               <ProtectedRoute>
-                <MapComponent />
+                <MapComponent statusOfAlerts={showAlerts}/>
               </ProtectedRoute>
             }
           />

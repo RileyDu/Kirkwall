@@ -128,6 +128,8 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
               bgColor="red.500"
               color="white"
               width="100%"
+            //   position={'relative'}
+            //   overflow={'auto'}
             >
               <AlertIcon color="white" />
               <AlertTitle>{stateCode} Weather Alerts:</AlertTitle>
