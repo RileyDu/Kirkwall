@@ -19,11 +19,15 @@ import {
   Button,
   Icon,
   Tooltip,
+  Input,
+  FormControl,
+  FormLabel,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../Backend/Firebase';
 import { FaChevronDown } from 'react-icons/fa';
+import { InfoIcon } from '@chakra-ui/icons';
 
 function WeatherAlerts({ isVisible, onClose, isMinimized }) {
   const [alerts, setAlerts] = useState([]);
@@ -32,8 +36,12 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
   const [showDescription, setShowDescription] = useState(false);
   const [user] = useAuthState(auth);
 
-  // Hardcoded state code for Fargo, ND (ND)
-  const stateCode = 'MN';
+  // State for managing the state code
+  const [stateCode, setStateCode] = useState('SD');
+
+  // State for the state code change modal
+  const [isChangeStateCodeModalOpen, setIsChangeStateCodeModalOpen] = useState(false);
+  const [newStateCode, setNewStateCode] = useState(stateCode);
 
   const fetchWeatherAlerts = async () => {
     try {
@@ -57,10 +65,10 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
     }
   };
 
-  // Fetch weather alerts when the component mounts
+  // Fetch weather alerts when the component mounts or stateCode changes
   useEffect(() => {
     fetchWeatherAlerts();
-  }, []);
+  }, [stateCode]);
 
   const handleAlertClick = (alert) => {
     setSelectedAlert(alert);
@@ -75,11 +83,21 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
     setShowDescription(!showDescription);
   };
 
+  const handleChangeStateCode = () => {
+    setStateCode(newStateCode);
+    setIsChangeStateCodeModalOpen(false);
+  };
+
   if (!isVisible) return null; // Return null if the component is not visible
 
   return user ? (
     <Center>
       <Box p={0} width="100%" zIndex={999} pt={'64px'} ml={!isMinimized ? '250px' : '84px'}>
+        {/* Always visible InfoIcon */}
+        {/* <Tooltip label="Change State">
+          <Icon as={InfoIcon} ml={2} cursor="pointer" onClick={() => setIsChangeStateCodeModalOpen(true)} />
+        </Tooltip> */}
+
         {error && !alerts.length && (
           <Alert
             status="error"
@@ -90,6 +108,9 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
           >
             <AlertIcon />
             <AlertTitle mr={2}>{error}</AlertTitle>
+            <Tooltip label="Change State">
+          <Icon as={InfoIcon} ml={2} cursor="pointer" onClick={() => setIsChangeStateCodeModalOpen(true)} />
+        </Tooltip>
             <CloseButton
               position="absolute"
               right="8px"
@@ -109,36 +130,33 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
               width="100%"
             >
               <AlertIcon color="white" />
-              <AlertTitle>Weather Alerts</AlertTitle>
-              {alerts.length > 0 ? (
-                alerts.map((alert) => (
-                  <Box
-                    border="2px"
-                    borderColor="black"
-                    borderRadius="xl"
-                    p="1"
-                    bg="gray.50"
-                    mx={1}
-                    cursor="pointer"
-                    key={alert.id}
-                    onClick={() => handleAlertClick(alert)}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    textAlign={'center'}
-                  >
-                    <Tooltip label={`Location: ${alert.properties.areaDesc}`} aria-label="Area Description">
-                      <AlertDescription px={4} fontSize="md" color="red.500">
-                        {alert.properties.event}
-                      </AlertDescription>
-                    </Tooltip>
-                  </Box>
-                ))
-              ) : !error ? (
-                <Text fontSize="xl" fontWeight="bold" paddingRight={5}>
-                  No weather alerts in your area.
-                </Text>
-              ) : null}
+              <AlertTitle>{stateCode} Weather Alerts:</AlertTitle>
+              {alerts.map((alert) => (
+                <Box
+                  border="2px"
+                  borderColor="black"
+                  borderRadius="xl"
+                  p="1"
+                  bg="gray.50"
+                  mx={1}
+                  cursor="pointer"
+                  key={alert.id}
+                  onClick={() => handleAlertClick(alert)}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  textAlign={'center'}
+                >
+                  <Tooltip label={`Location: ${alert.properties.areaDesc}`} aria-label="Area Description">
+                    <AlertDescription px={4} fontSize="md" color="red.500">
+                      {alert.properties.event}
+                    </AlertDescription>
+                  </Tooltip>
+                </Box>
+              ))}
+              <Tooltip label="Change State">
+          <Icon as={InfoIcon} ml={2} cursor="pointer" onClick={() => setIsChangeStateCodeModalOpen(true)} />
+        </Tooltip>
               <CloseButton
                 position="absolute"
                 right="8px"
@@ -190,6 +208,32 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
           </ModalContent>
         </Modal>
       )}
+      {/* Modal for changing state code */}
+      <Modal isOpen={isChangeStateCodeModalOpen} onClose={() => setIsChangeStateCodeModalOpen(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Change State Code</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl id="state-code">
+              <FormLabel>New State Code</FormLabel>
+              <Input
+                value={newStateCode}
+                onChange={(e) => setNewStateCode(e.target.value.toUpperCase())}
+                maxLength={2}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleChangeStateCode}>
+              Update
+            </Button>
+            <Button variant="ghost" onClick={() => setIsChangeStateCodeModalOpen(false)}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Center>
   ) : null;
 }
