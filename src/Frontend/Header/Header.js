@@ -190,6 +190,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
               {isSummaryOpen ? 'Hide Summary' : ' Weather Summary'}
             </MotionButton>
           </motion.div>
+          {isLargerThan768 && (
           <motion.div {...motionProps}>
             <Tooltip label="Toggle Weather Alerts">
               <MotionIconButton
@@ -206,6 +207,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
               />
             </Tooltip>
           </motion.div>
+          )}
           <motion.div {...motionProps}>
             <Tooltip label="Toggle Dark Mode">
               <MotionIconButton
@@ -369,7 +371,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           </ModalBody>
         </ModalContent>
       </Modal>
-      {isVisible && <WeatherAlerts isVisible={isVisible} onClose={toggleAlerts} isMinimized={isMinimized} />}
+      {isVisible && isLargerThan768 && <WeatherAlerts isVisible={isVisible} onClose={toggleAlerts} isMinimized={isMinimized} />}
           </>
   );
 };

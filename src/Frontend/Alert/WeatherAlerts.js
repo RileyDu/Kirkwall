@@ -37,7 +37,7 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
   const [user] = useAuthState(auth);
 
   // State for managing the state code
-  const [stateCode, setStateCode] = useState('SD');
+  const [stateCode, setStateCode] = useState('ND');
 
   // State for the state code change modal
   const [isChangeStateCodeModalOpen, setIsChangeStateCodeModalOpen] = useState(false);
@@ -148,7 +148,7 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
                   textAlign={'center'}
                 >
                   <Tooltip label={`Location: ${alert.properties.areaDesc}`} aria-label="Area Description">
-                    <AlertDescription px={4} fontSize="md" color="red.500">
+                    <AlertDescription px={1} fontSize="md" color="red.500">
                       {alert.properties.event}
                     </AlertDescription>
                   </Tooltip>
@@ -174,7 +174,7 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
             <ModalHeader bg={'#212121'} color={'white'}>
               {selectedAlert.properties.event}
             </ModalHeader>
-            <ModalCloseButton />
+            <ModalCloseButton size={'lg'} mt={1}/>
             <ModalBody fontSize={'lg'}>
               <Text my={1}>
                 <strong>Alert:</strong> {selectedAlert.properties.headline}
@@ -211,9 +211,9 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
       {/* Modal for changing state code */}
       <Modal isOpen={isChangeStateCodeModalOpen} onClose={() => setIsChangeStateCodeModalOpen(false)}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Change State Code</ModalHeader>
-          <ModalCloseButton />
+        <ModalContent border="2px solid black" bg="#2D3748">
+          <ModalHeader bg={'#212121'} color={'white'}>Change State Code</ModalHeader>
+          <ModalCloseButton size={'lg'} mt={1}/>
           <ModalBody>
             <FormControl id="state-code">
               <FormLabel>New State Code</FormLabel>
@@ -225,12 +225,12 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleChangeStateCode}>
+            <Button variant={'sidebar'} mr={3} onClick={handleChangeStateCode}>
               Update
             </Button>
-            <Button variant="ghost" onClick={() => setIsChangeStateCodeModalOpen(false)}>
+            {/* <Button variant="ghost" onClick={() => setIsChangeStateCodeModalOpen(false)}>
               Cancel
-            </Button>
+            </Button> */}
           </ModalFooter>
         </ModalContent>
       </Modal>
