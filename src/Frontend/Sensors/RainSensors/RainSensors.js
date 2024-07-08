@@ -1,5 +1,13 @@
 import React from 'react';
-import { Box, Heading, Divider, Spinner, Text, Flex } from '@chakra-ui/react';
+import {
+  Box,
+  Heading,
+  Divider,
+  Spinner,
+  Text,
+  Flex,
+  useColorMode,
+} from '@chakra-ui/react';
 import MiniDashboard from '../../Charts/ChartDashboard';
 import ChartWrapper from '../../Charts/ChartWrapper';
 import { BarChart, LineChart } from '../../Charts/Charts';
@@ -9,11 +17,11 @@ import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
 
 export default function RainSensors() {
-
   const { weatherData, rainfallData, loading } = useWeatherData();
 
   const [isReady, setIsReady] = useState(false);
 
+  const { colorMode } = useColorMode();
 
   useEffect(() => {
     setIsReady(false);
@@ -46,19 +54,34 @@ export default function RainSensors() {
         Rain Sensors
       </Heading>
       <Box width="100%">
-        <MiniDashboard metric="rain_15_min_inches" weatherData={rainfallData || weatherData} />
+        <MiniDashboard
+          metric="rain_15_min_inches"
+          weatherData={rainfallData || weatherData}
+        />
       </Box>
-      <ChartWrapper title="Rainfall (inches)" weatherData={rainfallData || weatherData}>
-        <BarChart data={rainfallData || weatherData} metric="rain_15_min_inches" />
-      </ChartWrapper>
-      <Divider
-        my={'8'}
-        borderWidth="4px"
-        borderRadius={'full'}
-      />
-      <ChartWrapper title="Rainfall (inches)" weatherData={rainfallData || weatherData}>
-        <LineChart data={rainfallData || weatherData} metric="rain_15_min_inches" />
-      </ChartWrapper>
+      <Box color={colorMode === 'light' ? 'black' : 'white'}>
+        <ChartWrapper
+          title="Rainfall (inches)"
+          weatherData={rainfallData || weatherData}
+        >
+          <BarChart
+            data={rainfallData || weatherData}
+            metric="rain_15_min_inches"
+          />
+        </ChartWrapper>
+      </Box>
+      <Divider my={'8'} borderWidth="4px" borderRadius={'full'} />
+      <Box color={colorMode === 'light' ? 'black' : 'white'}>
+        <ChartWrapper
+          title="Rainfall (inches)"
+          weatherData={rainfallData || weatherData}
+        >
+          <LineChart
+            data={rainfallData || weatherData}
+            metric="rain_15_min_inches"
+          />
+        </ChartWrapper>
+      </Box>
     </Box>
   );
 }
