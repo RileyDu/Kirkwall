@@ -16,7 +16,7 @@ import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
 
-export default function RainSensors() {
+export default function RainSensors({ statusOfAlerts }) {
   const { weatherData, rainfallData, loading } = useWeatherData();
 
   const [isReady, setIsReady] = useState(false);
@@ -49,7 +49,7 @@ export default function RainSensors() {
   }
 
   return (
-    <Box p="4" width={'100%'} height={'100%'} pt={'64px'}>
+    <Box p="4" width={'100%'} height={'100%'} pt={statusOfAlerts ? "10px" : "74px"}>
       <Heading size="xl" textAlign={'center'} mb={'4'}>
         Rain Sensors
       </Heading>

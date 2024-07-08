@@ -34,7 +34,7 @@ const locations = [
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const mapID = process.env.REACT_APP_GOOGLE_MAPS_MAP_ID;
 
-const MapComponent = () => {
+const MapComponent = ({ statusOfAlerts }) => {
   const [openInfoIndex, setOpenInfoIndex] = useState(null);
   const [isMobile] = useMediaQuery('(max-width: 767px)');
 
@@ -68,7 +68,7 @@ const MapComponent = () => {
         width="100%"
         textAlign="center"
         p={'4'}
-        pt={'64px'}
+        pt={statusOfAlerts ? "10px" : "74px"}
         color={colorMode === 'light' ? 'black' : 'white'}
       >
         <Heading size="xl" pb={'4'}>

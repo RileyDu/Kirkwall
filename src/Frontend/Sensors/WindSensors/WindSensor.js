@@ -18,7 +18,7 @@ const getCardinalDirection = (degree) => {
 
 
 
-export default function WindSensors() {
+export default function WindSensors({ statusOfAlerts }) {
   const [isMobile] = useMediaQuery("(max-width: 767px)");
 
   const { weatherData, windData, loading } = useWeatherData();
@@ -67,7 +67,7 @@ export default function WindSensors() {
   }
 
   return (
-    <Box width="100%" height="100%" textAlign="center" p={'4'} pt={'64px'}>
+    <Box width="100%" height="100%" textAlign="center" p={'4'} pt={statusOfAlerts ? "10px" : "74px"}>
       <Heading size="xl" pb={'4'}>
         Wind Sensors
       </Heading>

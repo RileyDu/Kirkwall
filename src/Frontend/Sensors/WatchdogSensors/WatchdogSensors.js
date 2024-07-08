@@ -17,7 +17,7 @@ import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
 
-export default function WatchdogSensors() {
+export default function WatchdogSensors({ statusOfAlerts }) {
   const { watchdogData, loading } = useWeatherData();
   const [isReady, setIsReady] = useState(false);
 
@@ -55,7 +55,7 @@ export default function WatchdogSensors() {
   const waterDetected = checkWaterSensor(watchdogData);
 
   return (
-    <Box p="4" width="100%" height="100%" pt="64px">
+    <Box p="4" width="100%" height="100%" pt={statusOfAlerts ? "10px" : "74px"}>
       <Heading textAlign="center" mb="4" >
         Watchdog Sensors
       </Heading>
