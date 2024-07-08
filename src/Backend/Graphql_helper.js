@@ -134,14 +134,6 @@ async function getWatchdogData(type, limit) {
           dataid
           device_location
           reading_time
-          apiid
-          api {
-            apiname
-            customer {
-              customerid
-              name
-            }
-          }
         }
       }
     `,

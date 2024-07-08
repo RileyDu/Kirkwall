@@ -66,6 +66,7 @@ export const WeatherDataProvider = ({ children }) => {
       } catch (error) {
         console.error('Error fetching watchdog data:', error);
         setWatchdogData([]);
+        
       }
     };
 
