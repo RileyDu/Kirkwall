@@ -38,6 +38,7 @@ import {
   Text
 } from '@chakra-ui/react';
 import { FaBars, FaSun, FaMoon, FaDog, FaGlobe } from 'react-icons/fa';
+import { FiAlertTriangle } from "react-icons/fi";
 import { WiThermometer, WiStrongWind, WiRain, WiHumidity } from 'react-icons/wi';
 import Logout from '../../Frontend/AuthComponents/Logout';
 import { useNavigate } from 'react-router-dom';
@@ -188,6 +189,22 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
             >
               {isSummaryOpen ? 'Hide Summary' : ' Weather Summary'}
             </MotionButton>
+          </motion.div>
+          <motion.div {...motionProps}>
+            <Tooltip label="Toggle Weather Alerts">
+              <MotionIconButton
+                icon={ <FiAlertTriangle />}
+                isRound
+                size="lg"
+                onClick={toggleAlerts}
+                bg="transparent"
+                color="whitesmoke"
+                aria-label="Toggle Weather Alerts"
+                _hover={{ bg: 'transparent' }}
+                whileHover={{ scale: 1.4 }}
+                whileTap={{ scale: 0.9 }}
+              />
+            </Tooltip>
           </motion.div>
           <motion.div {...motionProps}>
             <Tooltip label="Toggle Dark Mode">
