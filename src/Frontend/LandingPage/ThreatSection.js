@@ -46,11 +46,11 @@ const ThreatSection = () => (
                 <br />
                 <strong>Example 4:</strong> Russian state-sponsored actors have conducted spearphishing campaigns and deployed malware to gain access to critical infrastructure systems.
               </Text>
-              <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
+              {/* <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
                 <Button size="lg" colorScheme="primary" variant="solid" mt={4}>
                   Request Demo
                 </Button>
-              </Link>
+              </Link> */}
             </Box>
             <MotionImage
               src="jobsite.jpg"
@@ -92,11 +92,11 @@ const ThreatSection = () => (
                 <br />
                 <strong>Example 4:</strong> In March 2019, a former employee attempted to threaten drinking water safety by using unrevoked credentials to access a facility computer.
               </Text>
-              <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
+              {/* <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
                 <Button size="lg" colorScheme="primary" variant="solid" mt={4}>
                   Request Demo
                 </Button>
-              </Link>
+              </Link> */}
             </Box>
           </MotionFlex>
 
@@ -131,11 +131,11 @@ const ThreatSection = () => (
                 <br />
                 <strong>Example 2:</strong> Advanced Persistent Threat (APT) actors have exploited vulnerabilities in IT systems to gain long-term access and disrupt operations.
               </Text>
-              <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
+              {/* <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
                 <Button size="lg" colorScheme="primary" variant="solid" mt={4}>
                   Request Demo
                 </Button>
-              </Link>
+              </Link> */}
             </Box>
           </MotionFlex>
         </Box>

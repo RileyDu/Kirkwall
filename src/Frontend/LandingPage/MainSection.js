@@ -100,11 +100,11 @@ const MainSection = () => (
                 <li>Homegrown Expertise</li>
               </ul>
             </Text>
-            <Link href="https://kirkwall-demo.vercel.app/">       
+            {/* <Link href="https://kirkwall-demo.vercel.app/">       
                    <Button size="lg" colorScheme="primary" variant="solid" mt={4}>
                 Get Started
               </Button>
-            </Link>
+            </Link> */}
           </Box>
           <MotionImage
             src="team.jpg"
@@ -152,11 +152,11 @@ const MainSection = () => (
             <Text fontSize="lg" mb={4} color="primary.200">
               Founded in 2022, Kirkwall is dedicated to safeguarding agricultural, industrial, and manufacturing sectors with state-of-the-art monitoring and security solutions.
             </Text>
-            <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
+            {/* <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
               <Button size="lg" colorScheme="primary" variant="solid" mt={4}>
                 Get Started
               </Button>
-            </Link>
+            </Link> */}
           </Box>
         </MotionFlex>
 
@@ -175,11 +175,11 @@ const MainSection = () => (
           <Text fontSize="lg" color="primary.200" mb={6}>
             Addressing vulnerabilities in Agriculture, Energy, Water, Industrial, and Manufacturing sectors.
           </Text>
-          <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
+          {/* <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
             <Button size="lg" colorScheme="primary" variant="solid">
               Get Started
             </Button>
-          </Link>
+          </Link> */}
         </MotionBox>
 
 

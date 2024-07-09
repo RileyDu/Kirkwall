@@ -9,12 +9,18 @@ const Header = () => {
     <Box bg="navy.900" color="white" py={4} px={8} width="100%" position="sticky" top="0" zIndex="1000">
       <Flex justify="space-between" align="center" maxW="1200px" mx="auto">
         <Flex align="center">
-          <Icon as={FaChessRook} w={10} h={10} mr={3} color="primary.300" />
-          <Heading size="lg">Kirkwall</Heading>
+        <Box>
+            <img
+              src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
+              alt="kirkwall logo"
+              style={{ height: '50px', width: 'auto', cursor: 'pointer' }}
+            //   onClick={() => navigate('/')}
+            />
+          </Box>
         </Flex>
         <Flex display={{ base: 'none', md: 'flex' }}>
           <Link href="https://kirkwall-demo.vercel.app/login" style={{ textDecoration: 'none' }}>
-            <Button colorScheme="primary">Get Started</Button>
+            <Button colorScheme="primary">Login</Button>
           </Link>
         </Flex>
         <Icon as={FaBars} w={8} h={8} display={{ base: 'block', md: 'none' }} onClick={onOpen} />
