@@ -156,7 +156,7 @@ const ChartExpandModal = ({
           bg={getBackgroundColor()}
         >
           <ModalHeader
-            bg="gray.800"
+            bg="#2121"
             color="white"
             fontSize={fontSize}
             borderTopRadius={'md'}
@@ -167,8 +167,8 @@ const ChartExpandModal = ({
             {title}
           </ModalHeader>
           <ModalCloseButton size="lg" color="white" mt={2} />
-          <ModalBody display="flex" flexDirection="column" flexGrow={1} p={4} bg={getContentBackgroundColor()} borderRadius="md" boxShadow="md">
-            <Box display="flex" justifyContent="space-between" mb={2}>
+          <ModalBody display="flex" flexDirection="column" flexGrow={1} p={4} bg={getContentBackgroundColor()} borderBottomRadius={'md'} boxShadow="md">
+            <Box display="flex" justifyContent="space-between" mb={2} mt={-2}>
               {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map((timePeriod) => (
                 <MotionButton
                   key={timePeriod}
@@ -275,7 +275,7 @@ const ChartExpandModal = ({
                     </Box>
                   </>
                 ) : (
-                  <Text color={getTextColor()} mt={4}>Set thresholds to see alerts</Text>
+                  <Text color={'white'}mt={4}>Set thresholds to see alerts</Text>
                 )}
               </Box>
               <Box bg="gray.700" borderRadius="md" boxShadow="md" p={4} height="430px">
