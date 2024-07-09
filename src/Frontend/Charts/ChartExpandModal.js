@@ -231,7 +231,7 @@ const ChartExpandModal = ({
             <Divider />
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mt={4} flexGrow={1}>
               <Box bg="gray.700" borderRadius="md" boxShadow="md" p={4} height="430px">
-                <MiniDashboard weatherData={weatherData} metric={metric} setCurrentValue={setCurrentValue} mt={2} />
+                <MiniDashboard weatherData={weatherData} metric={metric} setCurrentValue={setCurrentValue} mt={2}  />
                 <Divider my={8} borderColor={'white'}/>
                 {highThreshold || lowThreshold ? (
                   <>

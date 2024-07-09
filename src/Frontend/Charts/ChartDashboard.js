@@ -1,4 +1,4 @@
-import { Box, Text, Flex } from '@chakra-ui/react';
+import { Box, Text, Flex, useColorMode } from '@chakra-ui/react';
 import { MinusIcon, AddIcon } from '@chakra-ui/icons';
 
 const getLabelForMetric = (metric) => {
@@ -24,12 +24,14 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod, setCurrentValue 
   const reversedData = [...weatherData]?.reverse();
   const currentData = reversedData.map((data) => data[metric]);
 
+  const { colorMode } = useColorMode();
+
   const min = currentData.length > 0 ? Math.min(...currentData) : 'N/A';
   const max = currentData.length > 0 ? Math.max(...currentData) : 'N/A';
   const mostRecentValue =
     currentData.length > 0 ? currentData[currentData.length - 1] : 'N/A';
 
-    setCurrentValue(mostRecentValue);
+    if (setCurrentValue) setCurrentValue(mostRecentValue);
 
   const calculateTimePeriod = (dataLength) => {
     const totalMinutes = metric === 'temp' || metric === 'hum' ? dataLength * 10 : dataLength * 5;
@@ -60,8 +62,8 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod, setCurrentValue 
           justifyContent="center"
           p={2}
           border="2px solid"
-          borderColor="white"
-          color={'white'}
+          borderColor={colorMode === 'light' ? 'gray.400' : 'white'}
+          color={colorMode === 'light' ? 'gray.500' : 'white'}
           borderRadius="md"
           boxShadow="lg"
           m={1}
@@ -80,8 +82,8 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod, setCurrentValue 
           justifyContent="center"
           p={2}
           border="2px solid"
-          borderColor="white"
-          color={'white'}
+          borderColor={colorMode === 'light' ? 'gray.400' : 'white'}
+          color={colorMode === 'light' ? 'gray.500' : 'white'}
           borderRadius="md"
           boxShadow="lg"
           m={1}
@@ -100,8 +102,8 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod, setCurrentValue 
           justifyContent="center"
           p={2}
           border="2px solid"
-          borderColor="white"
-          color={'white'}
+          borderColor={colorMode === 'light' ? 'gray.400' : 'white'}
+          color={colorMode === 'light' ? 'gray.500' : 'white'}
           borderRadius="md"
           boxShadow="lg"
           m={1}
@@ -120,8 +122,8 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod, setCurrentValue 
           justifyContent="center"
           p={2}
           border="2px solid"
-          borderColor="white"
-          color={'white'}
+          borderColor={colorMode === 'light' ? 'gray.400' : 'white'}
+          color={colorMode === 'light' ? 'gray.500' : 'white'}
           borderRadius="md"
           boxShadow="lg"
           m={1}

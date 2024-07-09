@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, VStack, Heading, Text, Flex, Image, Link, Button, Icon } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { FaArrowUp } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
@@ -11,7 +12,9 @@ const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-const ThreatSection = () => (
+const ThreatSection = () => {
+  const navigate = useNavigate();
+  return (
   <Box width="100%" py={10} bg="navy.900">
     <Box maxW="1200px" mx="auto" textAlign="left">
       <VStack spacing={10} align="stretch">
@@ -155,11 +158,11 @@ const ThreatSection = () => (
           <Text fontSize="lg" color="primary.200" mb={6}>
             A centralized, sensor-agnostic, scalable, and proactive solution to transform security and ensure resilience.
           </Text>
-          <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
-            <Button size="lg" colorScheme="primary" variant="solid">
+          {/* <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}> */}
+            <Button size="lg" colorScheme="primary" variant="solid" onClick={() => navigate('/login')}>
               Get Started
             </Button>
-          </Link>
+          {/* </Link> */}
         </MotionBox>
 
         <MotionBox
@@ -188,5 +191,6 @@ const ThreatSection = () => (
     <Icon as={FaArrowUp} w={10} h={10} position="fixed" bottom={5} right={5} color="primary.300" onClick={scrollToTop} cursor="pointer" />
   </Box>
 );
+};
 
 export default ThreatSection;

@@ -50,7 +50,7 @@ const MainSection = () => {
             href="https://kirkwall-demo.vercel.app/"
             style={{ textDecoration: 'none' }}
           > */}
-            <Button size="lg" colorScheme="primary" variant="solid" onClick={() => navigate('/')}>
+            <Button size="lg" colorScheme="primary" variant="solid" onClick={() => navigate('/login')}>
               Get Started
             </Button>
           {/* </Link> */}

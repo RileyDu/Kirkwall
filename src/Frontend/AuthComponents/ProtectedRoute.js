@@ -6,7 +6,7 @@ import { useAuth
 const ProtectedRoute = ({ children }) => {
   const { currentUser } = useAuth();
 
-  return currentUser ? children : <Navigate to="/login" />;
+  return currentUser ? children : <Navigate to="/landing" />;
 };
 
 export default ProtectedRoute;
