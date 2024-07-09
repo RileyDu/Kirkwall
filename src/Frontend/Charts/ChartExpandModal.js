@@ -54,9 +54,12 @@ const ChartExpandModal = ({
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
   const [alerts, setAlerts] = useState(JSON.parse(localStorage.getItem('alerts')) || []);
-  const [timer, setTimer] = useState(300);
+  const [timer, setTimer] = useState(30);
   const [currentValue, setCurrentValue] = useState(null);
   const [lastAlertTime, setLastAlertTime] = useState(null); // Add last alert time state
+
+  const apiUrl = process.env.REACT_APP_API_URL || 'https://kirkwall-demo.vercel.app/';
+
 
   const MotionButton = motion(Button);
   const toast = useToast();
@@ -107,7 +110,7 @@ const ChartExpandModal = ({
 
   const sendSMSAlert = async (to, body) => {
     try {
-      const response = await axios.post('http://localhost:3001/send-sms', { to, body });
+      const response = await axios.post(`${apiUrl}/send-sms`, { to, body });
       console.log('SMS response:', response.data);
       toast({
         title: 'Alert sent.',
@@ -130,7 +133,7 @@ const ChartExpandModal = ({
 
   const sendEmailAlert = async (to, subject, text, html) => {
     try {
-      const response = await axios.post('http://localhost:3001/send-email', { to, subject, text, html });
+      const response = await axios.post(`${apiUrl}/send-email`, { to, subject, text, html });
       console.log('Email response:', response.data);
       toast({
         title: 'Alert sent.',
