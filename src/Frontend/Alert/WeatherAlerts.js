@@ -27,7 +27,10 @@ import axios from 'axios';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../Backend/Firebase';
 import { FaChevronDown } from 'react-icons/fa';
-import { InfoIcon } from '@chakra-ui/icons';
+import { SettingsIcon } from '@chakra-ui/icons';
+import Marquee from 'react-marquee-slider';
+
+import { useWeatherData } from '../WeatherDataContext';
 
 function WeatherAlerts({ isVisible, onClose, isMinimized }) {
   const [alerts, setAlerts] = useState([]);
@@ -35,28 +38,24 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
   const [selectedAlert, setSelectedAlert] = useState(null);
   const [showDescription, setShowDescription] = useState(false);
   const [user] = useAuthState(auth);
+  const { loading } = useWeatherData();
 
-  // State for managing the state code
   const [stateCode, setStateCode] = useState(() => {
-    // Retrieve stateCode from localStorage or default to 'ND'
     return localStorage.getItem('stateCode') || 'ND';
   });
 
-  // State for the state code change modal
   const [isChangeStateCodeModalOpen, setIsChangeStateCodeModalOpen] = useState(false);
   const [newStateCode, setNewStateCode] = useState(stateCode);
 
   const fetchWeatherAlerts = async () => {
     try {
       console.log(`Fetching weather alerts for state: ${stateCode}`);
-      const response = await axios.get(
-        `https://api.weather.gov/alerts/active?area=${stateCode}`
-      );
+      const response = await axios.get(`https://api.weather.gov/alerts/active?area=${stateCode}`);
       console.log('API response:', response.data);
 
       if (response.data.features && response.data.features.length > 0) {
         setAlerts(response.data.features);
-        setError(''); // Clear any previous error message
+        setError(''); 
       } else {
         setAlerts([]);
         setError(`No weather alerts in your state (${stateCode})`);
@@ -68,24 +67,21 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
     }
   };
 
-  // Fetch weather alerts when the component mounts or stateCode changes
   useEffect(() => {
     fetchWeatherAlerts();
   }, [stateCode]);
 
-  // Sync newStateCode with stateCode when the modal opens
   useEffect(() => {
     setNewStateCode(stateCode);
   }, [isChangeStateCodeModalOpen, stateCode]);
 
-  // Save stateCode to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('stateCode', stateCode);
   }, [stateCode]);
 
   const handleAlertClick = (alert) => {
     setSelectedAlert(alert);
-    setShowDescription(false); // Reset the show description state
+    setShowDescription(false); 
   };
 
   const handleModalClose = () => {
@@ -101,16 +97,9 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
     setIsChangeStateCodeModalOpen(false);
   };
 
-  const handleFontSizePerAlert = () => {
-    if (alerts.length > 0 && alerts.length < 15) {
-      return 'md';
-    } else {
-      return 'xs';
-    }
-  };
-  
+  if (loading) return null;
 
-  if (!isVisible) return null; // Return null if the component is not visible
+  if (!isVisible) return null; 
 
   return user ? (
     <Center>
@@ -124,16 +113,10 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
             color="white"
           >
             <AlertIcon />
-            <AlertTitle mr={2}>{error}</AlertTitle>
             <Tooltip label="Change State">
-              <Icon as={InfoIcon} ml={2} cursor="pointer" onClick={() => setIsChangeStateCodeModalOpen(true)} position={'absolute'} right={'50px'} />
-            </Tooltip>
-            <CloseButton
-              position="absolute"
-              right="8px"
-              size="lg"
-              onClick={onClose}
-            />
+                <Icon as={SettingsIcon} ml={2} cursor="pointer" onClick={() => setIsChangeStateCodeModalOpen(true)} mr={2} />
+              </Tooltip>
+            <AlertTitle>{error}</AlertTitle>
           </Alert>
         )}
         <Flex justifyContent="center" alignItems="center" mb={0}>
@@ -145,43 +128,64 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
               bgColor="red.500"
               color="white"
               width="100%"
-              //   position={'relative'}
-              //   overflow={'auto'}
             >
-              <AlertIcon color="white" />
-              <AlertTitle>{stateCode} Weather Alerts:</AlertTitle>
-              {alerts.map((alert) => (
-                <Box
-                  border="2px"
-                  borderColor="black"
-                  borderRadius="xl"
-                  p="1"
-                  bg="gray.50"
-                  mx={1}
-                  cursor="pointer"
-                  key={alert.id}
-                  onClick={() => handleAlertClick(alert)}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  textAlign={'center'}
-                >
-                  <Tooltip label={`Location: ${alert.properties.areaDesc}`} aria-label="Area Description">
-                    <AlertDescription px={1} fontSize={handleFontSizePerAlert()} color="red.500">
-                      {alert.properties.event}
-                    </AlertDescription>
-                  </Tooltip>
-                </Box>
-              ))}
+              <AlertIcon color="white" ml={2}/>
               <Tooltip label="Change State">
-                <Icon as={InfoIcon} ml={2} cursor="pointer" onClick={() => setIsChangeStateCodeModalOpen(true)} position={'absolute'} right={'50px'} />
+                <Icon as={SettingsIcon} cursor="pointer" onClick={() => setIsChangeStateCodeModalOpen(true)} mr={4} ml={2}/>
               </Tooltip>
-              <CloseButton
-                position="absolute"
-                right="8px"
-                size={'lg'}
-                onClick={onClose}
-              />
+              <AlertTitle w={'150px'}>{stateCode} Weather Alerts:</AlertTitle>
+              {alerts.length > 15 ? (
+                <Marquee velocity={7} pauseOnHover={true} loop={true} direction='ltr'>
+                  {alerts.map((alert) => (
+                    <Button
+                      border="2px"
+                      borderColor="black"
+                      borderRadius="xl"
+                      p="1"
+                      bg="gray.50"
+                      mx={1}
+                      cursor="pointer"
+                      key={alert.id}
+                      onClick={() => handleAlertClick(alert)}
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      textAlign={'center'}
+                      fontWeight={'regular'}
+                    >
+                      <Tooltip label={`Location: ${alert.properties.areaDesc}`} aria-label="Area Description">
+                        <AlertDescription px={1} fontSize='xs' color="red.500">
+                          {alert.properties.event}
+                        </AlertDescription>
+                      </Tooltip>
+                    </Button>
+                  ))}
+                </Marquee>
+              ) : (
+                alerts.map((alert) => (
+                  <Box
+                    border="2px"
+                    borderColor="black"
+                    borderRadius="xl"
+                    p="1"
+                    bg="gray.50"
+                    mx={1}
+                    cursor="pointer"
+                    key={alert.id}
+                    onClick={() => handleAlertClick(alert)}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    textAlign={'center'}
+                  >
+                    <Tooltip label={`Location: ${alert.properties.areaDesc}`} aria-label="Area Description">
+                      <AlertDescription px={1} fontSize='md' color="red.500">
+                        {alert.properties.event}
+                      </AlertDescription>
+                    </Tooltip>
+                  </Box>
+                ))
+              )}
             </Alert>
           )}
         </Flex>
@@ -227,7 +231,6 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
           </ModalContent>
         </Modal>
       )}
-      {/* Modal for changing state code */}
       <Modal isOpen={isChangeStateCodeModalOpen} onClose={() => setIsChangeStateCodeModalOpen(false)}>
         <ModalOverlay />
         <ModalContent border="2px solid black" bg="#2D3748">
@@ -246,12 +249,16 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button variant={'sidebar'} mr={3} onClick={handleChangeStateCode}>
-              Update
+            <Button variant={'sidebar'} mr={3} onClick={handleChangeStateCode} color={'white'}>
+              Save
             </Button>
-            {/* <Button variant="ghost" onClick={() => setIsChangeStateCodeModalOpen(false)}>
+            <Button
+              variant={'sidebar'}
+              onClick={() => setIsChangeStateCodeModalOpen(false)}
+              color={'white'}
+            >
               Cancel
-            </Button> */}
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
