@@ -58,7 +58,9 @@ const ChartExpandModal = ({
   const [currentValue, setCurrentValue] = useState(null);
   const [lastAlertTime, setLastAlertTime] = useState(null); // Add last alert time state
 
-  const apiUrl = process.env.REACT_APP_API_URL || 'https://kirkwall-demo.vercel.app/';
+  const apiUrl = process.env.NODE_ENV === 'production'
+  ? 'https://kirkwall-demo.vercel.app'
+  : 'http://localhost:3001';
 
 
   const MotionButton = motion(Button);
