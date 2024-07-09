@@ -1,5 +1,15 @@
 import React from 'react';
-import { Box, VStack, Heading, Text, Flex, Button, Image, Link, Icon } from '@chakra-ui/react';
+import {
+  Box,
+  VStack,
+  Heading,
+  Text,
+  Flex,
+  Button,
+  Image,
+  Link,
+  Icon,
+} from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { FaArrowUp } from 'react-icons/fa';
 // import dashboard from '../dashboard.png'
@@ -29,9 +39,13 @@ const MainSection = () => (
             Comprehensive Monitoring for Your Business
           </Heading>
           <Text fontSize="lg" color="primary.200" mb={6}>
-            Protect your critical infrastructure with our advanced monitoring and real-time alert system.
+            Protect your critical infrastructure with our advanced monitoring
+            and real-time alert system.
           </Text>
-          <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
+          <Link
+            href="https://kirkwall-demo.vercel.app/"
+            style={{ textDecoration: 'none' }}
+          >
             <Button size="lg" colorScheme="primary" variant="solid">
               Get Started
             </Button>
@@ -39,7 +53,7 @@ const MainSection = () => (
         </MotionBox>
 
         <MotionFlex
-          direction={{ base: "column", lg: "row" }}
+          direction={{ base: 'column', lg: 'row' }}
           justify="space-between"
           align="center"
           py={10}
@@ -51,7 +65,7 @@ const MainSection = () => (
           <MotionImage
             src={'dashboard.png'}
             alt="Kirkwall Dashboard"
-            width={{ base: "100%", lg: "45%" }}
+            width={{ base: '100%', lg: '45%' }}
             objectFit="cover"
             mb={{ base: 6, lg: 0 }}
             whileHover={{ scale: 1.05 }}
@@ -61,13 +75,20 @@ const MainSection = () => (
               Overview
             </Heading>
             <Text fontSize="lg" mb={4}>
-              Kirkwall is your trusted partner in operational security, offering real-time monitoring and alerts to protect your critical systems from downtime and threats.
+              Kirkwall is your trusted partner in operational security, offering
+              real-time monitoring and alerts to protect your critical systems
+              from downtime and threats.
             </Text>
             <Heading as="h2" size="xl" mb={4} color="primary.100">
               Our Promise
             </Heading>
-            <Text fontSize="lg" color="primary.200">Proactive. Predictive. Secure.</Text>
-            <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
+            <Text fontSize="lg" color="primary.200">
+              Proactive. Predictive. Secure.
+            </Text>
+            <Link
+              href="mailto:will@kirkwall.com"
+              style={{ textDecoration: 'none' }}
+            >
               <Button size="lg" colorScheme="primary" variant="solid" mt={4}>
                 Request Demo
               </Button>
@@ -76,7 +97,7 @@ const MainSection = () => (
         </MotionFlex>
 
         <MotionFlex
-          direction={{ base: "column", lg: "row" }}
+          direction={{ base: 'column', lg: 'row' }}
           justify="space-between"
           align="center"
           py={10}
@@ -109,14 +130,14 @@ const MainSection = () => (
           <MotionImage
             src="team.jpg"
             alt="Kirkwall Values"
-            width={{ base: "100%", lg: "45%" }}
+            width={{ base: '100%', lg: '45%' }}
             objectFit="cover"
             whileHover={{ scale: 1.05 }}
           />
         </MotionFlex>
 
         <MotionFlex
-          direction={{ base: "column", lg: "row" }}
+          direction={{ base: 'column', lg: 'row' }}
           justify="space-between"
           align="center"
           py={10}
@@ -128,7 +149,7 @@ const MainSection = () => (
           <MotionImage
             src="topdowncombine.jpg"
             alt="Kirkwall Philosophy"
-            width={{ base: "100%", lg: "45%" }}
+            width={{ base: '100%', lg: '45%' }}
             objectFit="cover"
             mb={{ base: 6, lg: 0 }}
             whileHover={{ scale: 1.05 }}
@@ -138,7 +159,8 @@ const MainSection = () => (
               Our Philosophy
             </Heading>
             <Text fontSize="lg" mb={4} color="primary.200">
-              Challenging conventional security, Kirkwall pushes boundaries to deliver exceptional protection and value.
+              Challenging conventional security, Kirkwall pushes boundaries to
+              deliver exceptional protection and value.
             </Text>
             <Heading as="h2" size="xl" mb={4} color="primary.100">
               Our Voice
@@ -150,7 +172,9 @@ const MainSection = () => (
               About Kirkwall
             </Heading>
             <Text fontSize="lg" mb={4} color="primary.200">
-              Founded in 2022, Kirkwall is dedicated to safeguarding agricultural, industrial, and manufacturing sectors with state-of-the-art monitoring and security solutions.
+              Founded in 2022, Kirkwall is dedicated to safeguarding
+              agricultural, industrial, and manufacturing sectors with
+              state-of-the-art monitoring and security solutions.
             </Text>
             {/* <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
               <Button size="lg" colorScheme="primary" variant="solid" mt={4}>
@@ -173,7 +197,8 @@ const MainSection = () => (
             Securing America's Critical Infrastructure
           </Heading>
           <Text fontSize="lg" color="primary.200" mb={6}>
-            Addressing vulnerabilities in Agriculture, Energy, Water, Industrial, and Manufacturing sectors.
+            Addressing vulnerabilities in Agriculture, Energy, Water,
+            Industrial, and Manufacturing sectors.
           </Text>
           {/* <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
             <Button size="lg" colorScheme="primary" variant="solid">
@@ -182,9 +207,8 @@ const MainSection = () => (
           </Link> */}
         </MotionBox>
 
-
         <MotionFlex
-          direction={{ base: "column", lg: "row" }}
+          direction={{ base: 'column', lg: 'row' }}
           justify="space-between"
           align="center"
           py={10}
@@ -205,7 +229,10 @@ const MainSection = () => (
                 <li>IoT Security</li>
               </ul>
             </Text>
-            <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
+            <Link
+              href="https://kirkwall-demo.vercel.app/"
+              style={{ textDecoration: 'none' }}
+            >
               <Button size="lg" colorScheme="primary" variant="solid" mt={4}>
                 Request Demo
               </Button>
@@ -214,14 +241,24 @@ const MainSection = () => (
           <MotionImage
             src="sensor.jpg"
             alt="Security Solutions"
-            width={{ base: "100%", lg: "45%" }}
+            width={{ base: '100%', lg: '45%' }}
             objectFit="cover"
             whileHover={{ scale: 1.05 }}
           />
         </MotionFlex>
       </VStack>
     </Box>
-    <Icon as={FaArrowUp} w={10} h={10} position="fixed" bottom={5} right={5} color="primary.300" onClick={scrollToTop} cursor="pointer" />
+    <Icon
+      as={FaArrowUp}
+      w={10}
+      h={10}
+      position="fixed"
+      bottom={5}
+      right={5}
+      color="primary.300"
+      onClick={scrollToTop}
+      cursor="pointer"
+    />
   </Box>
 );
 
