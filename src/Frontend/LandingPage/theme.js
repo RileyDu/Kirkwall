@@ -6,6 +6,7 @@ const theme = extendTheme({
       body: {
         color: 'white',
         bg: '#0C090A',
+        margin: 2,
       },
     },
   },

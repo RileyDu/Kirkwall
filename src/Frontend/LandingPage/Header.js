@@ -44,8 +44,8 @@ const Header = () => {
             <Link href="#our-philosophy" onClick={onClose}>
               <Button color={'whitesmoke'} w="100%" my={2} bg="navy.700" _hover={{ bg: "navy.600" }}>Our Philosophy</Button>
             </Link>
-            <Link href="https://kirkwall-demo.vercel.app/login" onClick={onClose}>
-              <Button w="100%" my={2} colorScheme="primary">Get Started</Button>
+            <Link onClick={onClose}>
+              <Button w="100%" my={2} colorScheme="primary" onClick={() => navigate('/login')}>Get Started</Button>
             </Link>
             
           </DrawerBody>
