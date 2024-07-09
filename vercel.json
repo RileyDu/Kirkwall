@@ -14,11 +14,11 @@
   "rewrites": [
     {
       "source": "/send-sms",
-      "destination": "server.js"
+      "destination": "src/Backend/server.js"
     },
     {
       "source": "/send-email",
-      "destination": "server.js"
+      "destination": "src/Backend/server.js"
     },
     {
       "source": "/(.*)",
