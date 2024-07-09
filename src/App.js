@@ -46,7 +46,7 @@ const Layout = ({
   const location = useLocation();
 
   const shouldShowSidebar =
-    location.pathname !== '/login' && location.pathname !== '/signup';
+    location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !== '/landing';
 
   return (
     <Flex minH="100vh">
@@ -116,7 +116,7 @@ return (
 
   return (
     <Box>
-      {location.pathname !== '/login' && location.pathname !== '/signup' && (
+      {location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !== '/landing' && (
         <Header toggleMobileMenu={toggleMobileMenu} isMinimized={isMinimized} isVisible={showAlerts} toggleAlerts={toggleAlerts}/>
       )}
       <Layout
