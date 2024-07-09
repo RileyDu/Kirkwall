@@ -1,9 +1,12 @@
 import React from 'react';
 import { Box, Flex, Button, Icon, Heading, Link, useDisclosure, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, DrawerContent, DrawerCloseButton } from '@chakra-ui/react';
 import { FaChessRook, FaBars } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+
 
 const Header = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
 
   return (
     <Box bg="navy.900" color="white" py={4} px={8} width="100%" position="sticky" top="0" zIndex="1000">
@@ -19,9 +22,9 @@ const Header = () => {
           </Box>
         </Flex>
         <Flex display={{ base: 'none', md: 'flex' }}>
-          <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
-            <Button colorScheme="primary">Login</Button>
-          </Link>
+          {/* <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}> */}
+            <Button colorScheme="primary" onClick={() => navigate('/login')}>Login</Button>
+          {/* </Link> */}
         </Flex>
         <Icon as={FaBars} w={8} h={8} display={{ base: 'block', md: 'none' }} onClick={onOpen} />
       </Flex>

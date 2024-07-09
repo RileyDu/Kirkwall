@@ -13,6 +13,7 @@ import {
 import { motion } from 'framer-motion';
 import { FaArrowUp } from 'react-icons/fa';
 // import dashboard from '../dashboard.png'
+import { useNavigate } from 'react-router-dom';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
@@ -22,7 +23,10 @@ const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-const MainSection = () => (
+const MainSection = () => {
+  const navigate = useNavigate();
+  
+  return (
   <Box width="100%" py={10} bg="navy.900">
     <Box maxW="1200px" mx="auto" textAlign="left">
       <VStack spacing={10} align="stretch">
@@ -42,14 +46,14 @@ const MainSection = () => (
             Protect your critical infrastructure with our advanced monitoring
             and real-time alert system.
           </Text>
-          <Link
+          {/* <Link
             href="https://kirkwall-demo.vercel.app/"
             style={{ textDecoration: 'none' }}
-          >
-            <Button size="lg" colorScheme="primary" variant="solid">
+          > */}
+            <Button size="lg" colorScheme="primary" variant="solid" onClick={() => navigate('/')}>
               Get Started
             </Button>
-          </Link>
+          {/* </Link> */}
         </MotionBox>
 
         <MotionFlex
@@ -261,5 +265,6 @@ const MainSection = () => (
     />
   </Box>
 );
+};
 
 export default MainSection;

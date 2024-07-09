@@ -181,6 +181,10 @@ const Login = () => {
           {/* <Text color="gray.400" textAlign="center">
             Don't have an account? <Link color="#F4B860">Sign up</Link>
           </Text> */}
+                    {/* <Divider my="4" /> */}
+          <Text color="gray.400" textAlign="center">
+            <Link color="#F4B860" onClick={() => navigate('/landing')}>Back to Home</Link>
+          </Text>
         </Stack>
       </Container>
       <Center py={4}>
