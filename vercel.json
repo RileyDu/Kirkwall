@@ -12,6 +12,17 @@
     }
   ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+    {
+      "source": "/send-sms",
+      "destination": "/server.js"
+    },
+    {
+      "source": "/send-email",
+      "destination": "/server.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
+    }
   ]
 }
