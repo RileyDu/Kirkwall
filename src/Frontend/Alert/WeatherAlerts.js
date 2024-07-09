@@ -111,12 +111,13 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
             borderRadius="0"
             bgColor="red.500"
             color="white"
+            w={'100%'}
           >
-            <AlertIcon />
+            <AlertIcon ml={2} />
             <Tooltip label="Change State">
-                <Icon as={SettingsIcon} ml={2} cursor="pointer" onClick={() => setIsChangeStateCodeModalOpen(true)} mr={2} />
+                <Icon as={SettingsIcon} cursor="pointer" onClick={() => setIsChangeStateCodeModalOpen(true)} mr={4} />
               </Tooltip>
-            <AlertTitle>{error}</AlertTitle>
+            <AlertTitle fontSize={'lg'}>{error}</AlertTitle>
           </Alert>
         )}
         <Flex justifyContent="center" alignItems="center" mb={0}>
