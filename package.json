@@ -16,6 +16,7 @@
     "@vis.gl/react-google-maps": "^1.1.0",
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "firebase": "^10.12.2",
     "framer-motion": "^6.5.1",
@@ -54,5 +55,6 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.14.5"
-  }
+  },
+  "proxy": "http://localhost:3000"
 }

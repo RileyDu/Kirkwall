@@ -49,9 +49,9 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
 
   const fetchWeatherAlerts = async () => {
     try {
-      console.log(`Fetching weather alerts for state: ${stateCode}`);
+      // console.log(`Fetching weather alerts for state: ${stateCode}`);
       const response = await axios.get(`https://api.weather.gov/alerts/active?area=${stateCode}`);
-      console.log('API response:', response.data);
+      // console.log('API response:', response.data);
 
       if (response.data.features && response.data.features.length > 0) {
         setAlerts(response.data.features);
@@ -61,7 +61,7 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
         setError(`No weather alerts in your state (${stateCode})`);
       }
     } catch (err) {
-      console.error('Error fetching weather alerts:', err);
+      // console.error('Error fetching weather alerts:', err);
       setError(err.response?.data?.detail || 'An error occurred.');
       setAlerts([]);
     }

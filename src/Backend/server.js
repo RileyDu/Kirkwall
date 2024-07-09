@@ -1,10 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const twilio = require('twilio');
+const cors = require('cors');
+
 require('dotenv').config(); // Ensure this line is at the very top
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 
 // Twilio credentials from environment variables
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -19,6 +21,7 @@ if (!accountSid || !authToken || !twilioPhoneNumber) {
 // Initialize Twilio client
 const client = twilio(accountSid, authToken);
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

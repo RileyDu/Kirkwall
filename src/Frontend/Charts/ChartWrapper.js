@@ -151,57 +151,56 @@ const ChartWrapper = ({
     handleCloseModal();
   };
 
-  const sendSMSAlert = async (to, body) => {
-    try {
-      const response = await axios.post('/send-sms', { to, body });
-      console.log('SMS response:', response.data);
-      toast({
-        title: 'Alert sent.',
-        description: response.data.message,
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (error) {
-      console.error('Error sending alert:', error);
-      toast({
-        title: 'Error sending alert.',
-        description: error.message,
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
+  // const sendSMSAlert = async (to, body) => {
+  //   try {
+  //     const response = await axios.post('http://localhost:3000/send-sms', { to, body });
+  //     console.log('SMS response:', response.data);
+  //     toast({
+  //       title: 'Alert sent.',
+  //       description: response.data.message,
+  //       status: 'success',
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
+  //   } catch (error) {
+  //     console.error('Error sending alert:', error);
+  //     toast({
+  //       title: 'Error sending alert.',
+  //       description: error.message,
+  //       status: 'error',
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
+  //   }
+  // };
 
-  const checkThresholdExceed = () => {
-    const chartSettings = JSON.parse(
-      localStorage.getItem(`chartSettings_${title}`)
-    );
-    if (chartSettings) {
-      const { phoneNumber, highThreshold, lowThreshold } = chartSettings;
-      const lastValue =
-        weatherData && weatherData.length > 0 ? weatherData[0][metric] : null;
-      const now = new Date();
-
-      if (
-        lastValue &&
-        (lastValue > highThreshold || lastValue < lowThreshold) &&
-        (!lastAlertTime || now - new Date(lastAlertTime) >= 5 * 60 * 1000)
-      ) {
-        const message = `${title} has exceeded the threshold. Current value: ${lastValue}`;
-        sendSMSAlert(phoneNumber, message);
-        setLastAlertTime(now);
-      }
-    }
-  };
-
-  useEffect(() => {
-    // const interval = setInterval(() => {
-    //   checkThresholdExceed();
-    // }, 305000); // 5 minutes
-    // return () => clearInterval(interval);
-  }, [weatherData, metric, title, lastAlertTime]);
+  // const checkThresholdExceed = () => {
+  //   const chartSettings = JSON.parse(localStorage.getItem(`chartSettings_${title}`));
+    
+  //   if (!chartSettings) return;
+    
+  //   const { phoneNumber, highThreshold, lowThreshold } = chartSettings;
+  //   const lastValue = weatherData && weatherData.length > 0 ? weatherData[0][metric] : null;
+    
+  //   if (!lastValue) return;
+  
+  //   const now = new Date();
+  //   const lastAlertTimeObj = lastAlertTime ? new Date(lastAlertTime) : null;
+    
+  //   if (
+  //     (lastValue > highThreshold || lastValue < lowThreshold) &&
+  //     (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000)
+  //   ) {
+  //     const message = `${title} has exceeded the threshold. Current value: ${lastValue}`;
+  //     sendSMSAlert(phoneNumber, message);
+  //     setLastAlertTime(now);
+  //   }
+  // };
+  
+  // useEffect(() => {
+  //   checkThresholdExceed();
+  // }, [weatherData, metric, title, lastAlertTime]);
+  
 
   const mostRecentValue =
     weatherData && weatherData.length > 0 ? weatherData[0][metric] : 'N/A';
