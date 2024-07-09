@@ -33,6 +33,7 @@ import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors';
 import MapComponent from './Frontend/Maps/Map';
+import LandingPage from './Frontend/LandingPage/LandingPage';
 
 const Layout = ({
   children,
@@ -125,6 +126,7 @@ return (
         toggleMobileMenu={toggleMobileMenu}
       >
         <Routes>
+          <Route path='/landing' element={<LandingPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
           <Route

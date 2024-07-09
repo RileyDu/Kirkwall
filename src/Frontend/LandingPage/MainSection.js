@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, VStack, Heading, Text, Flex, Button, Image, Link, Icon } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { FaArrowUp } from 'react-icons/fa';
-import dashboard from '../dashboard.png'
+// import dashboard from '../dashboard.png'
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
@@ -49,7 +49,7 @@ const MainSection = () => (
           id="core-values"
         >
           <MotionImage
-            src={dashboard}
+            src={'dashboard.png'}
             alt="Kirkwall Dashboard"
             width={{ base: "100%", lg: "45%" }}
             objectFit="cover"
