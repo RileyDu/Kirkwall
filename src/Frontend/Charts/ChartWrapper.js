@@ -525,6 +525,7 @@ const ChartWrapper = ({
         handleTimePeriodChange={handleTimePeriodChange}
         currentTimePeriod={currentTimePeriod}
         setCurrentTimePeriod={setCurrentTimePeriod}
+        sensorMap={sensorMap}
       />
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <ModalOverlay />

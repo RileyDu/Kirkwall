@@ -20,7 +20,7 @@ const getLabelForMetric = (metric) => {
   }
 };
 
-const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
+const MiniDashboard = ({ weatherData, metric, adjustTimePeriod, setCurrentValue }) => {
   const reversedData = [...weatherData]?.reverse();
   const currentData = reversedData.map((data) => data[metric]);
 
@@ -28,6 +28,8 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
   const max = currentData.length > 0 ? Math.max(...currentData) : 'N/A';
   const mostRecentValue =
     currentData.length > 0 ? currentData[currentData.length - 1] : 'N/A';
+
+    setCurrentValue(mostRecentValue);
 
   const calculateTimePeriod = (dataLength) => {
     const totalMinutes = metric === 'temp' || metric === 'hum' ? dataLength * 10 : dataLength * 5;
@@ -57,9 +59,9 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
           alignItems="center"
           justifyContent="center"
           p={2}
-          border="3px solid"
-          borderColor="brand.800"
-          bg="brand.400"
+          border="2px solid"
+          borderColor="white"
+          color={'white'}
           borderRadius="md"
           boxShadow="lg"
           m={1}
@@ -77,9 +79,9 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
           alignItems="center"
           justifyContent="center"
           p={2}
-          border="3px solid"
-          borderColor="brand.800"
-          bg="brand.400"
+          border="2px solid"
+          borderColor="white"
+          color={'white'}
           borderRadius="md"
           boxShadow="lg"
           m={1}
@@ -97,9 +99,9 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
           alignItems="center"
           justifyContent="center"
           p={2}
-          border="3px solid"
-          borderColor="brand.800"
-          bg="brand.400"
+          border="2px solid"
+          borderColor="white"
+          color={'white'}
           borderRadius="md"
           boxShadow="lg"
           m={1}
@@ -117,9 +119,9 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod }) => {
           alignItems="center"
           justifyContent="center"
           p={2}
-          border="3px solid"
-          borderColor="brand.800"
-          bg="brand.400"
+          border="2px solid"
+          borderColor="white"
+          color={'white'}
           borderRadius="md"
           boxShadow="lg"
           m={1}
