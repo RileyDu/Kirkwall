@@ -122,10 +122,10 @@ const ChartExpandModal = ({
         isClosable: true,
       });
     } catch (error) {
-      console.error('Error sending alert:', error);
+      console.error('Error sending alert:', error, apiUrl);
       toast({
         title: 'Error sending alert.',
-        description: error.message,
+        description: error.message, apiUrl,
         status: 'error',
         duration: 3000,
         isClosable: true,
