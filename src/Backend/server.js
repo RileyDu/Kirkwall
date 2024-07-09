@@ -1,12 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const twilio = require('twilio');
+const sgMail = require('@sendgrid/mail');
+require('dotenv').config(); // Ensure this line is at the very top
 const cors = require('cors');
 
-require('dotenv').config(); // Ensure this line is at the very top
-
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
+
+app.use(cors());
 
 // Twilio credentials from environment variables
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -21,7 +23,15 @@ if (!accountSid || !authToken || !twilioPhoneNumber) {
 // Initialize Twilio client
 const client = twilio(accountSid, authToken);
 
-app.use(cors());
+//Initialize SengGrid keys
+const sendGridApiKey = process.env.SENDGRID_API_KEY;
+sgMail.setApiKey(sendGridApiKey);
+
+// Ensure the SendGrid API key is correctly loaded
+if (!sendGridApiKey) {
+  throw new Error("SendGrid API key is missing. Check your .env file.");
+}
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -47,3 +57,35 @@ app.post('/send-sms', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+
+//construct message
+// Endpoint to send email using SendGrid
+app.post('/send-email', async (req, res) => {
+  const { to, subject, text, html } = req.body;
+  console.log('Request received to send Email:', { to, subject, text, html });
+
+  const msg = {
+    to: to,
+    from: 'evan@kirkwall.io', // Replace with your verified email
+    subject: subject,
+    text: text,
+    html: html,
+  };
+
+  try {
+    await sgMail.send(msg);
+    console.log('Email sent');
+    res.status(200).send({ message: 'Email sent successfully!' });
+  } catch (error) {
+    console.error('Error sending Email:', error);
+    if (error.response) {
+      console.error(error.response.body);
+    }
+    res.status(500).send({ message: 'Failed to send Email', error: error.message });
+  }
+});
+
+// app.listen(port, () => {
+//   console.log(`Server is running on port ${port}`);
+// });

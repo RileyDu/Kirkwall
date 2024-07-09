@@ -29,6 +29,8 @@ import WatchdogMap from '../Maps/WatchdogMap';
 import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts';
+import axios from 'axios';
+// import ThresholdAlertEmail from './ThresholdAlertEmail';
 
 const ChartExpandModal = ({
   isOpen,
@@ -48,13 +50,16 @@ const ChartExpandModal = ({
   const [chartType, setChartType] = useState('line');
   const [isThresholdModalOpen, setIsThresholdModalOpen] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
   const [alerts, setAlerts] = useState(JSON.parse(localStorage.getItem('alerts')) || []);
-  const [timer, setTimer] = useState(60);
+  const [timer, setTimer] = useState(300);
   const [currentValue, setCurrentValue] = useState(null);
+  const [lastAlertTime, setLastAlertTime] = useState(null); // Add last alert time state
 
   const MotionButton = motion(Button);
+  const toast = useToast();
 
   const getBackgroundColor = () => 'gray.700';
   const getContentBackgroundColor = () => (colorMode === 'light' ? 'brand.50' : 'gray.800');
@@ -81,7 +86,7 @@ const ChartExpandModal = ({
       setTimer((prevTimer) => {
         if (prevTimer <= 1) {
           checkThresholds();
-          return 60;
+          return 300;
         }
         return prevTimer - 1;
       });
@@ -89,18 +94,88 @@ const ChartExpandModal = ({
     return () => clearInterval(interval);
   }, [currentValue, highThreshold, lowThreshold]);
 
+  useEffect(() => {
+    const savedChartSettings = JSON.parse(localStorage.getItem(`chartSettings_${title}`));
+
+    if (savedChartSettings) {
+      setPhoneNumber(savedChartSettings.phoneNumber || '');
+      setUserEmail(savedChartSettings.userEmail || '');
+      setHighThreshold(savedChartSettings.highThreshold || '');
+      setLowThreshold(savedChartSettings.lowThreshold || '');
+    }
+  }, [title]);
+
+  const sendSMSAlert = async (to, body) => {
+    try {
+      const response = await axios.post('http://localhost:3001/send-sms', { to, body });
+      console.log('SMS response:', response.data);
+      toast({
+        title: 'Alert sent.',
+        description: response.data.message,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error('Error sending alert:', error);
+      toast({
+        title: 'Error sending alert.',
+        description: error.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const sendEmailAlert = async (to, subject, text, html) => {
+    try {
+      const response = await axios.post('http://localhost:3001/send-email', { to, subject, text, html });
+      console.log('Email response:', response.data);
+      toast({
+        title: 'Alert sent.',
+        description: response.data.message,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error('Error sending alert:', error);
+      toast({
+        title: 'Error sending alert.',
+        description: error.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
   const checkThresholds = () => {
     if (currentValue != null) {
-      if (highThreshold  < currentValue) {
+      const now = new Date();
+      const lastAlertTimeObj = lastAlertTime ? new Date(lastAlertTime) : null;
+
+      if (highThreshold < currentValue) {
         const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${highThreshold}.`;
+        if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
+          sendSMSAlert(phoneNumber, alertMessage);
+          sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
+          setLastAlertTime(now);
+        }
         setAlerts((prevAlerts) => {
           const newAlerts = [...prevAlerts, alertMessage];
           localStorage.setItem('alerts', JSON.stringify(newAlerts));
           return newAlerts;
         });
       }
+
       if (lowThreshold > currentValue) {
         const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${lowThreshold}.`;
+        if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
+          sendSMSAlert(phoneNumber, alertMessage);
+          setLastAlertTime(now);
+        }
         setAlerts((prevAlerts) => {
           const newAlerts = [...prevAlerts, alertMessage];
           localStorage.setItem('alerts', JSON.stringify(newAlerts));
@@ -128,8 +203,10 @@ const ChartExpandModal = ({
   const handleFormSubmit = () => {
     const chartSettings = {
       phoneNumber: phoneNumber,
+      userEmail: userEmail,
       highThreshold: parseFloat(highThreshold),
       lowThreshold: parseFloat(lowThreshold),
+
     };
 
     localStorage.setItem(`chartSettings_${title}`, JSON.stringify(chartSettings));
@@ -141,6 +218,7 @@ const ChartExpandModal = ({
     setAlerts([]);
     localStorage.setItem('alerts', JSON.stringify([]));
   };
+
 
   return (
     <>
@@ -236,10 +314,10 @@ const ChartExpandModal = ({
                 {highThreshold || lowThreshold ? (
                   <>
                     <HStack>
-                      <Text color={getTextColor()} fontSize="lg" fontWeight="bold">Alerts</Text>
-                      <Text color={getTextColor()}>High Threshold: {highThreshold}</Text>
-                      <Text color={getTextColor()}>Low Threshold: {lowThreshold}</Text>
-                      <Text color={getTextColor()}>Timer: {timer}s</Text>
+                      <Text color='white' fontSize="lg" fontWeight="bold">Alerts</Text>
+                      <Text color='white'>High Threshold: {highThreshold}</Text>
+                      <Text color='white'>Low Threshold: {lowThreshold}</Text>
+                      <Text color='white'>Timer: {timer}s</Text>
                       <MotionButton
                         variant="solid"
                         onClick={clearAlerts}
@@ -301,6 +379,17 @@ const ChartExpandModal = ({
                 type="text"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
+                bg={'white'}
+                border={'2px solid #fd9801'}
+                color={'#212121'}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Email</FormLabel>
+              <Input
+                type="text"
+                value={userEmail}
+                onChange={(e) => setUserEmail(e.target.value)}
                 bg={'white'}
                 border={'2px solid #fd9801'}
                 color={'#212121'}
