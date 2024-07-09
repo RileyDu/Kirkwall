@@ -230,7 +230,7 @@ const MainSection = () => (
               </ul>
             </Text>
             <Link
-              href="https://kirkwall-demo.vercel.app/"
+              href="mailto:will@kirkwall.com"
               style={{ textDecoration: 'none' }}
             >
               <Button size="lg" colorScheme="primary" variant="solid" mt={4}>

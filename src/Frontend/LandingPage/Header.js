@@ -19,7 +19,7 @@ const Header = () => {
           </Box>
         </Flex>
         <Flex display={{ base: 'none', md: 'flex' }}>
-          <Link href="https://kirkwall-demo.vercel.app/login" style={{ textDecoration: 'none' }}>
+          <Link href="https://kirkwall-demo.vercel.app/" style={{ textDecoration: 'none' }}>
             <Button colorScheme="primary">Login</Button>
           </Link>
         </Flex>

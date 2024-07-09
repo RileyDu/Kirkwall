@@ -5,7 +5,7 @@ const Footer = () => (
   <Box bg="navy.800" color="white" py={8} width="100%">
     <Flex direction="column" align="center" maxW="1200px" mx="auto">
       <Text mb={2}>© 2024 Kirkwall. All rights reserved</Text>
-      <Flex>
+      {/* <Flex>
         <Link href="#privacy-policy" mx={2} color="primary.400">
           Privacy Policy
         </Link>
@@ -15,7 +15,7 @@ const Footer = () => (
         <Link href="#contact-us" mx={2} color="primary.400">
           Contact Us
         </Link>
-      </Flex>
+      </Flex> */}
     </Flex>
   </Box>
 );
