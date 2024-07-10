@@ -113,7 +113,7 @@ const ChartExpandModal = ({
   const sendSMSAlert = async (to, body) => {
     try {
       const response = await axios.post(`${apiUrl}/send-sms`, { to, body });
-      console.log('SMS response:', response.data);
+      // console.log('SMS response:', response.data);
       toast({
         title: 'Alert sent.',
         description: response.data.message,
@@ -122,7 +122,7 @@ const ChartExpandModal = ({
         isClosable: true,
       });
     } catch (error) {
-      console.error('Error sending alert:', error, apiUrl);
+      // console.error('Error sending alert:', error, apiUrl);
       toast({
         title: 'Error sending alert.',
         description: error.message, apiUrl,
@@ -136,7 +136,7 @@ const ChartExpandModal = ({
   const sendEmailAlert = async (to, subject, text, html) => {
     try {
       const response = await axios.post(`${apiUrl}/send-email`, { to, subject, text, html });
-      console.log('Email response:', response.data);
+      // console.log('Email response:', response.data);
       toast({
         title: 'Alert sent.',
         description: response.data.message,
@@ -145,7 +145,7 @@ const ChartExpandModal = ({
         isClosable: true,
       });
     } catch (error) {
-      console.error('Error sending alert:', error);
+      // console.error('Error sending alert:', error);
       toast({
         title: 'Error sending alert.',
         description: error.message,
@@ -179,6 +179,7 @@ const ChartExpandModal = ({
         const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${lowThreshold}.`;
         if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
           sendSMSAlert(phoneNumber, alertMessage);
+          sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
           setLastAlertTime(now);
         }
         setAlerts((prevAlerts) => {
