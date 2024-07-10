@@ -222,7 +222,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
           </GridItem>
           <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
             <ChartWrapper
-              title="Soil Moisture"
+              title="Soil Moisture (centibar)"
               onChartChange={handleChartChange(setSoilMoistureChartType)}
               weatherData={soilMoistureData || weatherData}
               metric="soil_moisture"

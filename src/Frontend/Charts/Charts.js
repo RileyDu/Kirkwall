@@ -86,7 +86,7 @@ const createCustomChartOptions = (metric, data, colorMode) => {
         },
       },
       y: {
-        min: min > 1 ? min - 1 : min,
+        min: min > 1 ? min - 1 : 0,
         max: max > 1 ? Math.round(max + 1) : max,
         ticks: {
           color: labelColor,  // Set label color based on color mode
@@ -117,6 +117,7 @@ const createCustomChartOptions = (metric, data, colorMode) => {
               'wind_speed': 'MPH',
               'temp' : '°F',
               'hum' : '% Humidity',
+              'soil_moisture': 'centibars',
             };
             const label = labelMap[metric] || '';
             const value = context.raw;

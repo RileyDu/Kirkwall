@@ -16,6 +16,10 @@ export const getLabelForMetric = (metric) => {
       return { label: 'inches', addSpace: true };
     case 'wind_speed':
       return { label: 'MPH', addSpace: true };
+    case 'soil_moisture':
+      return { label: 'centibars', addSpace: true };
+    case 'leaf_wetness':
+      return { label: '%', addSpace: false };
     default:
       return { label: '', addSpace: false };
   }
