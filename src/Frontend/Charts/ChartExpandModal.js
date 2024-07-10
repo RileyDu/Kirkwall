@@ -98,7 +98,7 @@ const ChartExpandModal = ({
   }, [currentValue, highThreshold, lowThreshold]);
 
   useEffect(() => {
-    const savedChartSettings = JSON.parse(localStorage.getItem(`chartSettings_${title}`));
+    const savedChartSettings = JSON.parse(localStorage.getItem(`chartSettings_${metric}`));
 
     if (savedChartSettings) {
       setPhoneNumber(savedChartSettings.phoneNumber || '');
@@ -208,7 +208,9 @@ const ChartExpandModal = ({
       lowThreshold: parseFloat(lowThreshold),
     };
 
-    localStorage.setItem(`chartSettings_${title}`, JSON.stringify(chartSettings));
+
+    localStorage.setItem(`chartSettings_${metric}`, JSON.stringify(chartSettings));
+
     setIsThresholdModalOpen(false);
   };
 

@@ -309,7 +309,7 @@ const ChartWrapper = ({
           </Box>
           {showIcons && (
             <Flex alignItems="center">
-              <motion.div
+              {/* <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1 }}
@@ -328,7 +328,7 @@ const ChartWrapper = ({
                     Current: {formatValue(mostRecentValue)}
                   </Text>
                 </Box>
-              </motion.div>
+              </motion.div> */}
               <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -525,60 +525,6 @@ const ChartWrapper = ({
         setCurrentTimePeriod={setCurrentTimePeriod}
         sensorMap={sensorMap}
       />
-      <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-        <ModalOverlay />
-        <ModalContent
-          sx={{
-            border: '2px solid black',
-            bg: 'brand.50',
-          }}
-        >
-          <ModalHeader bg={'#212121'} color={'white'}>
-            Add Thresholds for {title}
-          </ModalHeader>
-          <ModalCloseButton color={'white'} size={'lg'} mt={1} />
-          <ModalBody>
-            <FormControl>
-              <FormLabel>Phone Number</FormLabel>
-              <Input
-                type="text"
-                value={phoneNumber}
-                onChange={e => setPhoneNumber(e.target.value)}
-                bg={'white'}
-                border={'2px solid #fd9801'}
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>High Threshold</FormLabel>
-              <Input
-                type="number"
-                value={highThreshold}
-                onChange={e => setHighThreshold(e.target.value)}
-                bg={'white'}
-                border={'2px solid #fd9801'}
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Low Threshold</FormLabel>
-              <Input
-                type="number"
-                value={lowThreshold}
-                onChange={e => setLowThreshold(e.target.value)}
-                bg={'white'}
-                border={'2px solid #fd9801'}
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="sidebar" mr={3} onClick={handleFormSubmit}>
-              Save
-            </Button>
-            <Button variant="sidebar" onClick={handleCloseModal}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </>
   );
 };
