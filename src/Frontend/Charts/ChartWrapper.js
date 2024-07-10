@@ -309,7 +309,7 @@ const ChartWrapper = ({
           </Box>
           {showIcons && (
             <Flex alignItems="center">
-              <motion.div
+              {/* <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1 }}
@@ -328,7 +328,7 @@ const ChartWrapper = ({
                     Current: {formatValue(mostRecentValue)}
                   </Text>
                 </Box>
-              </motion.div>
+              </motion.div> */}
               <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
