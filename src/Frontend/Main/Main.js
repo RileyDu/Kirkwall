@@ -55,6 +55,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const [showSections, setShowSections] = useState({
     grandFarm: true,
     garage: true,
+    rivercity: true,
   });
   const { colorMode } = useColorMode();
 
@@ -120,6 +121,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             </MenuItem>
             <MenuItem onClick={() => toggleSection('garage')}>
               {showSections.garage ? 'Hide' : 'Show'} Garage Sensors
+            </MenuItem>
+            <MenuItem onClick={() => toggleSection('rivercity')}>
+              {showSections.rivercity ? 'Hide' : 'Show'} Freezer Sensors
             </MenuItem>
           </MenuList>
         </Menu>
@@ -385,8 +389,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
       <MotionBox
         initial={{ opacity: 0, height: 0 }}
         animate={{
-          opacity: showSections.garage ? 1 : 0,
-          height: showSections.garage ? 'auto' : 0,
+          opacity: showSections.rivercity ? 1 : 0,
+          height: showSections.rivercity ? 'auto' : 0,
         }}
         transition={{ duration: 0.5 }}
       >
@@ -406,7 +410,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               title="Temperature (°F)"
               onChartChange={handleChartChange(setRivercityTempChartType)}
               weatherData={rivercityTempData || rivercityData}
-              metric="temperature"
+              metric="rctemp"
               flex="1"
               timePeriod={timePeriod}
               display="flex"
@@ -416,13 +420,13 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               {rivercityTempChartType === 'line' ? (
                 <LineChart
                   data={rivercityTempData || rivercityData}
-                  metric="temperature"
+                  metric="rctemp"
                   style={{ flex: 1 }}
                 />
               ) : (
                 <BarChart
                   data={rivercityTempData || rivercityData}
-                  metric="temperature"
+                  metric="rctemp"
                   style={{ flex: 1 }}
                 />
               )}

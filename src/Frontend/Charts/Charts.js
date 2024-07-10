@@ -112,6 +112,7 @@ const createCustomChartOptions = (metric, data, colorMode) => {
           label: function (context) {
             const labelMap = {
               'temperature': '°F',
+              'rctemp': '°F',
               'percent_humidity': '% Humidity',
               'humidity': '% Humidity',
               'rain_15_min_inches': 'inches',

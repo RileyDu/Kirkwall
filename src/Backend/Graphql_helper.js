@@ -204,7 +204,7 @@ async function getRivercityData(type, limit) {
     all: `
       query rivercity_data($limit: Int!) {
         rivercity_data(ordering: "publishedat desc", limit: $limit) {
-          temperature
+          rctemp
           humidity
           deveui
           publishedat
@@ -217,7 +217,7 @@ async function getRivercityData(type, limit) {
     temp: `
       query rivercity_data($limit: Int!) {
         rivercity_data(ordering: "publishedat desc", limit: $limit) {
-          temperature
+          rctemp
           dataid
           deveui
           publishedat

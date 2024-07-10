@@ -142,6 +142,12 @@ export const WeatherDataProvider = ({ children }) => {
         if (dataLoaded.leafWetness) {
           fetchSpecificData('leaf_wetness', selectedTimePeriodLeafWetness);
         }
+        if (dataLoaded.rivercityTemp) {
+          fetchSpecificData('temperature', selectedTimePeriodRCTemp);
+        }
+        if (dataLoaded.rivercityHum) {
+          fetchSpecificData('humidity', selectedTimePeriodRCHum);
+        }
       }, 30000);
       return () => clearInterval(intervalId);
     }
@@ -155,6 +161,8 @@ export const WeatherDataProvider = ({ children }) => {
     selectedTimePeriodWDHum,
     selectedTimePeriodSoilMoisture,
     selectedTimePeriodLeafWetness,
+    selectedTimePeriodRCHum,
+    selectedTimePeriodRCTemp,
   ]);
 
   const handleTimePeriodChange = async (metric, timePeriod) => {
@@ -191,6 +199,14 @@ export const WeatherDataProvider = ({ children }) => {
         setSelectedTimePeriodWDHum(timePeriod);
         setDataLoaded(prevState => ({ ...prevState, watchdogHum: true }));
         break;
+      case 'humidity':
+        setSelectedTimePeriodRCHum(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, rivercityHum: true }));
+        break;
+      case 'rctemp':
+        setSelectedTimePeriodRCTemp(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, rivercityTemp: true }));
+        break;
       default:
         break;
     }
@@ -199,7 +215,7 @@ export const WeatherDataProvider = ({ children }) => {
 
   const weatherMetrics = ['temperature', 'percent_humidity', 'wind_speed', 'rain_15_min_inches', 'soil_moisture', 'leaf_wetness'];
   const watchdogMetrics = ['temp', 'hum'];
-  const rivercityMetrics = ['temperature', 'humidity'];
+  const rivercityMetrics = ['rctemp', 'humidity'];
   
 
   const determineLimitBasedOnTimePeriod = timePeriod => {
@@ -285,11 +301,11 @@ export const WeatherDataProvider = ({ children }) => {
       } else if (rivercityMetrics.includes(metric)) {
         const response = await getRivercityData(metric, rivercityDetermineLimitBasedOnTimePeriod(timePeriod));
         switch (metric) {
-          case 'temperature':
-            setRivercityTempData(response.data.weather_data);
+          case 'rctemp':
+            setRivercityTempData(response.data.rivercity_data);
             break;
           case 'humidity':
-            setRivercityHumData(response.data.weather_data);
+            setRivercityHumData(response.data.rivercity_data);
             break;
           default:
             break;

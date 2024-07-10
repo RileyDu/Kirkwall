@@ -97,6 +97,7 @@ const ChartWrapper = ({
         setSensorMap('garage');
         break;
       case'humidity':
+      case'rctemp':
         setSensorMap('freezer');
         break;
       default:
@@ -182,7 +183,7 @@ const ChartWrapper = ({
   const handleCloseModal = () => setIsModalOpen(false);
 
   const calculateTimePeriod = dataLength => {
-    const totalMinutes = metric === 'temp' || metric === 'hum' ? dataLength * 10 : dataLength * 5;
+    const totalMinutes = metric === 'temp' || metric === 'hum' || metric === 'humidity' || metric === 'rctemp' ? dataLength * 10 : dataLength * 5;
     const totalHours = Math.floor(totalMinutes / 60);
 
     if (totalHours < 24) {
