@@ -66,7 +66,7 @@ async function getWeatherData(type, limit) {
         }
       }
     `,
-    rain: `
+    rain_15_min_inches: `
       query weather_data($limit: Int!) {
         weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: $limit) {
           station {
@@ -83,7 +83,7 @@ async function getWeatherData(type, limit) {
         }
       }
     `,
-    humidity: `
+    percent_humidity: `
       query weather_data($limit: Int!) {
         weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: $limit) {
           station {
@@ -100,7 +100,7 @@ async function getWeatherData(type, limit) {
         }
       }
     `,
-    wind: `
+    wind_speed: `
       query weather_data($limit: Int!) {
         weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: $limit) {
           station {
@@ -118,7 +118,7 @@ async function getWeatherData(type, limit) {
         }
       }
     `,
-    leaf: `
+    leaf_wetness: `
     query weather_data($limit: Int!) {
       weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: $limit) {
         station {
@@ -135,7 +135,7 @@ async function getWeatherData(type, limit) {
       }
     }
   `,
-  soil: `
+  soil_moisture: `
   query weather_data($limit: Int!) {
     weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: $limit) {
       station {

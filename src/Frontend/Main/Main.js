@@ -249,7 +249,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
           </GridItem>
           <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
             <ChartWrapper
-              title="Leaf Wetness"
+              title="Leaf Wetness (0-15)"
               onChartChange={handleChartChange(setLeafWetnessChartType)}
               weatherData={leafWetnessData || weatherData}
               metric="leaf_wetness"

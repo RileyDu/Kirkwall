@@ -232,18 +232,23 @@ export const WeatherDataProvider = ({ children }) => {
         switch (metric) {
           case 'temperature':
             setTempData(response.data.weather_data);
+            console.log('Temperature data:', response.data.weather_data);
             break;
           case 'percent_humidity':
             setHumidityData(response.data.weather_data);
+            console.log('Humidity data:', response.data.weather_data);
             break;
           case 'wind_speed':
             setWindData(response.data.weather_data);
+            console.log('Wind data:', response.data.weather_data);
             break;
           case 'rain_15_min_inches':
             setRainfallData(response.data.weather_data);
+            console.log('Rainfall data:', response.data.weather_data);
             break;
           case 'soil_moisture':
             setSoilMoistureData(response.data.weather_data);
+            console.log('Soil moisture data:', response.data.weather_data);
             break;
           case 'leaf_wetness':
             setLeafWetnessData(response.data.weather_data);

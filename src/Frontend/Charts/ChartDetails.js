@@ -19,7 +19,7 @@ export const getLabelForMetric = (metric) => {
     case 'soil_moisture':
       return { label: 'centibars', addSpace: true };
     case 'leaf_wetness':
-      return { label: '%', addSpace: false };
+      return { label: 'out of 15', addSpace: true };
     default:
       return { label: '', addSpace: false };
   }

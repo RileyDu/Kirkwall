@@ -118,6 +118,7 @@ const createCustomChartOptions = (metric, data, colorMode) => {
               'temp' : '°F',
               'hum' : '% Humidity',
               'soil_moisture': 'centibars',
+              'leaf_wetness': 'out of 15',
             };
             const label = labelMap[metric] || '';
             const value = context.raw;
