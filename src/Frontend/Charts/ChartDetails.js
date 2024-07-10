@@ -12,6 +12,8 @@ export const getLabelForMetric = (metric) => {
       return { label: '%', addSpace: false };
     case 'percent_humidity':
       return { label: '%', addSpace: false };
+      case 'humidity':
+        return { label: '%', addSpace: false };
     case 'rain_15_min_inches':
       return { label: 'inches', addSpace: true };
     case 'wind_speed':
