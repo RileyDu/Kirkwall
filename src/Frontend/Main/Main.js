@@ -31,6 +31,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     windData,
     rainfallData,
     soilMoistureData,
+    leafWetnessData,
     loading,
     handleTimePeriodChange,
     watchdogData,
@@ -43,6 +44,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const [rainfallChartType, setRainfallChartType] = useState('bar');
   const [watchdogTempChartType, setWatchdogTempChartType] = useState('bar');
   const [soilMoistureChartType, setSoilMoistureChartType] = useState('bar');
+  const [leafWetnessChartType, setLeafWetnessChartType] = useState('bar');
   const [watchdogHumidityChartType, setWatchdogHumidityChartType] =
     useState('bar');
   const [isReady, setIsReady] = useState(false);
@@ -240,6 +242,33 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                 <BarChart
                   data={soilMoistureData || weatherData}
                   metric="soil_moisture"
+                  style={{ flex: 1 }}
+                />
+              )}
+            </ChartWrapper>
+          </GridItem>
+          <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+            <ChartWrapper
+              title="Leaf Wetness"
+              onChartChange={handleChartChange(setLeafWetnessChartType)}
+              weatherData={leafWetnessData || weatherData}
+              metric="leaf_wetness"
+              flex="1"
+              timePeriod={timePeriod}
+              display="flex"
+              flexDirection="column"
+              handleTimePeriodChange={handleTimePeriodChange}
+            >
+              {leafWetnessChartType === 'line' ? (
+                <LineChart
+                  data={leafWetnessData || weatherData}
+                  metric="leaf_wetness"
+                  style={{ flex: 1 }}
+                />
+              ) : (
+                <BarChart
+                  data={leafWetnessData || weatherData}
+                  metric="leaf_wetness"
                   style={{ flex: 1 }}
                 />
               )}

@@ -79,6 +79,7 @@ const ChartWrapper = ({
       case 'wind_speed':
       case 'rain_15_min_inches':
       case 'soil_moisture':
+      case 'leaf_wetness':
         setSensorMap('grandfarm');
         break;
       case 'temp':

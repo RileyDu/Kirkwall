@@ -15,6 +15,7 @@ export const WeatherDataProvider = ({ children }) => {
   const [selectedTimePeriodWind, setSelectedTimePeriodWind] = useState('3H');
   const [selectedTimePeriodRainfall, setSelectedTimePeriodRainfall] = useState('3H');
   const [selectedTimePeriodSoilMoisture, setSelectedTimePeriodSoilMoisture] = useState('3H');
+  const [selectedTimePeriodLeafWetness, setSelectedTimePeriodLeafWetness] = useState('3H');
   const [selectedTimePeriodWDTemp, setSelectedTimePeriodWDTemp] = useState('3H');
   const [selectedTimePeriodWDHum, setSelectedTimePeriodWDHum] = useState('3H');
   const [tempData, setTempData] = useState(null);
@@ -22,6 +23,7 @@ export const WeatherDataProvider = ({ children }) => {
   const [windData, setWindData] = useState(null);
   const [rainfallData, setRainfallData] = useState(null);
   const [soilMoistureData, setSoilMoistureData] = useState(null);
+  const [leafWetnessData, setLeafWetnessData] = useState(null);
   const [watchdogData, setWatchdogData] = useState([]);
   const [watchdogTempData, setWatchdogTempData] = useState(null);
   const [watchdogHumData, setWatchdogHumData] = useState(null);
@@ -31,6 +33,7 @@ export const WeatherDataProvider = ({ children }) => {
     wind: false,
     rainfall: false,
     soilMoisture: false,
+    leafWetness: false,
   });
 
   useEffect(() => {
@@ -104,6 +107,9 @@ export const WeatherDataProvider = ({ children }) => {
         if (dataLoaded.soilMoisture) {
           fetchSpecificData('soil_moisture', selectedTimePeriodSoilMoisture);
         }
+        if (dataLoaded.leafWetness) {
+          fetchSpecificData('leaf_wetness', selectedTimePeriodLeafWetness);
+        }
       }, 30000);
       return () => clearInterval(intervalId);
     }
@@ -116,6 +122,7 @@ export const WeatherDataProvider = ({ children }) => {
     selectedTimePeriodWDTemp,
     selectedTimePeriodWDHum,
     selectedTimePeriodSoilMoisture,
+    selectedTimePeriodLeafWetness,
   ]);
 
   const handleTimePeriodChange = async (metric, timePeriod) => {
@@ -140,6 +147,10 @@ export const WeatherDataProvider = ({ children }) => {
         setSelectedTimePeriodSoilMoisture(timePeriod);
         setDataLoaded(prevState => ({ ...prevState, soilMoisture: true }));
         break;
+      case 'leaf_wetness':
+        setSelectedTimePeriodLeafWetness(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, leafWetness: true }));
+        break;
       case 'temp':
         setSelectedTimePeriodWDTemp(timePeriod);
         setDataLoaded(prevState => ({ ...prevState, watchdogTemp: true }));
@@ -154,7 +165,7 @@ export const WeatherDataProvider = ({ children }) => {
     return fetchSpecificData(metric, timePeriod); // Return the promise
   };
 
-  const weatherMetrics = ['temperature', 'percent_humidity', 'wind_speed', 'rain_15_min_inches', 'soil_moisture'];
+  const weatherMetrics = ['temperature', 'percent_humidity', 'wind_speed', 'rain_15_min_inches', 'soil_moisture', 'leaf_wetness'];
   const watchdogMetrics = ['temp', 'hum'];
   
 
@@ -234,6 +245,10 @@ export const WeatherDataProvider = ({ children }) => {
           case 'soil_moisture':
             setSoilMoistureData(response.data.weather_data);
             break;
+          case 'leaf_wetness':
+            setLeafWetnessData(response.data.weather_data);
+            console.log('Leaf wetness data:', response.data.weather_data);
+            break;
           default:
             break;
         }
@@ -254,6 +269,7 @@ export const WeatherDataProvider = ({ children }) => {
         windData,
         rainfallData,
         soilMoistureData,
+        leafWetnessData,
         loading,
         handleTimePeriodChange,
         watchdogData,
