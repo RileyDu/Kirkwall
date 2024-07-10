@@ -30,6 +30,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     humidityData,
     windData,
     rainfallData,
+    soilMoistureData,
     loading,
     handleTimePeriodChange,
     watchdogData,
@@ -41,6 +42,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const [windChartType, setWindChartType] = useState('bar');
   const [rainfallChartType, setRainfallChartType] = useState('bar');
   const [watchdogTempChartType, setWatchdogTempChartType] = useState('bar');
+  const [soilMoistureChartType, setSoilMoistureChartType] = useState('bar');
   const [watchdogHumidityChartType, setWatchdogHumidityChartType] =
     useState('bar');
   const [isReady, setIsReady] = useState(false);
@@ -211,6 +213,33 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                 <BarChart
                   data={windData || weatherData}
                   metric="wind_speed"
+                  style={{ flex: 1 }}
+                />
+              )}
+            </ChartWrapper>
+          </GridItem>
+          <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+            <ChartWrapper
+              title="Soil Moisture"
+              onChartChange={handleChartChange(setSoilMoistureChartType)}
+              weatherData={soilMoistureData || weatherData}
+              metric="soil_moisture"
+              flex="1"
+              timePeriod={timePeriod}
+              display="flex"
+              flexDirection="column"
+              handleTimePeriodChange={handleTimePeriodChange}
+            >
+              {soilMoistureChartType === 'line' ? (
+                <LineChart
+                  data={soilMoistureData || weatherData}
+                  metric="soil_moisture"
+                  style={{ flex: 1 }}
+                />
+              ) : (
+                <BarChart
+                  data={soilMoistureData || weatherData}
+                  metric="soil_moisture"
                   style={{ flex: 1 }}
                 />
               )}

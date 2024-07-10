@@ -250,7 +250,7 @@ const ChartExpandModal = ({
           >
             {title}
           </ModalHeader>
-          <ModalCloseButton size="lg" color="white" mt={2} />
+          <ModalCloseButton size="lg" color="white" mt={1} />
           <ModalBody display="flex" flexDirection="column" flexGrow={1} p={4} bg={getContentBackgroundColor()} borderBottomRadius={'md'} boxShadow="md">
             <Box display="flex" justifyContent="space-between" mb={2} mt={-2}>
               {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map((timePeriod) => (

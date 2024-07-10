@@ -14,12 +14,14 @@ export const WeatherDataProvider = ({ children }) => {
   const [selectedTimePeriodHumidity, setSelectedTimePeriodHumidity] = useState('3H');
   const [selectedTimePeriodWind, setSelectedTimePeriodWind] = useState('3H');
   const [selectedTimePeriodRainfall, setSelectedTimePeriodRainfall] = useState('3H');
+  const [selectedTimePeriodSoilMoisture, setSelectedTimePeriodSoilMoisture] = useState('3H');
   const [selectedTimePeriodWDTemp, setSelectedTimePeriodWDTemp] = useState('3H');
   const [selectedTimePeriodWDHum, setSelectedTimePeriodWDHum] = useState('3H');
   const [tempData, setTempData] = useState(null);
   const [humidityData, setHumidityData] = useState(null);
   const [windData, setWindData] = useState(null);
   const [rainfallData, setRainfallData] = useState(null);
+  const [soilMoistureData, setSoilMoistureData] = useState(null);
   const [watchdogData, setWatchdogData] = useState([]);
   const [watchdogTempData, setWatchdogTempData] = useState(null);
   const [watchdogHumData, setWatchdogHumData] = useState(null);
@@ -28,6 +30,7 @@ export const WeatherDataProvider = ({ children }) => {
     humidity: false,
     wind: false,
     rainfall: false,
+    soilMoisture: false,
   });
 
   useEffect(() => {
@@ -98,6 +101,9 @@ export const WeatherDataProvider = ({ children }) => {
         if (dataLoaded.watchdogHum) {
           fetchSpecificData('hum', selectedTimePeriodWDHum);
         }
+        if (dataLoaded.soilMoisture) {
+          fetchSpecificData('soil_moisture', selectedTimePeriodSoilMoisture);
+        }
       }, 30000);
       return () => clearInterval(intervalId);
     }
@@ -109,6 +115,7 @@ export const WeatherDataProvider = ({ children }) => {
     selectedTimePeriodRainfall,
     selectedTimePeriodWDTemp,
     selectedTimePeriodWDHum,
+    selectedTimePeriodSoilMoisture,
   ]);
 
   const handleTimePeriodChange = async (metric, timePeriod) => {
@@ -129,6 +136,10 @@ export const WeatherDataProvider = ({ children }) => {
         setSelectedTimePeriodRainfall(timePeriod);
         setDataLoaded(prevState => ({ ...prevState, rainfall: true }));
         break;
+      case 'soil_moisture':
+        setSelectedTimePeriodSoilMoisture(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, soilMoisture: true }));
+        break;
       case 'temp':
         setSelectedTimePeriodWDTemp(timePeriod);
         setDataLoaded(prevState => ({ ...prevState, watchdogTemp: true }));
@@ -143,7 +154,7 @@ export const WeatherDataProvider = ({ children }) => {
     return fetchSpecificData(metric, timePeriod); // Return the promise
   };
 
-  const weatherMetrics = ['temperature', 'percent_humidity', 'wind_speed', 'rain_15_min_inches'];
+  const weatherMetrics = ['temperature', 'percent_humidity', 'wind_speed', 'rain_15_min_inches', 'soil_moisture'];
   const watchdogMetrics = ['temp', 'hum'];
   
 
@@ -220,6 +231,9 @@ export const WeatherDataProvider = ({ children }) => {
           case 'rain_15_min_inches':
             setRainfallData(response.data.weather_data);
             break;
+          case 'soil_moisture':
+            setSoilMoistureData(response.data.weather_data);
+            break;
           default:
             break;
         }
@@ -239,6 +253,7 @@ export const WeatherDataProvider = ({ children }) => {
         humidityData,
         windData,
         rainfallData,
+        soilMoistureData,
         loading,
         handleTimePeriodChange,
         watchdogData,

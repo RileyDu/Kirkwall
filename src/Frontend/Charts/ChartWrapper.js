@@ -78,6 +78,7 @@ const ChartWrapper = ({
       case 'percent_humidity':
       case 'wind_speed':
       case 'rain_15_min_inches':
+      case 'soil_moisture':
         setSensorMap('grandfarm');
         break;
       case 'temp':
@@ -151,56 +152,6 @@ const ChartWrapper = ({
     handleCloseModal();
   };
 
-  // const sendSMSAlert = async (to, body) => {
-  //   try {
-  //     const response = await axios.post('http://localhost:3001/send-sms', { to, body });
-  //     console.log('SMS response:', response.data);
-  //     toast({
-  //       title: 'Alert sent.',
-  //       description: response.data.message,
-  //       status: 'success',
-  //       duration: 3000,
-  //       isClosable: true,
-  //     });
-  //   } catch (error) {
-  //     console.error('Error sending alert:', error);
-  //     toast({
-  //       title: 'Error sending alert.',
-  //       description: error.message,
-  //       status: 'error',
-  //       duration: 3000,
-  //       isClosable: true,
-  //     });
-  //   }
-  // };
-
-  // const checkThresholdExceed = () => {
-  //   const chartSettings = JSON.parse(localStorage.getItem(`chartSettings_${title}`));
-    
-  //   if (!chartSettings) return;
-    
-  //   const { phoneNumber, highThreshold, lowThreshold } = chartSettings;
-  //   const lastValue = weatherData && weatherData.length > 0 ? weatherData[0][metric] : null;
-    
-  //   if (!lastValue) return;
-  
-  //   const now = new Date();
-  //   const lastAlertTimeObj = lastAlertTime ? new Date(lastAlertTime) : null;
-    
-  //   if (
-  //     (lastValue > highThreshold || lastValue < lowThreshold) &&
-  //     (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000)
-  //   ) {
-  //     const message = `${title} has exceeded the threshold. Current value: ${lastValue}`;
-  //     sendSMSAlert(phoneNumber, message);
-  //     setLastAlertTime(now);
-  //   }
-  // };
-  
-  // useEffect(() => {
-  //   checkThresholdExceed();
-  // }, [weatherData, metric, title, lastAlertTime]);
-  
 
   const mostRecentValue =
     weatherData && weatherData.length > 0 ? weatherData[0][metric] : 'N/A';

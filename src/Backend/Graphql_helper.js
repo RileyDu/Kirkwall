@@ -44,6 +44,8 @@ async function getWeatherData(type, limit) {
           percent_humidity
           wind_speed
           wind_direction
+          leaf_wetness
+          soil_moisture
         }
       }
     `,
@@ -115,7 +117,41 @@ async function getWeatherData(type, limit) {
           stationid
         }
       }
-    `
+    `,
+    leaf: `
+    query weather_data($limit: Int!) {
+      weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: $limit) {
+        station {
+          name
+          location {
+            srid
+            wkt
+          }
+        }
+        message_timestamp
+        leaf_wetness
+        ts
+        stationid
+      }
+    }
+  `,
+  soil: `
+  query weather_data($limit: Int!) {
+    weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: $limit) {
+      station {
+        name
+        location {
+          srid
+          wkt
+        }
+      }
+      message_timestamp
+      soil_moisture
+      ts
+      stationid
+    }
+  }
+`,
   };
 
   const query = queryMap[type] || queryMap.all; // Default to 'all' if type is invalid
