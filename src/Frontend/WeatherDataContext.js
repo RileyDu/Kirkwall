@@ -143,7 +143,7 @@ export const WeatherDataProvider = ({ children }) => {
           fetchSpecificData('leaf_wetness', selectedTimePeriodLeafWetness);
         }
         if (dataLoaded.rivercityTemp) {
-          fetchSpecificData('temperature', selectedTimePeriodRCTemp);
+          fetchSpecificData('rctemp', selectedTimePeriodRCTemp);
         }
         if (dataLoaded.rivercityHum) {
           fetchSpecificData('humidity', selectedTimePeriodRCHum);
