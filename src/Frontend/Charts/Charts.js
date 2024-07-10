@@ -87,7 +87,7 @@ const createCustomChartOptions = (metric, data, colorMode) => {
       },
       y: {
         min: min > 1 ? min - 1 : 0,
-        max: max > 1 ? Math.round(max + 1) : max,
+        max: max > 1 ? Math.round(max + 1) : 1,
         ticks: {
           color: labelColor,  // Set label color based on color mode
         },
