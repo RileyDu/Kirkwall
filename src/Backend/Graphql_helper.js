@@ -199,6 +199,47 @@ async function getWatchdogData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
+async function getRivercityData(type, limit) {
+  const queryMap = {
+    all: `
+      query rivercity_data($limit: Int!) {
+        rivercity_data(ordering: "publishedat desc", limit: $limit) {
+          temperature
+          humidity
+          deveui
+          publishedat
+          dataid
+          apiid
+          battery
+        }
+      }
+    `,
+    temp: `
+      query rivercity_data($limit: Int!) {
+        rivercity_data(ordering: "publishedat desc", limit: $limit) {
+          temperature
+          dataid
+          deveui
+          publishedat
+        }
+      }
+    `,
+    hum: `
+      query rivercity_data($limit: Int!) {
+        rivercity_data(ordering: "publishedat desc", limit: $limit) {
+          humidity
+          dataid
+          deveui
+          publishedat
+        }
+      }
+    `
+  };
+
+  const query = queryMap[type] || queryMap.all; // Default to 'all' if type is invalid
+  return executeGraphqlQuery(query, { limit });
+}
+
 // Function to edit weather data
 async function editWeatherData(dataid, temperature, humidity, windSpeed, windDirection) {
   const editWeatherMutation = `
@@ -235,4 +276,4 @@ async function editWeatherData(dataid, temperature, humidity, windSpeed, windDir
 }
 
 // Export the functions to be used elsewhere in the project
-export { getWeatherData, editWeatherData, getWatchdogData };
+export { getWeatherData, editWeatherData, getWatchdogData, getRivercityData };

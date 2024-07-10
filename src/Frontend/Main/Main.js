@@ -37,16 +37,20 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     watchdogData,
     watchdogTempData,
     watchdogHumData,
+    rivercityTempData,
+    rivercityHumData,
+    rivercityData,
   } = useWeatherData();
   const [tempChartType, setTempChartType] = useState('bar');
   const [humidityChartType, setHumidityChartType] = useState('bar');
   const [windChartType, setWindChartType] = useState('bar');
   const [rainfallChartType, setRainfallChartType] = useState('bar');
-  const [watchdogTempChartType, setWatchdogTempChartType] = useState('bar');
   const [soilMoistureChartType, setSoilMoistureChartType] = useState('bar');
   const [leafWetnessChartType, setLeafWetnessChartType] = useState('bar');
-  const [watchdogHumidityChartType, setWatchdogHumidityChartType] =
-    useState('bar');
+  const [watchdogTempChartType, setWatchdogTempChartType] = useState('bar');
+  const [watchdogHumidityChartType, setWatchdogHumidityChartType] = useState('bar');
+  const [rivercityTempChartType, setRivercityTempChartType] = useState('bar');
+  const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
   const [isReady, setIsReady] = useState(false);
   const [showSections, setShowSections] = useState({
     grandFarm: true,
@@ -371,6 +375,81 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                 <BarChart
                   data={watchdogHumData || watchdogData}
                   metric="hum"
+                  style={{ flex: 1 }}
+                />
+              )}
+            </ChartWrapper>
+          </GridItem>
+        </Grid>
+      </MotionBox>
+      <MotionBox
+        initial={{ opacity: 0, height: 0 }}
+        animate={{
+          opacity: showSections.garage ? 1 : 0,
+          height: showSections.garage ? 'auto' : 0,
+        }}
+        transition={{ duration: 0.5 }}
+      >
+        <Heading size="lg" textAlign="center" my="4" mt="8">
+          Rivercity Sensors
+        </Heading>
+        <Grid
+          templateColumns={{
+            base: '1fr',
+            md: 'repeat(2, 1fr)',
+            lg: 'repeat(2, 1fr)',
+          }}
+          gap="6"
+        >
+          <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+            <ChartWrapper
+              title="Temperature (°F)"
+              onChartChange={handleChartChange(setRivercityTempChartType)}
+              weatherData={rivercityTempData || rivercityData}
+              metric="temperature"
+              flex="1"
+              timePeriod={timePeriod}
+              display="flex"
+              flexDirection="column"
+              handleTimePeriodChange={handleTimePeriodChange}
+            >
+              {rivercityTempChartType === 'line' ? (
+                <LineChart
+                  data={rivercityTempData || rivercityData}
+                  metric="temperature"
+                  style={{ flex: 1 }}
+                />
+              ) : (
+                <BarChart
+                  data={rivercityTempData || rivercityData}
+                  metric="temperature"
+                  style={{ flex: 1 }}
+                />
+              )}
+            </ChartWrapper>
+          </GridItem>
+          <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+            <ChartWrapper
+              title="Humidity (%)"
+              onChartChange={handleChartChange(setRivercityHumChartType)}
+              weatherData={rivercityHumData || rivercityData}
+              metric="humidity"
+              flex="1"
+              timePeriod={timePeriod}
+              display="flex"
+              flexDirection="column"
+              handleTimePeriodChange={handleTimePeriodChange}
+            >
+              {rivercityHumChartType === 'line' ? (
+                <LineChart
+                  data={rivercityHumData || rivercityData}
+                  metric="humidity"
+                  style={{ flex: 1 }}
+                />
+              ) : (
+                <BarChart
+                  data={rivercityHumData || rivercityData}
+                  metric="humidity"
                   style={{ flex: 1 }}
                 />
               )}

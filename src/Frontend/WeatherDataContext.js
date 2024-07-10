@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getWeatherData, getWatchdogData } from '../Backend/Graphql_helper';
+import { getWeatherData, getWatchdogData, getRivercityData } from '../Backend/Graphql_helper';
 
 const WeatherDataContext = createContext();
 
@@ -18,6 +18,8 @@ export const WeatherDataProvider = ({ children }) => {
   const [selectedTimePeriodLeafWetness, setSelectedTimePeriodLeafWetness] = useState('3H');
   const [selectedTimePeriodWDTemp, setSelectedTimePeriodWDTemp] = useState('3H');
   const [selectedTimePeriodWDHum, setSelectedTimePeriodWDHum] = useState('3H');
+  const [selectedTimePeriodRCTemp, setSelectedTimePeriodRCTemp] = useState('3H');
+  const [selectedTimePeriodRCHum, setSelectedTimePeriodRCHum] = useState('3H');
   const [tempData, setTempData] = useState(null);
   const [humidityData, setHumidityData] = useState(null);
   const [windData, setWindData] = useState(null);
@@ -25,6 +27,9 @@ export const WeatherDataProvider = ({ children }) => {
   const [soilMoistureData, setSoilMoistureData] = useState(null);
   const [leafWetnessData, setLeafWetnessData] = useState(null);
   const [watchdogData, setWatchdogData] = useState([]);
+  const [rivercityData, setRivercityData] = useState(null);
+  const [rivercityTempData, setRivercityTempData] = useState(null);
+  const [rivercityHumData, setRivercityHumData] = useState(null);
   const [watchdogTempData, setWatchdogTempData] = useState(null);
   const [watchdogHumData, setWatchdogHumData] = useState(null);
   const [dataLoaded, setDataLoaded] = useState({
@@ -34,6 +39,10 @@ export const WeatherDataProvider = ({ children }) => {
     rainfall: false,
     soilMoisture: false,
     leafWetness: false,
+    watchdogTemp: false,
+    watchdogHum: false,
+    rivercityTemp: false,
+    rivercityHum: false,
   });
 
   useEffect(() => {
@@ -72,6 +81,29 @@ export const WeatherDataProvider = ({ children }) => {
       } catch (error) {
         console.error('Error fetching watchdog data:', error);
         setWatchdogData([]);
+        
+      }
+    };
+
+    fetchData();
+
+    const intervalId = setInterval(fetchData, 30000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getRivercityData('all', '19');
+        if (Array.isArray(response.data.rivercity_data)) {
+          setRivercityData(response.data.rivercity_data);
+        } else {
+          setRivercityData([]);
+        }
+      } catch (error) {
+        console.error('Error fetching watchdog data:', error);
+        setRivercityData([]);
         
       }
     };
@@ -167,6 +199,7 @@ export const WeatherDataProvider = ({ children }) => {
 
   const weatherMetrics = ['temperature', 'percent_humidity', 'wind_speed', 'rain_15_min_inches', 'soil_moisture', 'leaf_wetness'];
   const watchdogMetrics = ['temp', 'hum'];
+  const rivercityMetrics = ['temperature', 'humidity'];
   
 
   const determineLimitBasedOnTimePeriod = timePeriod => {
@@ -213,6 +246,28 @@ export const WeatherDataProvider = ({ children }) => {
     }
   };
 
+  const rivercityDetermineLimitBasedOnTimePeriod = timePeriod => {
+    console.log('Determining limit for time period (rivercityData):', timePeriod);
+    switch (timePeriod) {
+      case '1H':
+        return 7;
+      case '3H':
+        return 19;
+      case '6H':
+        return 37;
+      case '12H':
+        return 73;
+      case '1D':
+        return 145;
+      case '3D':
+        return 217;
+      case '1W':
+        return 1009;
+      default:
+        return 37;
+    }
+  };
+
   const fetchSpecificData = async (metric, timePeriod) => {
     try {
       if (watchdogMetrics.includes(metric)) {
@@ -227,7 +282,20 @@ export const WeatherDataProvider = ({ children }) => {
           default:
             break;
         }
-      } else if (weatherMetrics.includes(metric)) {
+      } else if (rivercityMetrics.includes(metric)) {
+        const response = await getRivercityData(metric, rivercityDetermineLimitBasedOnTimePeriod(timePeriod));
+        switch (metric) {
+          case 'temperature':
+            setRivercityTempData(response.data.weather_data);
+            break;
+          case 'humidity':
+            setRivercityHumData(response.data.weather_data);
+            break;
+          default:
+            break;
+        }
+      }
+       else if (weatherMetrics.includes(metric)) {
         const response = await getWeatherData(metric, determineLimitBasedOnTimePeriod(timePeriod));
         switch (metric) {
           case 'temperature':
@@ -280,6 +348,9 @@ export const WeatherDataProvider = ({ children }) => {
         watchdogData,
         watchdogTempData,
         watchdogHumData,
+        rivercityData,
+        rivercityTempData,
+        rivercityHumData,
       }}
     >
       {children}
