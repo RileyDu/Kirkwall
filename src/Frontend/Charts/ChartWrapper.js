@@ -42,6 +42,9 @@ import { useColorMode } from '@chakra-ui/react';
 import axios from 'axios';
 import MiniMap from '../Maps/MiniMap';
 import WatchdogMap from '../Maps/WatchdogMap';
+import RivercityMap from '../Maps/RivercityMap';
+
+
 
 const ChartWrapper = ({
   title,
@@ -63,6 +66,13 @@ const ChartWrapper = ({
   const [showMap, setShowMap] = useState(false);
   const [sensorMap, setSensorMap] = useState('grandfarm'); // State to toggle between map and chart
 
+  const mapComponents = {
+    grandfarm: MiniMap,
+    garage: WatchdogMap,
+    freezer: RivercityMap
+  };
+
+  const MapComponent = mapComponents[sensorMap] || null;
 
   const location = useLocation();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -85,6 +95,9 @@ const ChartWrapper = ({
       case 'temp':
       case 'hum':
         setSensorMap('garage');
+        break;
+      case'humidity':
+        setSensorMap('freezer');
         break;
       default:
         console.error(`Unknown metric: ${metric}`);
@@ -441,28 +454,12 @@ const ChartWrapper = ({
               initial={{ opacity: 0, scale: 0, rotate: -90 }}
               animate={{ opacity: 1, scale: 1, rotate: 0 }}
               transition={{ duration: .5, type: "linear", stiffness: 50 }}
-              // whileHover={{
-              //   scale: 1.2,
-              //   rotate: 10,
-              //   transition: { duration: 0.3 },
-              // }}
-              // whileTap={{
-              //   scale: 0.9,
-              //   rotate: -10,
-              //   borderRadius: "50%",
-              //   transition: { duration: 0.3 },
-              // }}
             >
-              {sensorMap === 'grandfarm' ? <MiniMap /> : <WatchdogMap /> }
+              <MapComponent />
             </motion.div>
         )}
         {!showMap && (
-          // <motion.div
-          // initial={{ opacity: 0, scale: 0, rotate: 45 }}
-          // animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          // transition={{ duration: .5, type: "linear", stiffness: 50 }}>
         children
-          // {/* </motion.div> */}
         )}
       </Box>
       <ChartExpandModal

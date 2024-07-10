@@ -29,6 +29,13 @@ const locations = [
     details: 'Temp, Humidity & Water Detection',
     dataReading: 'Sends data every 10 minutes',
   },
+  {
+    lat: 46.87762,
+    lng: -96.78811,
+    info: 'Freezer',
+    details: 'Temp & Humidity',
+    dataReading: 'Sends data every 10 minutes',
+  },
 ];
 
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
@@ -68,7 +75,7 @@ const MapComponent = ({ statusOfAlerts }) => {
         width="100%"
         textAlign="center"
         p={'4'}
-        pt={statusOfAlerts ? "10px" : "74px"}
+        pt={statusOfAlerts ? '10px' : '74px'}
         color={colorMode === 'light' ? 'black' : 'white'}
       >
         <Heading size="xl" pb={'4'}>

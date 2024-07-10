@@ -391,7 +391,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
         transition={{ duration: 0.5 }}
       >
         <Heading size="lg" textAlign="center" my="4" mt="8">
-          Rivercity Sensors
+          Freezer Sensors
         </Heading>
         <Grid
           templateColumns={{
