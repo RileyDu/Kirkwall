@@ -44,8 +44,6 @@ import MiniMap from '../Maps/MiniMap';
 import WatchdogMap from '../Maps/WatchdogMap';
 import RivercityMap from '../Maps/RivercityMap';
 
-
-
 const ChartWrapper = ({
   title,
   children,
@@ -65,11 +63,12 @@ const ChartWrapper = ({
   const [loading, setLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [sensorMap, setSensorMap] = useState('grandfarm'); // State to toggle between map and chart
+  const [logoToDisplay, setLogoToDisplay] = useState('');
 
   const mapComponents = {
     grandfarm: MiniMap,
     garage: WatchdogMap,
-    freezer: RivercityMap
+    freezer: RivercityMap,
   };
 
   const MapComponent = mapComponents[sensorMap] || null;
@@ -82,7 +81,7 @@ const ChartWrapper = ({
   const toggleMap = () => {
     setShowMap(!showMap);
   };
-  const setMapToDisplay = (metric) => {
+  const setMapToDisplay = metric => {
     switch (metric) {
       case 'temperature':
       case 'percent_humidity':
@@ -96,8 +95,8 @@ const ChartWrapper = ({
       case 'hum':
         setSensorMap('garage');
         break;
-      case'humidity':
-      case'rctemp':
+      case 'humidity':
+      case 'rctemp':
         setSensorMap('freezer');
         break;
       default:
@@ -167,23 +166,57 @@ const ChartWrapper = ({
     handleCloseModal();
   };
 
+  useEffect(() => {
+    const getLogoToDisplay = () => {
+      switch (metric) {
+        case 'temperature':
+        case 'percent_humidity':
+        case 'wind_speed':
+        case 'rain_15_min_inches':
+        case 'soil_moisture':
+        case 'leaf_wetness':
+          return 'Davis_logo.webp';
+        case 'temp':
+        case 'hum':
+          return 'WatchdogLogo.png';
+        case 'humidity':
+        case 'rctemp':
+          return 'rci-logo-blue.png';
+        default:
+          return '';
+      }
+    };
+    
+    setLogoToDisplay(getLogoToDisplay());
+  }, [metric]);
 
   const mostRecentValue =
     weatherData && weatherData.length > 0 ? weatherData[0][metric] : 'N/A';
   const { label, addSpace } = getLabelForMetric(metric);
   const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
 
-  const fontSize = useBreakpointValue({ base: 'xs', md: 'md', lg: 'md', xl: 'lg', xxl: 'lg' });
+  const fontSize = useBreakpointValue({
+    base: 'xs',
+    md: 'md',
+    lg: 'md',
+    xl: 'lg',
+    xxl: 'lg',
+  });
   const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
   const closeSize = useBreakpointValue({ base: 'sm', md: 'lg' });
-
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
   const calculateTimePeriod = dataLength => {
-    const totalMinutes = metric === 'temp' || metric === 'hum' || metric === 'humidity' || metric === 'rctemp' ? dataLength * 10 : dataLength * 5;
+    const totalMinutes =
+      metric === 'temp' ||
+      metric === 'hum' ||
+      metric === 'humidity' ||
+      metric === 'rctemp'
+        ? dataLength * 10
+        : dataLength * 5;
     const totalHours = Math.floor(totalMinutes / 60);
 
     if (totalHours < 24) {
@@ -256,8 +289,6 @@ const ChartWrapper = ({
 
   const MotionIconButton = motion(IconButton);
 
-  
-
   return (
     <>
       <Box
@@ -273,6 +304,7 @@ const ChartWrapper = ({
       >
         <Flex justify="space-between" mb="4" align="center">
           <Box fontSize={fontSize} fontWeight="bold">
+          {logoToDisplay && <img src={logoToDisplay} alt="logo" width="100px" border="2px solid #212121" mb="2"/>}
             {title}
           </Box>
           {showIcons && (
@@ -313,55 +345,73 @@ const ChartWrapper = ({
                   color={'#212121'}
                 >
                   <Popover
-      trigger="hover"
-      placement="bottom"
-      closeOnBlur
-      closeOnEsc
-    >
-      <PopoverTrigger>
-        <Text fontSize={fontSize}>Time: {timeOfGraph}</Text>
-      </PopoverTrigger>
-      <PopoverContent
-        bg="brand.50"
-        color="white"
-        borderRadius="md"
-        border="2px solid #212121"
-        p={0} // Remove padding to ensure the content uses full space
-        w="auto" // Ensure width adapts to content
-      >
-        <PopoverArrow bg="#212121" border={'2px solid #212121'}/>
-        <PopoverHeader bg="#212121" fontWeight="bold" color="white">
-          TIME SELECTOR
-        </PopoverHeader>
-        <PopoverCloseButton size={closeSize} color="white" mt={[1,-1]}/>
-        <PopoverBody color="#212121" p={0}> {/* Remove padding for full width use */}
-          <Box
-            display="flex"
-            flexWrap="wrap" // Allows buttons to wrap if they don't fit in one line
-            gap={0.5}
-            p={2} // Add some padding inside the Box for spacing
-            w="100%" // Ensure the Box takes full width
-          >
-            {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map(timePeriod => (
-              <MotionButton
-                key={timePeriod}
-                variant="pill"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => handleTimeButtonClick(timePeriod)}
-                bg={currentTimePeriod === timePeriod ? 'brand.800' : 'gray.100'}
-                color="black"
-                fontSize={fontSize}
-                flex="1 1 0" // Ensures buttons take equal space and grow
-                m={0} // Remove margin
-              >
-                {timePeriod}
-              </MotionButton>
-            ))}
-          </Box>
-        </PopoverBody>
-      </PopoverContent>
-    </Popover>
+                    trigger="hover"
+                    placement="bottom"
+                    closeOnBlur
+                    closeOnEsc
+                  >
+                    <PopoverTrigger>
+                      <Text fontSize={fontSize}>Time: {timeOfGraph}</Text>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      bg="brand.50"
+                      color="white"
+                      borderRadius="md"
+                      border="2px solid #212121"
+                      p={0} // Remove padding to ensure the content uses full space
+                      w="auto" // Ensure width adapts to content
+                    >
+                      <PopoverArrow bg="#212121" border={'2px solid #212121'} />
+                      <PopoverHeader
+                        bg="#212121"
+                        fontWeight="bold"
+                        color="white"
+                      >
+                        TIME SELECTOR
+                      </PopoverHeader>
+                      <PopoverCloseButton
+                        size={closeSize}
+                        color="white"
+                        mt={[1, -1]}
+                      />
+                      <PopoverBody color="#212121" p={0}>
+                        {' '}
+                        {/* Remove padding for full width use */}
+                        <Box
+                          display="flex"
+                          flexWrap="wrap" // Allows buttons to wrap if they don't fit in one line
+                          gap={0.5}
+                          p={2} // Add some padding inside the Box for spacing
+                          w="100%" // Ensure the Box takes full width
+                        >
+                          {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map(
+                            timePeriod => (
+                              <MotionButton
+                                key={timePeriod}
+                                variant="pill"
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() =>
+                                  handleTimeButtonClick(timePeriod)
+                                }
+                                bg={
+                                  currentTimePeriod === timePeriod
+                                    ? 'brand.800'
+                                    : 'gray.100'
+                                }
+                                color="black"
+                                fontSize={fontSize}
+                                flex="1 1 0" // Ensures buttons take equal space and grow
+                                m={0} // Remove margin
+                              >
+                                {timePeriod}
+                              </MotionButton>
+                            )
+                          )}
+                        </Box>
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
                 </Box>
               </motion.div>
               {/* <motion.div
@@ -451,17 +501,15 @@ const ChartWrapper = ({
           )}
         </Flex>
         {showMap && (
-              <motion.div
-              initial={{ opacity: 0, scale: 0, rotate: -90 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ duration: .5, type: "linear", stiffness: 50 }}
-            >
-              <MapComponent />
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0, rotate: -90 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 0.5, type: 'linear', stiffness: 50 }}
+          >
+            <MapComponent />
+          </motion.div>
         )}
-        {!showMap && (
-        children
-        )}
+        {!showMap && children}
       </Box>
       <ChartExpandModal
         isOpen={isOpen}
