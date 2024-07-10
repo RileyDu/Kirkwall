@@ -30,7 +30,6 @@ import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts';
 import axios from 'axios';
-// import ThresholdAlertEmail from './ThresholdAlertEmail';
 
 const ChartExpandModal = ({
   isOpen,
@@ -56,12 +55,11 @@ const ChartExpandModal = ({
   const [alerts, setAlerts] = useState(JSON.parse(localStorage.getItem('alerts')) || []);
   const [timer, setTimer] = useState(30);
   const [currentValue, setCurrentValue] = useState(null);
-  const [lastAlertTime, setLastAlertTime] = useState(null); // Add last alert time state
+  const [lastAlertTime, setLastAlertTime] = useState(null); 
 
   const apiUrl = process.env.NODE_ENV === 'production'
-  ? 'https://kirkwall-demo.vercel.app'
-  : 'http://localhost:3001';
-
+    ? 'https://kirkwall-demo.vercel.app'
+    : 'http://localhost:3001';
 
   const MotionButton = motion(Button);
   const toast = useToast();
@@ -113,7 +111,6 @@ const ChartExpandModal = ({
   const sendSMSAlert = async (to, body) => {
     try {
       const response = await axios.post(`${apiUrl}/send-sms`, { to, body });
-      // console.log('SMS response:', response.data);
       toast({
         title: 'Alert sent.',
         description: response.data.message,
@@ -122,10 +119,9 @@ const ChartExpandModal = ({
         isClosable: true,
       });
     } catch (error) {
-      // console.error('Error sending alert:', error, apiUrl);
       toast({
         title: 'Error sending alert.',
-        description: error.message, apiUrl,
+        description: error.message,
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -136,7 +132,6 @@ const ChartExpandModal = ({
   const sendEmailAlert = async (to, subject, text, html) => {
     try {
       const response = await axios.post(`${apiUrl}/send-email`, { to, subject, text, html });
-      // console.log('Email response:', response.data);
       toast({
         title: 'Alert sent.',
         description: response.data.message,
@@ -145,7 +140,6 @@ const ChartExpandModal = ({
         isClosable: true,
       });
     } catch (error) {
-      // console.error('Error sending alert:', error);
       toast({
         title: 'Error sending alert.',
         description: error.message,
@@ -212,11 +206,9 @@ const ChartExpandModal = ({
       userEmail: userEmail,
       highThreshold: parseFloat(highThreshold),
       lowThreshold: parseFloat(lowThreshold),
-
     };
 
     localStorage.setItem(`chartSettings_${title}`, JSON.stringify(chartSettings));
-
     setIsThresholdModalOpen(false);
   };
 
@@ -224,7 +216,6 @@ const ChartExpandModal = ({
     setAlerts([]);
     localStorage.setItem('alerts', JSON.stringify([]));
   };
-
 
   return (
     <>
@@ -260,7 +251,7 @@ const ChartExpandModal = ({
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => handleTimeButtonClick(timePeriod)}
-                  bg={currentTimePeriod === timePeriod ? 'brand.800' : 'gray.100'}
+                  bg={currentTimePeriod === timePeriod ? 'orange.400' : 'gray.100'}
                   color={currentTimePeriod === timePeriod ? 'white' : 'black'}
                   size={['sm', 'md']}
                 >
@@ -280,7 +271,7 @@ const ChartExpandModal = ({
                 mx={1}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                bg={chartType === 'line' ? 'brand.800' : 'gray.100'}
+                bg={chartType === 'line' ? 'orange.400' : 'gray.100'}
                 color={chartType === 'line' ? 'white' : 'black'}
               >
                 LINE
@@ -293,7 +284,7 @@ const ChartExpandModal = ({
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 size={['sm', 'md']}
-                bg={chartType === 'bar' ? 'brand.800' : 'gray.100'}
+                bg={chartType === 'bar' ? 'orange.400' : 'gray.100'}
                 color={chartType === 'bar' ? 'white' : 'black'}
               >
                 BAR
@@ -315,8 +306,8 @@ const ChartExpandModal = ({
             <Divider />
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mt={4} flexGrow={1}>
               <Box bg="gray.700" borderRadius="md" boxShadow="md" p={4} height="430px">
-                <MiniDashboard weatherData={weatherData} metric={metric} setCurrentValue={setCurrentValue} mt={2}  />
-                <Divider my={8} borderColor={'white'}/>
+                <MiniDashboard weatherData={weatherData} metric={metric} setCurrentValue={setCurrentValue} mt={2} />
+                <Divider my={8} borderColor={'white'} />
                 {highThreshold || lowThreshold ? (
                   <>
                     <HStack>
@@ -347,11 +338,10 @@ const ChartExpandModal = ({
                       overflowY="scroll"
                       minHeight="160px"
                       maxHeight="160px"
-
                     >
                       <Stack spacing={2}>
                         {alerts.map((alert, index) => (
-                          <Box key={index} bg="brand.400" p={2} borderRadius="md" boxShadow="md">
+                          <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
                             <Text color="#212121">{alert}</Text>
                           </Box>
                         ))}
@@ -359,12 +349,12 @@ const ChartExpandModal = ({
                     </Box>
                   </>
                 ) : (
-                  <Text color={'white'}mt={4}>Set thresholds to see alerts</Text>
+                  <Text color={'white'} mt={4}>Set thresholds to see alerts</Text>
                 )}
               </Box>
               <Box bg="gray.700" borderRadius="md" boxShadow="md" p={4} height="430px">
                 <Box height="100%">
-                {sensorMap === 'grandfarm' ? <MiniMap /> : <WatchdogMap /> }
+                  {sensorMap === 'grandfarm' ? <MiniMap /> : <WatchdogMap />}
                 </Box>
               </Box>
             </SimpleGrid>
@@ -410,7 +400,6 @@ const ChartExpandModal = ({
                 bg={'white'}
                 border={'2px solid #fd9801'}
                 color={'#212121'}
-
               />
             </FormControl>
             <FormControl mt={4}>
@@ -422,15 +411,14 @@ const ChartExpandModal = ({
                 bg={'white'}
                 border={'2px solid #fd9801'}
                 color={'#212121'}
-
               />
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button variant="sidebar" mr={3} onClick={handleFormSubmit}>
+            <Button variant="solid" bg="orange.400" color="white" _hover={{ bg: 'orange.500' }} mr={3} onClick={handleFormSubmit}>
               Save
             </Button>
-            <Button variant="sidebar" onClick={handleCloseThresholdModal}>
+            <Button variant="solid" bg="gray.400" color="white" _hover={{ bg: 'gray.500' }} onClick={handleCloseThresholdModal}>
               Cancel
             </Button>
           </ModalFooter>
