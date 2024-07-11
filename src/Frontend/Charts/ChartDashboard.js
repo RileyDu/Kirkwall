@@ -70,8 +70,9 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod, setCurrentValue 
           justifyContent="center"
           p={2}
           border="2px solid"
-          borderColor={colorMode === 'light' ? 'gray.400' : 'white'}
-          color={colorMode === 'light' ? 'gray.500' : 'white'}
+          borderColor={colorMode === 'light' ? 'brand.800' : 'white'}
+          color={colorMode === 'light' ? '#212121' : 'white'}
+          bg={colorMode === 'light' ? 'white' : ''}
           borderRadius="md"
           boxShadow="lg"
           m={1}
@@ -90,8 +91,9 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod, setCurrentValue 
           justifyContent="center"
           p={2}
           border="2px solid"
-          borderColor={colorMode === 'light' ? 'gray.400' : 'white'}
-          color={colorMode === 'light' ? 'gray.500' : 'white'}
+          borderColor={colorMode === 'light' ? 'brand.800' : 'white'}
+          color={colorMode === 'light' ? '#212121' : 'white'}
+          bg={colorMode === 'light' ? 'white' : ''}
           borderRadius="md"
           boxShadow="lg"
           m={1}
@@ -110,8 +112,9 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod, setCurrentValue 
           justifyContent="center"
           p={2}
           border="2px solid"
-          borderColor={colorMode === 'light' ? 'gray.400' : 'white'}
-          color={colorMode === 'light' ? 'gray.500' : 'white'}
+          borderColor={colorMode === 'light' ? 'brand.800' : 'white'}
+          color={colorMode === 'light' ? '#212121' : 'white'}
+          bg={colorMode === 'light' ? 'white' : ''}
           borderRadius="md"
           boxShadow="lg"
           m={1}
@@ -130,8 +133,9 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod, setCurrentValue 
           justifyContent="center"
           p={2}
           border="2px solid"
-          borderColor={colorMode === 'light' ? 'gray.400' : 'white'}
-          color={colorMode === 'light' ? 'gray.500' : 'white'}
+          borderColor={colorMode === 'light' ? 'brand.800' : 'white'}
+          color={colorMode === 'light' ? '#212121' : 'white'}
+          bg={colorMode === 'light' ? 'white' : ''}
           borderRadius="md"
           boxShadow="lg"
           m={1}
