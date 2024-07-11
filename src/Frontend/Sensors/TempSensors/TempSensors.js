@@ -61,6 +61,7 @@ export default function TempSensors({ statusOfAlerts }) {
           <ChartWrapper
             title="Temperature (°F)"
             weatherData={tempData || weatherData}
+            metric={'temperature'}
           >
             <LineChart data={tempData || weatherData} metric="temperature" />
           </ChartWrapper>
@@ -68,6 +69,7 @@ export default function TempSensors({ statusOfAlerts }) {
           <ChartWrapper
             title="Temperature (°F)"
             weatherData={tempData || weatherData}
+            metric={'temperature'}
           >
             <BarChart data={tempData || weatherData} metric="temperature" />
           </ChartWrapper>

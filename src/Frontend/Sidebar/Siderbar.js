@@ -6,6 +6,8 @@ import {
   WiHumidity,
 } from 'react-icons/wi';
 import { FaDog, FaChevronLeft, FaChevronRight, FaGlobe, FaSnowflake } from 'react-icons/fa';
+import { GiGroundSprout } from "react-icons/gi";
+
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
@@ -135,6 +137,15 @@ const SidebarContent = ({ navigate, colorMode }) => (
       Humidity Sensors
     </MotionButton>
     <MotionButton
+      leftIcon={<GiGroundSprout size="30" />}
+      onClick={() => navigate('/SoilMoistureSensors')}
+      {...buttonStyleProps}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+    >
+      Soil Sensors
+    </MotionButton>
+    <MotionButton
       leftIcon={<FaDog size="30" />}
       onClick={() => navigate('/WatchdogSensors')}
       {...buttonStyleProps}
@@ -200,6 +211,16 @@ const MinimizedSidebarContent = ({ navigate, toggleSidebar, colorMode }) => (
       icon={<WiHumidity size="30" />}
       onClick={() => navigate('/HumiditySensors')}
       aria-label="Humidity Sensors"
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      bg="#F4B860"
+      color="black"
+      _hover={{ bg: '#d7a247' }}
+    />
+        <MotionIconButton
+      icon={<GiGroundSprout size="30" />}
+      onClick={() => navigate('/SoilMoistureSensors')}
+      aria-label="Soil Sensors"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       bg="#F4B860"

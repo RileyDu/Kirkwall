@@ -147,7 +147,7 @@ export default function WindSensors({ statusOfAlerts }) {
       )}
       <Box width="100%" mb="4"       color={colorMode === 'light' ? 'black' : 'white'}
 >
-        <ChartWrapper title="Wind Speed (MPH)" weatherData={windData || weatherData}>
+        <ChartWrapper title="Wind Speed (MPH)" weatherData={windData || weatherData} metric={'wind_speed'}>
           <LineChart data={windData || weatherData} metric="wind_speed" />
         </ChartWrapper>
       </Box>
@@ -157,7 +157,7 @@ export default function WindSensors({ statusOfAlerts }) {
         borderRadius={'full'}
       />
       <Box width="100%" mb="4" color={colorMode === 'light' ? 'black' : 'white'}>
-        <ChartWrapper title="Wind Speed (MPH)" weatherData={windData || weatherData}>
+        <ChartWrapper title="Wind Speed (MPH)" weatherData={windData || weatherData} metric={'wind_speed'}>
           <BarChart data={windData || weatherData} metric="wind_speed" />
         </ChartWrapper>
       </Box>

@@ -65,6 +65,7 @@ export default function RainSensors({ statusOfAlerts }) {
         <ChartWrapper
           title="Rainfall (inches)"
           weatherData={rainfallData || weatherData}
+          metric={'rain_15_min_inches'}
         >
           <BarChart
             data={rainfallData || weatherData}
@@ -77,6 +78,7 @@ export default function RainSensors({ statusOfAlerts }) {
         <ChartWrapper
           title="Rainfall (inches)"
           weatherData={rainfallData || weatherData}
+          metric={'rain_15_min_inches'}
         >
           <LineChart
             data={rainfallData || weatherData}

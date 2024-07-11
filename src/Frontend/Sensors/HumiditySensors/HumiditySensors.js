@@ -52,7 +52,7 @@ export default function HumiditySensors({ statusOfAlerts }) {
         <MiniDashboard metric="percent_humidity" weatherData={humidityData || weatherData} />
       </Box>
       <Box color={colorMode === 'light' ? 'black' : 'white'}>
-      <ChartWrapper title="Humidity (%)" weatherData={humidityData || weatherData}>
+      <ChartWrapper title="Humidity (%)" weatherData={humidityData || weatherData} metric={"percent_humidity"}>
         <BarChart data={humidityData || weatherData} metric="percent_humidity" />
       </ChartWrapper>
       </Box>
@@ -62,7 +62,7 @@ export default function HumiditySensors({ statusOfAlerts }) {
         borderRadius={'full'}
       />
       <Box color={colorMode === 'light' ? 'black' : 'white'}>
-      <ChartWrapper title="Humidity (%)" weatherData={humidityData || weatherData}>
+      <ChartWrapper title="Humidity (%)" weatherData={humidityData || weatherData} metric={"percent_humidity"}>
         <LineChart data={humidityData || weatherData} metric="percent_humidity" />
       </ChartWrapper>
       </Box>

@@ -61,6 +61,7 @@ export default function SoilSensors({ statusOfAlerts }) {
           <ChartWrapper
             title="Soil Moisture (centibar)"
             weatherData={soilMoistureData || weatherData}
+            metric={'soil_moisture'}
           >
             <LineChart data={soilMoistureData || weatherData} metric="soil_moisture" />
           </ChartWrapper>
@@ -68,6 +69,7 @@ export default function SoilSensors({ statusOfAlerts }) {
           <ChartWrapper
             title="Soil Moisture (centibar)"
             weatherData={soilMoistureData || weatherData}
+            metric={'soil_moisture'}
           >
             <BarChart data={soilMoistureData || weatherData} metric="soil_moisture" />
           </ChartWrapper>
