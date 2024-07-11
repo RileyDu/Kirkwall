@@ -219,6 +219,12 @@ const ChartExpandModal = ({
     localStorage.setItem('alerts', JSON.stringify([]));
   };
 
+  useEffect(() => {
+    return () => {
+      clearAlerts();
+    };
+  }, []);
+
   return (
     <>
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
@@ -431,5 +437,3 @@ const ChartExpandModal = ({
 };
 
 export default ChartExpandModal;
-
-//sdadsa
