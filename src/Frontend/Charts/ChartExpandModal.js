@@ -334,7 +334,7 @@ const ChartExpandModal = ({
                         bg={'gray.100'}
                         color={'black'}
                       >
-                        CLEAR ALERTS
+                        CLEAR
                       </MotionButton>
                     </HStack>
                     <Box
