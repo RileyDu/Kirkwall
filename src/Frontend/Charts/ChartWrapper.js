@@ -167,29 +167,42 @@ const ChartWrapper = ({
     handleCloseModal();
   };
 
-  useEffect(() => {
-    const getLogoToDisplay = () => {
-      switch (metric) {
-        case 'temperature':
-        case 'percent_humidity':
-        case 'wind_speed':
-        case 'rain_15_min_inches':
-        case 'soil_moisture':
-        case 'leaf_wetness':
-          return 'Davis_logo.webp';
-        case 'temp':
-        case 'hum':
-          return 'WatchdogLogo.png';
-        case 'humidity':
-        case 'rctemp':
-          return 'rci-logo-blue.png';
-        default:
-          return '';
-      }
+  const getLogoToDisplay = (metric, colorMode) => {
+    const logoMap = {
+      light: {
+        temperature: 'DavisLogoBlack.webp',
+        percent_humidity: 'DavisLogoBlack.webp',
+        wind_speed: 'DavisLogoBlack.webp',
+        rain_15_min_inches: 'DavisLogoBlack.webp',
+        soil_moisture: 'DavisLogoBlack.webp',
+        leaf_wetness: 'DavisLogoBlack.webp',
+        temp: 'WatchdogLogoBlack.png',
+        hum: 'WatchdogLogoBlack.png',
+        humidity: 'rci-logo-blue.png',
+        rctemp: 'rci-logo-blue.png',
+      },
+      dark: {
+        temperature: 'DavisLogoWhite.webp',
+        percent_humidity: 'DavisLogoWhite.webp',
+        wind_speed: 'DavisLogoWhite.webp',
+        rain_15_min_inches: 'DavisLogoWhite.webp',
+        soil_moisture: 'DavisLogoWhite.webp',
+        leaf_wetness: 'DavisLogoWhite.webp',
+        temp: 'WatchdogLogoWhite.png',
+        hum: 'WatchdogLogoWhite.png',
+        humidity: 'rci-logo-white.png',
+        rctemp: 'rci-logo-white.png',
+      },
     };
-    
-    setLogoToDisplay(getLogoToDisplay());
-  }, [metric]);
+  
+    return logoMap[colorMode][metric] || '';
+  };
+
+  const [logo, setLogo] = useState('');
+
+  useEffect(() => {
+    setLogo(getLogoToDisplay(metric, colorMode));
+  }, [metric, colorMode]);
 
   const mostRecentValue =
     weatherData && weatherData.length > 0 ? weatherData[0][metric] : 'N/A';
@@ -305,7 +318,7 @@ const ChartWrapper = ({
       >
         <Flex justify="space-between" mb="4" align="center">
           <Box fontSize={fontSize} fontWeight="bold">
-          {logoToDisplay && <img src={logoToDisplay} alt="logo" width="100px" border="2px solid #212121" mb="2"/>}
+          {logo && <img src={logo} alt="logo" width="100px" border="2px solid #212121" mb="2"/>}
             {title}
           </Box>
           {showIcons && (
