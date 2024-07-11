@@ -133,7 +133,7 @@ const ChartWrapper = ({
   }, [location.pathname, title]);
 
   const getBackgroundColor = colorMode =>
-    colorMode === 'light' ? '#f9f9f9' : '#303030';
+    colorMode === 'light' ? '#f9f9f9' : 'gray.800';
 
   const handleFormSubmit = () => {
     // let formattedPhoneNumber = phoneNumber.startsWith('+1')
