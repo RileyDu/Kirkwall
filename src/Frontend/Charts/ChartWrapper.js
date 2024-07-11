@@ -63,7 +63,6 @@ const ChartWrapper = ({
   const [loading, setLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [sensorMap, setSensorMap] = useState('grandfarm'); // State to toggle between map and chart
-  const [logoToDisplay, setLogoToDisplay] = useState('');
 
   const mapComponents = {
     grandfarm: MiniMap,
