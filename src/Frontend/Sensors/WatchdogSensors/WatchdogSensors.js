@@ -30,6 +30,9 @@ export default function WatchdogSensors({ statusOfAlerts }) {
     }
   }, [watchdogData]);
 
+  const getLogoColor = () => (colorMode === 'light' ? 'black' : 'white');
+
+
   const spin = keyframes`
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -42,7 +45,7 @@ export default function WatchdogSensors({ statusOfAlerts }) {
           as={FaChessRook}
           animation={`${spin} infinite 2s linear`}
           fontSize="6xl"
-          color="black"
+          color={getLogoColor()}
         />
       </Flex>
     );

@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { LineChart, BarChart } from '../Charts/Charts';
 import ChartWrapper from '../Charts/ChartWrapper';
-import { FaChevronDown } from 'react-icons/fa';
+import { FaChessRook, FaChevronDown } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { useWeatherData } from '../WeatherDataContext';
 import { handleChartChange } from '../Charts/ChartUtils';
@@ -66,13 +66,15 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const { colorMode } = useColorMode();
   const iconColor = useColorModeValue('black', 'white');
 
+  
+  
   useEffect(() => {
     setIsReady(false);
     if (weatherData.length > 0) {
       setIsReady(true);
     }
   }, [weatherData]);
-
+  
   const toggleSection = section => {
     setShowSections(prevState => ({
       ...prevState,
@@ -80,6 +82,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     }));
   };
 
+  const getLogoColor = () => (colorMode === 'light' ? 'black' : 'white');
+  
   const spin = keyframes`
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -89,10 +93,10 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     return (
       <Flex justify="center" align="center" height="100%">
         <Box
-          as={FaChevronDown}
+          as={FaChessRook}
           animation={`${spin} infinite 2s linear`}
           fontSize="6xl"
-          color="black"
+          color={getLogoColor()}
         />
       </Flex>
     );

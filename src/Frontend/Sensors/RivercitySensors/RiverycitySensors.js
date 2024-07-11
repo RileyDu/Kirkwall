@@ -29,6 +29,9 @@ import {
         setIsReady(true);
       }
     }, [rivercityData]);
+
+    const getLogoColor = () => (colorMode === 'light' ? 'black' : 'white');
+
   
     const spin = keyframes`
       0% { transform: rotate(0deg); }
@@ -42,7 +45,7 @@ import {
             as={FaChessRook}
             animation={`${spin} infinite 2s linear`}
             fontSize="6xl"
-            color="black"
+            color={getLogoColor()}
           />
         </Flex>
       );
