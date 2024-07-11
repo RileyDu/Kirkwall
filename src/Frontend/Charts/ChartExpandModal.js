@@ -158,8 +158,8 @@ const ChartExpandModal = ({
       if (highThreshold < currentValue) {
         const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${highThreshold}.`;
         if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
-          sendSMSAlert(phoneNumber, alertMessage);
-          sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
+          (phoneNumber) && sendSMSAlert(phoneNumber, alertMessage);
+          (userEmail) && sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
           setLastAlertTime(now);
         }
         setAlerts((prevAlerts) => {
