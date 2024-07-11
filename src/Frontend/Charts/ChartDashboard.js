@@ -10,11 +10,11 @@ const getLabelForMetric = (metric) => {
       case 'rctemp':
         return { label: '°F', addSpace: false };
     case 'hum':
-      return { label: '% Humidity', addSpace: false };
+      return { label: '% ', addSpace: false };
     case 'percent_humidity':
-      return { label: '% Humidity', addSpace: false };
+      return { label: '% ', addSpace: false };
     case 'humidity':
-      return { label: '% Humidity', addSpace: false };
+      return { label: '% ', addSpace: false };
     case 'rain_15_min_inches':
       return { label: 'inches', addSpace: true };
     case 'wind_speed':
