@@ -226,10 +226,11 @@ const ChartExpandModal = ({
   }, []);
 
   return (
-    <>
-      <Modal onClose={onClose} isOpen={isOpen} isCentered>
+    <Box >
+      <Modal onClose={onClose} isOpen={isOpen}>
         <ModalOverlay />
         <ModalContent
+        marginTop={'15px'}
           width="90%"
           maxWidth="100%"
           height="90vh"
@@ -432,7 +433,7 @@ const ChartExpandModal = ({
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </>
+    </Box>
   );
 };
 
