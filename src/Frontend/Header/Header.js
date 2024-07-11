@@ -38,6 +38,8 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { FaBars, FaSun, FaMoon, FaDog, FaGlobe, FaSnowflake } from 'react-icons/fa';
+import { GiGroundSprout } from "react-icons/gi";
+
 import { FiAlertTriangle } from 'react-icons/fi';
 import {
   WiThermometer,
@@ -374,6 +376,15 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                   {...buttonStyleProps}
                 >
                   Humidity Sensors
+                </Button>
+              </motion.div>
+              <motion.div {...motionProps}>
+                <Button
+                  leftIcon={<GiGroundSprout size="24px" />}
+                  onClick={() => handleNavigation('/SoilMoistureSensors')}
+                  {...buttonStyleProps}
+                >
+                  Soil Sensors
                 </Button>
               </motion.div>
               <motion.div {...motionProps}>
