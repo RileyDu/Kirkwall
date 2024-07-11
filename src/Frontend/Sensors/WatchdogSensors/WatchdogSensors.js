@@ -25,7 +25,7 @@ export default function WatchdogSensors({ statusOfAlerts }) {
 
   useEffect(() => {
     setIsReady(false);
-    if (watchdogData.length > 0) {
+    if (watchdogData && watchdogData.length > 0) {
       setIsReady(true);
     }
   }, [watchdogData]);

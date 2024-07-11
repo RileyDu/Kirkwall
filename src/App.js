@@ -32,6 +32,7 @@ import { WeatherDataProvider } from './Frontend/WeatherDataContext';
 import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors';
+import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySensors';
 import MapComponent from './Frontend/Maps/Map';
 import LandingPage from './Frontend/LandingPage/LandingPage';
 
@@ -188,6 +189,14 @@ return (
             element={
               <ProtectedRoute>
                 <WatchdogSensors statusOfAlerts={showAlerts}  />
+              </ProtectedRoute>
+            }
+          />
+                    <Route
+            path="/RivercitySensors"
+            element={
+              <ProtectedRoute>
+                <RivercitySensors statusOfAlerts={showAlerts}  />
               </ProtectedRoute>
             }
           />

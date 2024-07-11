@@ -5,7 +5,7 @@ import {
   WiRain,
   WiHumidity,
 } from 'react-icons/wi';
-import { FaDog, FaChevronLeft, FaChevronRight, FaGlobe } from 'react-icons/fa';
+import { FaDog, FaChevronLeft, FaChevronRight, FaGlobe, FaSnowflake } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
@@ -201,6 +201,16 @@ const MinimizedSidebarContent = ({ navigate, toggleSidebar, colorMode }) => (
       icon={<FaDog size="30" />}
       onClick={() => navigate('/WatchdogSensors')}
       aria-label="Watchdog Sensors"
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      bg="#F4B860"
+      color="black"
+      _hover={{ bg: '#d7a247' }}
+    />
+        <MotionIconButton
+      icon={<FaSnowflake size="30" />}
+      onClick={() => navigate('/RivercitySensors')}
+      aria-label="Rivercity Sensors"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       bg="#F4B860"

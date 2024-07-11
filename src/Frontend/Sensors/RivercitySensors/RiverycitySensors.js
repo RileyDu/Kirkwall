@@ -25,7 +25,7 @@ import {
   
     useEffect(() => {
       setIsReady(false);
-      if (rivercityData.length > 0) {
+      if (rivercityData && rivercityData.length > 0) {
         setIsReady(true);
       }
     }, [rivercityData]);
@@ -54,17 +54,17 @@ import {
           Rivercity Sensors
         </Heading>
         <Box width="100%">
-          <MiniDashboard weatherData={rivercityTempData || rivercityData} metric="temp" />
+          <MiniDashboard weatherData={rivercityTempData || rivercityData} metric="rctemp" />
         </Box>
         <Flex direction="row" justifyContent="space-between">
           <Box width="100%">
             <Box color={colorMode === 'light' ? 'black' : 'white'}>
             <ChartWrapper
-              title="Temperature in Garage (°F)"
+              title="Temperature in Freezer (°F)"
               weatherData={rivercityTempData || rivercityData}
-              metric="temp"
+              metric="rctemp"
             >
-              <LineChart data={rivercityTempData || rivercityData} metric="temp" />
+              <LineChart data={rivercityTempData || rivercityData} metric="rctemp" />
             </ChartWrapper>
             </Box>
             <Divider
@@ -74,15 +74,15 @@ import {
               borderRadius="full"
             />
             <Box width="100%">
-              <MiniDashboard weatherData={rivercityHumData || rivercityData} metric="hum" />
+              <MiniDashboard weatherData={rivercityHumData || rivercityData} metric="humidity" />
             </Box>
             <Box color={colorMode === 'light' ? 'black' : 'white'}>
             <ChartWrapper
-              title="Humidity in Garage (%)"
+              title="Humidity in Freezer (%)"
               weatherData={rivercityHumData || rivercityData}
-              metric="hum"
+              metric="humidity"
             >
-              <BarChart data={rivercityHumData || rivercityData} metric="hum" />
+              <BarChart data={rivercityHumData || rivercityData} metric="humidity" />
             </ChartWrapper>
             </Box>
           </Box>
