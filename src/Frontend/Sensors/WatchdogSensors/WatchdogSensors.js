@@ -18,7 +18,7 @@ import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
 
 export default function WatchdogSensors({ statusOfAlerts }) {
-  const { watchdogData, loading } = useWeatherData();
+  const { watchdogData, loading, watchdogTempData, watchdogHumData, } = useWeatherData();
   const [isReady, setIsReady] = useState(false);
 
   const { colorMode } = useColorMode();
@@ -75,7 +75,7 @@ export default function WatchdogSensors({ statusOfAlerts }) {
         </Text>
       </Box>
       <Box width="100%">
-        <MiniDashboard weatherData={watchdogData} metric="temp" />
+        <MiniDashboard weatherData={watchdogTempData || watchdogData} metric="temp" />
       </Box>
 
       <Flex direction="row" justifyContent="space-between">
@@ -83,10 +83,10 @@ export default function WatchdogSensors({ statusOfAlerts }) {
           <Box color={colorMode === 'light' ? 'black' : 'white'}>
           <ChartWrapper
             title="Temperature in Garage (°F)"
-            weatherData={watchdogData}
+            weatherData={watchdogTempData || watchdogData}
             metric="temp"
           >
-            <LineChart data={watchdogData} metric="temp" />
+            <LineChart data={watchdogTempData || watchdogData} metric="temp" />
           </ChartWrapper>
           </Box>
           <Divider
@@ -96,15 +96,15 @@ export default function WatchdogSensors({ statusOfAlerts }) {
             borderRadius="full"
           />
           <Box width="100%">
-            <MiniDashboard weatherData={watchdogData} metric="hum" />
+            <MiniDashboard weatherData={watchdogHumData || watchdogData} metric="hum" />
           </Box>
           <Box color={colorMode === 'light' ? 'black' : 'white'}>
           <ChartWrapper
             title="Humidity in Garage (%)"
-            weatherData={watchdogData}
+            weatherData={watchdogHumData || watchdogData}
             metric="hum"
           >
-            <BarChart data={watchdogData} metric="hum" />
+            <BarChart data={watchdogHumData || watchdogData} metric="hum" />
           </ChartWrapper>
           </Box>
         </Box>
