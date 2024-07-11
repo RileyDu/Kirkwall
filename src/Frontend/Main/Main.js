@@ -157,6 +157,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                 height: showSections.grandFarm ? 'auto' : 0,
               }}
               transition={{ duration: 0.5 }}
+              mb={showSections.grandFarm ? '8' : 0}
             >
               <Heading size="lg" textAlign="center" mb="4">
                 Grand Farm Sensors
@@ -340,6 +341,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                 height: showSections.garage ? 'auto' : 0,
               }}
               transition={{ duration: 0.5 }}
+              mb={8}
             >
               <Heading size="lg" textAlign="center" mb="4">
                 Garage Sensors
