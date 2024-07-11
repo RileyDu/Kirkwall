@@ -144,6 +144,15 @@ const SidebarContent = ({ navigate, colorMode }) => (
       Watchdog Sensors
     </MotionButton>
     <MotionButton
+      leftIcon={<FaSnowflake size="30" />}
+      onClick={() => navigate('/RivercitySensors')}
+      {...buttonStyleProps}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+    >
+      Rivercity Sensors
+    </MotionButton>
+    <MotionButton
       leftIcon={<FaGlobe size="30" />}
       onClick={() => navigate('/map')}
       {...buttonStyleProps}

@@ -37,7 +37,7 @@ import {
   PopoverBody,
   Text,
 } from '@chakra-ui/react';
-import { FaBars, FaSun, FaMoon, FaDog, FaGlobe } from 'react-icons/fa';
+import { FaBars, FaSun, FaMoon, FaDog, FaGlobe, FaSnowflake } from 'react-icons/fa';
 import { FiAlertTriangle } from 'react-icons/fi';
 import {
   WiThermometer,
@@ -383,6 +383,15 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                   {...buttonStyleProps}
                 >
                   Watchdog Sensors
+                </Button>
+              </motion.div>
+              <motion.div {...motionProps}>
+                <Button
+                  leftIcon={<FaSnowflake size="24px" />}
+                  onClick={() => handleNavigation('/RivercitySensors')}
+                  {...buttonStyleProps}
+                >
+                  Rivercity Sensors
                 </Button>
               </motion.div>
               <motion.div {...motionProps}>
