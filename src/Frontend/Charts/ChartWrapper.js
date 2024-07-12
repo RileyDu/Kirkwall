@@ -342,7 +342,7 @@ const ChartWrapper = ({
                   </Text>
                 </Box>
               </motion.div> */}
-              <motion.div
+              {/* <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1, delay: 0.25 }}
@@ -356,17 +356,17 @@ const ChartWrapper = ({
                   mr={2}
                   bg={'brand.400'}
                   color={'#212121'}
-                >
-                  <Popover
+                > */}
+                  {/* <Popover
                     trigger="hover"
                     placement="bottom"
                     closeOnBlur
                     closeOnEsc
-                  >
-                    <PopoverTrigger>
+                  > */}
+                    {/* <PopoverTrigger>
                       <Text fontSize={fontSize}>Time: {timeOfGraph}</Text>
-                    </PopoverTrigger>
-                    <PopoverContent
+                    </PopoverTrigger> */}
+                    {/* <PopoverContent
                       bg="brand.50"
                       color="white"
                       borderRadius="md"
@@ -387,10 +387,9 @@ const ChartWrapper = ({
                         color="white"
                         mt={[1, -1]}
                       />
-                      <PopoverBody color="#212121" p={0}>
-                        {' '}
+                      <PopoverBody color="#212121" p={0}> */}
                         {/* Remove padding for full width use */}
-                        <Box
+                        {/* <Box
                           display="flex"
                           flexWrap="wrap" // Allows buttons to wrap if they don't fit in one line
                           gap={0.5}
@@ -424,9 +423,9 @@ const ChartWrapper = ({
                         </Box>
                       </PopoverBody>
                     </PopoverContent>
-                  </Popover>
-                </Box>
-              </motion.div>
+                  </Popover> */}
+                {/* </Box>
+              </motion.div> */}
               {/* <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
