@@ -35,6 +35,8 @@ import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors'
 import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySensors';
 import MapComponent from './Frontend/Maps/Map';
 import LandingPage from './Frontend/LandingPage/LandingPage';
+import { useAuth } from './Frontend/AuthComponents/AuthContext';
+import MedDashboard from './Frontend/ImpriMed/MedDashboard';
 
 const Layout = ({
   children,
@@ -86,6 +88,9 @@ const MainApp = () => {
   const [timePeriod, setTimePeriod] = useState(37); // Default time period
   const location = useLocation();
   const [showAlerts, setShowAlerts] = useState(true);
+  
+
+
 
 
   const toggleAlerts = () => {
@@ -130,6 +135,11 @@ return (
           <Route path='/landing' element={<LandingPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/imprimed" element={
+            <ProtectedRoute allowedUsers={['jerrycromarty@imprimedicine.com']}>
+              <MedDashboard />
+            </ProtectedRoute>
+          }/>
           <Route
             path="/"
             element={

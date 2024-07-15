@@ -25,7 +25,7 @@ import { keyframes } from '@emotion/react';
 import { useWeatherData } from '../WeatherDataContext';
 import { handleChartChange } from '../Charts/ChartUtils';
 import { motion } from 'framer-motion';
-import { useAuth } from '../AuthComponents/AuthContext.js';
+// import { useAuth } from '../AuthComponents/AuthContext.js';
 
 const MotionBox = motion(Box);
 const MotionTabPanel = motion(TabPanel);
@@ -69,22 +69,22 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const iconColor = useColorModeValue('black', 'white');
 
 
-  const { currentUser } = useAuth();
-  // console.log('This is the current user: ', currentUser.email);
+  // const { currentUser } = useAuth();
+  // // console.log('This is the current user: ', currentUser.email);
 
-  const doesUserHaveAPIAccess = () => {
-    switch (currentUser.email) {
-      case 'test@kirkwall.io':
-        return 'ALL';
-      case 'grandfarm@grandfarm.com':
-      case 'pmo@grandfarm.com':
-        return 'ACCESS_LEVEL_1';
-      case 'jerrycromarty@imprimedicine.com':
-        return 'ACCESS_LEVEL_2';
-      default:
-        return false;
-    }
-  };
+  // const doesUserHaveAPIAccess = () => {
+  //   switch (currentUser.email) {
+  //     case 'test@kirkwall.io':
+  //       return 'ALL';
+  //     case 'grandfarm@grandfarm.com':
+  //     case 'pmo@grandfarm.com':
+  //       return 'ACCESS_LEVEL_1';
+  //     case 'jerrycromarty@imprimedicine.com':
+  //       return 'ACCESS_LEVEL_2';
+  //     default:
+  //       return false;
+  //   }
+  // };
   
   useEffect(() => {
     setIsReady(false);
