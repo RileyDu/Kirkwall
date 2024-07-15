@@ -243,7 +243,7 @@ async function getRivercityData(type, limit) {
 // Function to get API ID of user
 async function getAPIIds() {
   const query = `
-  query api{
+  query{
     api{
       customer {
         name

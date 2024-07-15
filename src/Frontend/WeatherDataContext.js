@@ -382,6 +382,7 @@ export const WeatherDataProvider = ({ children }) => {
         rivercityData,
         rivercityTempData,
         rivercityHumData,
+        APIIds,
       }}
     >
       {children}
