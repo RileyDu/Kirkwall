@@ -5,6 +5,7 @@ import {
   Spinner,
   useMediaQuery,
   Flex,
+  useColorMode
 } from '@chakra-ui/react';
 import {
   BrowserRouter as Router,
@@ -12,6 +13,7 @@ import {
   Routes,
   useLocation,
 } from 'react-router-dom';
+
 import { AuthProvider } from './Frontend/AuthComponents/AuthContext';
 import ProtectedRoute from './Frontend/AuthComponents/ProtectedRoute';
 import SignUp from './Frontend/AuthComponents/Signup';
@@ -49,8 +51,10 @@ const Layout = ({
   const shouldShowSidebar =
     location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !== '/landing';
 
+  const { colorMode } = useColorMode();
+
   return (
-    <Flex minH="100vh">
+    <Flex minH="100vh" bg={colorMode === 'light' ? 'brand.50' : 'gray.700'} overflowX={'hidden'}>
       {isLargerThan768 && shouldShowSidebar && (
         <Sidebar
           isMinimized={isMinimized}
@@ -65,8 +69,8 @@ const Layout = ({
         ml={
           isLargerThan768 && shouldShowSidebar
             ? isMinimized
-              ? '80px'
-              : '250px'
+              ? '100px'
+              : '190px'
             : '0'
         }
         mt={!isLargerThan768 ? '70px' : '0'}

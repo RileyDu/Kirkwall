@@ -203,6 +203,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     transition: { type: 'spring', stiffness: 50, damping: 10 },
   };
 
+  
+
   return (
     <>
       <Flex
