@@ -304,7 +304,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                           ? '/GrandFarmLogo.jpg'
                           : currentUser.email ===
                             'jerrycromarty@imprimedicine.com'
-                          ? '/AnotherLogo.png'
+                          ? '/ImpriMedLogo.png'
                           : '/RookLogoWhite.png'
                       }
                       cursor="pointer"
