@@ -308,7 +308,7 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
             key="main-dashboard"
           >
             <Flex justify="space-between" mb="6" alignItems="center">
-              <Heading size="lg">GrandFarm Dashboard</Heading>
+              <Heading size="lg">Grand Farm Dashboard</Heading>
             </Flex>
             <MotionBox
               initial={{ opacity: 0, height: 0 }}
