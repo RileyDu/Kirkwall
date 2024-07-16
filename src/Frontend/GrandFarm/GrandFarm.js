@@ -321,7 +321,7 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
             >
               <Flex justify="center" align="center" mb="4">
                 <Heading size="lg" textAlign="center">
-                  Grand Farm Sensors
+                  Weather Sensors
                 </Heading>
                 {/* <Flex justify="center" mb="4"> */}
                 <Menu>
