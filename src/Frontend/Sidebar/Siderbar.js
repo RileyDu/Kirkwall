@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useWeatherData } from '../WeatherDataContext';
 import { useAuth } from '../AuthComponents/AuthContext';
+import { useEffect, useState } from 'react';
 
 const MotionFlex = motion(Flex);
 const MotionStack = motion(Stack);
@@ -65,11 +66,38 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
   const navigate = useNavigate();
   const { colorMode } = useColorMode();
   const { loading } = useWeatherData();
+  const [customerRole, setCustomerRole] = useState('');
 
   // Fetch current user email
   const { currentUser } = useAuth();
   const user = currentUser;
   const userEmail = user ? user.email : 'default';
+
+  useEffect(() => {
+    if (user) {
+      if (user.email === 'pmo@grandfarm.com') {
+        setCustomerRole('gf');
+      } else if (user.email === 'jerrycromarty@imprimedicine.com') {
+        setCustomerRole('imprimed');
+      } else {
+        setCustomerRole('default');
+      }
+    }
+  }, [user]);
+
+  const handleNavigation = () => {
+    switch (customerRole) {
+      case 'gf':
+        navigate('/grandfarm');
+        break;
+      case 'imprimed':
+        navigate('/imprimed');
+        break;
+      default:
+        navigate('/');
+        break;
+    }
+  };
 
   const sidebarVariants = {
     collapsed: {
@@ -125,7 +153,7 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
               src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
               alt="kirkwall logo"
               style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
-              onClick={() => navigate('/')}
+              onClick={() => handleNavigation()}
             />
           </Box>
         ) : (
@@ -135,7 +163,7 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
                 src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
                 alt="kirkwall logo"
                 style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
-                onClick={() => navigate('/')}
+                onClick={() => handleNavigation()}
               />
             </Box>
           </motion.div>
