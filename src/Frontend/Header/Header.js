@@ -205,18 +205,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         : 'N/A',
     },
     {
-      label: 'Total Rainfall @ GF (inches)',
-      value: rainfallData
-        ? rainfallData
-            .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
-            .toFixed(2)
-        : weatherData
-        ? weatherData
-            .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
-            .toFixed(2)
-        : 'N/A',
-    },
-    {
       label: 'Average Humidity @ GF (%)',
       value: humidityData
         ? (
@@ -230,6 +218,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           ).toFixed(2)
         : 'N/A',
     },
+
     {
       label: 'Average Wind Speed @ GF (mph)',
       value: windData
@@ -244,6 +233,19 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           ).toFixed(2)
         : 'N/A',
     },
+    {
+      label: 'Total Rainfall @ GF (inches)',
+      value: rainfallData
+        ? rainfallData
+            .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
+            .toFixed(2)
+        : weatherData
+        ? weatherData
+            .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
+            .toFixed(2)
+        : 'N/A',
+    },
+
   ];
 
   const MotionIconButton = motion(IconButton);
