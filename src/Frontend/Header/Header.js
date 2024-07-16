@@ -39,7 +39,6 @@ import {
 } from '@chakra-ui/react';
 import { FaBars, FaSun, FaMoon, FaDog, FaGlobe, FaSnowflake } from 'react-icons/fa';
 import { GiGroundSprout } from "react-icons/gi";
-
 import { FiAlertTriangle } from 'react-icons/fi';
 import {
   WiThermometer,
@@ -51,6 +50,7 @@ import Logout from '../../Frontend/AuthComponents/Logout';
 import { useNavigate } from 'react-router-dom';
 import { useWeatherData } from '../WeatherDataContext';
 import WeatherAlerts from '../Alert/WeatherAlerts';
+import { useAuth } from '../AuthComponents/AuthContext';
 
 const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
@@ -76,6 +76,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   // const toggleAlerts = () => {
   //   setShowAlerts(!showAlerts);
   // };
+
+  const { currentUser } = useAuth();
 
   const openDrawer = () => {
     setDrawerOpen(true);
@@ -233,6 +235,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           </Box>
         </motion.div>
         <Flex align="center">
+          {currentUser.email !== 'jerrycromarty@imprimedicine.com' && (
           <motion.div {...motionProps}>
             <MotionButton
               onClick={onSummaryToggle}
@@ -248,6 +251,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
               {isSummaryOpen ? 'Hide Summary' : ' Weather Summary'}
             </MotionButton>
           </motion.div>
+          )}
           {isLargerThan768 && (
             <motion.div {...motionProps}>
               <Tooltip label="Toggle Weather Alerts">
