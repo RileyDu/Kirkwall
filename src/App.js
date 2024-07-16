@@ -141,7 +141,7 @@ return (
           <Route path="/login" element={<Login />} />
           <Route path="/imprimed" element={
             <ProtectedRoute allowedUsers={['jerrycromarty@imprimedicine.com']}>
-              <MedDashboard />
+              <MedDashboard statusOfAlerts={showAlerts} isMinimized={isMinimized}/>
             </ProtectedRoute>
           }/>
           <Route
