@@ -67,15 +67,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     APIIDs,
   } = useWeatherData();
 
-  const [tempChartType, setTempChartType] = useState('bar');
-  const [humidityChartType, setHumidityChartType] = useState('bar');
-  const [windChartType, setWindChartType] = useState('bar');
-  const [rainfallChartType, setRainfallChartType] = useState('bar');
-  const [soilMoistureChartType, setSoilMoistureChartType] = useState('bar');
-  const [leafWetnessChartType, setLeafWetnessChartType] = useState('bar');
-  const [watchdogTempChartType, setWatchdogTempChartType] = useState('bar');
-  const [watchdogHumidityChartType, setWatchdogHumidityChartType] =
-    useState('bar');
+
   const [rivercityTempChartType, setRivercityTempChartType] = useState('bar');
   const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
 
@@ -149,13 +141,13 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     } else if (command.includes('hide humidity')) {
       hideChart('rivercity', 'humidity');
     } else if (command.includes('change temperature chart type to line')) {
-      setTempChartType('line');
+      setRivercityTempChartType('line');
     } else if (command.includes('change temperature chart type to bar')) {
-      setTempChartType('bar');
+      setRivercityTempChartType('bar');
     } else if (command.includes('change humidity chart type to line')) {
-      setHumidityChartType('line');
+      setRivercityHumChartType('line');
     } else if (command.includes('change humidity chart type to bar')) {
-      setHumidityChartType('bar');
+      setRivercityHumChartType('bar');
     } else {
       console.log('Command not recognized');
     }
@@ -402,30 +394,6 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
           } Chart`}
           weatherData={weatherData}
           metric={modalChart}
-          onChartChange={type => {
-            switch (modalChart) {
-              case 'temperature':
-                setTempChartType(type);
-                break;
-              case 'humidity':
-                setHumidityChartType(type);
-                break;
-              case 'wind':
-                setWindChartType(type);
-                break;
-              case 'soilMoisture':
-                setSoilMoistureChartType(type);
-                break;
-              case 'leafWetness':
-                setLeafWetnessChartType(type);
-                break;
-              case 'rainfall':
-                setRainfallChartType(type);
-                break;
-              default:
-                break;
-            }
-          }}
           handleTimePeriodChange={handleTimePeriodChange}
           currentTimePeriod={currentTimePeriod}
           setCurrentTimePeriod={setCurrentTimePeriod}
