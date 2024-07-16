@@ -86,7 +86,7 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen }) => {
               />
           </Box>
         ) : (
-          <motion.div {...motionProps}>
+          <motion.div >
             <Box ml={'2rem'}>
               <img
                 src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
@@ -100,13 +100,13 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen }) => {
         <Stack
           flex="1"
           py={{ base: '6', sm: '8' }}
-          px={{ base: '4', sm: '6' }}
+          px={{ base: '2', sm: '4' }}
           bg="transparent"
           color="white"
-          justifyContent="flex-start"
+          justifyContent="center"
         >
           {isMinimized ? (
-            <MinimizedSidebarContent navigate={navigate} toggleSidebar={toggleSidebar} colorMode={colorMode} />
+            <MinimizedSidebarContent navigate={navigate} toggleSidebar={toggleSidebar} colorMode={colorMode}/>
           ) : (
             <SidebarContent navigate={navigate} colorMode={colorMode} />
           )}
@@ -213,7 +213,7 @@ const SidebarContent = ({ navigate }) => (
 );
 
 const MinimizedSidebarContent = ({ navigate }) => (
-  <MotionStack spacing="4" mt={16}>
+  <MotionStack spacing="4" mt={16} >
     <MotionIconButton
       icon={<WiThermometer size="30" />}
       onClick={() => navigate('/TempSensors')}
