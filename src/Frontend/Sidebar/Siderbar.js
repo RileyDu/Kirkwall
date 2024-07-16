@@ -46,7 +46,7 @@ const buttonConfig = {
 
   ],
   'jerrycromarty@imprimedicine.com': [
-    { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
+    // { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
     { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' }
   ],
