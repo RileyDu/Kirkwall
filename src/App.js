@@ -80,7 +80,7 @@ const Layout = ({
               : '190px'
             : '0'
         }
-        mt={!isLargerThan768 ? '70px' : '0'}
+        // mt={!isLargerThan768 ? '70px' : '0'}
       >
         
         {children}

@@ -18,6 +18,7 @@ import {
   Image,
   Link,
   Spinner,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -50,6 +51,9 @@ const Login = () => {
     base: '/kirkwall_logo_1_white.png',
     md: '/kirkwall_logo_1_white.png',
   });
+
+  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
+
 
   const validateEmail = (email) => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -116,7 +120,7 @@ const Login = () => {
   }, [email, password]);
 
   return (
-    <Flex minH="100vh" bg="#1A202C" color="white" direction="column" justify="center" align="center">
+    <Flex minH="100vh" bg="#1A202C" color="white" direction="column" justify="center" align="center" >
       <Container maxW="md" py={{ base: '12', md: '24' }} px={{ base: '4', sm: '8' }} borderRadius="xl" boxShadow="2xl" bg="#2D3748">
         <Stack spacing="8">
           <Box textAlign="center">

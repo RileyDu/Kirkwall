@@ -449,7 +449,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                       />
                     }
                     {...buttonStyleProps}
-                    onClick={() => handleNavigation('/logout')}
+                    onClick={() => handleNavigation('/landing')}
                   >
                     Logout
                   </Button>
