@@ -78,7 +78,12 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen }) => {
       <Box overflowY="auto" height="100%">
         {isMinimized ? (
           <Box mb={'-4rem'} p="4" display="flex" justifyContent="center">
-            <Icon as={FaChessRook} boxSize="40px" color="white" />
+            <img
+                src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
+                alt="kirkwall logo"
+                style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
+                onClick={() => navigate('/')}
+              />
           </Box>
         ) : (
           <motion.div {...motionProps}>
