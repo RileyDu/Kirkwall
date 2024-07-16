@@ -1,4 +1,3 @@
-// src/components/VoiceControl.js
 import React, { useEffect, useState } from 'react';
 import { useToast } from '@chakra-ui/react';
 import VoiceRecognitionService from '../services/VoiceRecognitionService';
@@ -20,13 +19,22 @@ const VoiceControl = ({ onCommand }) => {
   }, [isListening]);
 
   const handleVoiceCommand = (command) => {
-    toast({
-      title: `Voice Command: ${command}`,
-      status: 'info',
-      duration: 2000,
-      isClosable: true,
-    });
-    onCommand(command);
+    if (command) {
+      toast({
+        title: `Voice Command: ${command}`,
+        status: 'info',
+        duration: 2000,
+        isClosable: true,
+      });
+      onCommand(command);
+    } else {
+      toast({
+        title: 'Command not recognized',
+        status: 'warning',
+        duration: 2000,
+        isClosable: true,
+      });
+    }
     setIsListening(false); // Stop listening after recognizing the command
   };
 
