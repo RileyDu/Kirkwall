@@ -43,7 +43,8 @@ import axios from 'axios';
 import MiniMap from '../Maps/MiniMap';
 import WatchdogMap from '../Maps/WatchdogMap';
 import RivercityMap from '../Maps/RivercityMap';
-
+import { useAuth } from '../AuthComponents/AuthContext';
+import ImpriMiniMap from '../Maps/ImpriMiniMap';
 const ChartWrapper = ({
   title,
   children,
@@ -64,10 +65,13 @@ const ChartWrapper = ({
   const [showMap, setShowMap] = useState(false);
   const [sensorMap, setSensorMap] = useState('grandfarm'); // State to toggle between map and chart
 
+  const { currentUser } = useAuth();
+
   const mapComponents = {
     grandfarm: MiniMap,
     garage: WatchdogMap,
     freezer: RivercityMap,
+    imprimed: ImpriMiniMap,
   };
 
   const MapComponent = mapComponents[sensorMap] || null;
@@ -80,8 +84,12 @@ const ChartWrapper = ({
   const toggleMap = () => {
     setShowMap(!showMap);
   };
-  const setMapToDisplay = metric => {
-    switch (metric) {
+  const setMapToDisplay = (metric, currentUser) => {
+    // Check for special case
+    if (currentUser && currentUser.email === 'jerrycromarty@imprimedicine.com') {
+      setSensorMap('imprimed');
+      return;
+    }    switch (metric) {
       case 'temperature':
       case 'percent_humidity':
       case 'wind_speed':
@@ -106,8 +114,8 @@ const ChartWrapper = ({
   // setMapToDisplay(metric);
 
   useEffect(() => {
-    setMapToDisplay(metric);
-  }, [metric]);
+    setMapToDisplay(metric, currentUser);
+  }, [metric, currentUser]);
 
   const restrictedRoutes = [
     '/TempSensors',

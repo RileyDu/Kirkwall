@@ -39,6 +39,7 @@ import MapComponent from './Frontend/Maps/Map';
 import LandingPage from './Frontend/LandingPage/LandingPage';
 import { useAuth } from './Frontend/AuthComponents/AuthContext';
 import MedDashboard from './Frontend/ImpriMed/MedDashboard';
+import ImpriMedMap from './Frontend/Maps/ImpriMedMap';
 
 const Layout = ({
   children,
@@ -220,6 +221,14 @@ return (
               </ProtectedRoute>
             }
           />
+          <Route
+          path="/imprimed/map"
+          element={
+            <ProtectedRoute>
+              <ImpriMedMap statusOfAlerts={showAlerts}/>
+            </ProtectedRoute>
+          }
+        />
         </Routes>
       </Layout>
       <MobileMenu isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} />
