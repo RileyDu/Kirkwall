@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../../Backend/Firebase';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   useMediaQuery,
@@ -59,13 +57,15 @@ import { useWeatherData } from '../WeatherDataContext';
 import WeatherAlerts from '../Alert/WeatherAlerts';
 import { useAuth } from '../AuthComponents/AuthContext';
 
+
 const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
-  const [user] = useAuthState(auth);
+  // const [user] = useAuthState(auth);
   const navigate = useNavigate();
   // const [showAlerts, setShowAlerts] = useState(true);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isSummaryOpen, setSummaryOpen] = useState(false);
+  const [customerRole, setCustomerRole] = useState('');
   const { colorMode, toggleColorMode } = useColorMode();
   const {
     weatherData,
@@ -85,6 +85,34 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   // };
 
   const { currentUser } = useAuth();
+  const user = currentUser;
+  // const userEmail = user ? user.email : 'default';
+
+  useEffect(() => {
+    if (user) {
+      if (user.email === 'pmo@grandfarm.com') {
+        setCustomerRole('gf');
+      } else if (user.email === 'jerrycromarty@imprimedicine.com') {
+        setCustomerRole('imprimed');
+      } else {
+        setCustomerRole('default');
+      }
+    }
+  }, [user]);
+
+  const handleUserNavigation = () => {
+    switch (customerRole) {
+      case 'gf':
+        navigate('/grandfarm');
+        break;
+      case 'imprimed':
+        navigate('/imprimed');
+        break;
+      default:
+        navigate('/');
+        break;
+    }
+  };
 
   const openDrawer = () => {
     setDrawerOpen(true);
@@ -173,34 +201,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           ).toFixed(2)
         : 'N/A',
     },
-    {
-      label: 'Average Temp @ Garage (°F)',
-      value: watchdogTempData
-        ? (
-            watchdogTempData.reduce((sum, data) => sum + data.temp, 0) /
-            watchdogTempData.length
-          ).toFixed(2)
-        : watchdogData
-        ? (
-            watchdogData.reduce((sum, data) => sum + data.temp, 0) /
-            watchdogData.length
-          ).toFixed(2)
-        : 'N/A',
-    },
-    {
-      label: 'Average Humidity @ Garage (%)',
-      value: watchdogHumData
-        ? (
-            watchdogHumData.reduce((sum, data) => sum + data.hum, 0) /
-            watchdogHumData.length
-          ).toFixed(2)
-        : watchdogData
-        ? (
-            watchdogData.reduce((sum, data) => sum + data.hum, 0) /
-            watchdogData.length
-          ).toFixed(2)
-        : 'N/A',
-    },
   ];
 
   const MotionIconButton = motion(IconButton);
@@ -235,7 +235,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
               src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
               alt="kirkwall logo"
               style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
-              onClick={() => navigate('/')}
+              onClick={() => handleUserNavigation()}
             />
           </Box>
         </motion.div>
