@@ -53,7 +53,7 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
     } else if (currentUser && currentUser.email === 'pmo@grandfarm.com') {
       setStateCode('ND');
     } else {
-      setStateCode(stateCode);
+      setStateCode('ND');
     }
   }, [currentUser]);
 
