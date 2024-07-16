@@ -9,6 +9,7 @@ import { FaDog, FaGlobe, FaSnowflake, FaChessRook,FaChevronRight,FaChevronLeft }
 import { GiGroundSprout } from "react-icons/gi";
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useWeatherData } from '../WeatherDataContext';
 
 const MotionFlex = motion(Flex);
 const MotionStack = motion(Stack);
@@ -40,6 +41,8 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
   const navigate = useNavigate();
   const { colorMode } = useColorMode();
 
+  const { loading } = useWeatherData();
+
   const sidebarVariants = {
     collapsed: {
       width: '80px',
@@ -54,6 +57,10 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
       },
     },
   };
+
+  if (loading) {
+    return null;
+  }
 
   return (
     <MotionFlex
@@ -73,7 +80,7 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
       flexDirection="column"
       display={{ base: isMobileMenuOpen ? 'flex' : 'none', md: 'flex' }}
       pt={isMinimized ? '0' : '20px'} // Add padding to prevent overlap with header
-      mt={statusOfAlerts ? '2rem' : '8rem'}
+      mt={statusOfAlerts ? '2rem' : '6rem'  }
     >
       <Box overflowY="auto" height="100%">
         {isMinimized ? (
