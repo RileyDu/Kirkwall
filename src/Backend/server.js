@@ -43,8 +43,8 @@ app.post('/send-email', async (req, res) => {
 
   const msg = {
     to: to,
-    from: 'your-verified-email@example.com', // Replace with your verified email
-    templateId: 'your-template-id', // Replace with your SendGrid template ID
+    from: 'alerts@kirkwall.io', // Replace with your verified email
+    templateId: 'Kirkwall_TempAlerts_v2', // Replace with your SendGrid template ID
     dynamic_template_data: {
       currenttemp: currenttemp,
       thresholdtemp: thresholdtemp,
