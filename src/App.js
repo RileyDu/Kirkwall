@@ -149,10 +149,8 @@ return (
             element={
               <ProtectedRoute>
                 <MainContent
-                  // weatherData={weatherData}
                   isMinimized={isMinimized}
                   timePeriod={timePeriod}
-                  // adjustTimePeriod={adjustTimePeriod}
                   statusOfAlerts={showAlerts}
                 />
               </ProtectedRoute>

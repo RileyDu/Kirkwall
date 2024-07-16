@@ -3,13 +3,12 @@ import { APIProvider, Map, AdvancedMarker, InfoWindow, Pin } from '@vis.gl/react
 import { useMediaQuery } from '@chakra-ui/react';
 
 const center = {
-  lat: 46.948580,
-  lng: -97.262730,
+  lat: 46.832556,
+  lng: -97.263596,
 };
 
 const locations = [
-  { lat: 46.948580, lng: -97.262730, info: 'Grand Farm', details: 'Temp, Humidity, Rainfall & Wind', dataReading: 'Sends data every 5 minutes'  },
-  // { lat: 46.904340, lng: -96.810500, info: 'Incubator (Garage)', details: 'Temp, Humidity & Water Detection', dataReading: 'Sends data every 10 minutes' },
+  { lat: 46.832556, lng: -97.263596, info: 'Grand Farm', details: 'Temp, Humidity, Rainfall & Wind', dataReading: 'Sends data every 5 minutes'  },
 ];
 
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
