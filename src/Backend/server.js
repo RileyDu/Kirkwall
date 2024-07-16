@@ -37,17 +37,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Endpoint to send SMS
+thresholdtemp: [highThreshold, lowThreshold];
 app.post('/send-email', async (req, res) => {
-  const { to, currenttemp, thresholdtemp } = req.body;
-  console.log('Request received to send Email:', { to, currenttemp, thresholdtemp });
+  const { to, tempData, thresholdtemp } = req.body;
+  console.log('Request received to send Email:', { to, tempData, thresholdtemp });
 
   const msg = {
     to: to,
     from: 'alerts@kirkwall.io', // Replace with your verified email
     templateId: 'Kirkwall_TempAlerts_v2', // Replace with your SendGrid template ID
     dynamic_template_data: {
-      currenttemp: currenttemp,
-      thresholdtemp: thresholdtemp,
+      currenttemp: tempData,
+      thresholdtemp: [highThreshold, lowThreshold]
     },
   };
 
