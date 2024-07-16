@@ -86,7 +86,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
 
   const { currentUser } = useAuth();
   const user = currentUser;
-  // const userEmail = user ? user.email : 'default';
+  const userEmail = user ? user.email : 'default';
 
   useEffect(() => {
     if (user) {
@@ -99,6 +99,49 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
       }
     }
   }, [user]);
+
+  const buttonConfig = {
+    'pmo@grandfarm.com': [
+      { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
+      { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
+      { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
+      { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
+      { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
+      { icon: <FaGlobe size="30" />, label: 'Map', route: '/grandfarm/map' }
+  
+    ],
+    'jerrycromarty@imprimedicine.com': [
+      // { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
+      { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+      { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' }
+    ],
+    'default': [
+      { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
+      { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
+      { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
+      { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
+      { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
+      { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
+      { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+      { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' }
+    ]
+  };
+
+  const renderButtons = () => {
+    const buttons = buttonConfig[userEmail] || buttonConfig['default'];
+    return buttons.map((button, index) => (
+      <motion.div {...motionProps}>
+                <Button
+                  key={index}
+                  leftIcon={button.icon}
+                  onClick={() => navigate(button.route)}
+                  {...buttonStyleProps}
+                >
+                  {button.label}
+                </Button>
+              </motion.div>
+    ))
+  };
 
   const handleUserNavigation = () => {
     switch (customerRole) {
@@ -364,78 +407,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           </DrawerHeader>
           <DrawerBody color={'#212121'}>
             <Stack spacing={6} direction="column" alignItems="flex-start">
-              <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<WiThermometer size="24px" />}
-                  onClick={() => handleNavigation('/TempSensors')}
-                  {...buttonStyleProps}
-                >
-                  Temperature Sensors
-                </Button>
-              </motion.div>
-              <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<WiStrongWind size="24px" />}
-                  onClick={() => handleNavigation('/WindSensors')}
-                  {...buttonStyleProps}
-                >
-                  Wind Sensors
-                </Button>
-              </motion.div>
-              <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<WiRain size="24px" />}
-                  onClick={() => handleNavigation('/RainSensors')}
-                  {...buttonStyleProps}
-                >
-                  Rain Sensors
-                </Button>
-              </motion.div>
-              <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<WiHumidity size="24px" />}
-                  onClick={() => handleNavigation('/HumiditySensors')}
-                  {...buttonStyleProps}
-                >
-                  Humidity Sensors
-                </Button>
-              </motion.div>
-              <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<GiGroundSprout size="24px" />}
-                  onClick={() => handleNavigation('/SoilMoistureSensors')}
-                  {...buttonStyleProps}
-                >
-                  Soil Sensors
-                </Button>
-              </motion.div>
-              <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<FaDog size="24px" />}
-                  onClick={() => handleNavigation('/WatchdogSensors')}
-                  {...buttonStyleProps}
-                >
-                  Watchdog Sensors
-                </Button>
-              </motion.div>
-              <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<FaSnowflake size="24px" />}
-                  onClick={() => handleNavigation('/RivercitySensors')}
-                  {...buttonStyleProps}
-                >
-                  Rivercity Sensors
-                </Button>
-              </motion.div>
-              <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<FaGlobe size="24px" />}
-                  onClick={() => handleNavigation('/map')}
-                  {...buttonStyleProps}
-                >
-                  Sensor Map
-                </Button>
-              </motion.div>
+              {renderButtons()}
               {user && (
                 <motion.div {...motionProps}>
                   <Button
