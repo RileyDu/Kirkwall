@@ -103,24 +103,23 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   const buttonConfig = {
     'pmo@grandfarm.com': [
       { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
-      { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
-      { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
       { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
+      { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
       { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
+      { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/grandfarm/map' }
   
     ],
     'jerrycromarty@imprimedicine.com': [
-      // { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
       { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' }
     ],
     'default': [
       { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
-      { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
-      { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
       { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
+      { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
       { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
+      { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
       { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
       { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' }
