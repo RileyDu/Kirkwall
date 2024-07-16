@@ -36,7 +36,7 @@ const motionProps = {
   transition: { type: 'spring', stiffness: 50, damping: 10 },
 };
 
-const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen }) => {
+const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts }) => {
   const navigate = useNavigate();
   const { colorMode } = useColorMode();
 
@@ -73,7 +73,7 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen }) => {
       flexDirection="column"
       display={{ base: isMobileMenuOpen ? 'flex' : 'none', md: 'flex' }}
       pt={isMinimized ? '0' : '20px'} // Add padding to prevent overlap with header
-      mt={'6rem'}
+      mt={statusOfAlerts ? '2rem' : '8rem'}
     >
       <Box overflowY="auto" height="100%">
         {isMinimized ? (

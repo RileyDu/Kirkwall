@@ -48,6 +48,7 @@ const Layout = ({
   toggleSidebar,
   isMobileMenuOpen,
   toggleMobileMenu,
+  statusOfAlerts
 }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const location = useLocation();
@@ -65,6 +66,7 @@ const Layout = ({
           toggleSidebar={toggleSidebar}
           isMobileMenuOpen={isMobileMenuOpen}
           toggleMobileMenu={toggleMobileMenu}
+          statusOfAlerts={statusOfAlerts}
         />
       )}
       <Box
@@ -136,6 +138,7 @@ return (
         toggleSidebar={toggleSidebar}
         isMobileMenuOpen={isMobileMenuOpen}
         toggleMobileMenu={toggleMobileMenu}
+        statusOfAlerts={showAlerts}
       >
         <Routes>
           <Route path='/landing' element={<LandingPage />} />
