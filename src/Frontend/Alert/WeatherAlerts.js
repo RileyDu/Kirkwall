@@ -29,6 +29,7 @@ import { auth } from '../../Backend/Firebase';
 import { FaChevronDown } from 'react-icons/fa';
 import { SettingsIcon } from '@chakra-ui/icons';
 import Marquee from 'react-marquee-slider';
+import { useAuth } from '../AuthComponents/AuthContext';
 
 import { useWeatherData } from '../WeatherDataContext';
 
@@ -40,9 +41,21 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
   const [user] = useAuthState(auth);
   const { loading } = useWeatherData();
 
+  const { currentUser } = useAuth();
+
   const [stateCode, setStateCode] = useState(() => {
     return localStorage.getItem('stateCode') || 'ND';
   });
+
+  useEffect(() => {
+    if (currentUser && currentUser.email === 'jerrycromarty@imprimedicine.com') {
+      setStateCode('CA');
+    } else if (currentUser && currentUser.email === 'pmo@grandfarm.com') {
+      setStateCode('ND');
+    } else {
+      setStateCode('ND');
+    }
+  }, [currentUser]);
 
   const [isChangeStateCodeModalOpen, setIsChangeStateCodeModalOpen] = useState(false);
   const [newStateCode, setNewStateCode] = useState(stateCode);
@@ -103,7 +116,7 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
 
   return user ? (
     <Center>
-      <Box p={0} width="100%" zIndex={999} pt={'64px'} ml={!isMinimized ? '250px' : '74px'}>
+      <Box p={0} width="100%" zIndex={999} pt={'64px'} >
         {error && !alerts.length && (
           <Alert
             status="error"

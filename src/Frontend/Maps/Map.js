@@ -16,8 +16,8 @@ const center = {
 
 const locations = [
   {
-    lat: 46.94858,
-    lng: -97.26273,
+    lat: 46.832556,
+    lng: -97.263596,
     info: 'Grand Farm',
     details: 'Temp, Humidity, Rainfall & Wind',
     dataReading: 'Sends data every 5 minutes',

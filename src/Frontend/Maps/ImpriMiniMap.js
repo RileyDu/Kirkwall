@@ -3,18 +3,24 @@ import { APIProvider, Map, AdvancedMarker, InfoWindow, Pin } from '@vis.gl/react
 import { useMediaQuery } from '@chakra-ui/react';
 
 const center = {
-  lat: 46.832556,
-  lng: -97.263596,
-};
-
-const locations = [
-  { lat: 46.832556, lng: -97.263596, info: 'Grand Farm', details: 'Temp, Humidity, Rainfall & Wind', dataReading: 'Sends data every 5 minutes'  },
-];
+    lat: 37.4207034,
+    lng: -122.096927,
+  };
+  
+  const locations = [
+    {
+      lat: 37.4207034,
+      lng: -122.096927,
+      info: 'ImpriMed',
+      details: 'Temperature & Humidity',
+      dataReading: 'Sends data every 10 minutes',
+    }
+  ];
 
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const mapID = process.env.REACT_APP_GOOGLE_MAPS_MAP_ID;
 
-const MiniMap = () => {
+const ImpriMiniMap = () => {
   const [openInfoIndex, setOpenInfoIndex] = useState(null);
   const [isMobile] = useMediaQuery('(max-width: 767px)');
 
@@ -76,4 +82,4 @@ const MiniMap = () => {
   );
 };
 
-export default MiniMap;
+export default ImpriMiniMap;

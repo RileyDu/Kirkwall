@@ -1,26 +1,41 @@
 import { useState } from 'react';
-import { APIProvider, Map, AdvancedMarker, InfoWindow, Pin } from '@vis.gl/react-google-maps';
-import { useMediaQuery } from '@chakra-ui/react';
+import {
+  APIProvider,
+  Map,
+  AdvancedMarker,
+  InfoWindow,
+  Pin,
+  Marker,
+} from '@vis.gl/react-google-maps';
+import { Heading, Box, useMediaQuery, useColorMode } from '@chakra-ui/react';
 
 const center = {
-  lat: 46.832556,
-  lng: -97.263596,
+  lat: 37.4207034,
+  lng: -122.096927,
 };
 
 const locations = [
-  { lat: 46.832556, lng: -97.263596, info: 'Grand Farm', details: 'Temp, Humidity, Rainfall & Wind', dataReading: 'Sends data every 5 minutes'  },
+  {
+    lat: 37.4207034,
+    lng: -122.096927,
+    info: 'ImpriMed',
+    details: 'Temperature & Humidity',
+    dataReading: 'Sends data every 10 minutes',
+  }
 ];
 
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const mapID = process.env.REACT_APP_GOOGLE_MAPS_MAP_ID;
 
-const MiniMap = () => {
+const ImpriMedMap = ({ statusOfAlerts }) => {
   const [openInfoIndex, setOpenInfoIndex] = useState(null);
   const [isMobile] = useMediaQuery('(max-width: 767px)');
 
+  const { colorMode } = useColorMode();
+
   const mapContainerStyles = {
-    width: isMobile ? '90%' : '100%',
-    height: isMobile ? '400px' : '400px',
+    width: isMobile ? '90%' : '60%',
+    height: isMobile ? '600px' : '800px',
     margin: '0 auto',
     borderRadius: '5px',
     boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
@@ -29,6 +44,7 @@ const MiniMap = () => {
 
   const mapOptions = {
     center: { lat: 37.7749, lng: -122.4194 },
+    zoom: 12,
     mapTypeId: 'terrain', // Always show the satellite view
     disableDefaultUI: true, // Disable all default UI controls
     scrollwheel: false, // Disable zooming with the mouse wheelc
@@ -38,14 +54,24 @@ const MiniMap = () => {
     fullscreenControl: false, // Disable the fullscreen control
     gestureHandling: 'greedy', // Allow gestures on the map
   };
-  
 
   return (
     <APIProvider apiKey={apiKey}>
+      <Box
+        width="100%"
+        textAlign="center"
+        p={'4'}
+        pt={statusOfAlerts ? '10px' : '74px'}
+        color={colorMode === 'light' ? 'black' : 'white'}
+      >
+        <Heading size="xl" pb={'4'}>
+          ImpriMed Sensor Map
+        </Heading>
+      </Box>
       <div className="map-container" style={mapContainerStyles}>
         <Map
           defaultCenter={center}
-          defaultZoom={11}
+          defaultZoom={10}
           mapId={mapID}
           options={mapOptions} // Pass the options prop
         >
@@ -55,17 +81,35 @@ const MiniMap = () => {
               position={{ lat: location.lat, lng: location.lng }}
               onClick={() => setOpenInfoIndex(index)}
             >
-              <Pin background={'#fd9801'} borderColor={'#212121'} glyphColor={'#212121'} />
+              <Pin
+                background={'#fd9801'}
+                borderColor={'#212121'}
+                glyphColor={'#212121'}
+              />
               {openInfoIndex === index && (
                 <InfoWindow
                   position={{ lat: location.lat, lng: location.lng }}
                   onCloseClick={() => setOpenInfoIndex(null)}
                   background={'#fd9801'}
                   pixelOffset={[0, -30]}
-                  headerContent={<div style={{ color: '#212121', fontWeight: 'bold', fontSize: '20px' }}>{location.info}</div>}
+                  headerContent={
+                    <div
+                      style={{
+                        color: '#212121',
+                        fontWeight: 'bold',
+                        fontSize: '20px',
+                      }}
+                    >
+                      {location.info}
+                    </div>
+                  }
                 >
-                  <div style={{ color: '#212121', fontSize: '14px' }}><strong>Sensors:</strong> {location.details}</div>
-                  <div style={{ color: '#212121', fontSize: '14px' }}><strong>Data:</strong> {location.dataReading}</div>
+                  <div style={{ color: '#212121', fontSize: '14px' }}>
+                    <strong>Sensors:</strong> {location.details}
+                  </div>
+                  <div style={{ color: '#212121', fontSize: '14px' }}>
+                    <strong>Data:</strong> {location.dataReading}
+                  </div>
                 </InfoWindow>
               )}
             </AdvancedMarker>
@@ -76,4 +120,4 @@ const MiniMap = () => {
   );
 };
 
-export default MiniMap;
+export default ImpriMedMap;

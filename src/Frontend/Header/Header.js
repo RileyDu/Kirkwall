@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../../Backend/Firebase';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   useMediaQuery,
@@ -37,9 +35,15 @@ import {
   PopoverBody,
   Text,
 } from '@chakra-ui/react';
-import { FaBars, FaSun, FaMoon, FaDog, FaGlobe, FaSnowflake } from 'react-icons/fa';
-import { GiGroundSprout } from "react-icons/gi";
-
+import {
+  FaBars,
+  FaSun,
+  FaMoon,
+  FaDog,
+  FaGlobe,
+  FaSnowflake,
+} from 'react-icons/fa';
+import { GiGroundSprout } from 'react-icons/gi';
 import { FiAlertTriangle } from 'react-icons/fi';
 import {
   WiThermometer,
@@ -51,14 +55,17 @@ import Logout from '../../Frontend/AuthComponents/Logout';
 import { useNavigate } from 'react-router-dom';
 import { useWeatherData } from '../WeatherDataContext';
 import WeatherAlerts from '../Alert/WeatherAlerts';
+import { useAuth } from '../AuthComponents/AuthContext';
+
 
 const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
-  const [user] = useAuthState(auth);
+  // const [user] = useAuthState(auth);
   const navigate = useNavigate();
   // const [showAlerts, setShowAlerts] = useState(true);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isSummaryOpen, setSummaryOpen] = useState(false);
+  const [customerRole, setCustomerRole] = useState('');
   const { colorMode, toggleColorMode } = useColorMode();
   const {
     weatherData,
@@ -68,14 +75,85 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     humidityData,
     windData,
     rainfallData,
-    watchdogData,
-    watchdogTempData,
-    watchdogHumData,
+    soilMoistureData,
+    leafWetnessData,
   } = useWeatherData();
 
   // const toggleAlerts = () => {
   //   setShowAlerts(!showAlerts);
   // };
+
+  const { currentUser } = useAuth();
+  const user = currentUser;
+  const userEmail = user ? user.email : 'default';
+
+  useEffect(() => {
+    if (user) {
+      if (user.email === 'pmo@grandfarm.com') {
+        setCustomerRole('gf');
+      } else if (user.email === 'jerrycromarty@imprimedicine.com') {
+        setCustomerRole('imprimed');
+      } else {
+        setCustomerRole('default');
+      }
+    }
+  }, [user]);
+
+  const buttonConfig = {
+    'pmo@grandfarm.com': [
+      { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
+      { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
+      { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
+      { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
+      { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
+      { icon: <FaGlobe size="30" />, label: 'Map', route: '/grandfarm/map' }
+  
+    ],
+    'jerrycromarty@imprimedicine.com': [
+      { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+      { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' }
+    ],
+    'default': [
+      { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
+      { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
+      { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
+      { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
+      { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
+      { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
+      { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+      { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' }
+    ]
+  };
+
+  const renderButtons = () => {
+    const buttons = buttonConfig[userEmail] || buttonConfig['default'];
+    return buttons.map((button, index) => (
+      <motion.div {...motionProps}>
+                <Button
+                  key={index}
+                  leftIcon={button.icon}
+                  onClick={() => navigate(button.route)}
+                  {...buttonStyleProps}
+                >
+                  {button.label}
+                </Button>
+              </motion.div>
+    ))
+  };
+
+  const handleUserNavigation = () => {
+    switch (customerRole) {
+      case 'gf':
+        navigate('/grandfarm');
+        break;
+      case 'imprimed':
+        navigate('/imprimed');
+        break;
+      default:
+        navigate('/');
+        break;
+    }
+  };
 
   const openDrawer = () => {
     setDrawerOpen(true);
@@ -111,7 +189,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
 
   const summaryMetrics = [
     {
-      label: 'Average Temp @ GF (°F)',
+      label: 'Average Temp (°F)',
       value: tempData
         ? (
             tempData.reduce((sum, data) => sum + data.temperature, 0) /
@@ -125,19 +203,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         : 'N/A',
     },
     {
-      label: 'Total Rainfall @ GF (inches)',
-      value: rainfallData
-        ? rainfallData
-            .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
-            .toFixed(2)
-        : weatherData
-        ? weatherData
-            .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
-            .toFixed(2)
-        : 'N/A',
-    },
-    {
-      label: 'Average Humidity @ GF (%)',
+      label: 'Average Humidity (%)',
       value: humidityData
         ? (
             humidityData.reduce((sum, data) => sum + data.percent_humidity, 0) /
@@ -150,8 +216,9 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           ).toFixed(2)
         : 'N/A',
     },
+
     {
-      label: 'Average Wind Speed @ GF (mph)',
+      label: 'Average Wind Speed (mph)',
       value: windData
         ? (
             windData.reduce((sum, data) => sum + data.wind_speed, 0) /
@@ -165,33 +232,48 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         : 'N/A',
     },
     {
-      label: 'Average Temp @ Garage (°F)',
-      value: watchdogTempData
+      label: 'Total Rainfall (inches)',
+      value: rainfallData
+        ? rainfallData
+            .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
+            .toFixed(2)
+        : weatherData
+        ? weatherData
+            .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
+            .toFixed(2)
+        : 'N/A',
+    },{
+      label: 'Average Leaf Wetness (0-15)',
+      value: leafWetnessData
         ? (
-            watchdogTempData.reduce((sum, data) => sum + data.temp, 0) /
-            watchdogTempData.length
+            leafWetnessData
+              .reduce((sum, data) => sum + data.leaf_wetness, 0) /
+            leafWetnessData.length
           ).toFixed(2)
-        : watchdogData
+        : weatherData
         ? (
-            watchdogData.reduce((sum, data) => sum + data.temp, 0) /
-            watchdogData.length
+            weatherData
+              .reduce((sum, data) => sum + data.leaf_wetness, 0) /
+            weatherData.length
           ).toFixed(2)
         : 'N/A',
     },
     {
-      label: 'Average Humidity @ Garage (%)',
-      value: watchdogHumData
+      label: 'Average Soil Moisture (centibars)',
+      value: soilMoistureData
         ? (
-            watchdogHumData.reduce((sum, data) => sum + data.hum, 0) /
-            watchdogHumData.length
+            soilMoistureData
+              .reduce((sum, data) => sum + data.soil_moisture, 0) /
+            soilMoistureData.length
           ).toFixed(2)
-        : watchdogData
+        : weatherData
         ? (
-            watchdogData.reduce((sum, data) => sum + data.hum, 0) /
-            watchdogData.length
+            weatherData
+              .reduce((sum, data) => sum + data.soil_moisture, 0) /
+            weatherData.length
           ).toFixed(2)
         : 'N/A',
-    },
+    }
   ];
 
   const MotionIconButton = motion(IconButton);
@@ -202,8 +284,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     animate: { opacity: 1, x: 0 },
     transition: { type: 'spring', stiffness: 50, damping: 10 },
   };
-
-  
 
   return (
     <>
@@ -228,26 +308,28 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
               src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
               alt="kirkwall logo"
               style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
-              onClick={() => navigate('/')}
+              onClick={() => handleUserNavigation()}
             />
           </Box>
         </motion.div>
         <Flex align="center">
-          <motion.div {...motionProps}>
-            <MotionButton
-              onClick={onSummaryToggle}
-              size={{ base: 'xs', md: 'md' }}
-              px={{ base: 4, md: 6 }}
-              mr="4"
-              variant="sidebar"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              bg="#F4B860"
-              color="black"
-            >
-              {isSummaryOpen ? 'Hide Summary' : ' Weather Summary'}
-            </MotionButton>
-          </motion.div>
+          {currentUser.email !== 'jerrycromarty@imprimedicine.com' && (
+            <motion.div {...motionProps}>
+              <MotionButton
+                onClick={onSummaryToggle}
+                size={{ base: 'xs', md: 'md' }}
+                px={{ base: 4, md: 6 }}
+                mr="4"
+                variant="sidebar"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                bg="#F4B860"
+                color="black"
+              >
+                {isSummaryOpen ? 'Hide Summary' : ' Weather Summary'}
+              </MotionButton>
+            </motion.div>
+          )}
           {isLargerThan768 && (
             <motion.div {...motionProps}>
               <Tooltip label="Toggle Weather Alerts">
@@ -289,8 +371,15 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                   <PopoverTrigger>
                     <Avatar
                       size="md"
-                      name="Grand Farm Logo"
-                      src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
+                      name="User Logo"
+                      src={
+                        currentUser.email === 'pmo@grandfarm.com'
+                          ? '/GrandFarmLogo.jpg'
+                          : currentUser.email ===
+                            'jerrycromarty@imprimedicine.com'
+                          ? '/ImpriMedLogo.png'
+                          : '/RookLogoWhite.png'
+                      }
                       cursor="pointer"
                       ml="4"
                     />
@@ -307,7 +396,11 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                       bg="#212121"
                       color="white"
                     >
-                      Kirkwall
+                      {currentUser.email === 'pmo@grandfarm.com'
+                        ? 'Grand Farm'
+                        : currentUser.email === 'jerrycromarty@imprimedicine.com'
+                        ? 'ImpriMed'
+                        : 'Kirkwall'}
                     </PopoverHeader>
                     <PopoverBody>
                       <Logout />
@@ -344,78 +437,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           </DrawerHeader>
           <DrawerBody color={'#212121'}>
             <Stack spacing={6} direction="column" alignItems="flex-start">
-              <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<WiThermometer size="24px" />}
-                  onClick={() => handleNavigation('/TempSensors')}
-                  {...buttonStyleProps}
-                >
-                  Temperature Sensors
-                </Button>
-              </motion.div>
-              <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<WiStrongWind size="24px" />}
-                  onClick={() => handleNavigation('/WindSensors')}
-                  {...buttonStyleProps}
-                >
-                  Wind Sensors
-                </Button>
-              </motion.div>
-              <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<WiRain size="24px" />}
-                  onClick={() => handleNavigation('/RainSensors')}
-                  {...buttonStyleProps}
-                >
-                  Rain Sensors
-                </Button>
-              </motion.div>
-              <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<WiHumidity size="24px" />}
-                  onClick={() => handleNavigation('/HumiditySensors')}
-                  {...buttonStyleProps}
-                >
-                  Humidity Sensors
-                </Button>
-              </motion.div>
-              <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<GiGroundSprout size="24px" />}
-                  onClick={() => handleNavigation('/SoilMoistureSensors')}
-                  {...buttonStyleProps}
-                >
-                  Soil Sensors
-                </Button>
-              </motion.div>
-              <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<FaDog size="24px" />}
-                  onClick={() => handleNavigation('/WatchdogSensors')}
-                  {...buttonStyleProps}
-                >
-                  Watchdog Sensors
-                </Button>
-              </motion.div>
-              <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<FaSnowflake size="24px" />}
-                  onClick={() => handleNavigation('/RivercitySensors')}
-                  {...buttonStyleProps}
-                >
-                  Rivercity Sensors
-                </Button>
-              </motion.div>
-              <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<FaGlobe size="24px" />}
-                  onClick={() => handleNavigation('/map')}
-                  {...buttonStyleProps}
-                >
-                  Sensor Map
-                </Button>
-              </motion.div>
+              {renderButtons()}
               {user && (
                 <motion.div {...motionProps}>
                   <Button
@@ -462,7 +484,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                 {summaryMetrics.map((metric, index) => (
                   <GridItem key={index}>
                     <Stat>
-                      <StatLabel color="white">{metric.label}</StatLabel>
+                      <StatLabel color="white" textDecoration={'underline'}>{metric.label}</StatLabel>
                       <StatNumber color="white">{metric.value}</StatNumber>
                     </Stat>
                   </GridItem>

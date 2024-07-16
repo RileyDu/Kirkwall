@@ -37,6 +37,11 @@ import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors'
 import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySensors';
 import MapComponent from './Frontend/Maps/Map';
 import LandingPage from './Frontend/LandingPage/LandingPage';
+import { useAuth } from './Frontend/AuthComponents/AuthContext';
+import MedDashboard from './Frontend/ImpriMed/MedDashboard';
+import ImpriMedMap from './Frontend/Maps/ImpriMedMap';
+import GrandFarmDashboard from './Frontend/GrandFarm/GrandFarm';
+import GrandFarmMap from './Frontend/Maps/GrandFarmMap';
 
 const Layout = ({
   children,
@@ -44,6 +49,7 @@ const Layout = ({
   toggleSidebar,
   isMobileMenuOpen,
   toggleMobileMenu,
+  statusOfAlerts
 }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const location = useLocation();
@@ -61,6 +67,7 @@ const Layout = ({
           toggleSidebar={toggleSidebar}
           isMobileMenuOpen={isMobileMenuOpen}
           toggleMobileMenu={toggleMobileMenu}
+          statusOfAlerts={statusOfAlerts}
         />
       )}
       <Box
@@ -90,6 +97,9 @@ const MainApp = () => {
   const [timePeriod, setTimePeriod] = useState(37); // Default time period
   const location = useLocation();
   const [showAlerts, setShowAlerts] = useState(true);
+  
+
+
 
 
   const toggleAlerts = () => {
@@ -129,20 +139,29 @@ return (
         toggleSidebar={toggleSidebar}
         isMobileMenuOpen={isMobileMenuOpen}
         toggleMobileMenu={toggleMobileMenu}
+        statusOfAlerts={showAlerts}
       >
         <Routes>
           <Route path='/landing' element={<LandingPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/imprimed" element={
+            <ProtectedRoute allowedUsers={['jerrycromarty@imprimedicine.com']}>
+              <MedDashboard statusOfAlerts={showAlerts} isMinimized={isMinimized}/>
+            </ProtectedRoute>
+          }/>
+          <Route path="/grandfarm" element={
+            <ProtectedRoute allowedUsers={['pmo@grandfarm.com']}>
+              <GrandFarmDashboard statusOfAlerts={showAlerts} isMinimized={isMinimized}/>
+            </ProtectedRoute>
+          }/>
           <Route
             path="/"
             element={
               <ProtectedRoute>
                 <MainContent
-                  // weatherData={weatherData}
                   isMinimized={isMinimized}
                   timePeriod={timePeriod}
-                  // adjustTimePeriod={adjustTimePeriod}
                   statusOfAlerts={showAlerts}
                 />
               </ProtectedRoute>
@@ -212,6 +231,22 @@ return (
               </ProtectedRoute>
             }
           />
+          <Route
+          path="/imprimed/map"
+          element={
+            <ProtectedRoute allowedUsers={['jerrycromarty@imprimedicine.com']}>
+              <ImpriMedMap statusOfAlerts={showAlerts}/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/grandfarm/map"
+          element={
+            <ProtectedRoute allowedUsers={['pmo@grandfarm.com']}>
+              <GrandFarmMap statusOfAlerts={showAlerts}/>
+            </ProtectedRoute>
+          }
+        />
         </Routes>
       </Layout>
       <MobileMenu isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} />

@@ -1,19 +1,18 @@
-import { Flex, Stack, Button, Box, IconButton, Image, useColorMode, Icon } from '@chakra-ui/react';
-import {
-  WiThermometer,
-  WiStrongWind,
-  WiRain,
-  WiHumidity,
-} from 'react-icons/wi';
-import { FaDog, FaGlobe, FaSnowflake, FaChessRook,FaChevronRight,FaChevronLeft } from 'react-icons/fa';
+import { Flex, Stack, Button, Box, IconButton, useColorMode } from '@chakra-ui/react';
+import { WiThermometer, WiStrongWind, WiRain, WiHumidity } from 'react-icons/wi';
+import { FaDog, FaGlobe, FaSnowflake, FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 import { GiGroundSprout } from "react-icons/gi";
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useWeatherData } from '../WeatherDataContext';
+import { useAuth } from '../AuthComponents/AuthContext';
+import { useEffect, useState } from 'react';
 
 const MotionFlex = motion(Flex);
 const MotionStack = motion(Stack);
 const MotionIconButton = motion(IconButton);
 const MotionButton = motion(Button);
+
 
 const buttonStyleProps = {
   justifyContent: 'flex-start',
@@ -36,9 +35,68 @@ const motionProps = {
   transition: { type: 'spring', stiffness: 50, damping: 10 },
 };
 
-const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen }) => {
+const buttonConfig = {
+  'pmo@grandfarm.com': [
+    { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
+    { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
+    { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
+    { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
+    { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
+    { icon: <FaGlobe size="30" />, label: 'Map', route: '/grandfarm/map' }
+
+  ],
+  'jerrycromarty@imprimedicine.com': [
+    { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+    { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' }
+  ],
+  'default': [
+    { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
+    { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
+    { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
+    { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
+    { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
+    { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
+    { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+    { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' }
+  ]
+};
+
+const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts }) => {
   const navigate = useNavigate();
   const { colorMode } = useColorMode();
+  const { loading } = useWeatherData();
+  const [customerRole, setCustomerRole] = useState('');
+
+  // Fetch current user email
+  const { currentUser } = useAuth();
+  const user = currentUser;
+  const userEmail = user ? user.email : 'default';
+
+  useEffect(() => {
+    if (user) {
+      if (user.email === 'pmo@grandfarm.com') {
+        setCustomerRole('gf');
+      } else if (user.email === 'jerrycromarty@imprimedicine.com') {
+        setCustomerRole('imprimed');
+      } else {
+        setCustomerRole('default');
+      }
+    }
+  }, [user]);
+
+  const handleNavigation = () => {
+    switch (customerRole) {
+      case 'gf':
+        navigate('/grandfarm');
+        break;
+      case 'imprimed':
+        navigate('/imprimed');
+        break;
+      default:
+        navigate('/');
+        break;
+    }
+  };
 
   const sidebarVariants = {
     collapsed: {
@@ -55,14 +113,26 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen }) => {
     },
   };
 
+  if (loading) {
+    return null;
+  }
+
+  const renderButtons = (isMinimized) => {
+    const buttons = buttonConfig[userEmail] || buttonConfig['default'];
+    return isMinimized ? (
+      <MinimizedSidebarContent buttons={buttons} navigate={navigate} />
+    ) : (
+      <SidebarContent buttons={buttons} navigate={navigate} />
+    );
+  };
+
   return (
     <MotionFlex
       as="aside"
       bg="gray.800"
       position="fixed"
-      // top="54px" // Adjust to the header height
       left="2"
-      height="calc(90%-64px)" // Adjust to the header height
+      height="calc(90%-64px)"
       boxShadow="0 4px 8px rgba(0, 0, 0, 0.1)"
       borderRadius="20px"
       variants={sidebarVariants}
@@ -72,22 +142,27 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen }) => {
       flexShrink={0}
       flexDirection="column"
       display={{ base: isMobileMenuOpen ? 'flex' : 'none', md: 'flex' }}
-      pt={isMinimized ? '0' : '20px'} // Add padding to prevent overlap with header
-      mt={'6rem'}
+      pt={isMinimized ? '0' : '20px'}
+      mt={statusOfAlerts ? '2rem' : '6rem'}
     >
       <Box overflowY="auto" height="100%">
         {isMinimized ? (
           <Box mb={'-4rem'} p="4" display="flex" justifyContent="center">
-            <Icon as={FaChessRook} boxSize="40px" color="white" />
+            <img
+              src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
+              alt="kirkwall logo"
+              style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
+              onClick={() => handleNavigation()}
+            />
           </Box>
         ) : (
-          <motion.div {...motionProps}>
+          <motion.div >
             <Box ml={'2rem'}>
               <img
                 src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
                 alt="kirkwall logo"
                 style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
-                onClick={() => navigate('/')}
+                onClick={() => handleNavigation()}
               />
             </Box>
           </motion.div>
@@ -95,27 +170,23 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen }) => {
         <Stack
           flex="1"
           py={{ base: '6', sm: '8' }}
-          px={{ base: '4', sm: '6' }}
+          px={{ base: '2', sm: '5' }}
           bg="transparent"
           color="white"
-          justifyContent="flex-start"
+          justifyContent="center"
         >
-          {isMinimized ? (
-            <MinimizedSidebarContent navigate={navigate} toggleSidebar={toggleSidebar} colorMode={colorMode} />
-          ) : (
-            <SidebarContent navigate={navigate} colorMode={colorMode} />
-          )}
+          {renderButtons(isMinimized)}
         </Stack>
       </Box>
       <Box mt="auto" p="4" justifyContent={'center'} display={'flex'}>
         <IconButton
           icon={<Box 
-                  as={motion.div}
-                  initial={isMinimized ? { rotate: 180 } : { rotate: 0 }}
-                  animate={isMinimized ? { rotate: 0 } : { rotate: 180 }}
-                >
-                {isMinimized ? <FaChevronRight /> : <FaChevronLeft />}
-                </Box>}
+            as={motion.div}
+            initial={isMinimized ? { rotate: 180 } : { rotate: 0 }}
+            animate={isMinimized ? { rotate: 0 } : { rotate: 180 }}
+          >
+            {isMinimized ? <FaChevronRight /> : <FaChevronLeft />}
+          </Box>}
           onClick={toggleSidebar}
           aria-label={isMinimized ? 'Expand' : 'Minimize'}
           bg="#F4B860"
@@ -130,165 +201,38 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen }) => {
   );
 };
 
-const SidebarContent = ({ navigate }) => (
+const SidebarContent = ({ buttons, navigate }) => (
   <>
-    <MotionButton
-      leftIcon={<WiThermometer size="30" />}
-      onClick={() => navigate('/TempSensors')}
-      {...buttonStyleProps}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-    >
-      Temperature
-    </MotionButton>
-    <MotionButton
-      leftIcon={<WiStrongWind size="30" />}
-      onClick={() => navigate('/WindSensors')}
-      {...buttonStyleProps}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-    >
-      Wind
-    </MotionButton>
-    <MotionButton
-      leftIcon={<WiRain size="30" />}
-      onClick={() => navigate('/RainSensors')}
-      {...buttonStyleProps}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-    >
-      Rain
-    </MotionButton>
-    <MotionButton
-      leftIcon={<WiHumidity size="30" />}
-      onClick={() => navigate('/HumiditySensors')}
-      {...buttonStyleProps}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-    >
-      Humidity
-    </MotionButton>
-    <MotionButton
-      leftIcon={<GiGroundSprout size="30" />}
-      onClick={() => navigate('/SoilMoistureSensors')}
-      {...buttonStyleProps}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-    >
-      Soil
-    </MotionButton>
-    <MotionButton
-      leftIcon={<FaDog size="30" />}
-      onClick={() => navigate('/WatchdogSensors')}
-      {...buttonStyleProps}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-    >
-      Watchdog
-    </MotionButton>
-    <MotionButton
-      leftIcon={<FaSnowflake size="30" />}
-      onClick={() => navigate('/RivercitySensors')}
-      {...buttonStyleProps}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-    >
-      Rivercity
-    </MotionButton>
-    <MotionButton
-      leftIcon={<FaGlobe size="30" />}
-      onClick={() => navigate('/map')}
-      {...buttonStyleProps}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-    >
-      Map
-    </MotionButton>
+    {buttons.map((btn, index) => (
+      <MotionButton
+        key={index}
+        leftIcon={btn.icon}
+        onClick={() => navigate(btn.route)}
+        {...buttonStyleProps}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+      >
+        {btn.label}
+      </MotionButton>
+    ))}
   </>
 );
 
-const MinimizedSidebarContent = ({ navigate }) => (
-  <MotionStack spacing="4" mt={16}>
-    <MotionIconButton
-      icon={<WiThermometer size="30" />}
-      onClick={() => navigate('/TempSensors')}
-      aria-label="Temperature"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      bg="#F4B860"
-      color="black"
-      _hover={{ bg: '#d7a247' }}
-    />
-    <MotionIconButton
-      icon={<WiStrongWind size="30" />}
-      onClick={() => navigate('/WindSensors')}
-      aria-label="Wind"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      bg="#F4B860"
-      color="black"
-      _hover={{ bg: '#d7a247' }}
-    />
-    <MotionIconButton
-      icon={<WiRain size="30" />}
-      onClick={() => navigate('/RainSensors')}
-      aria-label="Rain"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      bg="#F4B860"
-      color="black"
-      _hover={{ bg: '#d7a247' }}
-    />
-    <MotionIconButton
-      icon={<WiHumidity size="30" />}
-      onClick={() => navigate('/HumiditySensors')}
-      aria-label="Humidity"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      bg="#F4B860"
-      color="black"
-      _hover={{ bg: '#d7a247' }}
-    />
-    <MotionIconButton
-      icon={<GiGroundSprout size="30" />}
-      onClick={() => navigate('/SoilMoistureSensors')}
-      aria-label="Soil"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      bg="#F4B860"
-      color="black"
-      _hover={{ bg: '#d7a247' }}
-    />
-    <MotionIconButton
-      icon={<FaDog size="30" />}
-      onClick={() => navigate('/WatchdogSensors')}
-      aria-label="Watchdog"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      bg="#F4B860"
-      color="black"
-      _hover={{ bg: '#d7a247' }}
-    />
-    <MotionIconButton
-      icon={<FaSnowflake size="30" />}
-      onClick={() => navigate('/RivercitySensors')}
-      aria-label="Rivercity"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      bg="#F4B860"
-      color="black"
-      _hover={{ bg: '#d7a247' }}
-    />
-    <MotionIconButton
-      icon={<FaGlobe size="30" />}
-      onClick={() => navigate('/map')}
-      aria-label="Map"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      bg="#F4B860"
-      color="black"
-      _hover={{ bg: '#d7a247' }}
-    />
+const MinimizedSidebarContent = ({ buttons, navigate }) => (
+  <MotionStack spacing="4" mt={16} >
+    {buttons.map((btn, index) => (
+      <MotionIconButton
+        key={index}
+        icon={btn.icon}
+        onClick={() => navigate(btn.route)}
+        aria-label={btn.label}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        bg="#F4B860"
+        color="black"
+        _hover={{ bg: '#d7a247' }}
+      />
+    ))}
   </MotionStack>
 );
 
