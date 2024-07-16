@@ -313,7 +313,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           </Box>
         </motion.div>
         <Flex align="center">
-          {currentUser.email !== 'jerrycromarty@imprimedicine.com' && (
+          {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && (
             <motion.div {...motionProps}>
               <MotionButton
                 onClick={onSummaryToggle}
@@ -449,7 +449,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                       />
                     }
                     {...buttonStyleProps}
-                    onClick={() => handleNavigation('/logout')}
+                    onClick={() => handleNavigation('/landing')}
                   >
                     Logout
                   </Button>
