@@ -75,7 +75,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     humidityData,
     windData,
     rainfallData,
-    soilMoistureData
+    soilMoistureData,
+    leafWetnessData,
   } = useWeatherData();
 
   // const toggleAlerts = () => {
@@ -188,7 +189,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
 
   const summaryMetrics = [
     {
-      label: 'Average Temp @ GF (°F)',
+      label: 'Average Temp (°F)',
       value: tempData
         ? (
             tempData.reduce((sum, data) => sum + data.temperature, 0) /
@@ -202,7 +203,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         : 'N/A',
     },
     {
-      label: 'Average Humidity @ GF (%)',
+      label: 'Average Humidity (%)',
       value: humidityData
         ? (
             humidityData.reduce((sum, data) => sum + data.percent_humidity, 0) /
@@ -217,7 +218,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     },
 
     {
-      label: 'Average Wind Speed @ GF (mph)',
+      label: 'Average Wind Speed (mph)',
       value: windData
         ? (
             windData.reduce((sum, data) => sum + data.wind_speed, 0) /
@@ -231,7 +232,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         : 'N/A',
     },
     {
-      label: 'Total Rainfall @ GF (inches)',
+      label: 'Total Rainfall (inches)',
       value: rainfallData
         ? rainfallData
             .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
@@ -241,9 +242,24 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
             .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
             .toFixed(2)
         : 'N/A',
+    },{
+      label: 'Average Leaf Wetness (0-15)',
+      value: leafWetnessData
+        ? (
+            leafWetnessData
+              .reduce((sum, data) => sum + data.leaf_wetness, 0) /
+            leafWetnessData.length
+          ).toFixed(2)
+        : weatherData
+        ? (
+            weatherData
+              .reduce((sum, data) => sum + data.leaf_wetness, 0) /
+            weatherData.length
+          ).toFixed(2)
+        : 'N/A',
     },
     {
-      label: 'Average Soil Moisture @ GF (centibars)',
+      label: 'Average Soil Moisture (centibars)',
       value: soilMoistureData
         ? (
             soilMoistureData
@@ -258,7 +274,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           ).toFixed(2)
         : 'N/A',
     }
-
   ];
 
   const MotionIconButton = motion(IconButton);
@@ -469,7 +484,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                 {summaryMetrics.map((metric, index) => (
                   <GridItem key={index}>
                     <Stat>
-                      <StatLabel color="white">{metric.label}</StatLabel>
+                      <StatLabel color="white" textDecoration={'underline'}>{metric.label}</StatLabel>
                       <StatNumber color="white">{metric.value}</StatNumber>
                     </Stat>
                   </GridItem>
