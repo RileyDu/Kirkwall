@@ -29,6 +29,7 @@ import { auth } from '../../Backend/Firebase';
 import { FaChevronDown } from 'react-icons/fa';
 import { SettingsIcon } from '@chakra-ui/icons';
 import Marquee from 'react-marquee-slider';
+import { useAuth } from '../AuthComponents/AuthContext';
 
 import { useWeatherData } from '../WeatherDataContext';
 
@@ -40,9 +41,17 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
   const [user] = useAuthState(auth);
   const { loading } = useWeatherData();
 
+  const { currentUser } = useAuth();
+
   const [stateCode, setStateCode] = useState(() => {
     return localStorage.getItem('stateCode') || 'ND';
   });
+
+  useEffect(() => {
+    if (currentUser && currentUser.email === 'jerrycromarty@imprimedicine.com') {
+      setStateCode('CA');
+    }
+  }, [currentUser]);
 
   const [isChangeStateCodeModalOpen, setIsChangeStateCodeModalOpen] = useState(false);
   const [newStateCode, setNewStateCode] = useState(stateCode);
