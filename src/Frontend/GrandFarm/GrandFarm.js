@@ -36,7 +36,7 @@ import ChartExpandModal from '../Charts/ChartExpandModal';
 const MotionBox = motion(Box);
 const MotionTabPanel = motion(TabPanel);
 
-const MainContent = ({ timePeriod, statusOfAlerts }) => {
+const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
   const {
     weatherData,
     tempData,
@@ -1169,4 +1169,4 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   );
 };
 
-export default MainContent;
+export default GrandFarmDashboard;

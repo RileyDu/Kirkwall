@@ -89,7 +89,10 @@ const Login = () => {
       console.log('User logged in successfully');
       if (email === 'jerrycromarty@imprimedicine.com'){
         navigate('/imprimed');
-      } else {
+      } else if (email === 'pmo@grandfarm.com'){
+        navigate('/grandfarm');
+      }
+      else {
         navigate('/');
       }
     } catch (error) {

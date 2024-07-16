@@ -50,6 +50,10 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
   useEffect(() => {
     if (currentUser && currentUser.email === 'jerrycromarty@imprimedicine.com') {
       setStateCode('CA');
+    } else if (currentUser && currentUser.email === 'pmo@grandfarm.com') {
+      setStateCode('ND');
+    } else {
+      setStateCode(stateCode);
     }
   }, [currentUser]);
 

@@ -40,6 +40,7 @@ import LandingPage from './Frontend/LandingPage/LandingPage';
 import { useAuth } from './Frontend/AuthComponents/AuthContext';
 import MedDashboard from './Frontend/ImpriMed/MedDashboard';
 import ImpriMedMap from './Frontend/Maps/ImpriMedMap';
+import GrandFarmDashboard from './Frontend/GrandFarm/GrandFarm';
 
 const Layout = ({
   children,
@@ -143,6 +144,11 @@ return (
           <Route path="/imprimed" element={
             <ProtectedRoute allowedUsers={['jerrycromarty@imprimedicine.com']}>
               <MedDashboard statusOfAlerts={showAlerts} isMinimized={isMinimized}/>
+            </ProtectedRoute>
+          }/>
+          <Route path="/grandfarm" element={
+            <ProtectedRoute allowedUsers={['pmo@grandfarm.com']}>
+              <GrandFarmDashboard statusOfAlerts={showAlerts} isMinimized={isMinimized}/>
             </ProtectedRoute>
           }/>
           <Route
