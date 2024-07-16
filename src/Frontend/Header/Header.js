@@ -37,8 +37,15 @@ import {
   PopoverBody,
   Text,
 } from '@chakra-ui/react';
-import { FaBars, FaSun, FaMoon, FaDog, FaGlobe, FaSnowflake } from 'react-icons/fa';
-import { GiGroundSprout } from "react-icons/gi";
+import {
+  FaBars,
+  FaSun,
+  FaMoon,
+  FaDog,
+  FaGlobe,
+  FaSnowflake,
+} from 'react-icons/fa';
+import { GiGroundSprout } from 'react-icons/gi';
 import { FiAlertTriangle } from 'react-icons/fi';
 import {
   WiThermometer,
@@ -205,8 +212,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     transition: { type: 'spring', stiffness: 50, damping: 10 },
   };
 
-  
-
   return (
     <>
       <Flex
@@ -236,21 +241,21 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         </motion.div>
         <Flex align="center">
           {currentUser.email !== 'jerrycromarty@imprimedicine.com' && (
-          <motion.div {...motionProps}>
-            <MotionButton
-              onClick={onSummaryToggle}
-              size={{ base: 'xs', md: 'md' }}
-              px={{ base: 4, md: 6 }}
-              mr="4"
-              variant="sidebar"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              bg="#F4B860"
-              color="black"
-            >
-              {isSummaryOpen ? 'Hide Summary' : ' Weather Summary'}
-            </MotionButton>
-          </motion.div>
+            <motion.div {...motionProps}>
+              <MotionButton
+                onClick={onSummaryToggle}
+                size={{ base: 'xs', md: 'md' }}
+                px={{ base: 4, md: 6 }}
+                mr="4"
+                variant="sidebar"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                bg="#F4B860"
+                color="black"
+              >
+                {isSummaryOpen ? 'Hide Summary' : ' Weather Summary'}
+              </MotionButton>
+            </motion.div>
           )}
           {isLargerThan768 && (
             <motion.div {...motionProps}>
@@ -293,8 +298,15 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                   <PopoverTrigger>
                     <Avatar
                       size="md"
-                      name="Grand Farm Logo"
-                      src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
+                      name="User Logo"
+                      src={
+                        currentUser.email === 'pmo@grandfarm.com'
+                          ? '/GrandFarmLogo.jpg'
+                          : currentUser.email ===
+                            'jerrycromarty@imprimedicine.com'
+                          ? '/AnotherLogo.png'
+                          : '/RookLogoWhite.png'
+                      }
                       cursor="pointer"
                       ml="4"
                     />
@@ -311,7 +323,11 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                       bg="#212121"
                       color="white"
                     >
-                      Kirkwall
+                      {currentUser.email === 'pmo@grandfarm.com'
+                        ? 'Grand Farm'
+                        : currentUser.email === 'jerrycromarty@imprimedicine.com'
+                        ? 'ImpriMed'
+                        : 'Kirkwall'}
                     </PopoverHeader>
                     <PopoverBody>
                       <Logout />
