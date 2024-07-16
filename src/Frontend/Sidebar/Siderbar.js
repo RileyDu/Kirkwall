@@ -107,7 +107,7 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
         <Stack
           flex="1"
           py={{ base: '6', sm: '8' }}
-          px={{ base: '2', sm: '4' }}
+          px={{ base: '2', sm: '5' }}
           bg="transparent"
           color="white"
           justifyContent="center"
