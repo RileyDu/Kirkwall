@@ -87,7 +87,11 @@ const Login = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.log('User logged in successfully');
-      navigate('/');
+      if (email === 'jerrycromarty@imprimedicine.com'){
+        navigate('/imprimed');
+      } else {
+        navigate('/');
+      }
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = errorMessages[errorCode] || 'An unexpected error occurred. Please try again.';
