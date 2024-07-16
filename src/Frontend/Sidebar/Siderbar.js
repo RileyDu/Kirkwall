@@ -41,6 +41,8 @@ const buttonConfig = {
     { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
     { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
     { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
+    { icon: <FaGlobe size="30" />, label: 'Map', route: 'grandfarm/map' }
+
   ],
   'user2@example.com': [
     { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },

@@ -41,6 +41,7 @@ import { useAuth } from './Frontend/AuthComponents/AuthContext';
 import MedDashboard from './Frontend/ImpriMed/MedDashboard';
 import ImpriMedMap from './Frontend/Maps/ImpriMedMap';
 import GrandFarmDashboard from './Frontend/GrandFarm/GrandFarm';
+import GrandFarmMap from './Frontend/Maps/GrandFarmMap';
 
 const Layout = ({
   children,
@@ -233,8 +234,16 @@ return (
           <Route
           path="/imprimed/map"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedUsers={['jerrycromarty@imprimedicine.com']}>
               <ImpriMedMap statusOfAlerts={showAlerts}/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/grandfarm/map"
+          element={
+            <ProtectedRoute allowedUsers={['pmo@grandfarm.com']}>
+              <GrandFarmMap statusOfAlerts={showAlerts}/>
             </ProtectedRoute>
           }
         />
