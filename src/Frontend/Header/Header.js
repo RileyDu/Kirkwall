@@ -75,9 +75,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     humidityData,
     windData,
     rainfallData,
-    watchdogData,
-    watchdogTempData,
-    watchdogHumData,
+    soilMoistureData
   } = useWeatherData();
 
   // const toggleAlerts = () => {
@@ -244,6 +242,22 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
             .toFixed(2)
         : 'N/A',
     },
+    {
+      label: 'Average Soil Moisture @ GF (centibars)',
+      value: soilMoistureData
+        ? (
+            soilMoistureData
+              .reduce((sum, data) => sum + data.soil_moisture, 0) /
+            soilMoistureData.length
+          ).toFixed(2)
+        : weatherData
+        ? (
+            weatherData
+              .reduce((sum, data) => sum + data.soil_moisture, 0) /
+            weatherData.length
+          ).toFixed(2)
+        : 'N/A',
+    }
 
   ];
 
