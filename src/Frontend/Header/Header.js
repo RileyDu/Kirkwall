@@ -323,7 +323,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           </Box>
         </motion.div>
         <Flex align="center">
-          {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && (
+          {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && currentUser.email !== 'russell@rjenergysolutions.com' && (
             <motion.div {...motionProps}>
               <MotionButton
                 onClick={onSummaryToggle}
@@ -388,6 +388,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                           : currentUser.email ===
                             'jerrycromarty@imprimedicine.com'
                           ? '/ImpriMedLogo.png'
+                          : currentUser.email === 'russell@rjenergysolutions.com'
+                          ? '/RJLogo.jpeg'
                           : '/RookLogoWhite.png'
                       }
                       cursor="pointer"

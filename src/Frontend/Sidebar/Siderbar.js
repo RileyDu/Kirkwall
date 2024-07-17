@@ -82,6 +82,8 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
         setCustomerRole('gf');
       } else if (user.email === 'jerrycromarty@imprimedicine.com') {
         setCustomerRole('imprimed');
+      } else if (user.email === 'russell@rjenergysolutions.com') {
+        setCustomerRole('rj');
       } else {
         setCustomerRole('default');
       }
@@ -95,6 +97,9 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
         break;
       case 'imprimed':
         navigate('/imprimed');
+        break;
+      case 'rj':
+        navigate('/rjenergy');
         break;
       default:
         navigate('/');
