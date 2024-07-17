@@ -121,7 +121,7 @@ export const WeatherDataProvider = ({ children }) => {
       try {
         const response = await getAPIIds();
         setAPIIds(response.data.data);
-        console.log('API IDs:', APIIds);
+        // console.log('API IDs:', APIIds);
       } catch (error) {
         console.error('Error fetching API IDs:', error);
       }

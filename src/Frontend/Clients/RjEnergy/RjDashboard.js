@@ -413,7 +413,7 @@ const RJDashboard = ({ timePeriod, statusOfAlerts }) => {
         </TabPanels>
       </Tabs>
       
-      <VoiceControl onCommand={handleVoiceCommand} />
+      {/* <VoiceControl onCommand={handleVoiceCommand} />
       {isModalOpen && (
         <ChartExpandModal
           isOpen={isModalOpen}
@@ -449,8 +449,8 @@ const RJDashboard = ({ timePeriod, statusOfAlerts }) => {
           currentTimePeriod={currentTimePeriod}
           setCurrentTimePeriod={setCurrentTimePeriod}
           sensorMap="grandfarm"
-        />
-      )}
+        /> */}
+      {/* )} */}
     </Box>
   );
 };
