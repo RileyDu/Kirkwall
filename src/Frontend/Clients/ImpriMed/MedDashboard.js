@@ -20,11 +20,10 @@ import {
   IconButton,
   Tooltip,
 } from '@chakra-ui/react';
-import VoiceControl from '../services/VoiceControl';
-import { LineChart, BarChart } from '../Charts/Charts';
-import Logout from '../../Frontend/AuthComponents/Logout';
-import { auth } from '../../Backend/Firebase';
-import ChartWrapper from '../Charts/ChartWrapper';
+import VoiceControl from '../../services/VoiceControl';
+import { LineChart, BarChart } from '../../Charts/Charts';
+import { auth } from '../../../Backend/Firebase';
+import ChartWrapper from '../../Charts/ChartWrapper';
 import {
   FaChessRook,
   FaChevronDown,
@@ -36,13 +35,14 @@ import {
   FaWater,
   FaLeaf,
   FaCloudRain,
+  
 } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
-import { useWeatherData } from '../WeatherDataContext';
-import { handleChartChange } from '../Charts/ChartUtils';
+import { useWeatherData } from '../../WeatherDataContext';
+import { handleChartChange } from '../../Charts/ChartUtils';
 import { motion } from 'framer-motion';
 // import { useAuth } from '../AuthComponents/AuthContext.js';
-import ChartExpandModal from '../Charts/ChartExpandModal';
+import ChartExpandModal from '../../Charts/ChartExpandModal';
 
 const MotionBox = motion(Box);
 const MotionTabPanel = motion(TabPanel);
@@ -50,21 +50,11 @@ const MotionTabPanel = motion(TabPanel);
 const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const {
     weatherData,
-    tempData,
-    humidityData,
-    windData,
-    rainfallData,
-    soilMoistureData,
-    leafWetnessData,
     loading,
     handleTimePeriodChange,
-    watchdogData,
-    watchdogTempData,
-    watchdogHumData,
     rivercityTempData,
     rivercityHumData,
     rivercityData,
-    APIIDs,
   } = useWeatherData();
 
 
