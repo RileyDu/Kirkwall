@@ -412,6 +412,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                         ? 'Grand Farm'
                         : currentUser.email === 'jerrycromarty@imprimedicine.com'
                         ? 'ImpriMed'
+                        : currentUser.email === 'russell@rjenergysolutions.com'
+                        ? 'RJ Energy Solutions'
                         : 'Kirkwall'}
                     </PopoverHeader>
                     <PopoverBody>
