@@ -47,7 +47,7 @@ import ChartExpandModal from '../../Charts/ChartExpandModal';
 const MotionBox = motion(Box);
 const MotionTabPanel = motion(TabPanel);
 
-const MainContent = ({ timePeriod, statusOfAlerts }) => {
+const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
   const {
     weatherData,
     loading,
@@ -374,7 +374,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
           </MotionTabPanel>
         </TabPanels>
       </Tabs>
-      <VoiceControl onCommand={handleVoiceCommand} />
+      {/* <VoiceControl onCommand={handleVoiceCommand} />
       {isModalOpen && (
         <ChartExpandModal
           isOpen={isModalOpen}
@@ -389,9 +389,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
           setCurrentTimePeriod={setCurrentTimePeriod}
           sensorMap="grandfarm"
         />
-      )}
+      )} */}
     </Box>
   );
 };
 
-export default MainContent;
+export default MedDashboard;

@@ -191,8 +191,8 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
         <IconButton
           icon={<Box 
             as={motion.div}
-            initial={isMinimized ? { rotate: 180 } : { rotate: 0 }}
-            animate={isMinimized ? { rotate: 0 } : { rotate: 180 }}
+            initial={isMinimized ? { rotate: 0 } : { rotate: 360 }}
+            animate={isMinimized ? { rotate: 360 } : { rotate: 0 }}
           >
             {isMinimized ? <FaChevronRight /> : <FaChevronLeft />}
           </Box>}
