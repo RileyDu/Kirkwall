@@ -95,6 +95,8 @@ const Login = () => {
         navigate('/imprimed');
       } else if (email === 'pmo@grandfarm.com'){
         navigate('/grandfarm');
+      } else if (email === 'russell@rjenergysolutions.com'){
+        navigate('/rjenergy');
       }
       else {
         navigate('/');
