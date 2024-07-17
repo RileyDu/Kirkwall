@@ -39,6 +39,7 @@ import ImpriMedMap from './Frontend/Maps/ImpriMedMap';
 import GrandFarmDashboard from './Frontend/Clients/GrandFarm/GrandFarm';
 import MedDashboard from './Frontend/Clients/ImpriMed/MedDashboard';
 import GrandFarmMap from './Frontend/Maps/GrandFarmMap';
+import RJDashboard from './Frontend/Clients/RjEnergy/RjDashboard';
 
 const Layout = ({
   children,
@@ -147,6 +148,11 @@ return (
           <Route path="/grandfarm" element={
             <ProtectedRoute allowedUsers={['pmo@grandfarm.com']}>
               <GrandFarmDashboard statusOfAlerts={showAlerts} isMinimized={isMinimized}/>
+            </ProtectedRoute>
+          }/>
+          <Route path='/rjenergy' element={
+            <ProtectedRoute allowedUsers={['russell@rjenergysolutions.com']}>
+              <RJDashboard statusOfAlerts={showAlerts} isMinimized={isMinimized}/>
             </ProtectedRoute>
           }/>
           <Route
