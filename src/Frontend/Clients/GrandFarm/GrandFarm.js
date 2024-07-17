@@ -992,7 +992,7 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
           </MotionTabPanel>
         </TabPanels>
       </Tabs>
-      <VoiceControl onCommand={handleVoiceCommand} />
+      {/* <VoiceControl onCommand={handleVoiceCommand} />
       {isModalOpen && (
         <ChartExpandModal
           isOpen={isModalOpen}
@@ -1031,7 +1031,7 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
           setCurrentTimePeriod={setCurrentTimePeriod}
           sensorMap="grandfarm"
         />
-      )}
+      )} */}
     </Box>
   );
 };
