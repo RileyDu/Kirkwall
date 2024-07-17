@@ -22,14 +22,12 @@ import Header from './Frontend/Header/Header';
 import Sidebar from './Frontend/Sidebar/Siderbar';
 import MainContent from './Frontend/Main/Main';
 import TempSensors from './Frontend/Sensors/TempSensors/TempSensors';
-import SensorsMain from './Frontend/Sensors/SensorsMain/SensorsMain';
 import HumiditySensors from './Frontend/Sensors/HumiditySensors/HumiditySensors';
 import SoilSensors from './Frontend/Sensors/SoilSensors/SoilSensors';
 import RainSensors from './Frontend/Sensors/RainSensors/RainSensors';
 import WindSensors from './Frontend/Sensors/WindSensors/WindSensor';
 import MobileMenu from './Frontend/MobileMenu/MobileMenu';
 import customTheme from './Frontend/Styles/theme';
-import { getWeatherData } from './Backend/Graphql_helper';
 import { WeatherDataProvider } from './Frontend/WeatherDataContext';
 import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
@@ -37,10 +35,9 @@ import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors'
 import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySensors';
 import MapComponent from './Frontend/Maps/Map';
 import LandingPage from './Frontend/LandingPage/LandingPage';
-import { useAuth } from './Frontend/AuthComponents/AuthContext';
-import MedDashboard from './Frontend/ImpriMed/MedDashboard';
 import ImpriMedMap from './Frontend/Maps/ImpriMedMap';
-import GrandFarmDashboard from './Frontend/GrandFarm/GrandFarm';
+import GrandFarmDashboard from './Frontend/Clients/GrandFarm/GrandFarm';
+import MedDashboard from './Frontend/Clients/ImpriMed/MedDashboard';
 import GrandFarmMap from './Frontend/Maps/GrandFarmMap';
 
 const Layout = ({
@@ -122,9 +119,6 @@ return (
     fontSize="6xl"
     color="black"
   />
-  {/* <Text mt="4" fontSize="lg" color="teal.500">
-    Loading...
-  </Text> */}
 </Flex>
 );
 }
