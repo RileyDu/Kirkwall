@@ -49,6 +49,10 @@ const buttonConfig = {
     { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' }
   ],
+  'russell@rjenergysolutions.com': [
+    { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+    { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' }
+  ],
   'default': [
     { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
     { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },

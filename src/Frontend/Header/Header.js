@@ -93,7 +93,10 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         setCustomerRole('gf');
       } else if (user.email === 'jerrycromarty@imprimedicine.com') {
         setCustomerRole('imprimed');
-      } else {
+      } else if (user.email === 'russell@rjenergysolutions.com') {
+        setCustomerRole('rj');
+      }
+      else {
         setCustomerRole('default');
       }
     }
@@ -112,6 +115,10 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     'jerrycromarty@imprimedicine.com': [
       { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' }
+    ],
+    'russell@rjenergysolutions.com': [
+      { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+      { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' }
     ],
     'default': [
       { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
@@ -148,6 +155,9 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         break;
       case 'imprimed':
         navigate('/imprimed');
+        break;
+      case 'rj':
+        navigate('/rjenergy');
         break;
       default:
         navigate('/');

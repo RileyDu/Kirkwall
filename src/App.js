@@ -40,6 +40,7 @@ import GrandFarmDashboard from './Frontend/Clients/GrandFarm/GrandFarm';
 import MedDashboard from './Frontend/Clients/ImpriMed/MedDashboard';
 import GrandFarmMap from './Frontend/Maps/GrandFarmMap';
 import RJDashboard from './Frontend/Clients/RjEnergy/RjDashboard';
+import RJMap from './Frontend/Maps/RJMap';
 
 const Layout = ({
   children,
@@ -244,6 +245,14 @@ return (
           element={
             <ProtectedRoute allowedUsers={['pmo@grandfarm.com']}>
               <GrandFarmMap statusOfAlerts={showAlerts}/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/rjenergy/map"
+          element={
+            <ProtectedRoute allowedUsers={['russell@rjenergysolutions.com']}>
+              <RJMap statusOfAlerts={showAlerts}/>
             </ProtectedRoute>
           }
         />
