@@ -93,7 +93,10 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         setCustomerRole('gf');
       } else if (user.email === 'jerrycromarty@imprimedicine.com') {
         setCustomerRole('imprimed');
-      } else {
+      } else if (user.email === 'russell@rjenergysolutions.com') {
+        setCustomerRole('rj');
+      }
+      else {
         setCustomerRole('default');
       }
     }
@@ -112,6 +115,10 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     'jerrycromarty@imprimedicine.com': [
       { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' }
+    ],
+    'russell@rjenergysolutions.com': [
+      { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+      { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' }
     ],
     'default': [
       { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
@@ -148,6 +155,9 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         break;
       case 'imprimed':
         navigate('/imprimed');
+        break;
+      case 'rj':
+        navigate('/rjenergy');
         break;
       default:
         navigate('/');
@@ -313,7 +323,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           </Box>
         </motion.div>
         <Flex align="center">
-          {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && (
+          {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && currentUser.email !== 'russell@rjenergysolutions.com' && (
             <motion.div {...motionProps}>
               <MotionButton
                 onClick={onSummaryToggle}
@@ -378,6 +388,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                           : currentUser.email ===
                             'jerrycromarty@imprimedicine.com'
                           ? '/ImpriMedLogo.png'
+                          : currentUser.email === 'russell@rjenergysolutions.com'
+                          ? '/RJLogo.jpeg'
                           : '/RookLogoWhite.png'
                       }
                       cursor="pointer"
@@ -400,6 +412,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                         ? 'Grand Farm'
                         : currentUser.email === 'jerrycromarty@imprimedicine.com'
                         ? 'ImpriMed'
+                        : currentUser.email === 'russell@rjenergysolutions.com'
+                        ? 'RJ Energy Solutions'
                         : 'Kirkwall'}
                     </PopoverHeader>
                     <PopoverBody>

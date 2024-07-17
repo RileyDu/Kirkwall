@@ -49,6 +49,10 @@ const buttonConfig = {
     { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' }
   ],
+  'russell@rjenergysolutions.com': [
+    { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+    { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' }
+  ],
   'default': [
     { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
     { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
@@ -78,6 +82,8 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
         setCustomerRole('gf');
       } else if (user.email === 'jerrycromarty@imprimedicine.com') {
         setCustomerRole('imprimed');
+      } else if (user.email === 'russell@rjenergysolutions.com') {
+        setCustomerRole('rj');
       } else {
         setCustomerRole('default');
       }
@@ -91,6 +97,9 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
         break;
       case 'imprimed':
         navigate('/imprimed');
+        break;
+      case 'rj':
+        navigate('/rjenergy');
         break;
       default:
         navigate('/');
