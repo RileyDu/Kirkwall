@@ -40,8 +40,11 @@ const checkThresholds = async () => {
 };
 
 export default async function handler(req, res) {
+  // Check for the CRON_SECRET in the Authorization header
+  if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).end('Unauthorized');
+  }
+
   await checkThresholds();
   res.status(200).json({ message: 'Threshold check complete' });
 }
-
-//vercel didn't detect my last push of changes
