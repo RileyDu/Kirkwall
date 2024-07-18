@@ -349,8 +349,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               <Grid
                 templateColumns={{
                   base: '1fr',
-                  md: 'repeat(3, 1fr)',
-                  lg: 'repeat(3, 1fr)',
+                  md: 'repeat(2, 1fr)',
+                  lg: 'repeat(2, 1fr)',
                 }}
                 gap="6"
               >

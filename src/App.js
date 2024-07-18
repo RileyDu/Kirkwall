@@ -142,7 +142,7 @@ return (
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
           <Route path="/imprimed" element={
-            <ProtectedRoute allowedUsers={['jerrycromarty@imprimedicine.com']}>
+            <ProtectedRoute allowedUsers={['jerrycromarty@imprimedicine.com']} >
               <MedDashboard statusOfAlerts={showAlerts} isMinimized={isMinimized}/>
             </ProtectedRoute>
           }/>
@@ -159,7 +159,7 @@ return (
           <Route
             path="/"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedUsers={['test@kirkwall.io']} redirectPaths={{'jerrycromarty@imprimedicine.com' : '/imprimed', 'pmo@grandfarm.com' : '/grandfarm', 'russell@rjenergysolutions.com' :'/rjenergy' }}>
                 <MainContent
                   isMinimized={isMinimized}
                   timePeriod={timePeriod}
