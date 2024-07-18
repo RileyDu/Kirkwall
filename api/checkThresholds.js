@@ -43,3 +43,5 @@ export default async function handler(req, res) {
   await checkThresholds();
   res.status(200).json({ message: 'Threshold check complete' });
 }
+
+//vercel didn't detect my last push of changes
