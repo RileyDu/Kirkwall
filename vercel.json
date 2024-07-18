@@ -9,6 +9,11 @@
     {
       "src": "src/Backend/server.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/checkThresholds.js",
+      "use": "@vercel/node",
+      "config": { "runtime": "nodejs16.x" }
     }
   ],
   "rewrites": [
@@ -28,11 +33,7 @@
       "source": "/(.*)",
       "destination": "/"
     }
-  ], "functions": {
-    "api/checkThresholds.js": {
-      "runtime": "nodejs16.x"
-    }
-  },
+  ],
   "crons": [
     {
       "path": "/api/checkThresholds",
