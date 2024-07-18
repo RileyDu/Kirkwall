@@ -36,8 +36,8 @@
   ],
   "crons": [
     {
-      "path": "/api/checkThresholds.js",
-      "schedule": "35 12 * * *"
+      "path": "/api/cron",
+      "schedule": "55 13 * * *"
     }
   ]
 }
