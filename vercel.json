@@ -37,7 +37,7 @@
   "crons": [
     {
       "path": "/api/checkThresholds",
-      "schedule": "25 12 * * *"
+      "schedule": "30 12 * * *"
     }
   ]
 }
