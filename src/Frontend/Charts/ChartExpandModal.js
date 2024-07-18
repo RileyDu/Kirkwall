@@ -212,7 +212,7 @@ const ChartExpandModal = ({
     localStorage.setItem(`chartSettings_${metric}`, JSON.stringify(chartSettings));
   
     try {
-      const response = await axios.post(`${apiUrl}/set-thresholds`, chartSettings);
+      const response = await axios.post(`/api/set-thresholds`, chartSettings);
       toast({
         title: 'Thresholds saved.',
         description: response.data.message,
