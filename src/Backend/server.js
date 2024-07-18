@@ -36,6 +36,27 @@ if (!sendGridApiKey) {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Mock database or in-memory store for thresholds
+let thresholdsStore = {};
+
+// Endpoint to receive and save thresholds
+app.post('/api/set-thresholds', (req, res) => {
+  const { phoneNumber, userEmail, highThreshold, lowThreshold } = req.body;
+  thresholdsStore = {
+    phoneNumber,
+    userEmail,
+    highThreshold,
+    lowThreshold,
+  };
+  console.log('Received thresholds:', thresholdsStore);
+  res.status(200).send({ message: 'Thresholds saved successfully' });
+});
+
+// Endpoint to fetch thresholds (for cron job use)
+app.get('/api/get-thresholds', (req, res) => {
+  res.status(200).json(thresholdsStore);
+});
+
 // Endpoint to send SMS
 app.post('/send-sms', async (req, res) => {
   const { to, body } = req.body;

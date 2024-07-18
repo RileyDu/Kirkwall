@@ -21,8 +21,22 @@
       "destination": "src/Backend/server.js"
     },
     {
+      "source": "/api/set-thresholds",
+      "destination": "src/Backend/server.js"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
+    }
+  ], "functions": {
+    "api/checkThresholds.js": {
+      "runtime": "nodejs16.x"
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/checkThresholds",
+      "schedule": "*/5 * * * *"
     }
   ]
 }
