@@ -7,7 +7,7 @@ const apiUrl = process.env.NODE_ENV === 'production'
 
 const checkThresholds = async () => {
   // Fetch the latest thresholds
-  const { data: thresholds } = await axios.get(`$/api/get-thresholds`);
+  const { data: thresholds } = await axios.get(`/api/get-thresholds`);
   const { phoneNumber, userEmail, highThreshold, lowThreshold, metric, lastAlertTime } = thresholds;
 
   // Mock data for currentValue for testing purposes
