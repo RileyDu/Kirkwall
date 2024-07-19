@@ -19,6 +19,7 @@ import {
   useColorModeValue,
   IconButton,
   Tooltip,
+  useMediaQuery
 } from '@chakra-ui/react';
 import VoiceControl from '../../services/VoiceControl';
 import { LineChart, BarChart } from '../../Charts/Charts';
@@ -97,6 +98,9 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
     garage: ['temperature', 'humidity'],
     rivercity: ['temperature', 'humidity'],
   });
+
+  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalChart, setModalChart] = useState('');
@@ -293,7 +297,7 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
       flex="1"
       p="4"
       pt={statusOfAlerts ? '10px' : '74px'}
-      width="calc(100% - 80px)"
+      width={isLargerThan768 ? "calc(100% - 70px)" : "100%"}
       minHeight="100vh"
       display="flex"
       flexDirection="column"
@@ -307,8 +311,8 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
             transition={{ duration: 0.5 }}
             key="main-dashboard"
           >
-            <Flex justify="space-between" mb="6" alignItems="center">
-              <Heading size="lg">Grand Farm Dashboard</Heading>
+            <Flex justifyContent={isLargerThan768 ? 'flex-start' : 'center'} mb="6">
+              <Heading size={isLargerThan768 ? 'lg' : 'xl'} textDecoration={isLargerThan768 ? 'none' : 'underline'}>Grand Farm Dashboard</Heading>
             </Flex>
             <MotionBox
               initial={{ opacity: 0, height: 0 }}
