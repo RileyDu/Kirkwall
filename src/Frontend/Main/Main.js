@@ -282,7 +282,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
       flexDirection="column"
     >
       <Tabs variant="soft-rounded" colorScheme="orange">
-        <TabList mb="6">
+        <TabList mb="6" justifyContent={isLargerThan768 ? 'flex-start' : 'space-evenly'}>
           <Tab fontSize={{ base: 'sm', md: 'md' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>Main </Tab>
           <Tab fontSize={{ base: 'sm', md: 'md' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>Grand Farm </Tab>
           <Tab fontSize={{ base: 'sm', md: 'md' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>Garage </Tab>
@@ -351,7 +351,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
           variant="outline"
           ml={'2'}
           size={'sm'}
-          mt={'1'}
+          mt={isLargerThan768 ? '1' : '0'}
         />
       </Tooltip>
                   <MenuList>
@@ -575,8 +575,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
         aria-label="Toggle Charts"
         size={"sm"}
         ml={2}
-        mt={1}
-      />
+        mt={isLargerThan768 ? '1' : '0'}
+        />
     </Tooltip>
                   <MenuList>
                     {['temperature', 'humidity'].map(chart => (
@@ -681,8 +681,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
       variant="outline"
       size={"sm"}
       ml={2}
-      mt={1}
-    />
+      mt={isLargerThan768 ? '1' : '0'}
+      />
   </Tooltip>
                   <MenuList>
                     {['temperature', 'humidity'].map(chart => (
@@ -787,8 +787,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
       variant="outline"
       size={"sm"}
       ml={2}
-      mt={1}
-    />
+      mt={isLargerThan768 ? '1' : '0'}
+      />
   </Tooltip>
                 <MenuList>
                   {Object.keys(charts).map(chart => (
@@ -1008,8 +1008,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
       variant="outline"
       size={"sm"}
       ml={2}
-      mt={1}
-    />
+      mt={isLargerThan768 ? '1' : '0'}
+      />
   </Tooltip>
                 <MenuList>
                   {['temperature', 'humidity'].map(chart => (
