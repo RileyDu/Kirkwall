@@ -154,7 +154,7 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
       pt={isMinimized ? '0' : '20px'}
       mt={statusOfAlerts ? '2rem' : '6rem'}
     >
-      <Box overflowY="auto" height="100%">
+      <Box overflowY="auto" height="100%" overflowX="hidden">
         {isMinimized ? (
           <Box mb={'-4rem'} p="4" display="flex" justifyContent="center">
             <img

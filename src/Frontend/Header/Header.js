@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import WeatherSummaryButton from '../SummaryComponent/SummaryButton';
 import {
   useMediaQuery,
   Flex,
@@ -148,7 +149,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     ))
   };
 
-  const handleUserNavigation = () => {
+  const handleUserNavigation = () => {  
     switch (customerRole) {
       case 'gf':
         navigate('/grandfarm');
@@ -323,23 +324,9 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           </Box>
         </motion.div>
         <Flex align="center">
-          {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && currentUser.email !== 'russell@rjenergysolutions.com' && (
-            <motion.div {...motionProps}>
-              <MotionButton
-                onClick={onSummaryToggle}
-                size={{ base: 'xs', md: 'md' }}
-                px={{ base: 4, md: 6 }}
-                mr="4"
-                variant="sidebar"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                bg="#F4B860"
-                color="black"
-              >
-                {isSummaryOpen ? 'Hide Summary' : ' Weather Summary'}
-              </MotionButton>
-            </motion.div>
-          )}
+        {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && currentUser.email !== 'russell@rjenergysolutions.com' && (
+  <WeatherSummaryButton isSummaryOpen={isSummaryOpen} onSummaryToggle={onSummaryToggle} />
+)}
           {isLargerThan768 && (
             <motion.div {...motionProps}>
               <Tooltip label="Toggle Weather Alerts">
