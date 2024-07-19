@@ -292,31 +292,34 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             transition={{ duration: 0.5 }}
             key="main-dashboard"
           >
-            <Flex justify="space-between" mb="6" alignItems="center">
-              <Heading size="lg">Main Dashboard</Heading>
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  rightIcon={<FaChevronDown />}
-                  bg="brand.400"
-                  color="black"
-                  _hover={{ bg: '#d7a247' }}
-                >
-                  Toggle Sections
-                </MenuButton>
-                <MenuList>
-                  <MenuItem onClick={() => toggleSection('grandFarm')}>
-                    {showSections.grandFarm ? 'Hide' : 'Show'} Grand Farm Sensors
-                  </MenuItem>
-                  <MenuItem onClick={() => toggleSection('garage')}>
-                    {showSections.garage ? 'Hide' : 'Show'} Garage Sensors
-                  </MenuItem>
-                  <MenuItem onClick={() => toggleSection('rivercity')}>
-                    {showSections.rivercity ? 'Hide' : 'Show'} Freezer Sensors
-                  </MenuItem>
-                </MenuList>
-              </Menu>
-            </Flex>
+           <Flex mb="6" alignItems="center">
+  <Heading size="lg">Main Dashboard</Heading>
+  <Menu>
+    <Tooltip label="Toggle Sensor Sections" aria-label="Toggle Sensor Sections">
+      <MenuButton
+        as={IconButton}
+        icon={<FaChevronDown />}
+        bg="brand.400"
+        color="black"
+        _hover={{ bg: '#d7a247' }}
+        variant="outline"
+        ml={'2'}
+        size={'sm'}
+      />
+    </Tooltip>
+    <MenuList>
+      <MenuItem onClick={() => toggleSection('grandFarm')}>
+        {showSections.grandFarm ? 'Hide' : 'Show'} Grand Farm Sensors
+      </MenuItem>
+      <MenuItem onClick={() => toggleSection('garage')}>
+        {showSections.garage ? 'Hide' : 'Show'} Garage Sensors
+      </MenuItem>
+      <MenuItem onClick={() => toggleSection('rivercity')}>
+        {showSections.rivercity ? 'Hide' : 'Show'} Freezer Sensors
+      </MenuItem>
+    </MenuList>
+  </Menu>
+</Flex>
             <MotionBox
               initial={{ opacity: 0, height: 0 }}
               animate={{
