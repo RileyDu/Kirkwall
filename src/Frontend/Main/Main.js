@@ -20,6 +20,7 @@ import {
   IconButton,
   Tooltip,
   Divider,
+  useMediaQuery
 } from '@chakra-ui/react';
 import VoiceControl from '../services/VoiceControl';
 import { LineChart, BarChart } from '../Charts/Charts';
@@ -67,6 +68,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const [watchdogHumidityChartType, setWatchdogHumidityChartType] = useState('bar');
   const [rivercityTempChartType, setRivercityTempChartType] = useState('bar');
   const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
+
+  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
   const [isReady, setIsReady] = useState(false);
   const [showSections, setShowSections] = useState({
@@ -273,7 +276,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
       flex="1"
       p="4"
       pt={statusOfAlerts ? '10px' : '74px'}
-      width="calc(100% - 80px)"
+      width={isLargerThan768 ? "calc(100% - 80px)" : "100%"}
       minHeight="100vh"
       display="flex"
       flexDirection="column"
@@ -285,7 +288,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
           <Tab fontSize={{ base: 'sm', md: 'md' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>Garage </Tab>
           <Tab fontSize={{ base: 'sm', md: 'md' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>Freezer</Tab>
         </TabList>
-        <Divider mt={'-4'}/>
+        <Divider mt={'-4'} w={'100%'}/>
         <TabPanels>
           <MotionTabPanel
             initial={{ opacity: 0, y: 10 }}
@@ -294,6 +297,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             transition={{ duration: 0.5 }}
             key="main-dashboard"
           >
+            {isLargerThan768 && (
            <Flex mb="6" alignItems="center">
   <Heading size="lg">Main Dashboard</Heading>
   <Menu>
@@ -322,6 +326,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     </MenuList>
   </Menu>
 </Flex>
+)}
             <MotionBox
               initial={{ opacity: 0, height: 0 }}
               animate={{
