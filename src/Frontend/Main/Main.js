@@ -19,6 +19,7 @@ import {
   useColorModeValue,
   IconButton,
   Tooltip,
+  Divider,
 } from '@chakra-ui/react';
 import VoiceControl from '../services/VoiceControl';
 import { LineChart, BarChart } from '../Charts/Charts';
@@ -284,6 +285,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
           <Tab fontSize={{ base: 'sm', md: 'md' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>Garage </Tab>
           <Tab fontSize={{ base: 'sm', md: 'md' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>Freezer</Tab>
         </TabList>
+        <Divider mt={'-4'}/>
         <TabPanels>
           <MotionTabPanel
             initial={{ opacity: 0, y: 10 }}
@@ -329,14 +331,24 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               transition={{ duration: 0.5 }}
               mb={showSections.grandFarm ? '8' : 0}
             >
-              <Heading size="lg" textAlign="center" mb="4">
-                Grand Farm Sensors
-              </Heading>
               <Flex justify="center" mb="4">
-                <Menu>
-                  <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
-                    Toggle Charts
-                  </MenuButton>
+              <Heading size="lg" textAlign="center" mb="4">
+    Grand Farm Sensors
+  </Heading>
+    <Menu>
+      <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
+        <MenuButton
+          as={IconButton}
+          icon={<FaChevronDown />}
+          bg="brand.400"
+          color="black"
+          _hover={{ bg: '#d7a247' }}
+          variant="outline"
+          ml={'2'}
+          size={'sm'}
+          mt={'1'}
+        />
+      </Tooltip>
                   <MenuList>
                     {Object.keys(charts).map(chart => (
                       <MenuItem key={chart} onClick={() => toggleChartVisibility('grandFarm', chart)}>
@@ -542,14 +554,25 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               transition={{ duration: 0.5 }}
               mb={8}
             >
-              <Heading size="lg" textAlign="center" mb="4">
-                Garage Sensors
-              </Heading>
               <Flex justify="center" mb="4">
-                <Menu>
-                  <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
-                    Toggle Charts
-                  </MenuButton>
+              <Heading size="lg" textAlign="center" mb="4">
+    Garage Sensors
+  </Heading>
+  <Menu>
+    <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
+      <MenuButton
+        as={IconButton}
+        icon={<FaChevronDown />}
+        bg="brand.400"
+        color="black"
+        _hover={{ bg: '#d7a247' }}
+        variant="outline"
+        aria-label="Toggle Charts"
+        size={"sm"}
+        ml={2}
+        mt={1}
+      />
+    </Tooltip>
                   <MenuList>
                     {['temperature', 'humidity'].map(chart => (
                       <MenuItem key={chart} onClick={() => toggleChartVisibility('garage', chart)}>
@@ -638,14 +661,24 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               }}
               transition={{ duration: 0.5 }}
             >
+              <Flex justify="center" mb="4">
               <Heading size="lg" textAlign="center" mb="4">
                 Freezer Sensors
               </Heading>
-              <Flex justify="center" mb="4">
                 <Menu>
-                  <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
-                    Toggle Charts
-                  </MenuButton>
+                <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
+    <MenuButton
+      as={IconButton}
+      icon={<FaChevronDown />}
+      bg="brand.400"
+      color="black"
+      _hover={{ bg: '#d7a247' }}
+      variant="outline"
+      size={"sm"}
+      ml={2}
+      mt={1}
+    />
+  </Tooltip>
                   <MenuList>
                     {['temperature', 'humidity'].map(chart => (
                       <MenuItem key={chart} onClick={() => toggleChartVisibility('rivercity', chart)}>
