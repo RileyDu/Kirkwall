@@ -19,20 +19,31 @@ import {
   useColorModeValue,
   IconButton,
   Tooltip,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import VoiceControl from '../../services/VoiceControl';
 import { LineChart, BarChart } from '../../Charts/Charts';
 import Logout from '../../AuthComponents/Logout';
 import { auth } from '../../../Backend/Firebase';
 import ChartWrapper from '../../Charts/ChartWrapper';
-import { FaChessRook, FaChevronDown, FaPlus, FaMinus, FaTemperatureHigh, FaTint, FaWind, FaWater, FaLeaf, FaCloudRain } from 'react-icons/fa';
+import {
+  FaChessRook,
+  FaChevronDown,
+  FaPlus,
+  FaMinus,
+  FaTemperatureHigh,
+  FaTint,
+  FaWind,
+  FaWater,
+  FaLeaf,
+  FaCloudRain,
+} from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { useWeatherData } from '../../WeatherDataContext';
 import { handleChartChange } from '../../Charts/ChartUtils';
 import { motion } from 'framer-motion';
 // import { useAuth } from '../AuthComponents/AuthContext.js';
 import ChartExpandModal from '../../Charts/ChartExpandModal';
-
 
 const MotionBox = motion(Box);
 const MotionTabPanel = motion(TabPanel);
@@ -54,7 +65,7 @@ const RJDashboard = ({ timePeriod, statusOfAlerts }) => {
     rivercityTempData,
     rivercityHumData,
     rivercityData,
-    APIIDs
+    APIIDs,
   } = useWeatherData();
 
   const [tempChartType, setTempChartType] = useState('bar');
@@ -64,7 +75,8 @@ const RJDashboard = ({ timePeriod, statusOfAlerts }) => {
   const [soilMoistureChartType, setSoilMoistureChartType] = useState('bar');
   const [leafWetnessChartType, setLeafWetnessChartType] = useState('bar');
   const [watchdogTempChartType, setWatchdogTempChartType] = useState('bar');
-  const [watchdogHumidityChartType, setWatchdogHumidityChartType] = useState('bar');
+  const [watchdogHumidityChartType, setWatchdogHumidityChartType] =
+    useState('bar');
   const [rivercityTempChartType, setRivercityTempChartType] = useState('bar');
   const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
 
@@ -75,10 +87,19 @@ const RJDashboard = ({ timePeriod, statusOfAlerts }) => {
     rivercity: true,
   });
   const [visibleCharts, setVisibleCharts] = useState({
-    grandFarm: ['temperature', 'humidity', 'wind', 'soilMoisture', 'leafWetness', 'rainfall'],
+    grandFarm: [
+      'temperature',
+      'humidity',
+      'wind',
+      'soilMoisture',
+      'leafWetness',
+      'rainfall',
+    ],
     garage: ['temperature', 'humidity'],
     rivercity: ['temperature', 'humidity'],
   });
+
+  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalChart, setModalChart] = useState('');
@@ -87,35 +108,35 @@ const RJDashboard = ({ timePeriod, statusOfAlerts }) => {
   const { colorMode } = useColorMode();
   const iconColor = useColorModeValue('black', 'white');
 
-  const showSection = (section) => {
-    setShowSections((prevState) => ({
+  const showSection = section => {
+    setShowSections(prevState => ({
       ...prevState,
       [section]: true,
     }));
   };
 
-  const hideSection = (section) => {
-    setShowSections((prevState) => ({
+  const hideSection = section => {
+    setShowSections(prevState => ({
       ...prevState,
       [section]: false,
     }));
   };
 
   const showChart = (section, chart) => {
-    setVisibleCharts((prevState) => ({
+    setVisibleCharts(prevState => ({
       ...prevState,
       [section]: [...prevState[section], chart],
     }));
   };
 
   const hideChart = (section, chart) => {
-    setVisibleCharts((prevState) => ({
+    setVisibleCharts(prevState => ({
       ...prevState,
-      [section]: prevState[section].filter((item) => item !== chart),
+      [section]: prevState[section].filter(item => item !== chart),
     }));
   };
 
-  const handleVoiceCommand = (command) => {
+  const handleVoiceCommand = command => {
     if (command.includes('show grand farm')) {
       showSection('grandFarm');
     } else if (command.includes('hide grand farm')) {
@@ -179,20 +200,22 @@ const RJDashboard = ({ timePeriod, statusOfAlerts }) => {
     }
   };
 
-  const openModal = (chart) => {
+  const openModal = chart => {
     setModalChart(chart);
     setIsModalOpen(true);
   };
 
   const logOut = () => {
-    auth.signOut().then(() => {
-      console.log('User logged out');
-      // Additional logout logic if needed
-    }).catch((error) => {
-      console.error('Logout error:', error);
-    });
+    auth
+      .signOut()
+      .then(() => {
+        console.log('User logged out');
+        // Additional logout logic if needed
+      })
+      .catch(error => {
+        console.error('Logout error:', error);
+      });
   };
-
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -206,17 +229,17 @@ const RJDashboard = ({ timePeriod, statusOfAlerts }) => {
     }
   }, [weatherData]);
 
-  const toggleSection = (section) => {
-    setShowSections((prevState) => ({
+  const toggleSection = section => {
+    setShowSections(prevState => ({
       ...prevState,
       [section]: !prevState[section],
     }));
   };
 
   const toggleChartVisibility = (section, chart) => {
-    setVisibleCharts((prevState) => {
+    setVisibleCharts(prevState => {
       const newSectionCharts = prevState[section].includes(chart)
-        ? prevState[section].filter((item) => item !== chart)
+        ? prevState[section].filter(item => item !== chart)
         : [...prevState[section], chart];
       return { ...prevState, [section]: newSectionCharts };
     });
@@ -248,9 +271,9 @@ const RJDashboard = ({ timePeriod, statusOfAlerts }) => {
         icon={isVisible ? <FaMinus /> : <FaPlus />}
         onClick={onClick}
         mx="1"
-        bg={isVisible ? "red.400" : "green.400"}
+        bg={isVisible ? 'red.400' : 'green.400'}
         color="white"
-        _hover={{ bg: isVisible ? "red.500" : "green.500" }}
+        _hover={{ bg: isVisible ? 'red.500' : 'green.500' }}
         size="sm"
         aria-label={`${isVisible ? 'Hide' : 'Show'} ${chart}`}
       />
@@ -263,26 +286,22 @@ const RJDashboard = ({ timePeriod, statusOfAlerts }) => {
     wind: <FaWind />,
     soilMoisture: <FaWater />,
     leafWetness: <FaLeaf />,
-    rainfall: <FaCloudRain />
+    rainfall: <FaCloudRain />,
   };
 
   return (
-
-    
     <Box
       bg={colorMode === 'light' ? 'brand.50' : 'gray.700'}
       color={colorMode === 'light' ? 'black' : 'white'}
       flex="1"
       p="4"
       pt={statusOfAlerts ? '10px' : '74px'}
-      width="calc(100% - 80px)"
+      width={isLargerThan768 ? "calc(100% - 70px)" : "100%"}
       minHeight="100vh"
       display="flex"
       flexDirection="column"
     >
-
-
-<Tabs variant="soft-rounded" colorScheme="orange">
+      <Tabs variant="soft-rounded" colorScheme="orange">
         <TabPanels>
           <MotionTabPanel
             initial={{ opacity: 0, y: 10 }}
@@ -291,8 +310,8 @@ const RJDashboard = ({ timePeriod, statusOfAlerts }) => {
             transition={{ duration: 0.5 }}
             key="main-dashboard"
           >
-            <Flex justify="space-between" mb="6" alignItems="center">
-              <Heading size="lg">RJ Energy Dashboard</Heading>
+            <Flex justifyContent={isLargerThan768 ? 'flex-start' : 'center'} mb="6">
+            <Heading size={isLargerThan768 ? 'lg' : 'xl'} textDecoration={isLargerThan768 ? 'none' : 'underline'}>RJ Energy Dashboard</Heading>
             </Flex>
             <MotionBox
               initial={{ opacity: 0, height: 0 }}
@@ -303,39 +322,43 @@ const RJDashboard = ({ timePeriod, statusOfAlerts }) => {
               transition={{ duration: 0.5 }}
             >
               <Flex justify="center" align="center" mb="4">
-  <Heading size="lg" textAlign="center">
-    Freezer Sensors
-  </Heading>
-  <Menu>
-    <MenuButton
-      as={Button}
-      bg="brand.400"
-      color="black"
-      _hover={{ bg: '#d7a247' }}
-      ml={2}
-      size={'xs'}
-      mt={2}
-    >
-      <FaChevronDown />
-    </MenuButton>
-    <MenuList>
-      {['temperature', 'humidity'].map(chart => (
-        <MenuItem
-          key={chart}
-          onClick={() => toggleChartVisibility('rivercity', chart)}
-        >
-          <Flex alignItems="center">
-            {charts[chart]}
-            <Box ml="2">
-              {visibleCharts.rivercity.includes(chart) ? 'Hide' : 'Show'}{' '}
-              {chart.charAt(0).toUpperCase() + chart.slice(1)}
-            </Box>
-          </Flex>
-        </MenuItem>
-      ))}
-    </MenuList>
-  </Menu>
-</Flex>
+                <Heading size="lg" textAlign="center">
+                  Freezer Sensors
+                </Heading>
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    bg="brand.400"
+                    color="black"
+                    _hover={{ bg: '#d7a247' }}
+                    ml={2}
+                    size={'xs'}
+                    mt={2}
+                  >
+                    <FaChevronDown />
+                  </MenuButton>
+                  <MenuList>
+                    {['temperature', 'humidity'].map(chart => (
+                      <MenuItem
+                        key={chart}
+                        onClick={() =>
+                          toggleChartVisibility('rivercity', chart)
+                        }
+                      >
+                        <Flex alignItems="center">
+                          {charts[chart]}
+                          <Box ml="2">
+                            {visibleCharts.rivercity.includes(chart)
+                              ? 'Hide'
+                              : 'Show'}{' '}
+                            {chart.charAt(0).toUpperCase() + chart.slice(1)}
+                          </Box>
+                        </Flex>
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
+              </Flex>
 
               <Grid
                 templateColumns={{
@@ -412,7 +435,7 @@ const RJDashboard = ({ timePeriod, statusOfAlerts }) => {
           </MotionTabPanel>
         </TabPanels>
       </Tabs>
-      
+
       {/* <VoiceControl onCommand={handleVoiceCommand} />
       {isModalOpen && (
         <ChartExpandModal
@@ -454,4 +477,4 @@ const RJDashboard = ({ timePeriod, statusOfAlerts }) => {
     </Box>
   );
 };
-export default RJDashboard
+export default RJDashboard;
