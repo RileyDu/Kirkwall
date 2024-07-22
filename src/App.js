@@ -33,7 +33,7 @@ import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors';
 import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySensors';
-import MapComponent from './Frontend/Maps/Map';
+import MapComponent from './Frontend/Maps/KirkwallMap';
 import LandingPage from './Frontend/LandingPage/LandingPage';
 import ImpriMedMap from './Frontend/Maps/ImpriMedMap';
 import GrandFarmDashboard from './Frontend/Clients/GrandFarm/GrandFarm';
@@ -41,6 +41,8 @@ import MedDashboard from './Frontend/Clients/ImpriMed/MedDashboard';
 import GrandFarmMap from './Frontend/Maps/GrandFarmMap';
 import RJDashboard from './Frontend/Clients/RjEnergy/RjDashboard';
 import RJMap from './Frontend/Maps/RJMap';
+import WatchDogProtectDashboard from './Frontend/Clients/WatchDogProtect/WatchDogProtectDashboard';
+import WatchdogProtectMap from './Frontend/Maps/WatchdogMap';
 
 const Layout = ({
   children,
@@ -156,10 +158,15 @@ return (
               <RJDashboard statusOfAlerts={showAlerts} isMinimized={isMinimized}/>
             </ProtectedRoute>
           }/>
+          <Route path='/watchdogprotect' element={
+            <ProtectedRoute allowedUsers={['trey@watchdogprotect.com']}>
+              <WatchDogProtectDashboard statusOfAlerts={showAlerts} isMinimized={isMinimized}/>
+            </ProtectedRoute>
+          }/>
           <Route
             path="/"
             element={
-              <ProtectedRoute allowedUsers={['test@kirkwall.io']} redirectPaths={{'jerrycromarty@imprimedicine.com' : '/imprimed', 'pmo@grandfarm.com' : '/grandfarm', 'russell@rjenergysolutions.com' :'/rjenergy' }}>
+              <ProtectedRoute allowedUsers={['test@kirkwall.io']} redirectPaths={{'jerrycromarty@imprimedicine.com' : '/imprimed', 'pmo@grandfarm.com' : '/grandfarm', 'russell@rjenergysolutions.com' :'/rjenergy', 'trey@watchdogprotect.com' : '/watchdogprotect' }}>
                 <MainContent
                   isMinimized={isMinimized}
                   timePeriod={timePeriod}
@@ -253,6 +260,14 @@ return (
           element={
             <ProtectedRoute allowedUsers={['russell@rjenergysolutions.com']}>
               <RJMap statusOfAlerts={showAlerts}/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/watchdogprotect/map"
+          element={
+            <ProtectedRoute allowedUsers={['trey@watchdogprotect.com']}>
+              <WatchdogProtectMap statusOfAlerts={showAlerts}/>
             </ProtectedRoute>
           }
         />

@@ -97,8 +97,9 @@ const Login = () => {
         navigate('/grandfarm');
       } else if (email === 'russell@rjenergysolutions.com'){
         navigate('/rjenergy');
-      }
-      else {
+      } else if (email === 'trey@watchdogprotect.com'){
+        navigate('/watchdogprotect');
+      } else {
         navigate('/');
       }
     } catch (error) {

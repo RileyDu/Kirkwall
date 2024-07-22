@@ -53,6 +53,10 @@ const buttonConfig = {
     { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' }
   ],
+  'trey@watchdogprotect.com': [
+    { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
+    { icon: <FaGlobe size="30" />, label: 'Map', route: '/watchdogprotect/map' }
+  ],
   'default': [
     { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
     { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
@@ -84,7 +88,10 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
         setCustomerRole('imprimed');
       } else if (user.email === 'russell@rjenergysolutions.com') {
         setCustomerRole('rj');
-      } else {
+      } else if (user.email === 'trey@watchdogprotect.com') {
+        setCustomerRole('wdp');
+      } 
+      else {
         setCustomerRole('default');
       }
     }
@@ -100,6 +107,9 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
         break;
       case 'rj':
         navigate('/rjenergy');
+        break;
+      case 'wdp':
+        navigate('/watchdogprotect');
         break;
       default:
         navigate('/');
@@ -154,7 +164,7 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
       pt={isMinimized ? '0' : '20px'}
       mt={statusOfAlerts ? '2rem' : '6rem'}
     >
-      <Box overflowY="auto" height="100%">
+      <Box overflowY="auto" height="100%" overflowX="hidden">
         {isMinimized ? (
           <Box mb={'-4rem'} p="4" display="flex" justifyContent="center">
             <img

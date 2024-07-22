@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import SummaryButton from '../SummaryComponent/SummaryButton';
 import {
   useMediaQuery,
   Flex,
@@ -57,12 +58,9 @@ import { useWeatherData } from '../WeatherDataContext';
 import WeatherAlerts from '../Alert/WeatherAlerts';
 import { useAuth } from '../AuthComponents/AuthContext';
 
-
 const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
-  // const [user] = useAuthState(auth);
   const navigate = useNavigate();
-  // const [showAlerts, setShowAlerts] = useState(true);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isSummaryOpen, setSummaryOpen] = useState(false);
   const [customerRole, setCustomerRole] = useState('');
@@ -77,30 +75,17 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     rainfallData,
     soilMoistureData,
     leafWetnessData,
+    watchdogTempData,
+    watchdogHumData,
+    watchdogData,
+    rivercityTempData,
+    rivercityHumData,
+    rivercityData
   } = useWeatherData();
-
-  // const toggleAlerts = () => {
-  //   setShowAlerts(!showAlerts);
-  // };
 
   const { currentUser } = useAuth();
   const user = currentUser;
   const userEmail = user ? user.email : 'default';
-
-  useEffect(() => {
-    if (user) {
-      if (user.email === 'pmo@grandfarm.com') {
-        setCustomerRole('gf');
-      } else if (user.email === 'jerrycromarty@imprimedicine.com') {
-        setCustomerRole('imprimed');
-      } else if (user.email === 'russell@rjenergysolutions.com') {
-        setCustomerRole('rj');
-      }
-      else {
-        setCustomerRole('default');
-      }
-    }
-  }, [user]);
 
   const buttonConfig = {
     'pmo@grandfarm.com': [
@@ -120,6 +105,10 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
       { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' }
     ],
+    'trey@watchdogprotect.com': [
+    { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
+    { icon: <FaGlobe size="30" />, label: 'Map', route: '/watchdogprotect/map' }
+  ],
     'default': [
       { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
       { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
@@ -132,23 +121,192 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     ]
   };
 
+  const userConfig = {
+    'pmo@grandfarm.com': ['Average Temp (°F)', 'Average Humidity (%)', 'Average Wind Speed (mph)', 'Average Soil Moisture (centibars)', 'Total Rainfall (inches)', 'Average Leaf Wetness (0-15)'],
+    'jerrycromarty@imprimedicine.com': ['Rivercity Temperature (°F)', 'Rivercity Humidity (%)'],
+    'russell@rjenergysolutions.com': ['Rivercity Temperature (°F)', 'Rivercity Humidity (%)'],
+    'trey@watchdogprotect.com': ['Garage Average Temp (°F)', 'Garage Humidity (%)'],
+    'test@kirkwall.io': ['Average Temp (°F)', 'Average Humidity (%)', 'Average Wind Speed (mph)', 'Average Soil Moisture (centibars)', 'Total Rainfall (inches)', 'Average Leaf Wetness (0-15)', 'Garage Average Temp (°F)', 'Garage Humidity (%)', 'Rivercity Temperature (°F)', 'Rivercity Humidity (%)']
+  };
+
+  const summaryMetrics = [
+    {
+      label: 'Average Temp (°F)',
+      value: tempData
+        ? (
+            tempData.reduce((sum, data) => sum + data.temperature, 0) /
+            tempData.length
+          ).toFixed(2)
+        : weatherData
+        ? (
+            weatherData.reduce((sum, data) => sum + data.temperature, 0) /
+            weatherData.length
+          ).toFixed(2)
+        : 'N/A',
+    },
+    {
+      label: 'Average Humidity (%)',
+      value: humidityData
+        ? (
+            humidityData.reduce((sum, data) => sum + data.percent_humidity, 0) /
+            humidityData.length
+          ).toFixed(2)
+        : weatherData
+        ? (
+            weatherData.reduce((sum, data) => sum + data.percent_humidity, 0) /
+            weatherData.length
+          ).toFixed(2)
+        : 'N/A',
+    },
+    {
+      label: 'Average Wind Speed (mph)',
+      value: windData
+        ? (
+            windData.reduce((sum, data) => sum + data.wind_speed, 0) /
+            windData.length
+          ).toFixed(2)
+        : weatherData
+        ? (
+            weatherData.reduce((sum, data) => sum + data.wind_speed, 0) /
+            weatherData.length
+          ).toFixed(2)
+        : 'N/A',
+    },
+    {
+      label: 'Average Soil Moisture (centibars)',
+      value: soilMoistureData
+        ? (
+            soilMoistureData
+              .reduce((sum, data) => sum + data.soil_moisture, 0) /
+            soilMoistureData.length
+          ).toFixed(2)
+        : weatherData
+        ? (
+            weatherData
+              .reduce((sum, data) => sum + data.soil_moisture, 0) /
+            weatherData.length
+          ).toFixed(2)
+        : 'N/A',
+    },
+    {
+      label: 'Total Rainfall (inches)',
+      value: rainfallData
+        ? rainfallData
+            .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
+            .toFixed(2)
+        : weatherData
+        ? weatherData
+            .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
+            .toFixed(2)
+        : 'N/A',
+    },
+    {
+      label: 'Average Leaf Wetness (0-15)',
+      value: leafWetnessData
+        ? (
+            leafWetnessData
+              .reduce((sum, data) => sum + data.leaf_wetness, 0) /
+            leafWetnessData.length
+          ).toFixed(2)
+        : weatherData
+        ? (
+            weatherData
+              .reduce((sum, data) => sum + data.leaf_wetness, 0) /
+            weatherData.length
+          ).toFixed(2)
+        : 'N/A',
+    },
+    {
+      label: 'Garage Average Temp (°F)',
+      value: watchdogTempData
+        ? (
+          watchdogTempData.reduce((sum, data) => sum + data.temp, 0) /
+          watchdogTempData.length
+          ).toFixed(2)
+        : watchdogData
+        ? (
+          watchdogData.reduce((sum, data) => sum + data.temp, 0) /
+          watchdogData.length
+          ).toFixed(2)
+        : 'N/A',
+    },
+    {
+      label: 'Garage Humidity (%)',
+      value: watchdogHumData
+        ? (
+          watchdogHumData.reduce((sum, data) => sum + data.hum, 0) /
+          watchdogHumData.length
+          ).toFixed(2)
+        : watchdogData
+        ? (
+          watchdogData.reduce((sum, data) => sum + data.hum, 0) /
+          watchdogData.length
+          ).toFixed(2)
+        : 'N/A',
+    },
+    {
+      label: 'Rivercity Temperature (°F)',
+      value: rivercityTempData
+        ? (
+            rivercityTempData.reduce((sum, data) => sum + data.rctemp, 0) /
+            rivercityTempData.length
+          ).toFixed(2)
+        : rivercityData
+        ? (
+          rivercityData.reduce((sum, data) => sum + data.rctemp, 0) /
+          rivercityData.length
+          ).toFixed(2)
+        : 'N/A',
+    },
+    {
+      label: 'Rivercity Humidity (%)',
+      value: rivercityHumData
+        ? (
+            rivercityHumData.reduce((sum, data) => sum + data.humidity, 0) /
+            rivercityHumData.length
+          ).toFixed(2)
+        : (rivercityData && rivercityData.length)
+        ? (
+            rivercityData.reduce((sum, data) => sum + data.humidity, 0) /
+            rivercityData.length
+          ).toFixed(2)
+        : 'N/A',
+    }
+  ];
+
+  const filteredSummaryMetrics = summaryMetrics.filter(metric => {
+    const userMetrics = userConfig[userEmail];
+    return userMetrics && userMetrics.includes(metric.label);
+  });
+
+  // console.log(filteredSummaryMetrics)
+
+  const MotionIconButton = motion(IconButton);
+  const MotionButton = motion(Button);
+
+  const motionProps = {
+    initial: { opacity: 0, x: '-100%' },
+    animate: { opacity: 1, x: 0 },
+    transition: { type: 'spring', stiffness: 50, damping: 10 },
+  };
+
   const renderButtons = () => {
     const buttons = buttonConfig[userEmail] || buttonConfig['default'];
     return buttons.map((button, index) => (
       <motion.div {...motionProps}>
-                <Button
-                  key={index}
-                  leftIcon={button.icon}
-                  onClick={() => navigate(button.route)}
-                  {...buttonStyleProps}
-                >
-                  {button.label}
-                </Button>
-              </motion.div>
+        <Button
+          key={index}
+          leftIcon={button.icon}
+          onClick={() => navigate(button.route)}
+          {...buttonStyleProps}
+        >
+          {button.label}
+        </Button>
+      </motion.div>
     ))
   };
 
-  const handleUserNavigation = () => {
+  const handleUserNavigation = () => {  
     switch (customerRole) {
       case 'gf':
         navigate('/grandfarm');
@@ -159,6 +317,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
       case 'rj':
         navigate('/rjenergy');
         break;
+      case 'wdp':
+        navigate('/watchdogprotect')
       default:
         navigate('/');
         break;
@@ -197,104 +357,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     boxShadow: 'md',
   };
 
-  const summaryMetrics = [
-    {
-      label: 'Average Temp (°F)',
-      value: tempData
-        ? (
-            tempData.reduce((sum, data) => sum + data.temperature, 0) /
-            tempData.length
-          ).toFixed(2)
-        : weatherData
-        ? (
-            weatherData.reduce((sum, data) => sum + data.temperature, 0) /
-            weatherData.length
-          ).toFixed(2)
-        : 'N/A',
-    },
-    {
-      label: 'Average Humidity (%)',
-      value: humidityData
-        ? (
-            humidityData.reduce((sum, data) => sum + data.percent_humidity, 0) /
-            humidityData.length
-          ).toFixed(2)
-        : weatherData
-        ? (
-            weatherData.reduce((sum, data) => sum + data.percent_humidity, 0) /
-            weatherData.length
-          ).toFixed(2)
-        : 'N/A',
-    },
-
-    {
-      label: 'Average Wind Speed (mph)',
-      value: windData
-        ? (
-            windData.reduce((sum, data) => sum + data.wind_speed, 0) /
-            windData.length
-          ).toFixed(2)
-        : weatherData
-        ? (
-            weatherData.reduce((sum, data) => sum + data.wind_speed, 0) /
-            weatherData.length
-          ).toFixed(2)
-        : 'N/A',
-    },
-    {
-      label: 'Total Rainfall (inches)',
-      value: rainfallData
-        ? rainfallData
-            .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
-            .toFixed(2)
-        : weatherData
-        ? weatherData
-            .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
-            .toFixed(2)
-        : 'N/A',
-    },{
-      label: 'Average Leaf Wetness (0-15)',
-      value: leafWetnessData
-        ? (
-            leafWetnessData
-              .reduce((sum, data) => sum + data.leaf_wetness, 0) /
-            leafWetnessData.length
-          ).toFixed(2)
-        : weatherData
-        ? (
-            weatherData
-              .reduce((sum, data) => sum + data.leaf_wetness, 0) /
-            weatherData.length
-          ).toFixed(2)
-        : 'N/A',
-    },
-    {
-      label: 'Average Soil Moisture (centibars)',
-      value: soilMoistureData
-        ? (
-            soilMoistureData
-              .reduce((sum, data) => sum + data.soil_moisture, 0) /
-            soilMoistureData.length
-          ).toFixed(2)
-        : weatherData
-        ? (
-            weatherData
-              .reduce((sum, data) => sum + data.soil_moisture, 0) /
-            weatherData.length
-          ).toFixed(2)
-        : 'N/A',
-    }
-  ];
-
-  const MotionIconButton = motion(IconButton);
-  const MotionButton = motion(Button);
-
-  const motionProps = {
-    initial: { opacity: 0, x: '-100%' },
-    animate: { opacity: 1, x: 0 },
-    transition: { type: 'spring', stiffness: 50, damping: 10 },
-  };
-
   return (
     <>
       <Flex
@@ -323,23 +385,9 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           </Box>
         </motion.div>
         <Flex align="center">
-          {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && currentUser.email !== 'russell@rjenergysolutions.com' && (
-            <motion.div {...motionProps}>
-              <MotionButton
-                onClick={onSummaryToggle}
-                size={{ base: 'xs', md: 'md' }}
-                px={{ base: 4, md: 6 }}
-                mr="4"
-                variant="sidebar"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                bg="#F4B860"
-                color="black"
-              >
-                {isSummaryOpen ? 'Hide Summary' : ' Weather Summary'}
-              </MotionButton>
-            </motion.div>
-          )}
+        {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && (
+          <SummaryButton isSummaryOpen={isSummaryOpen} onSummaryToggle={onSummaryToggle} summaryMetrics={filteredSummaryMetrics} />
+        )}
           {isLargerThan768 && (
             <motion.div {...motionProps}>
               <Tooltip label="Toggle Weather Alerts">
@@ -390,7 +438,11 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                           ? '/ImpriMedLogo.png'
                           : currentUser.email === 'russell@rjenergysolutions.com'
                           ? '/RJLogo.jpeg'
+                          : currentUser.email === 'trey@watchdogprotect.com'
+                          ? '/RookLogoWhite.png'
                           : '/RookLogoWhite.png'
+                          
+
                       }
                       cursor="pointer"
                       ml="4"
@@ -414,6 +466,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                         ? 'ImpriMed'
                         : currentUser.email === 'russell@rjenergysolutions.com'
                         ? 'RJ Energy Solutions'
+                        : currentUser.email === 'trey@watchdogprotect.com'
+                        ? 'Watch Dog Protect'
                         : 'Kirkwall'}
                     </PopoverHeader>
                     <PopoverBody>
@@ -474,40 +528,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         </DrawerContent>
       </Drawer>
 
-      <Modal isOpen={isSummaryOpen} onClose={onSummaryToggle}>
-        <ModalOverlay />
-        <ModalContent
-          sx={{
-            border: '2px solid black',
-            bg: '#2D3748',
-          }}
-        >
-          <ModalHeader bg={'#212121'} color={'white'}>
-            Weather Summary
-          </ModalHeader>
-          <ModalCloseButton color={'white'} size={'lg'} mt={1} />
-          <ModalBody>
-            {loading ? (
-              <Flex justify="center" align="center" height="100%">
-                <Text>Loading...</Text>
-              </Flex>
-            ) : error ? (
-              <Text color="red.500">{error}</Text>
-            ) : (
-              <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                {summaryMetrics.map((metric, index) => (
-                  <GridItem key={index}>
-                    <Stat>
-                      <StatLabel color="white" textDecoration={'underline'}>{metric.label}</StatLabel>
-                      <StatNumber color="white">{metric.value}</StatNumber>
-                    </Stat>
-                  </GridItem>
-                ))}
-              </Grid>
-            )}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
       {isVisible && isLargerThan768 && (
         <motion.div
           initial={{ opacity: 0, y: -50 }}

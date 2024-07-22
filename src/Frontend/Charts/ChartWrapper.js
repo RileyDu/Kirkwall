@@ -40,9 +40,9 @@ import ChartExpandModal from './ChartExpandModal'; // Adjust the path as necessa
 import ChartDetails, { getLabelForMetric } from './ChartDetails';
 import { useColorMode } from '@chakra-ui/react';
 import axios from 'axios';
-import MiniMap from '../Maps/MiniMap';
-import WatchdogMap from '../Maps/WatchdogMap';
-import RivercityMap from '../Maps/RivercityMap';
+import MiniMap from '../Maps/GrandFarmMiniMap';
+import WatchdogMap from '../Maps/WatchdogMiniMap';
+import RivercityMap from '../Maps/RivercityMiniMap';
 import { useAuth } from '../AuthComponents/AuthContext';
 import ImpriMiniMap from '../Maps/ImpriMiniMap';
 const ChartWrapper = ({
