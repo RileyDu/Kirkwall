@@ -53,6 +53,16 @@ const buttonConfig = {
     { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' }
   ],
+  'trey@watchdogprotect.com': [
+    { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
+    { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
+    { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
+    { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
+    { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
+    { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
+    { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+    { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' }
+  ],
   'default': [
     { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
     { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
@@ -84,7 +94,10 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
         setCustomerRole('imprimed');
       } else if (user.email === 'russell@rjenergysolutions.com') {
         setCustomerRole('rj');
-      } else {
+      } else if (user.email === 'trey@watchdogprotect.com') {
+        setCustomerRole('wdp');
+      } 
+      else {
         setCustomerRole('default');
       }
     }
@@ -100,6 +113,9 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
         break;
       case 'rj':
         navigate('/rjenergy');
+        break;
+      case 'wdp':
+        navigate('/watchdogprotect');
         break;
       default:
         navigate('/');

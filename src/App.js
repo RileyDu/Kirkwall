@@ -41,6 +41,7 @@ import MedDashboard from './Frontend/Clients/ImpriMed/MedDashboard';
 import GrandFarmMap from './Frontend/Maps/GrandFarmMap';
 import RJDashboard from './Frontend/Clients/RjEnergy/RjDashboard';
 import RJMap from './Frontend/Maps/RJMap';
+import WatchDogProtectDashboard from './Frontend/Clients/WatchDogProtect/WatchDogProtectDashboard';
 
 const Layout = ({
   children,
@@ -154,6 +155,11 @@ return (
           <Route path='/rjenergy' element={
             <ProtectedRoute allowedUsers={['russell@rjenergysolutions.com']}>
               <RJDashboard statusOfAlerts={showAlerts} isMinimized={isMinimized}/>
+            </ProtectedRoute>
+          }/>
+          <Route path='/watchdogprotect' element={
+            <ProtectedRoute allowedUsers={['trey@watchdogprotect.com']}>
+              <WatchDogProtectDashboard statusOfAlerts={showAlerts} isMinimized={isMinimized}/>
             </ProtectedRoute>
           }/>
           <Route
