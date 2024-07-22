@@ -54,14 +54,8 @@ const buttonConfig = {
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' }
   ],
   'trey@watchdogprotect.com': [
-    { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
-    { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
-    { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
-    { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
-    { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
     { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
-    { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
-    { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' }
+    { icon: <FaGlobe size="30" />, label: 'Map', route: '/watchdogprotect/map' }
   ],
   'default': [
     { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },

@@ -36,7 +36,7 @@ const SummaryButton = ({ isSummaryOpen, onSummaryToggle, summaryMetrics }) => {
           bg="#F4B860"
           color="black"
         >
-          {isSummaryOpen ? 'Hide Summary' : 'Summary'}
+          Summary
         </Button>
       </motion.div>
 

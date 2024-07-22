@@ -24,8 +24,8 @@ import {
   HStack,
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard';
-import MiniMap from '../Maps/MiniMap';
-import WatchdogMap from '../Maps/WatchdogMap';
+import MiniMap from '../Maps/GrandFarmMiniMap';
+import WatchdogMap from '../Maps/WatchdogMiniMap';
 import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts';

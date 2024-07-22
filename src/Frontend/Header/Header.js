@@ -58,12 +58,9 @@ import { useWeatherData } from '../WeatherDataContext';
 import WeatherAlerts from '../Alert/WeatherAlerts';
 import { useAuth } from '../AuthComponents/AuthContext';
 
-
 const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
-  // const [user] = useAuthState(auth);
   const navigate = useNavigate();
-  // const [showAlerts, setShowAlerts] = useState(true);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isSummaryOpen, setSummaryOpen] = useState(false);
   const [customerRole, setCustomerRole] = useState('');
@@ -86,30 +83,9 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     rivercityData
   } = useWeatherData();
 
-  // const toggleAlerts = () => {
-  //   setShowAlerts(!showAlerts);
-  // };
-
   const { currentUser } = useAuth();
   const user = currentUser;
   const userEmail = user ? user.email : 'default';
-  const emailIncludesGrandFarm = currentUser.email.includes("@grandfarm.com")
-
-
-  useEffect(() => {
-    if (user) {
-      if (user.email === 'pmo@grandfarm.com') {
-        setCustomerRole('gf');
-      } else if (user.email === 'jerrycromarty@imprimedicine.com') {
-        setCustomerRole('imprimed');
-      } else if (user.email === 'russell@rjenergysolutions.com') {
-        setCustomerRole('rj');
-      }
-      else {
-        setCustomerRole('default');
-      }
-    }
-  }, [user]);
 
   const buttonConfig = {
     'pmo@grandfarm.com': [
@@ -129,6 +105,10 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
       { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' }
     ],
+    'trey@watchdogprotect.com': [
+    { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
+    { icon: <FaGlobe size="30" />, label: 'Map', route: '/watchdogprotect/map' }
+  ],
     'default': [
       { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
       { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
@@ -141,69 +121,12 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     ]
   };
 
-  const renderButtons = () => {
-    const buttons = buttonConfig[userEmail] || buttonConfig['default'];
-    return buttons.map((button, index) => (
-      <motion.div {...motionProps}>
-                <Button
-                  key={index}
-                  leftIcon={button.icon}
-                  onClick={() => navigate(button.route)}
-                  {...buttonStyleProps}
-                >
-                  {button.label}
-                </Button>
-              </motion.div>
-    ))
-  };
-
-  const handleUserNavigation = () => {  
-    switch (customerRole) {
-      case 'gf':
-        navigate('/grandfarm');
-        break;
-      case 'imprimed':
-        navigate('/imprimed');
-        break;
-      case 'rj':
-        navigate('/rjenergy');
-        break;
-      default:
-        navigate('/');
-        break;
-    }
-  };
-
-  const openDrawer = () => {
-    setDrawerOpen(true);
-  };
-
-  const closeDrawer = () => {
-    setDrawerOpen(false);
-  };
-
-  const handleNavigation = path => {
-    navigate(path);
-    closeDrawer();
-  };
-
-  const onSummaryToggle = () => {
-    setSummaryOpen(!isSummaryOpen);
-  };
-
-  const buttonStyleProps = {
-    justifyContent: 'flex-start',
-    width: '100%',
-    alignItems: 'center',
-    fontSize: 'md',
-    borderRadius: 'md',
-    mb: 4,
-    bg: '#F4B860',
-    color: '#212121',
-    _hover: {
-      bg: '#d7a247',
-    },
-    boxShadow: 'md',
+  const userConfig = {
+    'pmo@grandfarm.com': ['Average Temp (°F)', 'Average Humidity (%)', 'Average Wind Speed (mph)', 'Average Soil Moisture (centibars)', 'Total Rainfall (inches)', 'Average Leaf Wetness (0-15)'],
+    'jerrycromarty@imprimedicine.com': ['Rivercity Temperature (°F)', 'Rivercity Humidity (%)'],
+    'russell@rjenergysolutions.com': ['Rivercity Temperature (°F)', 'Rivercity Humidity (%)'],
+    'trey@watchdogprotect.com': ['Garage Average Temp (°F)', 'Garage Humidity (%)'],
+    'test@kirkwall.io': ['Average Temp (°F)', 'Average Humidity (%)', 'Average Wind Speed (mph)', 'Average Soil Moisture (centibars)', 'Total Rainfall (inches)', 'Average Leaf Wetness (0-15)', 'Garage Average Temp (°F)', 'Garage Humidity (%)', 'Rivercity Temperature (°F)', 'Rivercity Humidity (%)']
   };
 
   const summaryMetrics = [
@@ -293,8 +216,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           ).toFixed(2)
         : 'N/A',
     },
-    
-    !emailIncludesGrandFarm && {
+    {
       label: 'Garage Average Temp (°F)',
       value: watchdogTempData
         ? (
@@ -308,7 +230,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           ).toFixed(2)
         : 'N/A',
     },
-    !emailIncludesGrandFarm && {
+    {
       label: 'Garage Humidity (%)',
       value: watchdogHumData
         ? (
@@ -322,7 +244,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           ).toFixed(2)
         : 'N/A',
     },
-    !emailIncludesGrandFarm && {
+    {
       label: 'Rivercity Temperature (°F)',
       value: rivercityTempData
         ? (
@@ -336,7 +258,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           ).toFixed(2)
         : 'N/A',
     },
-    !emailIncludesGrandFarm && {
+    {
       label: 'Rivercity Humidity (%)',
       value: rivercityHumData
         ? (
@@ -352,6 +274,13 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     }
   ];
 
+  const filteredSummaryMetrics = summaryMetrics.filter(metric => {
+    const userMetrics = userConfig[userEmail];
+    return userMetrics && userMetrics.includes(metric.label);
+  });
+
+  // console.log(filteredSummaryMetrics)
+
   const MotionIconButton = motion(IconButton);
   const MotionButton = motion(Button);
 
@@ -359,6 +288,73 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     initial: { opacity: 0, x: '-100%' },
     animate: { opacity: 1, x: 0 },
     transition: { type: 'spring', stiffness: 50, damping: 10 },
+  };
+
+  const renderButtons = () => {
+    const buttons = buttonConfig[userEmail] || buttonConfig['default'];
+    return buttons.map((button, index) => (
+      <motion.div {...motionProps}>
+        <Button
+          key={index}
+          leftIcon={button.icon}
+          onClick={() => navigate(button.route)}
+          {...buttonStyleProps}
+        >
+          {button.label}
+        </Button>
+      </motion.div>
+    ))
+  };
+
+  const handleUserNavigation = () => {  
+    switch (customerRole) {
+      case 'gf':
+        navigate('/grandfarm');
+        break;
+      case 'imprimed':
+        navigate('/imprimed');
+        break;
+      case 'rj':
+        navigate('/rjenergy');
+        break;
+      case 'wdp':
+        navigate('/watchdogprotect')
+      default:
+        navigate('/');
+        break;
+    }
+  };
+
+  const openDrawer = () => {
+    setDrawerOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setDrawerOpen(false);
+  };
+
+  const handleNavigation = path => {
+    navigate(path);
+    closeDrawer();
+  };
+
+  const onSummaryToggle = () => {
+    setSummaryOpen(!isSummaryOpen);
+  };
+
+  const buttonStyleProps = {
+    justifyContent: 'flex-start',
+    width: '100%',
+    alignItems: 'center',
+    fontSize: 'md',
+    borderRadius: 'md',
+    mb: 4,
+    bg: '#F4B860',
+    color: '#212121',
+    _hover: {
+      bg: '#d7a247',
+    },
+    boxShadow: 'md',
   };
 
   return (
@@ -389,8 +385,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           </Box>
         </motion.div>
         <Flex align="center">
-        {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && currentUser.email !== 'russell@rjenergysolutions.com' && (
-          <SummaryButton isSummaryOpen={isSummaryOpen} onSummaryToggle={onSummaryToggle} summaryMetrics={summaryMetrics} />
+        {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && (
+          <SummaryButton isSummaryOpen={isSummaryOpen} onSummaryToggle={onSummaryToggle} summaryMetrics={filteredSummaryMetrics} />
         )}
           {isLargerThan768 && (
             <motion.div {...motionProps}>

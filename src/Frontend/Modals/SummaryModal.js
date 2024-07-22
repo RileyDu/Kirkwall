@@ -27,7 +27,7 @@ const SummaryModal = (props) => {
           }}
         >
           <ModalHeader bg={'#212121'} color={'white'}>
-            Weather Summary
+            Summary of Sensors
           </ModalHeader>
           <ModalCloseButton color={'white'} size={'lg'} mt={1} />
           <ModalBody>
