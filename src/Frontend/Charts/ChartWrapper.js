@@ -118,13 +118,13 @@ const ChartWrapper = ({
   }, [metric, currentUser]);
 
   const restrictedRoutes = [
-    '/TempSensors',
-    '/HumiditySensors',
-    '/SoilMoistureSensors',
-    '/WindSensors',
-    '/RainSensors',
-    '/WatchdogSensors',
-    '/RivercitySensors',
+    // '/TempSensors',
+    // '/HumiditySensors',
+    // '/SoilMoistureSensors',
+    // '/WindSensors',
+    // '/RainSensors',
+    // '/WatchdogSensors',
+    // '/RivercitySensors',
   ];
 
   useEffect(() => {
@@ -304,7 +304,7 @@ const ChartWrapper = ({
     }
   }, [loading, toast]);
 
-  const timeOfGraph = calculateTimePeriod(weatherData.length - 1);
+  const timeOfGraph = (weatherData ? calculateTimePeriod(weatherData.length - 1) : 'N/A');
 
   const MotionButton = motion(Button);
 
