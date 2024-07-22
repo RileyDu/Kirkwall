@@ -30,6 +30,8 @@ import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts';
 import axios from 'axios';
+// import { getDatabase, ref, set, get, child } from 'firebase/database';
+
 
 const ChartExpandModal = ({
   isOpen,
@@ -63,6 +65,8 @@ const ChartExpandModal = ({
 
   const MotionButton = motion(Button);
   const toast = useToast();
+  // const db = getDatabase();
+
 
   const getBackgroundColor = () => 'gray.700';
   const getContentBackgroundColor = () => (colorMode === 'light' ? 'brand.50' : 'gray.800');
@@ -107,6 +111,41 @@ const ChartExpandModal = ({
       setLowThreshold(savedChartSettings.lowThreshold || '');
     }
   }, [title]);
+
+//   useEffect(() => {
+//     const fetchChartSettings = async () => {
+//         try {
+//             const dbRef = ref(db);
+//             const snapshot = await get(child(dbRef, `chartSettings/${metric}`));
+
+//             if (snapshot.exists()) {
+//                 const savedChartSettings = snapshot.val();
+//                 setPhoneNumber(savedChartSettings.phoneNumber || '');
+//                 setUserEmail(savedChartSettings.userEmail || '');
+//                 setHighThreshold(savedChartSettings.highThreshold || '');
+//                 setLowThreshold(savedChartSettings.lowThreshold || '');
+//             } else {
+//                 console.log('No data available');
+//             }
+//         } catch (error) {
+//             console.error('Error fetching chart settings:', error);
+//         }
+//     };
+
+//     fetchChartSettings();
+// }, [metric]);
+
+useEffect(() => {
+  const savedChartSettings = JSON.parse(localStorage.getItem(`chartSettings_${metric}`));
+
+  if (savedChartSettings) {
+    setPhoneNumber(savedChartSettings.phoneNumber || '');
+    setUserEmail(savedChartSettings.userEmail || '');
+    setHighThreshold(savedChartSettings.highThreshold || '');
+    setLowThreshold(savedChartSettings.lowThreshold || '');
+  }
+}, [metric]);
+
 
   const sendSMSAlert = async (to, body) => {
     try {
@@ -200,19 +239,50 @@ const ChartExpandModal = ({
 
   const handleOpenThresholdModal = () => setIsThresholdModalOpen(true);
   const handleCloseThresholdModal = () => setIsThresholdModalOpen(false);
-  const handleFormSubmit = () => {
-    const chartSettings = {
-      phoneNumber: phoneNumber,
-      userEmail: userEmail,
-      highThreshold: parseFloat(highThreshold),
-      lowThreshold: parseFloat(lowThreshold),
-    };
 
+  // const handleFormSubmit = () => {
+//     const chartSettings = {
+//         phoneNumber: phoneNumber,
+//         userEmail: userEmail,
+//         highThreshold: parseFloat(highThreshold),
+//         lowThreshold: parseFloat(lowThreshold),
+//     };
 
-    localStorage.setItem(`chartSettings_${metric}`, JSON.stringify(chartSettings));
+//     set(ref(db, `chartSettings/${metric}`), chartSettings)
+//         .then(() => {
+//             toast({
+//                 title: 'Settings saved.',
+//                 description: 'Your chart settings have been saved.',
+//                 status: 'success',
+//                 duration: 3000,
+//                 isClosable: true,
+//             });
+//             setIsThresholdModalOpen(false);
+//         })
+//         .catch((error) => {
+//             toast({
+//                 title: 'Error saving settings.',
+//                 description: error.message,
+//                 status: 'error',
+//                 duration: 3000,
+//                 isClosable: true,
+//             });
+//         });
+// };
 
-    setIsThresholdModalOpen(false);
+const handleFormSubmit = () => {
+  const chartSettings = {
+    phoneNumber: phoneNumber,
+    userEmail: userEmail,
+    highThreshold: parseFloat(highThreshold),
+    lowThreshold: parseFloat(lowThreshold),
   };
+
+
+  localStorage.setItem(`chartSettings_${metric}`, JSON.stringify(chartSettings));
+
+  setIsThresholdModalOpen(false);
+};
 
   const clearAlerts = () => {
     setAlerts([]);

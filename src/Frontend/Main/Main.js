@@ -19,6 +19,8 @@ import {
   useColorModeValue,
   IconButton,
   Tooltip,
+  Divider,
+  useMediaQuery
 } from '@chakra-ui/react';
 import VoiceControl from '../services/VoiceControl';
 import { LineChart, BarChart } from '../Charts/Charts';
@@ -66,6 +68,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const [watchdogHumidityChartType, setWatchdogHumidityChartType] = useState('bar');
   const [rivercityTempChartType, setRivercityTempChartType] = useState('bar');
   const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
+
+  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
   const [isReady, setIsReady] = useState(false);
   const [showSections, setShowSections] = useState({
@@ -272,18 +276,19 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
       flex="1"
       p="4"
       pt={statusOfAlerts ? '10px' : '74px'}
-      width="calc(100% - 80px)"
+      width={isLargerThan768 ? "calc(100% - 70px)" : "100%"}
       minHeight="100vh"
       display="flex"
       flexDirection="column"
     >
       <Tabs variant="soft-rounded" colorScheme="orange">
-        <TabList mb="6">
+        <TabList mb="6" justifyContent={isLargerThan768 ? 'flex-start' : 'space-evenly'}>
           <Tab fontSize={{ base: 'sm', md: 'md' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>Main </Tab>
           <Tab fontSize={{ base: 'sm', md: 'md' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>Grand Farm </Tab>
           <Tab fontSize={{ base: 'sm', md: 'md' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>Garage </Tab>
           <Tab fontSize={{ base: 'sm', md: 'md' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>Freezer</Tab>
         </TabList>
+        <Divider mt={'-4'} w={'100%'}/>
         <TabPanels>
           <MotionTabPanel
             initial={{ opacity: 0, y: 10 }}
@@ -292,31 +297,36 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             transition={{ duration: 0.5 }}
             key="main-dashboard"
           >
-            <Flex justify="space-between" mb="6" alignItems="center">
-              <Heading size="lg">Main Dashboard</Heading>
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  rightIcon={<FaChevronDown />}
-                  bg="brand.400"
-                  color="black"
-                  _hover={{ bg: '#d7a247' }}
-                >
-                  Toggle Sections
-                </MenuButton>
-                <MenuList>
-                  <MenuItem onClick={() => toggleSection('grandFarm')}>
-                    {showSections.grandFarm ? 'Hide' : 'Show'} Grand Farm Sensors
-                  </MenuItem>
-                  <MenuItem onClick={() => toggleSection('garage')}>
-                    {showSections.garage ? 'Hide' : 'Show'} Garage Sensors
-                  </MenuItem>
-                  <MenuItem onClick={() => toggleSection('rivercity')}>
-                    {showSections.rivercity ? 'Hide' : 'Show'} Freezer Sensors
-                  </MenuItem>
-                </MenuList>
-              </Menu>
-            </Flex>
+            {isLargerThan768 && (
+           <Flex mb="6" alignItems="center">
+  <Heading size="lg">Main Dashboard</Heading>
+  <Menu>
+    <Tooltip label="Toggle Sensor Sections" aria-label="Toggle Sensor Sections">
+      <MenuButton
+        as={IconButton}
+        icon={<FaChevronDown />}
+        bg="brand.400"
+        color="black"
+        _hover={{ bg: '#d7a247' }}
+        variant="outline"
+        ml={'2'}
+        size={'sm'}
+      />
+    </Tooltip>
+    <MenuList>
+      <MenuItem onClick={() => toggleSection('grandFarm')}>
+        {showSections.grandFarm ? 'Hide' : 'Show'} Grand Farm Sensors
+      </MenuItem>
+      <MenuItem onClick={() => toggleSection('garage')}>
+        {showSections.garage ? 'Hide' : 'Show'} Garage Sensors
+      </MenuItem>
+      <MenuItem onClick={() => toggleSection('rivercity')}>
+        {showSections.rivercity ? 'Hide' : 'Show'} Freezer Sensors
+      </MenuItem>
+    </MenuList>
+  </Menu>
+</Flex>
+)}
             <MotionBox
               initial={{ opacity: 0, height: 0 }}
               animate={{
@@ -326,14 +336,24 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               transition={{ duration: 0.5 }}
               mb={showSections.grandFarm ? '8' : 0}
             >
-              <Heading size="lg" textAlign="center" mb="4">
-                Grand Farm Sensors
-              </Heading>
               <Flex justify="center" mb="4">
-                <Menu>
-                  <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
-                    Toggle Charts
-                  </MenuButton>
+              <Heading size="lg" textAlign="center" mb="4">
+    Grand Farm Sensors
+  </Heading>
+    <Menu>
+      <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
+        <MenuButton
+          as={IconButton}
+          icon={<FaChevronDown />}
+          bg="brand.400"
+          color="black"
+          _hover={{ bg: '#d7a247' }}
+          variant="outline"
+          ml={'2'}
+          size={'sm'}
+          mt={isLargerThan768 ? '1' : '0'}
+        />
+      </Tooltip>
                   <MenuList>
                     {Object.keys(charts).map(chart => (
                       <MenuItem key={chart} onClick={() => toggleChartVisibility('grandFarm', chart)}>
@@ -539,14 +559,25 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               transition={{ duration: 0.5 }}
               mb={8}
             >
-              <Heading size="lg" textAlign="center" mb="4">
-                Garage Sensors
-              </Heading>
               <Flex justify="center" mb="4">
-                <Menu>
-                  <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
-                    Toggle Charts
-                  </MenuButton>
+              <Heading size="lg" textAlign="center" mb="4">
+    Garage Sensors
+  </Heading>
+  <Menu>
+    <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
+      <MenuButton
+        as={IconButton}
+        icon={<FaChevronDown />}
+        bg="brand.400"
+        color="black"
+        _hover={{ bg: '#d7a247' }}
+        variant="outline"
+        aria-label="Toggle Charts"
+        size={"sm"}
+        ml={2}
+        mt={isLargerThan768 ? '1' : '0'}
+        />
+    </Tooltip>
                   <MenuList>
                     {['temperature', 'humidity'].map(chart => (
                       <MenuItem key={chart} onClick={() => toggleChartVisibility('garage', chart)}>
@@ -635,14 +666,24 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               }}
               transition={{ duration: 0.5 }}
             >
+              <Flex justify="center" mb="4">
               <Heading size="lg" textAlign="center" mb="4">
                 Freezer Sensors
               </Heading>
-              <Flex justify="center" mb="4">
                 <Menu>
-                  <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
-                    Toggle Charts
-                  </MenuButton>
+                <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
+    <MenuButton
+      as={IconButton}
+      icon={<FaChevronDown />}
+      bg="brand.400"
+      color="black"
+      _hover={{ bg: '#d7a247' }}
+      variant="outline"
+      size={"sm"}
+      ml={2}
+      mt={isLargerThan768 ? '1' : '0'}
+      />
+  </Tooltip>
                   <MenuList>
                     {['temperature', 'humidity'].map(chart => (
                       <MenuItem key={chart} onClick={() => toggleChartVisibility('rivercity', chart)}>
@@ -731,14 +772,24 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             transition={{ duration: 0.5 }}
             key="grand-farm-sensors"
           >
+            <Flex justify="center" mb="4">
             <Heading size="lg" textAlign="center" mb="4">
               Grand Farm Sensors
             </Heading>
-            <Flex justify="center" mb="4">
               <Menu>
-                <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
-                  Toggle Charts
-                </MenuButton>
+              <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
+    <MenuButton
+      as={IconButton}
+      icon={<FaChevronDown />}
+      bg="brand.400"
+      color="black"
+      _hover={{ bg: '#d7a247' }}
+      variant="outline"
+      size={"sm"}
+      ml={2}
+      mt={isLargerThan768 ? '1' : '0'}
+      />
+  </Tooltip>
                 <MenuList>
                   {Object.keys(charts).map(chart => (
                     <MenuItem key={chart} onClick={() => toggleChartVisibility('grandFarm', chart)}>
@@ -754,8 +805,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             <Grid
               templateColumns={{
                 base: '1fr',
-                md: 'repeat(3, 1fr)',
-                lg: 'repeat(3, 1fr)',
+                md: 'repeat(2, 1fr)',
+                lg: 'repeat(2, 1fr)',
               }}
               gap="6"
             >
@@ -942,14 +993,24 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             transition={{ duration: 0.5 }}
             key="garage-sensors"
           >
+            <Flex justify="center" mb="4">
             <Heading size="lg" textAlign="center" mb="4">
               Garage Sensors
             </Heading>
-            <Flex justify="center" mb="4">
               <Menu>
-                <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
-                  Toggle Charts
-                </MenuButton>
+              <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
+    <MenuButton
+      as={IconButton}
+      icon={<FaChevronDown />}
+      bg="brand.400"
+      color="black"
+      _hover={{ bg: '#d7a247' }}
+      variant="outline"
+      size={"sm"}
+      ml={2}
+      mt={isLargerThan768 ? '1' : '0'}
+      />
+  </Tooltip>
                 <MenuList>
                   {['temperature', 'humidity'].map(chart => (
                     <MenuItem key={chart} onClick={() => toggleChartVisibility('garage', chart)}>
@@ -1037,14 +1098,24 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             transition={{ duration: 0.5 }}
             key="freezer-sensors"
           >
+            <Flex justify="center" mb="4">
             <Heading size="lg" textAlign="center" mb="4">
               Freezer Sensors
             </Heading>
-            <Flex justify="center" mb="4">
               <Menu>
-                <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
-                  Toggle Charts
-                </MenuButton>
+              <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
+    <MenuButton
+      as={IconButton}
+      icon={<FaChevronDown />}
+      bg="brand.400"
+      color="black"
+      _hover={{ bg: '#d7a247' }}
+      variant="outline"
+      size={"sm"}
+      ml={2}
+      mt={1}
+    />
+  </Tooltip>
                 <MenuList>
                   {['temperature', 'humidity'].map(chart => (
                     <MenuItem key={chart} onClick={() => toggleChartVisibility('rivercity', chart)}>

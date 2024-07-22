@@ -37,39 +37,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Endpoint to send SMS
-thresholdtemp: [highThreshold, lowThreshold];
-app.post('/send-email', async (req, res) => {
-  const { to, tempData, thresholdtemp } = req.body;
-  console.log('Request received to send Email:', { to, tempData, thresholdtemp });
+app.post('/send-sms', async (req, res) => {
+  const { to, body } = req.body;
+  console.log('Request received to send SMS:', { to, body });
 
-  const msg = {
-    to: to,
-    from: 'alerts@kirkwall.io', // Replace with your verified email
-    templateId: 'Kirkwall_TempAlerts_v2', // Replace with your SendGrid template ID
-    dynamic_template_data: {
-      currenttemp: tempData,
-      thresholdtemp: [highThreshold, lowThreshold]
-    },
-  };
-
-  try {
-    await sgMail.send(msg);
-    console.log('Email sent');
-    res.status(200).send({ message: 'Email sent successfully!' });
-  } catch (error) {
-    console.error('Error sending Email:', error);
-    if (error.response) {
-      console.error(error.response.body);
-    }
-    res.status(500).send({ message: 'Failed to send Email', error: error.message });
-  }
-});
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
-
-/*
   try {
     const message = await client.messages.create({
       body: body,
@@ -97,7 +68,7 @@ app.post('/send-email', async (req, res) => {
 
   const msg = {
     to: to,
-    from: 'alerts@kirkwall.io', // Replace with your verified email
+    from: 'evan@kirkwall.io', // Replace with your verified email
     subject: subject,
     text: text,
     html: html,
@@ -115,4 +86,7 @@ app.post('/send-email', async (req, res) => {
     res.status(500).send({ message: 'Failed to send Email', error: error.message });
   }
 });
-*/
+
+// app.listen(port, () => {
+//   console.log(`Server is running on port ${port}`);
+// });
