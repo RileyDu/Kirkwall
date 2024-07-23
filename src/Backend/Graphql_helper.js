@@ -170,6 +170,10 @@ async function getWatchdogData(type, limit) {
           dataid
           device_location
           reading_time
+          hum_low_threshold
+          hum_high_threshold
+          temp_low_threshold
+          temp_high_threshold
         }
       }
     `,
@@ -180,6 +184,8 @@ async function getWatchdogData(type, limit) {
           dataid
           device_location
           reading_time
+          temp_low_threshold
+          temp_high_threshold
         }
       }
     `,
@@ -190,6 +196,8 @@ async function getWatchdogData(type, limit) {
           dataid
           device_location
           reading_time
+          hum_low_threshold
+          hum_high_threshold
         }
       }
     `
