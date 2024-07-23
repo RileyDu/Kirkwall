@@ -240,10 +240,10 @@ async function getRivercityData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
-export const getLatestThreshold = async (metric) => {
+export const getLatestThreshold = async () => {
   const query = `
     query getLatestThreshold {
-      thresholds(filter: "metric = '${metric}'") {
+      thresholds(ordering: "timestamp") {
         metric
         high
         low

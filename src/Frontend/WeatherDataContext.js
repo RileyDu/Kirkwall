@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getWeatherData, getWatchdogData, getRivercityData, getAPIIds } from '../Backend/Graphql_helper';
+import { getWeatherData, getWatchdogData, getRivercityData, getAPIIds, getLatestThreshold } from '../Backend/Graphql_helper';
 
 const WeatherDataContext = createContext();
 
@@ -33,6 +33,7 @@ export const WeatherDataProvider = ({ children }) => {
   const [watchdogTempData, setWatchdogTempData] = useState(null);
   const [watchdogHumData, setWatchdogHumData] = useState(null);
   const [APIIds, setAPIIds] = useState([]);
+  const [thresholds, setThresholds] = useState([]);
   const [dataLoaded, setDataLoaded] = useState({
     temperature: false,
     humidity: false,
@@ -45,6 +46,24 @@ export const WeatherDataProvider = ({ children }) => {
     rivercityTemp: false,
     rivercityHum: false,
   });
+
+    useEffect(() => {
+      const fetchThresholds = async () => {
+        try {
+          const result = await getLatestThreshold();
+          setThresholds(result.data);
+          console.log('Thresholds from DB:', thresholds);
+        } catch (error) {
+          console.error('Error fetching thresholds:', error);
+        }
+      };
+
+      fetchThresholds();
+
+      // const intervalId = setInterval(fetchThresholds, 30000);
+
+      // return () => clearInterval(intervalId);
+    }, []);
 
   useEffect(() => {
     const fetchData = async () => {

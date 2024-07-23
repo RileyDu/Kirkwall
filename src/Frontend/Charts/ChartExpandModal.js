@@ -101,21 +101,21 @@ const ChartExpandModal = ({
   //   return () => clearInterval(interval);
   // }, [currentValue, highThreshold, lowThreshold]);
 
-  // Fetch the latest thresholds from the database
-  const fetchThresholds = useCallback(async () => {
-    try {
-      const result = await getLatestThreshold(metric);
-      setThresholds(result.data);
-      console.log('Thresholds from DB:', result.data.thresholds);
-    } catch (error) {
-      console.error('Error fetching thresholds:', error);
-    }
-  }, [metric]);
+  // // Fetch the latest thresholds from the database
+  // const fetchThresholds = useCallback(async () => {
+  //   try {
+  //     const result = await getLatestThreshold(metric);
+  //     setThresholds(result.data);
+  //     console.log('Thresholds from DB:', result.data.thresholds);
+  //   } catch (error) {
+  //     console.error('Error fetching thresholds:', error);
+  //   }
+  // }, [metric]);
 
-  // Fetch the latest thresholds on component mount
-  useEffect(() => {
-    fetchThresholds();
-  }, [fetchThresholds]);
+  // // Fetch the latest thresholds on component mount
+  // useEffect(() => {
+  //   fetchThresholds();
+  // }, [fetchThresholds]);
 
   // const sendSMSAlert = async (to, body) => {
   //   try {
