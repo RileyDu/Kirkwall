@@ -70,17 +70,21 @@ const ChartExpandModal = ({
     const threshold = thresholds.find((threshold) => threshold.metric === metric);
     const highThreshold = threshold?.high ?? ''; // Use nullish coalescing to handle null or undefined values
     const lowThreshold = threshold?.low ?? '';  // Use nullish coalescing to handle null or undefined values
-    return { highThreshold, lowThreshold };
+    const phone = threshold?.phone ?? '';
+    const email = threshold?.email ?? '';
+    return { highThreshold, lowThreshold, phone, email };
   };
   
   useEffect(() => {
-    console.log("Thresholds from DB:", thresholds); // Debugging line
-    console.log("Current Metric:", metric); // Debugging line
-    console.log("Latest Thresholds:", findLatestThreshold(metric)); // Debugging line
+    // console.log("Thresholds from DB:", thresholds); // Debugging line
+    // console.log("Current Metric:", metric); // Debugging line
+    // console.log("Latest Thresholds:", findLatestThreshold(metric)); // Debugging line
   
     const latestThreshold = findLatestThreshold(metric);
     setHighThreshold(latestThreshold.highThreshold);
     setLowThreshold(latestThreshold.lowThreshold);
+    setPhoneNumber(latestThreshold.phone);
+    setUserEmail(latestThreshold.email);
   }, [metric, thresholds]);
 
   const apiUrl = process.env.NODE_ENV === 'production'
