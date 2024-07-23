@@ -280,6 +280,202 @@ async function getRivercityData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
+// Function to set new thresholds
+async function setNewThresholds(metric, dataid, highThreshold, lowThreshold) {
+  let setThresholdsMutation;
+  let variables;
+
+  switch (metric) {
+    case 'temperature':
+      setThresholdsMutation = `
+        mutation ($input: weather_dataInput!, $id: ID!) {
+          update_weather_data(input: $input, dataid: $id) {
+            dataid
+            temperature_low_threshold
+            temperature_high_threshold
+          }
+        }
+      `;
+      variables = {
+        id: dataid,
+        input: {
+          temperature_low_threshold: parseFloat(lowThreshold),
+          temperature_high_threshold: parseFloat(highThreshold),
+        },
+      };
+      break;
+    case 'rain_15_min_inches':
+      setThresholdsMutation = `
+        mutation ($input: weather_dataInput!, $id: ID!) {
+          update_weather_data(input: $input, dataid: $id) {
+            dataid
+            rain_15_min_inches_low_threshold
+            rain_15_min_inches_high_threshold
+          }
+        }
+      `;
+      variables = {
+        id: dataid,
+        input: {
+          rain_15_min_inches_low_threshold: parseFloat(lowThreshold),
+          rain_15_min_inches_high_threshold: parseFloat(highThreshold),
+        },
+      };
+      break;
+    case 'percent_humidity':
+      setThresholdsMutation = `
+        mutation ($input: weather_dataInput!, $id: ID!) {
+          update_weather_data(input: $input, dataid: $id) {
+            dataid
+            percent_humidity_low_threshold
+            percent_humidity_high_threshold
+          }
+        }
+      `;
+      variables = {
+        id: dataid,
+        input: {
+          percent_humidity_low_threshold: parseFloat(lowThreshold),
+          percent_humidity_high_threshold: parseFloat(highThreshold),
+        },
+      };
+      break;
+    case 'wind_speed':
+      setThresholdsMutation = `
+        mutation ($input: weather_dataInput!, $id: ID!) {
+          update_weather_data(input: $input, dataid: $id) {
+            dataid
+            wind_speed_low_threshold
+            wind_speed_high_threshold
+          }
+        }
+      `;
+      variables = {
+        id: dataid,
+        input: {
+          wind_speed_low_threshold: parseFloat(lowThreshold),
+          wind_speed_high_threshold: parseFloat(highThreshold),
+        },
+      };
+      break;
+    case 'soil_moisture':
+      setThresholdsMutation = `
+              mutation ($input: weather_dataInput!, $id: ID!) {
+          update_weather_data(input: $input, dataid: $id) {
+            dataid
+            soil_moisture_low_threshold
+            soil_moisture_high_threshold
+          }
+        }
+      `;
+      variables = {
+        id: dataid,
+        input: {
+          soil_moisture_low_threshold: parseFloat(lowThreshold),
+          soil_moisture_high_threshold: parseFloat(highThreshold),
+        },
+      };
+      break;
+      case 'leaf_wetness':
+        setThresholdsMutation = `
+                mutation ($input: weather_dataInput!, $id: ID!) {
+            update_weather_data(input: $input, dataid: $id) {
+              dataid
+              leaf_wetness_low_threshold
+              leaf_wetness_high_threshold
+            }
+          }
+        `;
+        variables = {
+          id: dataid,
+          input: {
+            leaf_wetness_low_threshold: parseFloat(lowThreshold),
+            leaf_wetness_high_threshold: parseFloat(highThreshold),
+          },
+        };
+        break;
+    case 'temp':
+      setThresholdsMutation = `
+        mutation ($input: watchdog_dataInput!, $id: ID!) {
+          update_watchdog_data(input: $input, dataid: $id) {
+            dataid
+            temp_low_threshold
+            temp_high_threshold
+          }
+        }
+      `;
+      variables = {
+        id: dataid,
+        input: {
+          temp_low_threshold: parseFloat(lowThreshold),
+          temp_high_threshold: parseFloat(highThreshold),
+        },
+      };
+      break;
+    case 'hum':
+      setThresholdsMutation = `
+        mutation ($input: watchdog_dataInput!, $id: ID!) {
+          update_watchdog_data(input: $input, dataid: $id) {
+            dataid
+            hum_low_threshold
+            hum_high_threshold
+          }
+        }
+      `;
+      variables = {
+        id: dataid,
+        input: {
+          hum_low_threshold: parseFloat(lowThreshold),
+          hum_high_threshold: parseFloat(highThreshold),
+        },
+      };
+      break;
+    case 'rctemp':
+      setThresholdsMutation = `
+        mutation ($input: rivercity_dataInput!, $id: ID!) {
+          update_rivercity_data(input: $input, dataid: $id) {
+            dataid
+            rctemp_low_threshold
+            rctemp_high_threshold
+          }
+        }
+      `;
+      variables = {
+        id: dataid,
+        input: {
+          rctemp_low_threshold: parseFloat(lowThreshold),
+          rctemp_high_threshold: parseFloat(highThreshold),
+        },
+      };
+      break;
+    case 'humidity':
+      setThresholdsMutation = `
+        mutation ($input: rivercity_dataInput!, $id: ID!) {
+          update_rivercity_data(input: $input, dataid: $id) {
+            dataid
+            humidity_low_threshold
+            humidity_high_threshold
+          }
+        }
+      `;
+      variables = {
+        id: dataid,
+        input: {
+          humidity_low_threshold: parseFloat(lowThreshold),
+          humidity_high_threshold: parseFloat(highThreshold),
+        },
+      };
+      break;
+    default:
+      throw new Error('Invalid metric type');
+  }
+
+  return executeGraphqlQuery(setThresholdsMutation, variables);
+}
+
+
+
+
 // Function to get API ID of user
 async function getAPIIds() {
   const query = `
@@ -344,4 +540,5 @@ export {
   getWatchdogData,
   getRivercityData,
   getAPIIds,
+  setNewThresholds
 };

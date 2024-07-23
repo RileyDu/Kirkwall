@@ -240,36 +240,6 @@ useEffect(() => {
   const handleOpenThresholdModal = () => setIsThresholdModalOpen(true);
   const handleCloseThresholdModal = () => setIsThresholdModalOpen(false);
 
-  // const handleFormSubmit = () => {
-//     const chartSettings = {
-//         phoneNumber: phoneNumber,
-//         userEmail: userEmail,
-//         highThreshold: parseFloat(highThreshold),
-//         lowThreshold: parseFloat(lowThreshold),
-//     };
-
-//     set(ref(db, `chartSettings/${metric}`), chartSettings)
-//         .then(() => {
-//             toast({
-//                 title: 'Settings saved.',
-//                 description: 'Your chart settings have been saved.',
-//                 status: 'success',
-//                 duration: 3000,
-//                 isClosable: true,
-//             });
-//             setIsThresholdModalOpen(false);
-//         })
-//         .catch((error) => {
-//             toast({
-//                 title: 'Error saving settings.',
-//                 description: error.message,
-//                 status: 'error',
-//                 duration: 3000,
-//                 isClosable: true,
-//             });
-//         });
-// };
-
 const handleFormSubmit = () => {
   const chartSettings = {
     phoneNumber: phoneNumber,
