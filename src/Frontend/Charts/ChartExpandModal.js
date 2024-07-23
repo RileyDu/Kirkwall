@@ -30,8 +30,7 @@ import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts';
 import axios from 'axios';
-// import { getDatabase, ref, set, get, child } from 'firebase/database';
-
+import { setNewThresholds } from '../../Backend/Graphql_helper';
 
 const ChartExpandModal = ({
   isOpen,
@@ -50,14 +49,12 @@ const ChartExpandModal = ({
   const [loading, setLoading] = useState(false);
   const [chartType, setChartType] = useState('bar');
   const [isThresholdModalOpen, setIsThresholdModalOpen] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [userEmail, setUserEmail] = useState('');
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
-  const [alerts, setAlerts] = useState(JSON.parse(localStorage.getItem('alerts')) || []);
+  const [alerts, setAlerts] = useState([]);
   const [timer, setTimer] = useState(30);
   const [currentValue, setCurrentValue] = useState(null);
-  const [lastAlertTime, setLastAlertTime] = useState(null); 
+  const [lastAlertTime, setLastAlertTime] = useState(null);
 
   const apiUrl = process.env.NODE_ENV === 'production'
     ? 'https://kirkwall-demo.vercel.app'
@@ -65,28 +62,11 @@ const ChartExpandModal = ({
 
   const MotionButton = motion(Button);
   const toast = useToast();
-  // const db = getDatabase();
-
 
   const getBackgroundColor = () => 'gray.700';
   const getContentBackgroundColor = () => (colorMode === 'light' ? 'brand.50' : 'gray.800');
   const getTextColor = () => (colorMode === 'light' ? 'black' : 'white');
   const getModalBackgroundColor = () => (colorMode === 'light' ? 'whitesmoke' : 'gray.700');
-
-  const handleTimeButtonClick = async (timePeriod) => {
-    if (timePeriod === currentTimePeriod) return;
-
-    setLoading(true);
-
-    try {
-      const result = await handleTimePeriodChange(metric, timePeriod);
-      setCurrentTimePeriod(timePeriod);
-    } catch (error) {
-      // Handle error
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -102,50 +82,25 @@ const ChartExpandModal = ({
   }, [currentValue, highThreshold, lowThreshold]);
 
   useEffect(() => {
-    const savedChartSettings = JSON.parse(localStorage.getItem(`chartSettings_${metric}`));
+    const { high, low } = getThresholds(weatherData, metric);
+    setHighThreshold(high);
+    setLowThreshold(low);
+  }, [weatherData, metric]);
 
-    if (savedChartSettings) {
-      setPhoneNumber(savedChartSettings.phoneNumber || '');
-      setUserEmail(savedChartSettings.userEmail || '');
-      setHighThreshold(savedChartSettings.highThreshold || '');
-      setLowThreshold(savedChartSettings.lowThreshold || '');
+  const handleTimeButtonClick = async (timePeriod) => {
+    if (timePeriod === currentTimePeriod) return;
+
+    setLoading(true);
+
+    try {
+      const result = await handleTimePeriodChange(metric, timePeriod);
+      setCurrentTimePeriod(timePeriod);
+    } catch (error) {
+      // Handle error
+    } finally {
+      setLoading(false);
     }
-  }, [title]);
-
-//   useEffect(() => {
-//     const fetchChartSettings = async () => {
-//         try {
-//             const dbRef = ref(db);
-//             const snapshot = await get(child(dbRef, `chartSettings/${metric}`));
-
-//             if (snapshot.exists()) {
-//                 const savedChartSettings = snapshot.val();
-//                 setPhoneNumber(savedChartSettings.phoneNumber || '');
-//                 setUserEmail(savedChartSettings.userEmail || '');
-//                 setHighThreshold(savedChartSettings.highThreshold || '');
-//                 setLowThreshold(savedChartSettings.lowThreshold || '');
-//             } else {
-//                 console.log('No data available');
-//             }
-//         } catch (error) {
-//             console.error('Error fetching chart settings:', error);
-//         }
-//     };
-
-//     fetchChartSettings();
-// }, [metric]);
-
-useEffect(() => {
-  const savedChartSettings = JSON.parse(localStorage.getItem(`chartSettings_${metric}`));
-
-  if (savedChartSettings) {
-    setPhoneNumber(savedChartSettings.phoneNumber || '');
-    setUserEmail(savedChartSettings.userEmail || '');
-    setHighThreshold(savedChartSettings.highThreshold || '');
-    setLowThreshold(savedChartSettings.lowThreshold || '');
-  }
-}, [metric]);
-
+  };
 
   const sendSMSAlert = async (to, body) => {
     try {
@@ -197,15 +152,11 @@ useEffect(() => {
       if (highThreshold < currentValue) {
         const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${highThreshold}.`;
         if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
-          (phoneNumber) && sendSMSAlert(phoneNumber, alertMessage);
-          (userEmail) && sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
+          sendSMSAlert(phoneNumber, alertMessage);
+          sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
           setLastAlertTime(now);
         }
-        setAlerts((prevAlerts) => {
-          const newAlerts = [...prevAlerts, alertMessage];
-          localStorage.setItem('alerts', JSON.stringify(newAlerts));
-          return newAlerts;
-        });
+        setAlerts((prevAlerts) => [...prevAlerts, alertMessage]);
       }
 
       if (lowThreshold > currentValue) {
@@ -215,11 +166,7 @@ useEffect(() => {
           sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
           setLastAlertTime(now);
         }
-        setAlerts((prevAlerts) => {
-          const newAlerts = [...prevAlerts, alertMessage];
-          localStorage.setItem('alerts', JSON.stringify(newAlerts));
-          return newAlerts;
-        });
+        setAlerts((prevAlerts) => [...prevAlerts, alertMessage]);
       }
     }
   };
@@ -240,23 +187,45 @@ useEffect(() => {
   const handleOpenThresholdModal = () => setIsThresholdModalOpen(true);
   const handleCloseThresholdModal = () => setIsThresholdModalOpen(false);
 
-const handleFormSubmit = () => {
-  const chartSettings = {
-    phoneNumber: phoneNumber,
-    userEmail: userEmail,
-    highThreshold: parseFloat(highThreshold),
-    lowThreshold: parseFloat(lowThreshold),
+  const handleFormSubmit = async () => {
+    try {
+      const response = await setNewThresholds(
+        metric,
+        parseFloat(highThreshold),
+        parseFloat(lowThreshold)
+      );
+
+      if (response.errors) {
+        toast({
+          title: 'Error saving thresholds.',
+          description: response.errors[0].message,
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: 'Thresholds saved.',
+          description: 'Thresholds have been successfully saved.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+        setIsThresholdModalOpen(false);
+      }
+    } catch (error) {
+      toast({
+        title: 'Error saving thresholds.',
+        description: error.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
-
-
-  localStorage.setItem(`chartSettings_${metric}`, JSON.stringify(chartSettings));
-
-  setIsThresholdModalOpen(false);
-};
 
   const clearAlerts = () => {
     setAlerts([]);
-    localStorage.setItem('alerts', JSON.stringify([]));
   };
 
   useEffect(() => {
@@ -266,11 +235,11 @@ const handleFormSubmit = () => {
   }, []);
 
   return (
-    <Box >
+    <Box>
       <Modal onClose={onClose} isOpen={isOpen}>
         <ModalOverlay />
         <ModalContent
-        marginTop={'15px'}
+          marginTop={'15px'}
           width="90%"
           maxWidth="100%"
           height="90vh"
