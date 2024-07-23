@@ -240,6 +240,38 @@ async function getRivercityData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
+export const getLatestThreshold = async (metric) => {
+  const query = `
+    query getLatestThreshold($metric: String!) {
+      getLatestThreshold(metric: $metric) {
+        metric
+        high
+        low
+        phone
+        email
+        timestamp
+      }
+    }
+  `;
+  return executeGraphqlQuery(query, { metric });
+};
+
+export const createThreshold = async (metric, high, low, phone, email) => {
+  const mutation = `
+    mutation createThreshold($metric: String!, $high: Float!, $low: Float!, $phone: String, $email: String) {
+      createThreshold(metric: $metric, high: $high, low: $low, phone: $phone, email: $email) {
+        metric
+        high
+        low
+        phone
+        email
+        timestamp
+      }
+    }
+  `;
+  return executeGraphqlQuery(mutation, { metric, high, low, phone, email });
+};
+
 // Function to get API ID of user
 async function getAPIIds() {
   const query = `

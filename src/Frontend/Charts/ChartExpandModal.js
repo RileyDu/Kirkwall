@@ -31,7 +31,7 @@ import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts';
 import axios from 'axios';
 // import { getDatabase, ref, set, get, child } from 'firebase/database';
-
+import { getLatestThreshold, createThreshold } from '../../Backend/Graphql_helper';
 
 const ChartExpandModal = ({
   isOpen,
@@ -58,6 +58,7 @@ const ChartExpandModal = ({
   const [timer, setTimer] = useState(30);
   const [currentValue, setCurrentValue] = useState(null);
   const [lastAlertTime, setLastAlertTime] = useState(null); 
+  const [thresholds, setThresholds] = useState({});
 
   const apiUrl = process.env.NODE_ENV === 'production'
     ? 'https://kirkwall-demo.vercel.app'
@@ -66,7 +67,6 @@ const ChartExpandModal = ({
   const MotionButton = motion(Button);
   const toast = useToast();
   // const db = getDatabase();
-
 
   const getBackgroundColor = () => 'gray.700';
   const getContentBackgroundColor = () => (colorMode === 'light' ? 'brand.50' : 'gray.800');
@@ -102,50 +102,20 @@ const ChartExpandModal = ({
   }, [currentValue, highThreshold, lowThreshold]);
 
   useEffect(() => {
-    const savedChartSettings = JSON.parse(localStorage.getItem(`chartSettings_${metric}`));
+    const fetchThresholds = async () => {
+      setLoading(true);
+      try {
+        const result = await getLatestThreshold(metric);
+        setThresholds(result.data.getLatestThreshold);
+      } catch (error) {
+        console.error('Error fetching thresholds:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    if (savedChartSettings) {
-      setPhoneNumber(savedChartSettings.phoneNumber || '');
-      setUserEmail(savedChartSettings.userEmail || '');
-      setHighThreshold(savedChartSettings.highThreshold || '');
-      setLowThreshold(savedChartSettings.lowThreshold || '');
-    }
-  }, [title]);
-
-//   useEffect(() => {
-//     const fetchChartSettings = async () => {
-//         try {
-//             const dbRef = ref(db);
-//             const snapshot = await get(child(dbRef, `chartSettings/${metric}`));
-
-//             if (snapshot.exists()) {
-//                 const savedChartSettings = snapshot.val();
-//                 setPhoneNumber(savedChartSettings.phoneNumber || '');
-//                 setUserEmail(savedChartSettings.userEmail || '');
-//                 setHighThreshold(savedChartSettings.highThreshold || '');
-//                 setLowThreshold(savedChartSettings.lowThreshold || '');
-//             } else {
-//                 console.log('No data available');
-//             }
-//         } catch (error) {
-//             console.error('Error fetching chart settings:', error);
-//         }
-//     };
-
-//     fetchChartSettings();
-// }, [metric]);
-
-useEffect(() => {
-  const savedChartSettings = JSON.parse(localStorage.getItem(`chartSettings_${metric}`));
-
-  if (savedChartSettings) {
-    setPhoneNumber(savedChartSettings.phoneNumber || '');
-    setUserEmail(savedChartSettings.userEmail || '');
-    setHighThreshold(savedChartSettings.highThreshold || '');
-    setLowThreshold(savedChartSettings.lowThreshold || '');
-  }
-}, [metric]);
-
+    fetchThresholds();
+  }, [metric]);
 
   const sendSMSAlert = async (to, body) => {
     try {
@@ -240,49 +210,26 @@ useEffect(() => {
   const handleOpenThresholdModal = () => setIsThresholdModalOpen(true);
   const handleCloseThresholdModal = () => setIsThresholdModalOpen(false);
 
-  // const handleFormSubmit = () => {
-//     const chartSettings = {
-//         phoneNumber: phoneNumber,
-//         userEmail: userEmail,
-//         highThreshold: parseFloat(highThreshold),
-//         lowThreshold: parseFloat(lowThreshold),
-//     };
-
-//     set(ref(db, `chartSettings/${metric}`), chartSettings)
-//         .then(() => {
-//             toast({
-//                 title: 'Settings saved.',
-//                 description: 'Your chart settings have been saved.',
-//                 status: 'success',
-//                 duration: 3000,
-//                 isClosable: true,
-//             });
-//             setIsThresholdModalOpen(false);
-//         })
-//         .catch((error) => {
-//             toast({
-//                 title: 'Error saving settings.',
-//                 description: error.message,
-//                 status: 'error',
-//                 duration: 3000,
-//                 isClosable: true,
-//             });
-//         });
-// };
-
-const handleFormSubmit = () => {
-  const chartSettings = {
-    phoneNumber: phoneNumber,
-    userEmail: userEmail,
-    highThreshold: parseFloat(highThreshold),
-    lowThreshold: parseFloat(lowThreshold),
+  const handleFormSubmit = async () => {
+    setLoading(true);
+    try {
+      await createThreshold(metric, parseFloat(highThreshold), parseFloat(lowThreshold), phoneNumber, userEmail);
+      // Optionally update local state with new threshold
+      setThresholds({
+        metric,
+        high: parseFloat(highThreshold),
+        low: parseFloat(lowThreshold),
+        phone: phoneNumber,
+        email: userEmail,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Error creating threshold:', error);
+    } finally {
+      setLoading(false);
+      setIsThresholdModalOpen(false);
+    }
   };
-
-
-  localStorage.setItem(`chartSettings_${metric}`, JSON.stringify(chartSettings));
-
-  setIsThresholdModalOpen(false);
-};
 
   const clearAlerts = () => {
     setAlerts([]);
@@ -296,11 +243,11 @@ const handleFormSubmit = () => {
   }, []);
 
   return (
-    <Box >
+    <Box>
       <Modal onClose={onClose} isOpen={isOpen}>
         <ModalOverlay />
         <ModalContent
-        marginTop={'15px'}
+          marginTop={'15px'}
           width="90%"
           maxWidth="100%"
           height="90vh"
@@ -465,6 +412,7 @@ const handleFormSubmit = () => {
                 type="text"
                 value={userEmail}
                 onChange={(e) => setUserEmail(e.target.value)}
+                
                 bg={'white'}
                 border={'2px solid #fd9801'}
                 color={'#212121'}
