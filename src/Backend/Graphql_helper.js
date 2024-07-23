@@ -211,6 +211,10 @@ async function getRivercityData(type, limit) {
           dataid
           apiid
           battery
+          humidity_low_threshold
+          humidity_high_threshold
+          rctemp_low_threshold
+          rctemp_high_threshold
         }
       }
     `,
@@ -221,6 +225,8 @@ async function getRivercityData(type, limit) {
           dataid
           deveui
           publishedat
+          rctemp_low_threshold
+          rctemp_high_threshold
         }
       }
     `,
@@ -231,6 +237,8 @@ async function getRivercityData(type, limit) {
           dataid
           deveui
           publishedat
+          humidity_low_threshold
+          humidity_high_threshold
         }
       }
     `
