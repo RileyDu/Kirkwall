@@ -46,6 +46,18 @@ async function getWeatherData(type, limit) {
           wind_direction
           leaf_wetness
           soil_moisture
+    temperature_low_threshold
+    temperature_high_threshold
+    percent_humidity_low_threshold
+    percent_humidity_high_threshold
+    wind_speed_low_threshold
+    wind_speed_high_threshold
+    rain_15_min_inches_low_threshold
+    rain_15_min_inches_high_threshold
+    leaf_wetness_low_threshold
+    leaf_wetness_high_threshold
+    soil_moisture_low_threshold
+    soil_moisture_high_threshold
         }
       }
     `,
@@ -63,6 +75,8 @@ async function getWeatherData(type, limit) {
           temperature
           ts
           stationid
+          temperature_low_threshold
+          temperature_high_threshold
         }
       }
     `,
@@ -80,6 +94,8 @@ async function getWeatherData(type, limit) {
           rain_15_min_inches
           ts
           stationid
+          rain_15_min_inches_low_threshold
+          rain_15_min_inches_high_threshold
         }
       }
     `,
@@ -97,6 +113,8 @@ async function getWeatherData(type, limit) {
           percent_humidity
           ts
           stationid
+          percent_humidity_low_threshold
+          percent_humidity_high_threshold
         }
       }
     `,
@@ -115,6 +133,8 @@ async function getWeatherData(type, limit) {
           wind_direction
           ts
           stationid
+          wind_speed_low_threshold
+          wind_speed_high_threshold
         }
       }
     `,
@@ -132,10 +152,12 @@ async function getWeatherData(type, limit) {
         leaf_wetness
         ts
         stationid
+        leaf_wetness_low_threshold
+        leaf_wetness_high_threshold
       }
     }
   `,
-  soil_moisture: `
+    soil_moisture: `
   query weather_data($limit: Int!) {
     weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: $limit) {
       station {
@@ -149,6 +171,8 @@ async function getWeatherData(type, limit) {
       soil_moisture
       ts
       stationid
+      soil_moisture_low_threshold
+      soil_moisture_high_threshold
     }
   }
 `,
@@ -200,7 +224,7 @@ async function getWatchdogData(type, limit) {
           hum_high_threshold
         }
       }
-    `
+    `,
   };
 
   const query = queryMap[type] || queryMap.all; // Default to 'all' if type is invalid
@@ -249,7 +273,7 @@ async function getRivercityData(type, limit) {
           humidity_high_threshold
         }
       }
-    `
+    `,
   };
 
   const query = queryMap[type] || queryMap.all; // Default to 'all' if type is invalid
@@ -273,7 +297,13 @@ async function getAPIIds() {
 }
 
 // Function to edit weather data
-async function editWeatherData(dataid, temperature, humidity, windSpeed, windDirection) {
+async function editWeatherData(
+  dataid,
+  temperature,
+  humidity,
+  windSpeed,
+  windDirection
+) {
   const editWeatherMutation = `
       mutation ($i: weather_dataInput, $j: ID!) {
           update_weather_data(input: $i, dataid: $j) {
@@ -295,17 +325,23 @@ async function editWeatherData(dataid, temperature, humidity, windSpeed, windDir
       }`;
 
   const variables = {
-      j: dataid,
-      i: {
-          temperature: Number(temperature),
-          percent_humidity: Number(humidity),
-          wind_speed: Number(windSpeed),
-          wind_direction: Number(windDirection)
-      }
+    j: dataid,
+    i: {
+      temperature: Number(temperature),
+      percent_humidity: Number(humidity),
+      wind_speed: Number(windSpeed),
+      wind_direction: Number(windDirection),
+    },
   };
 
   return executeGraphqlQuery(editWeatherMutation, variables);
 }
 
 // Export the functions to be used elsewhere in the project
-export { getWeatherData, editWeatherData, getWatchdogData, getRivercityData, getAPIIds };
+export {
+  getWeatherData,
+  editWeatherData,
+  getWatchdogData,
+  getRivercityData,
+  getAPIIds,
+};
