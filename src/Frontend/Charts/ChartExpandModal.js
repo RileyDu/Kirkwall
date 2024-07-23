@@ -101,21 +101,21 @@ const ChartExpandModal = ({
     return () => clearInterval(interval);
   }, [currentValue, highThreshold, lowThreshold]);
 
-  useEffect(() => {
-    const fetchThresholds = async () => {
-      setLoading(true);
-      try {
-        const result = await getLatestThreshold(metric);
-        setThresholds(result.data.getLatestThreshold);
-      } catch (error) {
-        console.error('Error fetching thresholds:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchThresholds = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const result = await getLatestThreshold(metric);
+  //       setThresholds(result.data.getLatestThreshold);
+  //     } catch (error) {
+  //       console.error('Error fetching thresholds:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchThresholds();
-  }, [metric]);
+  //   fetchThresholds();
+  // }, [metric]);
 
   const sendSMSAlert = async (to, body) => {
     try {
@@ -211,9 +211,9 @@ const ChartExpandModal = ({
   const handleCloseThresholdModal = () => setIsThresholdModalOpen(false);
 
   const handleFormSubmit = async () => {
-    setLoading(true);
+    const timestamp = new Date().toISOString();
     try {
-      await createThreshold(metric, parseFloat(highThreshold), parseFloat(lowThreshold), phoneNumber, userEmail);
+      await createThreshold(metric, parseFloat(highThreshold), parseFloat(lowThreshold), phoneNumber, userEmail, timestamp);
       // Optionally update local state with new threshold
       setThresholds({
         metric,
@@ -221,12 +221,11 @@ const ChartExpandModal = ({
         low: parseFloat(lowThreshold),
         phone: phoneNumber,
         email: userEmail,
-        timestamp: new Date().toISOString(),
+        timestamp: timestamp,
       });
     } catch (error) {
       console.error('Error creating threshold:', error);
     } finally {
-      setLoading(false);
       setIsThresholdModalOpen(false);
     }
   };

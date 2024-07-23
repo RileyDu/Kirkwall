@@ -256,10 +256,10 @@ export const getLatestThreshold = async (metric) => {
   return executeGraphqlQuery(query, { metric });
 };
 
-export const createThreshold = async (metric, high, low, phone, email) => {
+export const createThreshold = async (metric, high, low, phone, email, timestamp) => {
   const mutation = `
-    mutation createThreshold($metric: String!, $high: Float!, $low: Float!, $phone: String, $email: String) {
-      createThreshold(metric: $metric, high: $high, low: $low, phone: $phone, email: $email) {
+    mutation($i: thresholdsInput! ) {
+      create_thresholds(input: $i) {
         metric
         high
         low
@@ -269,24 +269,19 @@ export const createThreshold = async (metric, high, low, phone, email) => {
       }
     }
   `;
-  return executeGraphqlQuery(mutation, { metric, high, low, phone, email });
-};
-
-// Function to get API ID of user
-async function getAPIIds() {
-  const query = `
-  query{
-    api{
-      customer {
-        name
-      }
-      apiid
-      apiname
+  const variables = {
+    i : {
+      metric: metric,
+      high: high,
+      low: low,
+      phone: phone,
+      email: email,
+      timestamp: timestamp
     }
   }
-  `;
-  return executeGraphqlQuery(query);
-}
+  return executeGraphqlQuery(mutation, variables);
+};
+
 
 // Function to edit weather data
 async function editWeatherData(dataid, temperature, humidity, windSpeed, windDirection) {
@@ -321,6 +316,22 @@ async function editWeatherData(dataid, temperature, humidity, windSpeed, windDir
   };
 
   return executeGraphqlQuery(editWeatherMutation, variables);
+}
+
+// Function to get API ID of user
+async function getAPIIds() {
+  const query = `
+  query{
+    api{
+      customer {
+        name
+      }
+      apiid
+      apiname
+    }
+  }
+  `;
+  return executeGraphqlQuery(query);
 }
 
 // Export the functions to be used elsewhere in the project
