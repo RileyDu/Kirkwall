@@ -51,7 +51,7 @@ export const WeatherDataProvider = ({ children }) => {
       const fetchThresholds = async () => {
         try {
           const result = await getLatestThreshold();
-          setThresholds(result.data);
+          setThresholds(result.data.thresholds);
           console.log('Thresholds from DB:', thresholds);
         } catch (error) {
           console.error('Error fetching thresholds:', error);
@@ -402,6 +402,7 @@ export const WeatherDataProvider = ({ children }) => {
         rivercityTempData,
         rivercityHumData,
         APIIds,
+        thresholds
       }}
     >
       {children}

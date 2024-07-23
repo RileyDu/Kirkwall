@@ -30,7 +30,9 @@ import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts';
 import axios from 'axios';
-import { getLatestThreshold, createThreshold } from '../../Backend/Graphql_helper';
+import { createThreshold } from '../../Backend/Graphql_helper';
+import { useWeatherData } from '../WeatherDataContext';
+
 
 const ChartExpandModal = ({
   isOpen,
@@ -57,7 +59,29 @@ const ChartExpandModal = ({
   const [timer, setTimer] = useState(30);
   const [currentValue, setCurrentValue] = useState(null);
   const [lastAlertTime, setLastAlertTime] = useState(null); 
-  const [thresholds, setThresholds] = useState({});
+  const { thresholds } = useWeatherData();
+
+  const findLatestThreshold = (metric) => {
+    if (!Array.isArray(thresholds)) {
+      console.error("Thresholds is not an array", thresholds);
+      return { highThreshold: '', lowThreshold: '' };
+    }
+  
+    const threshold = thresholds.find((threshold) => threshold.metric === metric);
+    const highThreshold = threshold?.high ?? ''; // Use nullish coalescing to handle null or undefined values
+    const lowThreshold = threshold?.low ?? '';  // Use nullish coalescing to handle null or undefined values
+    return { highThreshold, lowThreshold };
+  };
+  
+  useEffect(() => {
+    console.log("Thresholds from DB:", thresholds); // Debugging line
+    console.log("Current Metric:", metric); // Debugging line
+    console.log("Latest Thresholds:", findLatestThreshold(metric)); // Debugging line
+  
+    const latestThreshold = findLatestThreshold(metric);
+    setHighThreshold(latestThreshold.highThreshold);
+    setLowThreshold(latestThreshold.lowThreshold);
+  }, [metric, thresholds]);
 
   const apiUrl = process.env.NODE_ENV === 'production'
     ? 'https://kirkwall-demo.vercel.app'
@@ -219,14 +243,14 @@ const ChartExpandModal = ({
     const timestamp = new Date().toISOString();
     try {
       await createThreshold(metric, parseFloat(highThreshold), parseFloat(lowThreshold), phoneNumber, userEmail, timestamp);
-      setThresholds({
-        metric,
-        high: parseFloat(highThreshold),
-        low: parseFloat(lowThreshold),
-        phone: phoneNumber,
-        email: userEmail,
-        timestamp: timestamp,
-      });
+      // setThresholds({
+      //   metric,
+      //   high: parseFloat(highThreshold),
+      //   low: parseFloat(lowThreshold),
+      //   phone: phoneNumber,
+      //   email: userEmail,
+      //   timestamp: timestamp,
+      // });
     } catch (error) {
       console.error('Error creating threshold:', error);
     } finally {
