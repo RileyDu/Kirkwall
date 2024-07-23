@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -30,7 +30,6 @@ import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts';
 import axios from 'axios';
-// import { getDatabase, ref, set, get, child } from 'firebase/database';
 import { getLatestThreshold, createThreshold } from '../../Backend/Graphql_helper';
 
 const ChartExpandModal = ({
@@ -66,13 +65,14 @@ const ChartExpandModal = ({
 
   const MotionButton = motion(Button);
   const toast = useToast();
-  // const db = getDatabase();
 
   const getBackgroundColor = () => 'gray.700';
   const getContentBackgroundColor = () => (colorMode === 'light' ? 'brand.50' : 'gray.800');
   const getTextColor = () => (colorMode === 'light' ? 'black' : 'white');
   const getModalBackgroundColor = () => (colorMode === 'light' ? 'whitesmoke' : 'gray.700');
 
+
+  // Handle time period button click
   const handleTimeButtonClick = async (timePeriod) => {
     if (timePeriod === currentTimePeriod) return;
 
@@ -88,114 +88,116 @@ const ChartExpandModal = ({
     }
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimer((prevTimer) => {
-        if (prevTimer <= 1) {
-          checkThresholds();
-          return 300;
-        }
-        return prevTimer - 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [currentValue, highThreshold, lowThreshold]);
-
   // useEffect(() => {
-  //   const fetchThresholds = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const result = await getLatestThreshold(metric);
-  //       setThresholds(result.data.getLatestThreshold);
-  //     } catch (error) {
-  //       console.error('Error fetching thresholds:', error);
-  //     } finally {
-  //       setLoading(false);
+  //   const interval = setInterval(() => {
+  //     setTimer((prevTimer) => {
+  //       if (prevTimer <= 1) {
+  //         checkThresholds();
+  //         return 300;
+  //       }
+  //       return prevTimer - 1;
+  //     });
+  //   }, 1000);
+  //   return () => clearInterval(interval);
+  // }, [currentValue, highThreshold, lowThreshold]);
+
+  // Fetch the latest thresholds from the database
+  const fetchThresholds = useCallback(async () => {
+    try {
+      const result = await getLatestThreshold(metric);
+      setThresholds(result.data.getLatestThreshold);
+      console.log('Thresholds from DB:', result.data.getLatestThreshold);
+    } catch (error) {
+      console.error('Error fetching thresholds:', error);
+    }
+  }, [metric]);
+
+  // Fetch the latest thresholds on component mount
+  useEffect(() => {
+    fetchThresholds();
+  }, [fetchThresholds]);
+
+  // const sendSMSAlert = async (to, body) => {
+  //   try {
+  //     const response = await axios.post(`${apiUrl}/send-sms`, { to, body });
+  //     toast({
+  //       title: 'Alert sent.',
+  //       description: response.data.message,
+  //       status: 'success',
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
+  //   } catch (error) {
+  //     toast({
+  //       title: 'Error sending alert.',
+  //       description: error.message,
+  //       status: 'error',
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
+  //   }
+  // };
+
+  // const sendEmailAlert = async (to, subject, text, html) => {
+  //   try {
+  //     const response = await axios.post(`${apiUrl}/send-email`, { to, subject, text, html });
+  //     toast({
+  //       title: 'Alert sent.',
+  //       description: response.data.message,
+  //       status: 'success',
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
+  //   } catch (error) {
+  //     toast({
+  //       title: 'Error sending alert.',
+  //       description: error.message,
+  //       status: 'error',
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
+  //   }
+  // };
+
+  // const checkThresholds = () => {
+  //   if (currentValue != null) {
+  //     const now = new Date();
+  //     const lastAlertTimeObj = lastAlertTime ? new Date(lastAlertTime) : null;
+
+  //     if (highThreshold < currentValue) {
+  //       const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${highThreshold}.`;
+  //       if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
+  //         (phoneNumber) && sendSMSAlert(phoneNumber, alertMessage);
+  //         (userEmail) && sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
+  //         setLastAlertTime(now);
+  //       }
+  //       setAlerts((prevAlerts) => {
+  //         const newAlerts = [...prevAlerts, alertMessage];
+  //         localStorage.setItem('alerts', JSON.stringify(newAlerts));
+  //         return newAlerts;
+  //       });
   //     }
-  //   };
 
-  //   fetchThresholds();
-  // }, [metric]);
+  //     if (lowThreshold > currentValue) {
+  //       const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${lowThreshold}.`;
+  //       if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
+  //         sendSMSAlert(phoneNumber, alertMessage);
+  //         sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
+  //         setLastAlertTime(now);
+  //       }
+  //       setAlerts((prevAlerts) => {
+  //         const newAlerts = [...prevAlerts, alertMessage];
+  //         localStorage.setItem('alerts', JSON.stringify(newAlerts));
+  //         return newAlerts;
+  //       });
+  //     }
+  //   }
+  // };
 
-  const sendSMSAlert = async (to, body) => {
-    try {
-      const response = await axios.post(`${apiUrl}/send-sms`, { to, body });
-      toast({
-        title: 'Alert sent.',
-        description: response.data.message,
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (error) {
-      toast({
-        title: 'Error sending alert.',
-        description: error.message,
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const sendEmailAlert = async (to, subject, text, html) => {
-    try {
-      const response = await axios.post(`${apiUrl}/send-email`, { to, subject, text, html });
-      toast({
-        title: 'Alert sent.',
-        description: response.data.message,
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (error) {
-      toast({
-        title: 'Error sending alert.',
-        description: error.message,
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const checkThresholds = () => {
-    if (currentValue != null) {
-      const now = new Date();
-      const lastAlertTimeObj = lastAlertTime ? new Date(lastAlertTime) : null;
-
-      if (highThreshold < currentValue) {
-        const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${highThreshold}.`;
-        if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
-          (phoneNumber) && sendSMSAlert(phoneNumber, alertMessage);
-          (userEmail) && sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
-          setLastAlertTime(now);
-        }
-        setAlerts((prevAlerts) => {
-          const newAlerts = [...prevAlerts, alertMessage];
-          localStorage.setItem('alerts', JSON.stringify(newAlerts));
-          return newAlerts;
-        });
-      }
-
-      if (lowThreshold > currentValue) {
-        const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${lowThreshold}.`;
-        if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
-          sendSMSAlert(phoneNumber, alertMessage);
-          sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
-          setLastAlertTime(now);
-        }
-        setAlerts((prevAlerts) => {
-          const newAlerts = [...prevAlerts, alertMessage];
-          localStorage.setItem('alerts', JSON.stringify(newAlerts));
-          return newAlerts;
-        });
-      }
-    }
-  };
-
+  // Set the font size based on the breakpoint
   const fontSize = useBreakpointValue({ base: 'xs', md: 'md', lg: 'md', xl: 'lg', xxl: 'lg' });
 
+  // Render the chart based on the selected chart type
   const renderChart = () => {
     switch (chartType) {
       case 'line':
@@ -207,14 +209,16 @@ const ChartExpandModal = ({
     }
   };
 
+  // Open and close threshold modal functions
   const handleOpenThresholdModal = () => setIsThresholdModalOpen(true);
   const handleCloseThresholdModal = () => setIsThresholdModalOpen(false);
 
+
+  // Send threshold data to the backend
   const handleFormSubmit = async () => {
     const timestamp = new Date().toISOString();
     try {
       await createThreshold(metric, parseFloat(highThreshold), parseFloat(lowThreshold), phoneNumber, userEmail, timestamp);
-      // Optionally update local state with new threshold
       setThresholds({
         metric,
         high: parseFloat(highThreshold),
@@ -230,11 +234,13 @@ const ChartExpandModal = ({
     }
   };
 
+  // Clear alerts on button click
   const clearAlerts = () => {
     setAlerts([]);
     localStorage.setItem('alerts', JSON.stringify([]));
   };
 
+  // Clear alerts on unmount
   useEffect(() => {
     return () => {
       clearAlerts();

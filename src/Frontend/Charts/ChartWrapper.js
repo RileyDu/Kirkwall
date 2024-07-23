@@ -304,7 +304,7 @@ const ChartWrapper = ({
     }
   }, [loading, toast]);
 
-  const timeOfGraph = calculateTimePeriod(weatherData.length - 1);
+  const timeOfGraph = (weatherData && calculateTimePeriod(weatherData.length - 1));
 
   const MotionButton = motion(Button);
 
