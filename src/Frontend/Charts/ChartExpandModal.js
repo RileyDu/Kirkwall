@@ -105,8 +105,8 @@ const ChartExpandModal = ({
   const fetchThresholds = useCallback(async () => {
     try {
       const result = await getLatestThreshold(metric);
-      setThresholds(result.data.getLatestThreshold);
-      console.log('Thresholds from DB:', result.data.getLatestThreshold);
+      setThresholds(result.data);
+      console.log('Thresholds from DB:', result.data.thresholds);
     } catch (error) {
       console.error('Error fetching thresholds:', error);
     }
