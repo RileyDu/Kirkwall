@@ -31,6 +31,7 @@ import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts';
 import axios from 'axios';
 import { setNewThresholds } from '../../Backend/Graphql_helper';
+import { getThresholds } from './ChartUtils';
 
 const ChartExpandModal = ({
   isOpen,
@@ -68,18 +69,18 @@ const ChartExpandModal = ({
   const getTextColor = () => (colorMode === 'light' ? 'black' : 'white');
   const getModalBackgroundColor = () => (colorMode === 'light' ? 'whitesmoke' : 'gray.700');
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimer((prevTimer) => {
-        if (prevTimer <= 1) {
-          checkThresholds();
-          return 300;
-        }
-        return prevTimer - 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [currentValue, highThreshold, lowThreshold]);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setTimer((prevTimer) => {
+  //       if (prevTimer <= 1) {
+  //         checkThresholds();
+  //         return 300;
+  //       }
+  //       return prevTimer - 1;
+  //     });
+  //   }, 1000);
+  //   return () => clearInterval(interval);
+  // }, [currentValue, highThreshold, lowThreshold]);
 
   useEffect(() => {
     const { high, low } = getThresholds(weatherData, metric);
@@ -144,32 +145,32 @@ const ChartExpandModal = ({
     }
   };
 
-  const checkThresholds = () => {
-    if (currentValue != null) {
-      const now = new Date();
-      const lastAlertTimeObj = lastAlertTime ? new Date(lastAlertTime) : null;
+  // const checkThresholds = () => {
+  //   if (currentValue != null) {
+  //     const now = new Date();
+  //     const lastAlertTimeObj = lastAlertTime ? new Date(lastAlertTime) : null;
 
-      if (highThreshold < currentValue) {
-        const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${highThreshold}.`;
-        if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
-          sendSMSAlert(phoneNumber, alertMessage);
-          sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
-          setLastAlertTime(now);
-        }
-        setAlerts((prevAlerts) => [...prevAlerts, alertMessage]);
-      }
+  //     if (highThreshold < currentValue) {
+  //       const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${highThreshold}.`;
+  //       if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
+  //         sendSMSAlert(phoneNumber, alertMessage);
+  //         sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
+  //         setLastAlertTime(now);
+  //       }
+  //       setAlerts((prevAlerts) => [...prevAlerts, alertMessage]);
+  //     }
 
-      if (lowThreshold > currentValue) {
-        const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${lowThreshold}.`;
-        if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
-          sendSMSAlert(phoneNumber, alertMessage);
-          sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
-          setLastAlertTime(now);
-        }
-        setAlerts((prevAlerts) => [...prevAlerts, alertMessage]);
-      }
-    }
-  };
+  //     if (lowThreshold > currentValue) {
+  //       const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${lowThreshold}.`;
+  //       if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
+  //         sendSMSAlert(phoneNumber, alertMessage);
+  //         sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
+  //         setLastAlertTime(now);
+  //       }
+  //       setAlerts((prevAlerts) => [...prevAlerts, alertMessage]);
+  //     }
+  //   }
+  // };
 
   const fontSize = useBreakpointValue({ base: 'xs', md: 'md', lg: 'md', xl: 'lg', xxl: 'lg' });
 
@@ -387,7 +388,7 @@ const ChartExpandModal = ({
           </ModalHeader>
           <ModalCloseButton color={'white'} size={'lg'} mt={1} />
           <ModalBody>
-            <FormControl>
+            {/* <FormControl>
               <FormLabel>Phone Number</FormLabel>
               <Input
                 type="text"
@@ -408,7 +409,7 @@ const ChartExpandModal = ({
                 border={'2px solid #fd9801'}
                 color={'#212121'}
               />
-            </FormControl>
+            </FormControl> */}
             <FormControl mt={4}>
               <FormLabel>High Threshold</FormLabel>
               <Input
