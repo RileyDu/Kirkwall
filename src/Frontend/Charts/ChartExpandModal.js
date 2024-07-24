@@ -55,10 +55,10 @@ const ChartExpandModal = ({
   const [userEmail, setUserEmail] = useState('');
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
-  const [alerts, setAlerts] = useState(JSON.parse(localStorage.getItem('alerts')) || []);
+  // const [alerts, setAlerts] = useState(JSON.parse(localStorage.getItem('alerts')) || []);
   const [timer, setTimer] = useState(30);
   const [currentValue, setCurrentValue] = useState(null);
-  const [lastAlertTime, setLastAlertTime] = useState(null); 
+  // const [lastAlertTime, setLastAlertTime] = useState(null); 
   const { thresholds } = useWeatherData();
 
   // Find the latest threshold for the selected metric, assign a graph to the threshold
@@ -109,111 +109,7 @@ const ChartExpandModal = ({
     }
   };
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setTimer((prevTimer) => {
-  //       if (prevTimer <= 1) {
-  //         checkThresholds();
-  //         return 300;
-  //       }
-  //       return prevTimer - 1;
-  //     });
-  //   }, 1000);
-  //   return () => clearInterval(interval);
-  // }, [currentValue, highThreshold, lowThreshold]);
 
-  // // Fetch the latest thresholds from the database
-  // const fetchThresholds = useCallback(async () => {
-  //   try {
-  //     const result = await getLatestThreshold(metric);
-  //     setThresholds(result.data);
-  //     console.log('Thresholds from DB:', result.data.thresholds);
-  //   } catch (error) {
-  //     console.error('Error fetching thresholds:', error);
-  //   }
-  // }, [metric]);
-
-  // // Fetch the latest thresholds on component mount
-  // useEffect(() => {
-  //   fetchThresholds();
-  // }, [fetchThresholds]);
-
-  // const sendSMSAlert = async (to, body) => {
-  //   try {
-  //     const response = await axios.post(`${apiUrl}/send-sms`, { to, body });
-  //     toast({
-  //       title: 'Alert sent.',
-  //       description: response.data.message,
-  //       status: 'success',
-  //       duration: 3000,
-  //       isClosable: true,
-  //     });
-  //   } catch (error) {
-  //     toast({
-  //       title: 'Error sending alert.',
-  //       description: error.message,
-  //       status: 'error',
-  //       duration: 3000,
-  //       isClosable: true,
-  //     });
-  //   }
-  // };
-
-  // const sendEmailAlert = async (to, subject, text, html) => {
-  //   try {
-  //     const response = await axios.post(`${apiUrl}/send-email`, { to, subject, text, html });
-  //     toast({
-  //       title: 'Alert sent.',
-  //       description: response.data.message,
-  //       status: 'success',
-  //       duration: 3000,
-  //       isClosable: true,
-  //     });
-  //   } catch (error) {
-  //     toast({
-  //       title: 'Error sending alert.',
-  //       description: error.message,
-  //       status: 'error',
-  //       duration: 3000,
-  //       isClosable: true,
-  //     });
-  //   }
-  // };
-
-  // const checkThresholds = () => {
-  //   if (currentValue != null) {
-  //     const now = new Date();
-  //     const lastAlertTimeObj = lastAlertTime ? new Date(lastAlertTime) : null;
-
-  //     if (highThreshold < currentValue) {
-  //       const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${highThreshold}.`;
-  //       if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
-  //         (phoneNumber) && sendSMSAlert(phoneNumber, alertMessage);
-  //         (userEmail) && sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
-  //         setLastAlertTime(now);
-  //       }
-  //       setAlerts((prevAlerts) => {
-  //         const newAlerts = [...prevAlerts, alertMessage];
-  //         localStorage.setItem('alerts', JSON.stringify(newAlerts));
-  //         return newAlerts;
-  //       });
-  //     }
-
-  //     if (lowThreshold > currentValue) {
-  //       const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${lowThreshold}.`;
-  //       if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
-  //         sendSMSAlert(phoneNumber, alertMessage);
-  //         sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
-  //         setLastAlertTime(now);
-  //       }
-  //       setAlerts((prevAlerts) => {
-  //         const newAlerts = [...prevAlerts, alertMessage];
-  //         localStorage.setItem('alerts', JSON.stringify(newAlerts));
-  //         return newAlerts;
-  //       });
-  //     }
-  //   }
-  // };
 
   // Set the font size based on the breakpoint
   const fontSize = useBreakpointValue({ base: 'xs', md: 'md', lg: 'md', xl: 'lg', xxl: 'lg' });
@@ -248,17 +144,17 @@ const ChartExpandModal = ({
   };
 
   // Clear alerts on button click
-  const clearAlerts = () => {
-    setAlerts([]);
-    localStorage.setItem('alerts', JSON.stringify([]));
-  };
+  // const clearAlerts = () => {
+  //   setAlerts([]);
+  //   localStorage.setItem('alerts', JSON.stringify([]));
+  // };
 
-  // Clear alerts on unmount
-  useEffect(() => {
-    return () => {
-      clearAlerts();
-    };
-  }, []);
+  // // Clear alerts on unmount
+  // useEffect(() => {
+  //   return () => {
+  //     clearAlerts();
+  //   };
+  // }, []);
 
   return (
     <Box>
@@ -358,8 +254,9 @@ const ChartExpandModal = ({
                       <Text color='white' fontSize="lg" fontWeight="bold">Alerts</Text>
                       <Text color='white'>High Threshold: {highThreshold}</Text>
                       <Text color='white'>Low Threshold: {lowThreshold}</Text>
-                      <Text color='white'>Timer: {timer}s</Text>
-                      <MotionButton
+                      <Text color='white'>Phone: {phoneNumber}</Text>
+                      <Text color='white'>Email: {userEmail}</Text>
+                      {/* <MotionButton
                         variant="solid"
                         onClick={clearAlerts}
                         leftIcon={<FaTrash />}
@@ -371,7 +268,7 @@ const ChartExpandModal = ({
                         color={'black'}
                       >
                         CLEAR
-                      </MotionButton>
+                      </MotionButton> */}
                     </HStack>
                     <Box
                       mt={2}
@@ -383,13 +280,13 @@ const ChartExpandModal = ({
                       minHeight="160px"
                       maxHeight="160px"
                     >
-                      <Stack spacing={2}>
+                      {/* <Stack spacing={2}>
                         {alerts.map((alert, index) => (
                           <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
                             <Text color="#212121">{alert}</Text>
                           </Box>
                         ))}
-                      </Stack>
+                      </Stack> */}
                     </Box>
                   </>
                 ) : (
