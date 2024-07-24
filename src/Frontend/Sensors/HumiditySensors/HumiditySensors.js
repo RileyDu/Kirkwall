@@ -78,7 +78,7 @@ export default function HumiditySensors({ statusOfAlerts }) {
       <Box color={colorMode === 'light' ? 'black' : 'white'}>
       <ChartWrapper
         title="Humidity (%)"
-        onChartChange={handleChartChange(setTempChartType)}
+        onChartChange={handleChartChange(setHumidityChartType)}
         weatherData={humidityData || weatherData} 
         metric="percent_humidity"
         handleTimePeriodChange={handleTimePeriodChange}
@@ -100,7 +100,7 @@ export default function HumiditySensors({ statusOfAlerts }) {
 
       </ChartWrapper>
       </Box>
-      <Divider
+      {/* <Divider
         my={'8'}
         borderWidth="4px"
         borderRadius={'full'}
@@ -109,7 +109,7 @@ export default function HumiditySensors({ statusOfAlerts }) {
       <ChartWrapper title="Humidity (%)" weatherData={humidityData || weatherData} metric={"percent_humidity"}>
         <LineChart data={humidityData || weatherData} metric="percent_humidity" />
       </ChartWrapper>
-      </Box>
+      </Box> */}
     </Box>
   );
 }

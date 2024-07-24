@@ -170,7 +170,7 @@ export default function WindSensors({ statusOfAlerts }) {
           )}
         </ChartWrapper>
       </Box>
-      <Divider
+      {/* <Divider
         my={'8'}
         borderWidth="4px"
         borderRadius={'full'}
@@ -179,7 +179,7 @@ export default function WindSensors({ statusOfAlerts }) {
         <ChartWrapper title="Wind Speed (MPH)" weatherData={windData || weatherData} metric={'wind_speed'}>
           <BarChart data={windData || weatherData} metric="wind_speed" />
         </ChartWrapper>
-      </Box>
+      </Box> */}
     </Box>
   );
 }

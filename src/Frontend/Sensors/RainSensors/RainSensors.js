@@ -85,7 +85,7 @@ export default function RainSensors({ statusOfAlerts }) {
             )}
           </ChartWrapper>
       </Box>
-      <Divider my={'8'} borderWidth="4px" borderRadius={'full'} />
+      {/* <Divider my={'8'} borderWidth="4px" borderRadius={'full'} />
       <Box color={colorMode === 'light' ? 'black' : 'white'}>
         <ChartWrapper
           title="Rainfall (inches)"
@@ -97,7 +97,7 @@ export default function RainSensors({ statusOfAlerts }) {
             metric="rain_15_min_inches"
           />
         </ChartWrapper>
-      </Box>
+      </Box> */}
     </Box>
   );
 }
