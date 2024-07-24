@@ -62,10 +62,10 @@ const ChartExpandModal = ({
   const { thresholds } = useWeatherData();
 
   const findLatestThreshold = (metric) => {
-    if (!Array.isArray(thresholds)) {
-      console.error("Thresholds is not an array", thresholds);
-      return { highThreshold: '', lowThreshold: '' };
-    }
+    // if (!Array.isArray(thresholds)) {
+    //   console.error("Thresholds is not an array", thresholds);
+    //   return { highThreshold: '', lowThreshold: '' };
+    // }
   
     const threshold = thresholds.find((threshold) => threshold.metric === metric);
     const highThreshold = threshold?.high ?? ''; // Use nullish coalescing to handle null or undefined values

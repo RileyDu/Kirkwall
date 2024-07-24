@@ -51,7 +51,9 @@ export const WeatherDataProvider = ({ children }) => {
       const fetchThresholds = async () => {
         try {
           const result = await getLatestThreshold();
-          setThresholds(result.data.thresholds);
+          if (Array.isArray(result.data.thresholds)) {
+            setThresholds(result.data.thresholds);
+          }
           console.log('Thresholds from DB:', thresholds);
         } catch (error) {
           console.error('Error fetching thresholds:', error);
@@ -60,9 +62,6 @@ export const WeatherDataProvider = ({ children }) => {
 
       fetchThresholds();
 
-      // const intervalId = setInterval(fetchThresholds, 30000);
-
-      // return () => clearInterval(intervalId);
     }, []);
 
   useEffect(() => {

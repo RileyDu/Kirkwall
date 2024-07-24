@@ -243,7 +243,7 @@ async function getRivercityData(type, limit) {
 export const getLatestThreshold = async () => {
   const query = `
     query getLatestThreshold {
-      thresholds(ordering: "timestamp") {
+      thresholds(ordering: "timestamp desc") {
         metric
         high
         low
