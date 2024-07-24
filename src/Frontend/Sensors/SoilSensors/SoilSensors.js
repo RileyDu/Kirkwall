@@ -6,11 +6,13 @@ import { useWeatherData } from '../../WeatherDataContext';
 import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
+import { handleChartChange } from '../../Charts/ChartUtils';
 
 export default function SoilSensors({ statusOfAlerts }) {
-  const { weatherData, soilMoistureData, loading } = useWeatherData();
+  const { weatherData, soilMoistureData, loading, handleTimePeriodChange } = useWeatherData();
 
   const { colorMode } = useColorMode();
+  const [soilMoistureChartType, setSoilMoistureChartType] = useState('bar');
 
   const [isReady, setIsReady] = useState(false);
 
@@ -58,21 +60,37 @@ export default function SoilSensors({ statusOfAlerts }) {
         color={colorMode === 'light' ? 'black' : 'white'}
       >
         <Box width="100%">
+
           <ChartWrapper
             title="Soil Moisture (centibar)"
+            onChartChange={handleChartChange(setSoilMoistureChartType)}
             weatherData={soilMoistureData || weatherData}
-            metric={'soil_moisture'}
-          >
-            <LineChart data={soilMoistureData || weatherData} metric="soil_moisture" />
-          </ChartWrapper>
-          <Divider my={'8'} borderWidth="4px" borderRadius={'full'} />
+            metric="soil_moisture"
+            handleTimePeriodChange={handleTimePeriodChange}
+                    >
+                      {soilMoistureChartType === 'line' ? (
+                        <LineChart
+                          data={soilMoistureData || weatherData}
+                          metric="soil_moisture"
+                          style={{ flex: 1 }}
+                        />
+                      ) : (
+                        <BarChart
+                          data={soilMoistureData || weatherData}
+                          metric="soil_moisture"
+                          style={{ flex: 1 }}
+                        />
+                      )}
+                    </ChartWrapper>
+
+          {/* <Divider my={'8'} borderWidth="4px" borderRadius={'full'} />
           <ChartWrapper
             title="Soil Moisture (centibar)"
             weatherData={soilMoistureData || weatherData}
             metric={'soil_moisture'}
           >
             <BarChart data={soilMoistureData || weatherData} metric="soil_moisture" />
-          </ChartWrapper>
+          </ChartWrapper> */}
         </Box>
       </Flex>
     </Box>

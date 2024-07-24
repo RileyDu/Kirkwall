@@ -30,7 +30,7 @@ import {
 import {
   FaExpandAlt,
   FaChessRook,
-  FaChartBar,
+  FaChartBar, 
   FaChartLine,
   FaMap,
 } from 'react-icons/fa';
@@ -117,15 +117,15 @@ const ChartWrapper = ({
     setMapToDisplay(metric, currentUser);
   }, [metric, currentUser]);
 
-  const restrictedRoutes = [
-    '/TempSensors',
-    '/HumiditySensors',
-    '/SoilMoistureSensors',
-    '/WindSensors',
-    '/RainSensors',
-    '/WatchdogSensors',
-    '/RivercitySensors',
-  ];
+   const restrictedRoutes = [
+  //   '/TempSensors',
+  //   '/HumiditySensors',
+  //   '/SoilMoistureSensors',
+  //   '/WindSensors',
+  //   '/RainSensors',
+  //   '/WatchdogSensors',
+  //   '/RivercitySensors',
+   ];
 
   useEffect(() => {
     setShowIcons(!restrictedRoutes.includes(location.pathname));

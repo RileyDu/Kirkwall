@@ -10,6 +10,7 @@ import {
     useColorMode
   } from '@chakra-ui/react';
   import { useWeatherData } from '../../WeatherDataContext';
+  import { handleChartChange } from '../../Charts/ChartUtils';
   import ChartWrapper from '../../Charts/ChartWrapper';
   import { BarChart, LineChart } from '../../Charts/Charts';
   import MiniDashboard from '../../Charts/ChartDashboard';
@@ -18,8 +19,12 @@ import {
   import { useEffect, useState } from 'react';
   
   export default function RivercitySensors({ statusOfAlerts }) {
-    const { rivercityData, rivercityTempData, rivercityHumData, loading } = useWeatherData();
+    const { rivercityData, rivercityTempData, rivercityHumData, loading, handleTimePeriodChange } = useWeatherData();
     const [isReady, setIsReady] = useState(false);
+    const [rivercityTempChartType, setRivercityTempChartType] = useState('bar');
+    const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
+
+
   
     const { colorMode } = useColorMode();
   
@@ -62,13 +67,30 @@ import {
         <Flex direction="row" justifyContent="space-between">
           <Box width="100%">
             <Box color={colorMode === 'light' ? 'black' : 'white'}>
-            <ChartWrapper
-              title="Temperature in Freezer (°F)"
-              weatherData={rivercityTempData || rivercityData}
-              metric="rctemp"
-            >
-              <LineChart data={rivercityTempData || rivercityData} metric="rctemp" />
-            </ChartWrapper>
+              <ChartWrapper
+                title="Temperature (°F)"
+                onChartChange={handleChartChange(setRivercityTempChartType)}
+                weatherData={rivercityTempData || rivercityData}
+                metric="rctemp"
+                flex="1"
+                display="flex"
+                flexDirection="column"
+                handleTimePeriodChange={handleTimePeriodChange}
+              >
+                {rivercityTempChartType === 'line' ? (
+                  <LineChart
+                    data={rivercityTempData || rivercityData}
+                    metric="rctemp"
+                    style={{ flex: 1 }}
+                  />
+                  ) : (
+                  <BarChart
+                    data={rivercityTempData || rivercityData}
+                    metric="rctemp"
+                    style={{ flex: 1 }}
+                  />
+                  )}
+              </ChartWrapper>
             </Box>
             <Divider
               my="8"
@@ -80,13 +102,31 @@ import {
               <MiniDashboard weatherData={rivercityHumData || rivercityData} metric="humidity" />
             </Box>
             <Box color={colorMode === 'light' ? 'black' : 'white'}>
-            <ChartWrapper
-              title="Humidity in Freezer (%)"
-              weatherData={rivercityHumData || rivercityData}
-              metric="humidity"
-            >
-              <BarChart data={rivercityHumData || rivercityData} metric="humidity" />
-            </ChartWrapper>
+            <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                    <ChartWrapper
+                      title="Humidity (%)"
+                      onChartChange={handleChartChange(setRivercityHumChartType)}
+                      weatherData={rivercityHumData || rivercityData}
+                      metric="humidity"
+                      display="flex"
+                      flexDirection="column"
+                      handleTimePeriodChange={handleTimePeriodChange}
+                    >
+                      {rivercityHumChartType === 'line' ? (
+                        <LineChart
+                          data={rivercityHumData || rivercityData}
+                          metric="humidity"
+                          style={{ flex: 1 }}
+                        />
+                      ) : (
+                        <BarChart
+                          data={rivercityHumData || rivercityData}
+                          metric="humidity"
+                          style={{ flex: 1 }}
+                        />
+                      )}
+                    </ChartWrapper>
+                  </GridItem>
             </Box>
           </Box>
         </Flex>
