@@ -46,7 +46,7 @@ const sendSMSAlert = async (to, body) => {
 const sendEmailAlert = async (to, subject, text, html) => {
   const msg = {
     to: to,
-    from: 'evan@kirkwall.io', // Replace with your verified email
+    from: 'alerts@kirkwall.io', // Replace with your verified email
     subject: subject,
     text: text,
     html: html,
