@@ -3,24 +3,10 @@ import bodyParser from 'body-parser';
 import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
 import cron from 'node-cron';
-// const express = require('express');
-// const bodyParser = require('body-parser');
-// const twilio = require('twilio');
-// const sgMail = require('@sendgrid/mail');
-// const cron = require('node-cron');
-// const {
-//   getLatestThreshold,
-//   getWeatherData,
-//   getWatchdogData,
-//   getRivercityData,
-// } = require('./Graphql_helper.js');
 import dotenv from 'dotenv';
 import cors from 'cors';
 dotenv.config();
-
-
-
-// Rest of your code...
+import { getWeatherData, getWatchdogData, getRivercityData, getLatestThreshold } from './Graphql_helper.js';
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -72,64 +58,74 @@ const sendEmailAlert = async (to, subject, text, html) => {
   }
 };
 
-// // Function to check thresholds
-// const checkThresholds = async () => {
-//   const thresholds = await getLatestThreshold();
+// Utility function to extract current value based on the metric and response structure
+const extractCurrentValue = (response, metric) => {
+  if (Array.isArray(response.data.weather_data)) {
+    return response.data.weather_data[0]?.[metric];
+  } else if (Array.isArray(response.data.watchdog_data)) {
+    return response.data.watchdog_data[0]?.[metric];
+  } else if (Array.isArray(response.data.rivercity_data)) {
+    return response.data.rivercity_data[0]?.[metric];
+  }
+  return null;
+};
 
-//   for (const threshold of thresholds.data.thresholds) {
-//     const { id, metric, high, low, phone, email } = threshold;
-//     let currentValueData;
-//     switch (metric) {
-//       case 'temperature':
-//       case 'percent_humidity':
-//       case 'wind_speed':
-//       case 'rain_15_min_inches':
-//       case 'soil_moisture':
-//       case 'leaf_wetness':
-//         currentValueData = await getWeatherData('all', 1);
-//         break;
-//       case 'temp':
-//       case 'hum':
-//         currentValueData = await getWatchdogData('all', 1);
-//         break;
-//       case 'rctemp':
-//       case 'humidity':
-//         currentValueData = await getRivercityData('all', 1);
-//         break;
-//       default:
-//         console.error('Invalid metric:', metric);
-//     }
-//     const currentValue = currentValueData.data.weather_data[0]?.[metric];
+// Function to check thresholds and send alerts
+const checkThresholds = async () => {
+  try {
+    const thresholds = await getLatestThreshold();
 
-//     if (currentValue == null) continue;
+    for (const threshold of thresholds.data.thresholds) {
+      const { id, metric, high, low, phone, email } = threshold;
+      let responseData;
 
-//     const now = new Date();
-//     const lastAlertTimeDate = new Date(lastAlertTime);
+      switch (metric) {
+        case 'temperature':
+        case 'percent_humidity':
+        case 'wind_speed':
+        case 'rain_15_min_inches':
+        case 'soil_moisture':
+        case 'leaf_wetness':
+          responseData = await getWeatherData('all', 1);
+          break;
+        case 'temp':
+        case 'hum':
+          responseData = await getWatchdogData('all', 1);
+          break;
+        case 'rctemp':
+        case 'humidity':
+          responseData = await getRivercityData('all', 1);
+          break;
+        default:
+          console.error('Invalid metric:', metric);
+          continue;
+      }
 
-//     if (
-//       currentValue > high &&
-//       (!lastAlertTimeDate || now - lastAlertTimeDate >= 5 * 60 * 1000)
-//     ) {
-//       const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high}.`;
-//       if (phone) await sendSMSAlert(phone, alertMessage);
-//       if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage);
-//       await updateLastAlertTime(id, now.toISOString());
-//     }
+      const currentValue = extractCurrentValue(responseData, metric);
 
-//     if (
-//       currentValue < low &&
-//       (!lastAlertTimeDate || now - lastAlertTimeDate >= 5 * 60 * 1000)
-//     ) {
-//       const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low}.`;
-//       if (phone) await sendSMSAlert(phone, alertMessage);
-//       if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage);
-//       await updateLastAlertTime(id, now.toISOString());
-//     }
-//   }
-// };
+      if (currentValue == null) continue;
 
-// // Schedule the threshold check function to run every 5 minutes
-// cron.schedule('*/5 * * * *', checkThresholds);
+      if (currentValue > high) {
+        const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high}.`;
+        if (phone) await sendSMSAlert(phone, alertMessage);
+        if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage, alertMessage);
+        // await updateLastAlertTime(id, new Date().toISOString());
+      }
+
+      if (currentValue < low) {
+        const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low}.`;
+        if (phone) await sendSMSAlert(phone, alertMessage);
+        if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage, alertMessage);
+        // await updateLastAlertTime(id, new Date().toISOString());
+      }
+    }
+  } catch (error) {
+    console.error('Error checking thresholds:', error);
+  }
+};
+
+// Schedule the threshold check function to run every 5 minutes
+cron.schedule('*/5 * * * *', checkThresholds);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
