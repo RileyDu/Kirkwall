@@ -1,11 +1,11 @@
 import { Flex, Stack, Button, Box, IconButton, useColorMode } from '@chakra-ui/react';
-import { WiThermometer, WiStrongWind, WiRain, WiHumidity } from 'react-icons/wi';
-import { FaDog, FaGlobe, FaSnowflake, FaChevronRight, FaChevronLeft } from 'react-icons/fa';
-import { GiGroundSprout } from "react-icons/gi";
+import { WiThermometer, WiStrongWind, WiRain, WiHumidity } from 'react-icons/wi/index.esm.js';
+import { FaDog, FaGlobe, FaSnowflake, FaChevronRight, FaChevronLeft } from 'react-icons/fa/index.esm.js';
+import { GiGroundSprout } from "react-icons/gi/index.esm.js";
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useWeatherData } from '../WeatherDataContext';
-import { useAuth } from '../AuthComponents/AuthContext';
+import { useWeatherData } from '../WeatherDataContext.js';
+import { useAuth } from '../AuthComponents/AuthContext.js';
 import { useEffect, useState } from 'react';
 
 const MotionFlex = motion(Flex);

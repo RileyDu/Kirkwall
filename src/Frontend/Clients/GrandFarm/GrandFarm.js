@@ -21,11 +21,11 @@ import {
   Tooltip,
   useMediaQuery
 } from '@chakra-ui/react';
-import VoiceControl from '../../services/VoiceControl';
-import { LineChart, BarChart } from '../../Charts/Charts';
+// import VoiceControl from '../../services/VoiceControl';
+import { LineChart, BarChart } from '../../Charts/Charts.js';
 // import Logout from '../../Frontend/AuthComponents/Logout';
-import { auth } from '../../../Backend/Firebase';
-import ChartWrapper from '../../Charts/ChartWrapper';
+import { auth } from '../../../Backend/Firebase.js';
+import ChartWrapper from '../../Charts/ChartWrapper.js';
 import {
   FaChessRook,
   FaChevronDown,
@@ -37,13 +37,13 @@ import {
   FaWater,
   FaLeaf,
   FaCloudRain,
-} from 'react-icons/fa';
+} from 'react-icons/fa/index.esm.js';
 import { keyframes } from '@emotion/react';
-import { useWeatherData } from '../../WeatherDataContext';
-import { handleChartChange } from '../../Charts/ChartUtils';
+import { useWeatherData } from '../../WeatherDataContext.js';
+import { handleChartChange } from '../../Charts/ChartUtils.js';
 import { motion } from 'framer-motion';
 // import { useAuth } from '../AuthComponents/AuthContext.js';
-import ChartExpandModal from '../../Charts/ChartExpandModal';
+// import ChartExpandModal from '../../Charts/ChartExpandModal';
 
 const MotionBox = motion(Box);
 const MotionTabPanel = motion(TabPanel);

@@ -23,15 +23,15 @@ import {
   ModalFooter,
   HStack,
 } from '@chakra-ui/react';
-import MiniDashboard from './ChartDashboard';
-import MiniMap from '../Maps/GrandFarmMiniMap';
-import WatchdogMap from '../Maps/WatchdogMiniMap';
-import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
+import MiniDashboard from './ChartDashboard.js';
+import MiniMap from '../Maps/GrandFarmMiniMap.js';
+import WatchdogMap from '../Maps/WatchdogMiniMap.js';
+import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa/index.esm.js';
 import { motion } from 'framer-motion';
-import { LineChart, BarChart } from '../Charts/Charts';
+import { LineChart, BarChart } from '../Charts/Charts.js';
 import axios from 'axios';
-import { createThreshold } from '../../Backend/Graphql_helper';
-import { useWeatherData } from '../WeatherDataContext';
+import { createThreshold } from '../../Backend/Graphql_helper.js';
+import { useWeatherData } from '../WeatherDataContext.js';
 
 
 const ChartExpandModal = ({

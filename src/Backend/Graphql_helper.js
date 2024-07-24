@@ -1,6 +1,9 @@
 // Helper functions for GraphQL queries and mutations
 import axios from 'axios';
-import { getAccessToken, setupAuthHeaders } from './Auth';
+import { getAccessToken, setupAuthHeaders } from './Auth.js';
+// const axios = require('axios');
+// const { getAccessToken, setupAuthHeaders } = require('./Auth');
+
 
 const QUERY_URL = 'https://api.devii.io/query';
 
@@ -240,7 +243,7 @@ async function getRivercityData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
-export const getLatestThreshold = async () => {
+async function getLatestThreshold() {
   const query = `
     query getLatestThreshold {
       thresholds(ordering: "timestamp desc") {
@@ -257,7 +260,7 @@ export const getLatestThreshold = async () => {
 };
 
 
-export const createThreshold = async (metric, high, low, phone, email, timestamp) => {
+async function createThreshold(metric, high, low, phone, email, timestamp) {
   const mutation = `
     mutation($i: thresholdsInput! ) {
       create_thresholds(input: $i) {
@@ -336,4 +339,4 @@ async function getAPIIds() {
 }
 
 // Export the functions to be used elsewhere in the project
-export { getWeatherData, editWeatherData, getWatchdogData, getRivercityData, getAPIIds };
+export { getWeatherData, editWeatherData, getWatchdogData, getRivercityData, getAPIIds, getLatestThreshold, createThreshold };

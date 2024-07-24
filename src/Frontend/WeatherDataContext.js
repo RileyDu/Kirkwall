@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getWeatherData, getWatchdogData, getRivercityData, getAPIIds, getLatestThreshold } from '../Backend/Graphql_helper';
+import { getWeatherData, getWatchdogData, getRivercityData, getAPIIds, getLatestThreshold } from '../Backend/Graphql_helper.js';
 
 const WeatherDataContext = createContext();
 
@@ -54,7 +54,7 @@ export const WeatherDataProvider = ({ children }) => {
           if (Array.isArray(result.data.thresholds)) {
             setThresholds(result.data.thresholds);
           }
-          console.log('Thresholds from DB:', thresholds);
+          // console.log('Thresholds from DB:', thresholds);
         } catch (error) {
           console.error('Error fetching thresholds:', error);
         }

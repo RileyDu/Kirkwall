@@ -1,13 +1,17 @@
 import React from 'react';
 import { getAuth, signOut } from 'firebase/auth';
 import { Button } from '@chakra-ui/react';
-import { useAuthState } from 'react-firebase-hooks/auth';
+// import { useAuthState } from 'react-firebase-hooks/auth';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthComponents/AuthContext.js';
+
 
 const Logout = ({ onLogout }) => {
   const auth = getAuth();
-  const [user] = useAuthState(auth);
+  // const [user] = useAuthState(auth);
   const location = useLocation();
+  const { currentUser } = useAuth();
+  const user = currentUser;
 
   const navigate = useNavigate();
 

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "homepage": "https://kirkwall-demo.vercel.app",
+  "type": "module",
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.2",
@@ -22,6 +23,7 @@
     "firebase": "^10.12.2",
     "framer-motion": "^6.5.1",
     "fuse.js": "^7.0.0",
+    "node-cron": "^3.0.3",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-d3-speedometer": "^2.2.1",

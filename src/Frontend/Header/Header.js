@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import SummaryButton from '../SummaryComponent/SummaryButton';
+import SummaryButton from '../SummaryComponent/SummaryButton.js';
 import {
   useMediaQuery,
   Flex,
@@ -17,24 +17,12 @@ import {
   Stack,
   Tooltip,
   useColorMode,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  Grid,
-  GridItem,
-  Stat,
-  StatLabel,
-  StatNumber,
   Popover,
   PopoverCloseButton,
   PopoverTrigger,
   PopoverContent,
   PopoverHeader,
   PopoverBody,
-  Text,
 } from '@chakra-ui/react';
 import {
   FaBars,
@@ -43,20 +31,20 @@ import {
   FaDog,
   FaGlobe,
   FaSnowflake,
-} from 'react-icons/fa';
-import { GiGroundSprout } from 'react-icons/gi';
-import { FiAlertTriangle } from 'react-icons/fi';
+} from 'react-icons/fa/index.esm.js';
+import { GiGroundSprout } from 'react-icons/gi/index.esm.js';
+import { FiAlertTriangle } from 'react-icons/fi/index.esm.js';
 import {
   WiThermometer,
   WiStrongWind,
   WiRain,
   WiHumidity,
-} from 'react-icons/wi';
-import Logout from '../../Frontend/AuthComponents/Logout';
+} from 'react-icons/wi/index.esm.js';
+import Logout from '../../Frontend/AuthComponents/Logout.js';
 import { useNavigate } from 'react-router-dom';
-import { useWeatherData } from '../WeatherDataContext';
-import WeatherAlerts from '../Alert/WeatherAlerts';
-import { useAuth } from '../AuthComponents/AuthContext';
+import { useWeatherData } from '../WeatherDataContext.js';
+import WeatherAlerts from '../Alert/WeatherAlerts.js';
+import { useAuth } from '../AuthComponents/AuthContext.js';
 
 const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');

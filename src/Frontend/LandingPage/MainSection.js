@@ -11,7 +11,7 @@ import {
   Icon,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import { FaArrowUp } from 'react-icons/fa';
+import { FaArrowUp } from 'react-icons/fa/index.esm.js';
 // import dashboard from '../dashboard.png'
 import { useNavigate } from 'react-router-dom';
 import ReactPlayer from 'react-player';

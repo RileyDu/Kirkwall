@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, Stack, Button, Flex } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { WiThermometer, WiStrongWind, WiRain, WiHumidity } from 'react-icons/wi';
-import Logout from '../AuthComponents/Logout';
-import { FaDog } from "react-icons/fa";
+import { WiThermometer, WiStrongWind, WiRain, WiHumidity } from 'react-icons/wi/index.esm.js';
+import Logout from '../AuthComponents/Logout.js';
+import { FaDog } from "react-icons/fa/index.esm.js";
 
 const MobileMenu = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
