@@ -4,7 +4,6 @@ import { getAccessToken, setupAuthHeaders } from './Auth.js';
 // const axios = require('axios');
 // const { getAccessToken, setupAuthHeaders } = require('./Auth');
 
-
 const QUERY_URL = 'https://api.devii.io/query';
 
 // General helper function for executing GraphQL queries and mutations
@@ -25,7 +24,8 @@ async function executeGraphqlQuery(query, variables = {}) {
   }
 }
 
-// Generalized function to get weather data based on requested type
+// Generalized function to get weather data based on requested metric
+// All is triggerd on page load
 async function getWeatherData(type, limit) {
   const queryMap = {
     all: `
@@ -138,7 +138,7 @@ async function getWeatherData(type, limit) {
       }
     }
   `,
-  soil_moisture: `
+    soil_moisture: `
   query weather_data($limit: Int!) {
     weather_data(filter: "stationid = 181795", ordering: "ts desc", limit: $limit) {
       station {
@@ -161,7 +161,8 @@ async function getWeatherData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
-// Generalized function to get watchdog data based on requested type
+// Generalized function to get watchdog data based on requested metric
+// All is triggerd on page load
 async function getWatchdogData(type, limit) {
   const queryMap = {
     all: `
@@ -195,13 +196,15 @@ async function getWatchdogData(type, limit) {
           reading_time
         }
       }
-    `
+    `,
   };
 
   const query = queryMap[type] || queryMap.all; // Default to 'all' if type is invalid
   return executeGraphqlQuery(query, { limit });
 }
 
+// Generalized function to get rivercity data based on requested metric
+// All is triggerd on page load
 async function getRivercityData(type, limit) {
   const queryMap = {
     all: `
@@ -236,13 +239,14 @@ async function getRivercityData(type, limit) {
           publishedat
         }
       }
-    `
+    `,
   };
 
   const query = queryMap[type] || queryMap.all; // Default to 'all' if type is invalid
   return executeGraphqlQuery(query, { limit });
 }
 
+// Function to get the latest threshold data from the database
 async function getLatestThreshold() {
   const query = `
     query getLatestThreshold {
@@ -257,9 +261,9 @@ async function getLatestThreshold() {
     }
   `;
   return executeGraphqlQuery(query);
-};
+}
 
-
+// Function to create a new threshold for a metric in the database
 async function createThreshold(metric, high, low, phone, email, timestamp) {
   const mutation = `
     mutation($i: thresholdsInput! ) {
@@ -274,82 +278,95 @@ async function createThreshold(metric, high, low, phone, email, timestamp) {
     }
   `;
   const variables = {
-    i : {
+    i: {
       metric: metric,
       high: high,
       low: low,
       phone: phone,
       email: email,
-      timestamp: timestamp
-    }
-  }
-  return executeGraphqlQuery(mutation, variables);
-};
-
-
-// Function to edit weather data
-async function editWeatherData(dataid, temperature, humidity, windSpeed, windDirection) {
-  const editWeatherMutation = `
-      mutation ($i: weather_dataInput, $j: ID!) {
-          update_weather_data(input: $i, dataid: $j) {
-              station {
-                  name
-                  location {
-                      srid
-                      wkt
-                  }
-              }
-              message_timestamp
-              temperature
-              percent_humidity
-              wind_speed
-              wind_direction
-              ts
-              stationid
-          }
-      }`;
-
-  const variables = {
-      j: dataid,
-      i: {
-          temperature: Number(temperature),
-          percent_humidity: Number(humidity),
-          wind_speed: Number(windSpeed),
-          wind_direction: Number(windDirection)
-      }
+      timestamp: timestamp,
+    },
   };
-
-  return executeGraphqlQuery(editWeatherMutation, variables);
+  return executeGraphqlQuery(mutation, variables);
 }
 
 async function getAlerts() {
   const query = `
-    query {
-  alerts {
-    metric
-    message
-    timestamp
-  }
-}
-  `;
+  query {
+    alerts {
+      metric
+      message
+      timestamp
+      }
+      }
+      `;
   return executeGraphqlQuery(query);
 }
 
 // Function to get API ID of user
-async function getAPIIds() {
-  const query = `
-  query{
-    api{
-      customer {
-        name
-      }
-      apiid
-      apiname
-    }
-  }
-  `;
-  return executeGraphqlQuery(query);
-}
+// async function getAPIIds() {
+//   const query = `
+//   query{
+//     api{
+//       customer {
+//         name
+//       }
+//       apiid
+//       apiname
+//     }
+//   }
+//   `;
+//   return executeGraphqlQuery(query);
+// }
 
 // Export the functions to be used elsewhere in the project
-export { getWeatherData, editWeatherData, getWatchdogData, getRivercityData, getAPIIds, getLatestThreshold, createThreshold, getAlerts };
+
+// Function to edit weather data
+// async function editWeatherData(
+//   dataid,
+//   temperature,
+//   humidity,
+//   windSpeed,
+//   windDirection
+// ) {
+//   const editWeatherMutation = `
+//                   mutation ($i: weather_dataInput, $j: ID!) {
+//                       update_weather_data(input: $i, dataid: $j) {
+//                           station {
+//                               name
+//                               location {
+//                                   srid
+//                                   wkt
+//                               }
+//                           }
+//                           message_timestamp
+//                           temperature
+//                           percent_humidity
+//                           wind_speed
+//                           wind_direction
+//                           ts
+//                           stationid
+//                       }
+//                   }`;
+
+//   const variables = {
+//     j: dataid,
+//     i: {
+//       temperature: Number(temperature),
+//       percent_humidity: Number(humidity),
+//       wind_speed: Number(windSpeed),
+//       wind_direction: Number(windDirection),
+//     },
+//   };
+
+//   return executeGraphqlQuery(editWeatherMutation, variables);
+// }
+
+export {
+  getWeatherData,
+  getWatchdogData,
+  getRivercityData,
+  getLatestThreshold,
+  createThreshold,
+  getAlerts,
+};
