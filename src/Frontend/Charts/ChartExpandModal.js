@@ -61,25 +61,18 @@ const ChartExpandModal = ({
   const [lastAlertTime, setLastAlertTime] = useState(null); 
   const { thresholds } = useWeatherData();
 
+  // Find the latest threshold for the selected metric, assign a graph to the threshold
   const findLatestThreshold = (metric) => {
-    // if (!Array.isArray(thresholds)) {
-    //   console.error("Thresholds is not an array", thresholds);
-    //   return { highThreshold: '', lowThreshold: '' };
-    // }
-  
     const threshold = thresholds.find((threshold) => threshold.metric === metric);
-    const highThreshold = threshold?.high ?? ''; // Use nullish coalescing to handle null or undefined values
-    const lowThreshold = threshold?.low ?? '';  // Use nullish coalescing to handle null or undefined values
+    const highThreshold = threshold?.high ?? ''; 
+    const lowThreshold = threshold?.low ?? '';  
     const phone = threshold?.phone ?? '';
     const email = threshold?.email ?? '';
     return { highThreshold, lowThreshold, phone, email };
   };
   
+  // Update the threshold values when the metric or thresholds change, fetched from the database
   useEffect(() => {
-    // console.log("Thresholds from DB:", thresholds); // Debugging line
-    // console.log("Current Metric:", metric); // Debugging line
-    // console.log("Latest Thresholds:", findLatestThreshold(metric)); // Debugging line
-  
     const latestThreshold = findLatestThreshold(metric);
     setHighThreshold(latestThreshold.highThreshold);
     setLowThreshold(latestThreshold.lowThreshold);
@@ -247,14 +240,6 @@ const ChartExpandModal = ({
     const timestamp = new Date().toISOString();
     try {
       await createThreshold(metric, parseFloat(highThreshold), parseFloat(lowThreshold), phoneNumber, userEmail, timestamp);
-      // setThresholds({
-      //   metric,
-      //   high: parseFloat(highThreshold),
-      //   low: parseFloat(lowThreshold),
-      //   phone: phoneNumber,
-      //   email: userEmail,
-      //   timestamp: timestamp,
-      // });
     } catch (error) {
       console.error('Error creating threshold:', error);
     } finally {
