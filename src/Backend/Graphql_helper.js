@@ -322,6 +322,19 @@ async function editWeatherData(dataid, temperature, humidity, windSpeed, windDir
   return executeGraphqlQuery(editWeatherMutation, variables);
 }
 
+async function getAlerts() {
+  const query = `
+    query {
+  alerts {
+    metric
+    message
+    timestamp
+  }
+}
+  `;
+  return executeGraphqlQuery(query);
+}
+
 // Function to get API ID of user
 async function getAPIIds() {
   const query = `
@@ -339,4 +352,4 @@ async function getAPIIds() {
 }
 
 // Export the functions to be used elsewhere in the project
-export { getWeatherData, editWeatherData, getWatchdogData, getRivercityData, getAPIIds, getLatestThreshold, createThreshold };
+export { getWeatherData, editWeatherData, getWatchdogData, getRivercityData, getAPIIds, getLatestThreshold, createThreshold, getAlerts };

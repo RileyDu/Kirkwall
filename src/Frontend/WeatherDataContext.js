@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getWeatherData, getWatchdogData, getRivercityData, getAPIIds, getLatestThreshold } from '../Backend/Graphql_helper.js';
+import { getWeatherData, getWatchdogData, getRivercityData, getAlerts, getLatestThreshold } from '../Backend/Graphql_helper.js';
 
 const WeatherDataContext = createContext();
 
@@ -32,7 +32,7 @@ export const WeatherDataProvider = ({ children }) => {
   const [rivercityHumData, setRivercityHumData] = useState(null);
   const [watchdogTempData, setWatchdogTempData] = useState(null);
   const [watchdogHumData, setWatchdogHumData] = useState(null);
-  const [APIIds, setAPIIds] = useState([]);
+  const [alertsThreshold, setAlertsThreshold] = useState([]);
   const [thresholds, setThresholds] = useState([]);
   const [dataLoaded, setDataLoaded] = useState({
     temperature: false,
@@ -135,16 +135,16 @@ export const WeatherDataProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const fetchAPIIds = async () => {
+    const fetchAlertsThreshold = async () => {
       try {
-        const response = await getAPIIds();
-        setAPIIds(response.data.data);
-        // console.log('API IDs:', APIIds);
+        const response = await getAlerts();
+        setAlertsThreshold(response.data.alerts);
+        console.log('Alerts Threshold:', alertsThreshold);
       } catch (error) {
-        console.error('Error fetching API IDs:', error);
+        console.error('Error fetching alerts', error);
       }
     };
-    fetchAPIIds();
+    fetchAlertsThreshold();
   }, []);
     
 
@@ -400,8 +400,8 @@ export const WeatherDataProvider = ({ children }) => {
         rivercityData,
         rivercityTempData,
         rivercityHumData,
-        APIIds,
-        thresholds
+        thresholds,
+        alertsThreshold
       }}
     >
       {children}
