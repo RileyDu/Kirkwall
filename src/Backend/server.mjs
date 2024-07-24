@@ -1,16 +1,26 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const twilio = require('twilio');
-const sgMail = require('@sendgrid/mail');
-const cron = require('node-cron');
-const {
-  getLatestThreshold,
-  getWeatherData,
-  getWatchdogData,
-  getRivercityData,
-} = require('./Graphql_helper.js');
-require('dotenv').config();
-const cors = require('cors');
+import express from 'express';
+import bodyParser from 'body-parser';
+import twilio from 'twilio';
+import sgMail from '@sendgrid/mail';
+import cron from 'node-cron';
+// const express = require('express');
+// const bodyParser = require('body-parser');
+// const twilio = require('twilio');
+// const sgMail = require('@sendgrid/mail');
+// const cron = require('node-cron');
+// const {
+//   getLatestThreshold,
+//   getWeatherData,
+//   getWatchdogData,
+//   getRivercityData,
+// } = require('./Graphql_helper.js');
+import dotenv from 'dotenv';
+import cors from 'cors';
+dotenv.config();
+
+
+
+// Rest of your code...
 
 const app = express();
 const port = process.env.PORT || 3001;
