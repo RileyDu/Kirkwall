@@ -203,10 +203,9 @@ async function getRivercityData(type, limit) {
   const queryMap = {
     all: `
       query rivercity_data($limit: Int!) {
-        rivercity_data(ordering: "publishedat desc", limit: $limit) {
+        rivercity_data(filter: "deveui = '0080E115054FF0B7'", ordering: "publishedat desc", limit: $limit) {
           rctemp
           humidity
-          deveui
           publishedat
           dataid
           apiid
@@ -216,7 +215,7 @@ async function getRivercityData(type, limit) {
     `,
     temp: `
       query rivercity_data($limit: Int!) {
-        rivercity_data(ordering: "publishedat desc", limit: $limit) {
+        rivercity_data(filter: "deveui = '0080E115054FF0B7'", ordering: "publishedat desc", limit: $limit) {
           rctemp
           dataid
           deveui
@@ -226,7 +225,7 @@ async function getRivercityData(type, limit) {
     `,
     hum: `
       query rivercity_data($limit: Int!) {
-        rivercity_data(ordering: "publishedat desc", limit: $limit) {
+        rivercity_data(filter: "deveui = '0080E115054FF0B7'", ordering: "publishedat desc", limit: $limit) {
           humidity
           dataid
           deveui
