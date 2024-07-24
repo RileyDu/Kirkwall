@@ -15,10 +15,11 @@ import { useWeatherData } from '../../WeatherDataContext';
 import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
+import { handleChartChange } from '../../Charts/ChartUtils';
 
 export default function RainSensors({ statusOfAlerts }) {
-  const { weatherData, rainfallData, loading } = useWeatherData();
-
+  const { weatherData, rainfallData, loading, handleTimePeriodChange } = useWeatherData();
+  const [rainfallChartType, setRainfallChartType] = useState('bar');
   const [isReady, setIsReady] = useState(false);
 
   const { colorMode } = useColorMode();
@@ -63,17 +64,28 @@ export default function RainSensors({ statusOfAlerts }) {
       </Box>
       <Box color={colorMode === 'light' ? 'black' : 'white'}>
         <ChartWrapper
-          title="Rainfall (inches)"
+          title="Rainfall (in)"
+          onChartChange={handleChartChange(setRainfallChartType)}
           weatherData={rainfallData || weatherData}
-          metric={'rain_15_min_inches'}
+          metric="rain_15_min_inches"
+          handleTimePeriodChange={handleTimePeriodChange}
         >
-          <BarChart
-            data={rainfallData || weatherData}
-            metric="rain_15_min_inches"
-          />
-        </ChartWrapper>
+          {rainfallChartType === 'line' ? (
+            <LineChart
+              data={rainfallData || weatherData}
+              metric="rain_15_min_inches"
+              style={{ flex: 1 }}
+            />
+            ) : (
+              <BarChart
+                data={rainfallData || weatherData}
+                metric="rain_15_min_inches"
+                style={{ flex: 1 }}
+              />
+            )}
+          </ChartWrapper>
       </Box>
-      <Divider my={'8'} borderWidth="4px" borderRadius={'full'} />
+      {/* <Divider my={'8'} borderWidth="4px" borderRadius={'full'} />
       <Box color={colorMode === 'light' ? 'black' : 'white'}>
         <ChartWrapper
           title="Rainfall (inches)"
@@ -85,7 +97,7 @@ export default function RainSensors({ statusOfAlerts }) {
             metric="rain_15_min_inches"
           />
         </ChartWrapper>
-      </Box>
+      </Box> */}
     </Box>
   );
 }

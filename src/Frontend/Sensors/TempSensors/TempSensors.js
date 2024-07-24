@@ -6,13 +6,16 @@ import { useWeatherData } from '../../WeatherDataContext';
 import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
+import { handleChartChange } from '../../Charts/ChartUtils';
 
 export default function TempSensors({ statusOfAlerts }) {
-  const { weatherData, tempData, loading } = useWeatherData();
+  const { weatherData, tempData, loading, handleTimePeriodChange } = useWeatherData();
 
   const { colorMode } = useColorMode();
 
   const [isReady, setIsReady] = useState(false);
+  const [tempChartType, setTempChartType] = useState('bar');
+
 
   useEffect(() => {
     setIsReady(false);
@@ -60,18 +63,26 @@ export default function TempSensors({ statusOfAlerts }) {
         <Box width="100%">
           <ChartWrapper
             title="Temperature (°F)"
+            onChartChange={handleChartChange(setTempChartType)}
             weatherData={tempData || weatherData}
-            metric={'temperature'}
+            metric="temperature"
+            display="flex"
+            flexDirection="column"
+            handleTimePeriodChange={handleTimePeriodChange}
           >
-            <LineChart data={tempData || weatherData} metric="temperature" />
-          </ChartWrapper>
-          <Divider my={'8'} borderWidth="4px" borderRadius={'full'} />
-          <ChartWrapper
-            title="Temperature (°F)"
-            weatherData={tempData || weatherData}
-            metric={'temperature'}
-          >
-            <BarChart data={tempData || weatherData} metric="temperature" />
+            {tempChartType === 'line' ? (
+            <LineChart
+              data={tempData || weatherData}
+              metric="temperature"
+              style={{ flex: 1 }}
+            />
+          ) : (
+            <BarChart
+              data={tempData || weatherData}
+              metric="temperature"
+              style={{ flex: 1 }}
+            />
+            )}
           </ChartWrapper>
         </Box>
       </Flex>
