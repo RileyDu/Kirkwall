@@ -31,6 +31,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Function to send SMS alert
 const sendSMSAlert = async (to, body) => {
   try {
+    console.log(`Sending SMS to ${to}: ${body}`);
     await client.messages.create({
       body: body,
       from: twilioPhoneNumber,
@@ -52,6 +53,7 @@ const sendEmailAlert = async (to, subject, text, html) => {
   };
 
   try {
+    console.log(`Sending Email to ${to}: ${subject}`);
     await sgMail.send(msg);
   } catch (error) {
     console.error('Error sending Email:', error);
@@ -70,12 +72,32 @@ const extractCurrentValue = (response, metric) => {
   return null;
 };
 
+// In-memory store to track last alert times for debouncing
+// const lastAlertTimes = {};
+
+// Function to get the latest thresholds for each metric
+const getLatestThresholds = (thresholds) => {
+  const latestThresholds = {};
+
+  thresholds.forEach(threshold => {
+    const { metric, timestamp } = threshold;
+
+    if (!latestThresholds[metric] || new Date(threshold.timestamp) > new Date(latestThresholds[metric].timestamp)) {
+      latestThresholds[metric] = threshold;
+    }
+  });
+
+  return Object.values(latestThresholds);
+};
+
 // Function to check thresholds and send alerts
 const checkThresholds = async () => {
+  console.log('Checking thresholds...');
   try {
     const thresholds = await getLatestThreshold();
+    const latestThresholds = getLatestThresholds(thresholds.data.thresholds);
 
-    for (const threshold of thresholds.data.thresholds) {
+    for (const threshold of latestThresholds) {
       const { id, metric, high, low, phone, email } = threshold;
       let responseData;
 
@@ -105,18 +127,27 @@ const checkThresholds = async () => {
 
       if (currentValue == null) continue;
 
+      // const now = new Date();
+      // const lastAlertTime = lastAlertTimes[id] || 0;
+      // const timeSinceLastAlert = now - lastAlertTime;
+
+      // if (timeSinceLastAlert < 300000) { // 5 minutes in milliseconds
+      //   console.log(`Skipping alert for ${metric}, recently alerted.`);
+      //   continue;
+      // }
+
       if (currentValue > high) {
         const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high}.`;
         if (phone) await sendSMSAlert(phone, alertMessage);
         if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage, alertMessage);
-        // await updateLastAlertTime(id, new Date().toISOString());
+        // lastAlertTimes[id] = now;
       }
 
       if (currentValue < low) {
         const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low}.`;
         if (phone) await sendSMSAlert(phone, alertMessage);
         if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage, alertMessage);
-        // await updateLastAlertTime(id, new Date().toISOString());
+        // lastAlertTimes[id] = now;
       }
     }
   } catch (error) {
@@ -125,6 +156,7 @@ const checkThresholds = async () => {
 };
 
 // Schedule the threshold check function to run every 5 minutes
+console.log('Scheduling cron job for checking thresholds every 5 minutes...');
 cron.schedule('*/5 * * * *', checkThresholds);
 
 app.listen(port, () => {
