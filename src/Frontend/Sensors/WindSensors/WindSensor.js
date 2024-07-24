@@ -77,7 +77,7 @@ export default function WindSensors({ statusOfAlerts }) {
         Wind Sensors
       </Heading>
       <Box width="100%" mb="4">
-        <MiniDashboard metric="wind_speed" weatherData={weatherData} />
+        <MiniDashboard metric="wind_speed" weatherData={windData || weatherData} />
       </Box>
       {!isMobile && (
         <>
