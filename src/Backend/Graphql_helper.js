@@ -290,6 +290,7 @@ async function createThreshold(metric, high, low, phone, email, timestamp) {
   return executeGraphqlQuery(mutation, variables);
 }
 
+// Function to get all alerts from the database
 async function getAlerts() {
   const query = `
   query {
@@ -301,6 +302,27 @@ async function getAlerts() {
       }
       `;
   return executeGraphqlQuery(query);
+}
+
+// Function to add a new alert to the database
+async function createAlert(metric, message, timestamp) {
+  const mutation = `
+    mutation($i: alertsInput! ) {
+      create_alerts(input: $i) {
+        metric
+        message
+        timestamp
+      }
+    }
+  `;
+  const variables = {
+    i: {
+      metric: metric,
+      message: message,
+      timestamp: timestamp,
+    },
+  };
+  return executeGraphqlQuery(mutation, variables);
 }
 
 // Function to get API ID of user
@@ -369,4 +391,5 @@ export {
   getLatestThreshold,
   createThreshold,
   getAlerts,
+  createAlert,
 };
