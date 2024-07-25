@@ -6,7 +6,7 @@ import cron from 'node-cron';
 import dotenv from 'dotenv';
 import cors from 'cors';
 dotenv.config();
-import { getWeatherData, getWatchdogData, getRivercityData, getLatestThreshold } from './Graphql_helper.js';
+import { getWeatherData, getWatchdogData, getRivercityData, getLatestThreshold, createAlert } from './Graphql_helper.js';
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -59,6 +59,15 @@ const sendEmailAlert = async (to, subject, text, html) => {
     console.error('Error sending Email:', error);
   }
 };
+
+const sendAlertToDB = async (metric, message, timestamp) => {
+  try {
+    console.log(`Sending alert to database: ${message}`);
+    await createAlert(metric, message, timestamp);
+  } catch (error) {
+    console.error('Error sending alert to database:', error);
+  }
+}
 
 // Utility function to extract current value based on the metric and response structure
 const extractCurrentValue = (response, metric) => {
@@ -140,6 +149,7 @@ const checkThresholds = async () => {
         const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high}.`;
         if (phone) await sendSMSAlert(phone, alertMessage);
         if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage, alertMessage);
+        sendAlertToDB(metric, alertMessage, new Date());
         // lastAlertTimes[id] = now;
       }
 
@@ -147,6 +157,7 @@ const checkThresholds = async () => {
         const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low}.`;
         if (phone) await sendSMSAlert(phone, alertMessage);
         if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage, alertMessage);
+        sendAlertToDB(metric, alertMessage, new Date());
         // lastAlertTimes[id] = now;
       }
     }
