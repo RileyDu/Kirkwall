@@ -258,8 +258,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     temperature: <FaTemperatureHigh />,
     humidity: <FaTint />,
     wind: <FaWind />,
-    soilMoisture: <FaWater />,
-    leafWetness: <FaLeaf />,
+    soil: <FaWater />,
+    leaf: <FaLeaf />,
     rainfall: <FaCloudRain />,
   };
 
@@ -319,6 +319,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                 Main Dashboard
               </Heading>
               <Menu isOpen={isOpen}>
+                <Tooltip label="Toggle Charts">
                 <MenuButton
                   as={Button}
                   bg="brand.400"
@@ -328,6 +329,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                 >
                   <FaChevronDown />
                 </MenuButton>
+                  </Tooltip>
                 <MenuList placement="top" sx={{ bg: '#212121', border: '2px' }}>
                   {Object.keys(charts).map(chart => (
                     <MenuItem
@@ -343,6 +345,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                           ? '#212121'
                           : 'white'
                       }
+                      border={'1px solid #212121'}
                     >
                       <Flex
                         alignItems="center"
@@ -351,9 +354,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       >
                         {charts[chart]}
                         <Box ml="2">
-                          {visibleCharts.grandFarm.includes(chart)
-                            ? 'Hide'
-                            : 'Show'}
+                          
                           {chart.charAt(0).toUpperCase() + chart.slice(1)}
                         </Box>
                       </Flex>
@@ -373,6 +374,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                           ? '#212121'
                           : 'white'
                       }
+                      border={'1px solid #212121'}
+
                     >
                       <Flex
                         alignItems="center"
@@ -381,9 +384,6 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       >
                         {charts[chart]}
                         <Box ml="2">
-                          {visibleCharts.garage.includes(chart)
-                            ? 'Hide'
-                            : 'Show'}{' '}
                           {chart.charAt(0).toUpperCase() + chart.slice(1)}
                         </Box>
                       </Flex>
@@ -403,6 +403,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                           ? '#212121'
                           : 'white'
                       }
+                      border={'1px solid #212121'}
                     >
                       <Flex
                         alignItems="center"
@@ -411,9 +412,6 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       >
                         {charts[chart]}
                         <Box ml="2">
-                          {visibleCharts.rivercity.includes(chart)
-                            ? 'Hide'
-                            : 'Show'}{' '}
                           {chart.charAt(0).toUpperCase() + chart.slice(1)}
                         </Box>
                       </Flex>
@@ -848,7 +846,11 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                           : 'white'
                       }
                     >
-                      <Flex alignItems="center">
+                      <Flex
+                        alignItems="center"
+                        justifyContent={'center'}
+                        w={'100%'}
+                      >
                         {charts[chart]}
                         <Box ml="2">
                           {visibleCharts.grandFarm.includes(chart)
@@ -1064,7 +1066,6 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                   color="black"
                   _hover={{ bg: '#d7a247' }}
                   onClick={isOpen ? onClose : onOpen}
-
                 >
                   <FaChevronDown />
                 </MenuButton>
@@ -1084,7 +1085,11 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                           : 'white'
                       }
                     >
-                      <Flex alignItems="center">
+                      <Flex
+                        alignItems="center"
+                        justifyContent={'center'}
+                        w={'100%'}
+                      >
                         {charts[chart]}
                         <Box ml="2">
                           {visibleCharts.garage.includes(chart)
@@ -1186,7 +1191,6 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                   color="black"
                   _hover={{ bg: '#d7a247' }}
                   onClick={isOpen ? onClose : onOpen}
-
                 >
                   <FaChevronDown />
                 </MenuButton>
@@ -1206,7 +1210,11 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                           : 'white'
                       }
                     >
-                      <Flex alignItems="center">
+                      <Flex
+                        alignItems="center"
+                        justifyContent={'center'}
+                        w={'100%'}
+                      >
                         {charts[chart]}
                         <Box ml="2">
                           {visibleCharts.rivercity.includes(chart)
