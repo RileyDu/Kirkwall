@@ -61,18 +61,14 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
   const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isReady, setIsReady] = useState(false);
-  const [showSections, setShowSections] = useState({
-    grandFarm: true,
-    garage: true,
-    rivercity: true,
-  });
+
   const [visibleCharts, setVisibleCharts] = useState({
     grandFarm: [
       'temperature',
       'humidity',
       'wind',
-      'soilMoisture',
-      'leafWetness',
+      'soil',
+      'leaf',
       'rainfall',
     ],
     garage: ['temperature', 'humidity'],
@@ -88,19 +84,6 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
   const { colorMode } = useColorMode();
   const iconColor = useColorModeValue('black', 'white');
 
-  const showSection = section => {
-    setShowSections(prevState => ({
-      ...prevState,
-      [section]: true,
-    }));
-  };
-
-  const hideSection = section => {
-    setShowSections(prevState => ({
-      ...prevState,
-      [section]: false,
-    }));
-  };
 
   const showChart = (section, chart) => {
     setVisibleCharts(prevState => ({
@@ -117,11 +100,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
   };
 
   const handleVoiceCommand = command => {
-    if (command.includes('show freezer')) {
-      showSection('rivercity');
-    } else if (command.includes('hide freezer')) {
-      hideSection('rivercity');
-    } else if (command.includes('log out')) {
+ if (command.includes('log out')) {
       logOut();
     } else if (command.includes('show temperature')) {
       showChart('rivercity', 'temperature');
@@ -173,12 +152,6 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
     }
   }, [weatherData]);
 
-  const toggleSection = section => {
-    setShowSections(prevState => ({
-      ...prevState,
-      [section]: !prevState[section],
-    }));
-  };
 
   const toggleChartVisibility = (section, chart) => {
     setVisibleCharts(prevState => {
