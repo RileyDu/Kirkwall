@@ -20,6 +20,7 @@ import {
   IconButton,
   Tooltip,
   useMediaQuery,
+  useDisclosure,
 } from '@chakra-ui/react';
 import VoiceControl from '../../services/VoiceControl';
 import { LineChart, BarChart } from '../../Charts/Charts';
@@ -51,34 +52,20 @@ const MotionTabPanel = motion(TabPanel);
 const WatchdogProtectDashboard = ({ timePeriod, statusOfAlerts }) => {
   const {
     weatherData,
-    tempData,
-    humidityData,
-    windData,
-    rainfallData,
-    soilMoistureData,
-    leafWetnessData,
     loading,
     handleTimePeriodChange,
     watchdogData,
     watchdogTempData,
     watchdogHumData,
-    rivercityTempData,
-    rivercityHumData,
-    rivercityData,
-    APIIDs,
+
   } = useWeatherData();
 
   const [tempChartType, setTempChartType] = useState('bar');
   const [humidityChartType, setHumidityChartType] = useState('bar');
   const [watchdogTempChartType, setWatchdogTempChartType] = useState('bar');
   const [watchdogHumidityChartType, setWatchdogHumidityChartType] = useState('bar');
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [isReady, setIsReady] = useState(false);
-  const [showSections, setShowSections] = useState({
-    grandFarm: true,
-    garage: true,
-    rivercity: true,
-  });
   const [visibleCharts, setVisibleCharts] = useState({
     grandFarm: [
       'temperature',
@@ -101,20 +88,6 @@ const WatchdogProtectDashboard = ({ timePeriod, statusOfAlerts }) => {
   const { colorMode } = useColorMode();
   const iconColor = useColorModeValue('black', 'white');
 
-  const showSection = section => {
-    setShowSections(prevState => ({
-      ...prevState,
-      [section]: true,
-    }));
-  };
-
-  const hideSection = section => {
-    setShowSections(prevState => ({
-      ...prevState,
-      [section]: false,
-    }));
-  };
-
   const showChart = (section, chart) => {
     setVisibleCharts(prevState => ({
       ...prevState,
@@ -130,19 +103,7 @@ const WatchdogProtectDashboard = ({ timePeriod, statusOfAlerts }) => {
   };
 
   const handleVoiceCommand = command => {
-    if (command.includes('show grand farm')) {
-      showSection('grandFarm');
-    } else if (command.includes('hide grand farm')) {
-      hideSection('grandFarm');
-    } else if (command.includes('show garage')) {
-      showSection('garage');
-    } else if (command.includes('hide garage')) {
-      hideSection('garage');
-    } else if (command.includes('show freezer')) {
-      showSection('rivercity');
-    } else if (command.includes('hide freezer')) {
-      hideSection('rivercity');
-    } else if (command.includes('show temperature')) {
+    if (command.includes('show temperature')) {
       showChart('grandFarm', 'temperature');
     } else if (command.includes('hide temperature')) {
       hideChart('grandFarm', 'temperature');
@@ -222,12 +183,7 @@ const WatchdogProtectDashboard = ({ timePeriod, statusOfAlerts }) => {
     }
   }, [weatherData]);
 
-  const toggleSection = section => {
-    setShowSections(prevState => ({
-      ...prevState,
-      [section]: !prevState[section],
-    }));
-  };
+
 
   const toggleChartVisibility = (section, chart) => {
     setVisibleCharts(prevState => {
@@ -303,23 +259,9 @@ const WatchdogProtectDashboard = ({ timePeriod, statusOfAlerts }) => {
             transition={{ duration: 0.5 }}
             key="main-dashboard"
           >
-            <Flex justifyContent={isLargerThan768 ? 'flex-start' : 'center'} mb="6">
+            <Flex justifyContent={isLargerThan768 ? 'space-between' : 'center'} mb="2">
             <Heading size={isLargerThan768 ? 'lg' : 'xl'} textDecoration={isLargerThan768 ? 'none' : 'underline'}>Watchdog Protect Dashboard</Heading>
-            </Flex>
-            <MotionBox
-              initial={{ opacity: 0, height: 0 }}
-              animate={{
-                opacity: showSections.garage ? 1 : 0,
-                height: showSections.garage ? 'auto' : 0,
-              }}
-              transition={{ duration: 0.5 }}
-              mb={8}
-            >
-              <Flex justify="center" mb="4">
-              <Heading size="lg" textAlign="center" mb="4">
-    Garage Sensors
-  </Heading>
-  <Menu>
+  <Menu isOpen={isOpen}>
     <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
       <MenuButton
         as={IconButton}
@@ -329,17 +271,18 @@ const WatchdogProtectDashboard = ({ timePeriod, statusOfAlerts }) => {
         _hover={{ bg: '#d7a247' }}
         variant="outline"
         aria-label="Toggle Charts"
-        size={"sm"}
-        ml={2}
+        size={isLargerThan768 ? 'md' : 'sm'}
+        ml={isLargerThan768 ? '0' : '4'}
         mt={isLargerThan768 ? '1' : '0'}
+        onClick={isOpen ? onClose : onOpen}
         />
     </Tooltip>
-                  <MenuList>
+                  <MenuList sx={{ bg: '#212121', border: '2px' }}>
                     {['temperature', 'humidity'].map(chart => (
                       <MenuItem key={chart} onClick={() => toggleChartVisibility('garage', chart)}>
-                        <Flex alignItems="center">
+                        <Flex alignItems="center" justifyContent={"center"} w={"100%"}>
                           {charts[chart]}
-                          <Box ml="2">{visibleCharts.garage.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
+                          <Box ml="2">{chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
                         </Flex>
                       </MenuItem>
                     ))}
@@ -413,7 +356,6 @@ const WatchdogProtectDashboard = ({ timePeriod, statusOfAlerts }) => {
                   </GridItem>
                 )}
               </Grid>
-            </MotionBox>
           </MotionTabPanel>
         </TabPanels>
       </Tabs>

@@ -60,13 +60,6 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
     leafWetnessData,
     loading,
     handleTimePeriodChange,
-    watchdogData,
-    watchdogTempData,
-    watchdogHumData,
-    rivercityTempData,
-    rivercityHumData,
-    rivercityData,
-    APIIDs,
   } = useWeatherData();
 
   const [tempChartType, setTempChartType] = useState('bar');
@@ -75,18 +68,10 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
   const [rainfallChartType, setRainfallChartType] = useState('bar');
   const [soilMoistureChartType, setSoilMoistureChartType] = useState('bar');
   const [leafWetnessChartType, setLeafWetnessChartType] = useState('bar');
-  const [watchdogTempChartType, setWatchdogTempChartType] = useState('bar');
-  const [watchdogHumidityChartType, setWatchdogHumidityChartType] =
-    useState('bar');
-  const [rivercityTempChartType, setRivercityTempChartType] = useState('bar');
-  const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isReady, setIsReady] = useState(false);
-  const [showSections, setShowSections] = useState({
-    grandFarm: true,
-    garage: true,
-    rivercity: true,
-  });
+
   const [visibleCharts, setVisibleCharts] = useState({
     grandFarm: [
       'temperature',
@@ -96,8 +81,6 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
       'leaf',
       'rainfall',
     ],
-    garage: ['temperature', 'humidity'],
-    rivercity: ['temperature', 'humidity'],
   });
 
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
@@ -109,19 +92,6 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
   const { colorMode } = useColorMode();
   const iconColor = useColorModeValue('black', 'white');
 
-  const showSection = section => {
-    setShowSections(prevState => ({
-      ...prevState,
-      [section]: true,
-    }));
-  };
-
-  const hideSection = section => {
-    setShowSections(prevState => ({
-      ...prevState,
-      [section]: false,
-    }));
-  };
 
   const showChart = (section, chart) => {
     setVisibleCharts(prevState => ({
@@ -138,19 +108,8 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
   };
 
   const handleVoiceCommand = command => {
-    if (command.includes('show grand farm')) {
-      showSection('grandFarm');
-    } else if (command.includes('hide grand farm')) {
-      hideSection('grandFarm');
-    } else if (command.includes('show garage')) {
-      showSection('garage');
-    } else if (command.includes('hide garage')) {
-      hideSection('garage');
-    } else if (command.includes('show freezer')) {
-      showSection('rivercity');
-    } else if (command.includes('hide freezer')) {
-      hideSection('rivercity');
-    } else if (command.includes('show temperature')) {
+    
+    if (command.includes('show temperature')) {
       showChart('grandFarm', 'temperature');
     } else if (command.includes('hide temperature')) {
       hideChart('grandFarm', 'temperature');
@@ -229,13 +188,6 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
       setIsReady(true);
     }
   }, [weatherData]);
-
-  const toggleSection = section => {
-    setShowSections(prevState => ({
-      ...prevState,
-      [section]: !prevState[section],
-    }));
-  };
 
   const toggleChartVisibility = (section, chart) => {
     setVisibleCharts(prevState => {
