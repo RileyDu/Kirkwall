@@ -282,21 +282,21 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             color={colorMode === 'light' ? 'black' : 'white'}
             _selected={{ color: 'white', bg: 'orange.400' }}
           >
-            Main{' '}
+            Main
           </Tab>
           <Tab
             fontSize={{ base: 'sm', md: 'md' }}
             color={colorMode === 'light' ? 'black' : 'white'}
             _selected={{ color: 'white', bg: 'orange.400' }}
           >
-            Grand Farm{' '}
+            Grand Farm
           </Tab>
           <Tab
             fontSize={{ base: 'sm', md: 'md' }}
             color={colorMode === 'light' ? 'black' : 'white'}
             _selected={{ color: 'white', bg: 'orange.400' }}
           >
-            Garage{' '}
+            Garage
           </Tab>
           <Tab
             fontSize={{ base: 'sm', md: 'md' }}
@@ -318,12 +318,13 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               <Heading size="lg" mb="4">
                 Main Dashboard
               </Heading>
-              <Menu isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
+              <Menu isOpen={isOpen}>
                 <MenuButton
                   as={Button}
                   bg="brand.400"
                   color="black"
                   _hover={{ bg: '#d7a247' }}
+                  onClick={isOpen ? onClose : onOpen}
                 >
                   <FaChevronDown />
                 </MenuButton>
@@ -352,7 +353,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         <Box ml="2">
                           {visibleCharts.grandFarm.includes(chart)
                             ? 'Hide'
-                            : 'Show'}{' '}
+                            : 'Show'}
                           {chart.charAt(0).toUpperCase() + chart.slice(1)}
                         </Box>
                       </Flex>
@@ -362,7 +363,16 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     <MenuItem
                       key={chart}
                       onClick={() => handleMenuItemClick('garage', chart)}
-                      bg={'brand.50'}
+                      bg={
+                        visibleCharts.garage.includes(chart)
+                          ? 'brand.50'
+                          : '#212121'
+                      }
+                      color={
+                        visibleCharts.garage.includes(chart)
+                          ? '#212121'
+                          : 'white'
+                      }
                     >
                       <Flex
                         alignItems="center"
@@ -383,7 +393,16 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     <MenuItem
                       key={chart}
                       onClick={() => handleMenuItemClick('rivercity', chart)}
-                      bg={'brand.50'}
+                      bg={
+                        visibleCharts.rivercity.includes(chart)
+                          ? 'brand.50'
+                          : '#212121'
+                      }
+                      color={
+                        visibleCharts.rivercity.includes(chart)
+                          ? '#212121'
+                          : 'white'
+                      }
                     >
                       <Flex
                         alignItems="center"
@@ -803,20 +822,31 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               <Heading size="lg" textAlign="center" mb="4">
                 Grand Farm Sensors
               </Heading>
-              <Menu>
+              <Menu isOpen={isOpen}>
                 <MenuButton
                   as={Button}
                   bg="brand.400"
                   color="black"
                   _hover={{ bg: '#d7a247' }}
+                  onClick={isOpen ? onClose : onOpen}
                 >
                   <FaChevronDown />
                 </MenuButton>
-                <MenuList>
+                <MenuList sx={{ bg: '#212121', border: '2px' }}>
                   {Object.keys(charts).map(chart => (
                     <MenuItem
                       key={chart}
                       onClick={() => toggleChartVisibility('grandFarm', chart)}
+                      bg={
+                        visibleCharts.grandFarm.includes(chart)
+                          ? 'brand.50'
+                          : '#212121'
+                      }
+                      color={
+                        visibleCharts.grandFarm.includes(chart)
+                          ? '#212121'
+                          : 'white'
+                      }
                     >
                       <Flex alignItems="center">
                         {charts[chart]}
@@ -1027,20 +1057,32 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               <Heading size="lg" textAlign="center" mb="4">
                 Garage Sensors
               </Heading>
-              <Menu>
+              <Menu isOpen={isOpen}>
                 <MenuButton
                   as={Button}
                   bg="brand.400"
                   color="black"
                   _hover={{ bg: '#d7a247' }}
+                  onClick={isOpen ? onClose : onOpen}
+
                 >
                   <FaChevronDown />
                 </MenuButton>
-                <MenuList>
+                <MenuList placement="top" sx={{ bg: '#212121', border: '2px' }}>
                   {['temperature', 'humidity'].map(chart => (
                     <MenuItem
                       key={chart}
                       onClick={() => toggleChartVisibility('garage', chart)}
+                      bg={
+                        visibleCharts.garage.includes(chart)
+                          ? 'brand.50'
+                          : '#212121'
+                      }
+                      color={
+                        visibleCharts.garage.includes(chart)
+                          ? '#212121'
+                          : 'white'
+                      }
                     >
                       <Flex alignItems="center">
                         {charts[chart]}
@@ -1137,20 +1179,32 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               <Heading size="lg" textAlign="center" mb="4">
                 Freezer Sensors
               </Heading>
-              <Menu>
+              <Menu isOpen={isOpen}>
                 <MenuButton
                   as={Button}
                   bg="brand.400"
                   color="black"
                   _hover={{ bg: '#d7a247' }}
+                  onClick={isOpen ? onClose : onOpen}
+
                 >
                   <FaChevronDown />
                 </MenuButton>
-                <MenuList>
+                <MenuList sx={{ bg: '#212121', border: '2px' }}>
                   {['temperature', 'humidity'].map(chart => (
                     <MenuItem
                       key={chart}
                       onClick={() => toggleChartVisibility('rivercity', chart)}
+                      bg={
+                        visibleCharts.rivercity.includes(chart)
+                          ? 'brand.50'
+                          : '#212121'
+                      }
+                      color={
+                        visibleCharts.rivercity.includes(chart)
+                          ? '#212121'
+                          : 'white'
+                      }
                     >
                       <Flex alignItems="center">
                         {charts[chart]}
