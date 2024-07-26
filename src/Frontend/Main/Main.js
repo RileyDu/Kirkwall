@@ -100,8 +100,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const [currentTimePeriod, setCurrentTimePeriod] = useState('1H');
   const { colorMode } = useColorMode();
   const iconColor = useColorModeValue('black', 'white');
-
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
   const showChart = (section, chart) => {
     setVisibleCharts(prevState => ({
@@ -270,13 +270,13 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
       flex="1"
       p="4"
       pt={statusOfAlerts ? '10px' : '74px'}
-      width="calc(100% - 80px)"
+      width={isLargerThan768 ? "calc(100% - 70px)" : "100%"}
       minHeight="100vh"
       display="flex"
       flexDirection="column"
     >
       <Tabs variant="soft-rounded" colorScheme="orange">
-        <TabList mb="6">
+        <TabList mb="6" justifyContent={isLargerThan768 ? 'flex-start' : 'space-evenly'}>
           <Tab
             fontSize={{ base: 'sm', md: 'md' }}
             color={colorMode === 'light' ? 'black' : 'white'}
@@ -306,6 +306,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             Freezer
           </Tab>
         </TabList>
+        <Divider mt={'-4'} w={'100%'}/>
         <TabPanels>
           <MotionTabPanel
             initial={{ opacity: 0, y: 10 }}
@@ -314,7 +315,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             transition={{ duration: 0.5 }}
             key="main-dashboard"
           >
-            <Flex justify="space-between">
+            <Flex justify={isLargerThan768 ? 'space-between' : 'center'}>
               <Heading size="lg" mb="4">
                 Main Dashboard
               </Heading>
@@ -326,6 +327,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                   color="black"
                   _hover={{ bg: '#d7a247' }}
                   onClick={isOpen ? onClose : onOpen}
+                  size={isLargerThan768 ? 'md' : 'sm'}
+                  // mt={isLargerThan768 ? '0' : '4'}
+                  ml={isLargerThan768 ? '0' : '4'}
                 >
                   <FaChevronDown />
                 </MenuButton>
