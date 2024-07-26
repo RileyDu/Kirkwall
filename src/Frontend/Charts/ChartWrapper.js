@@ -17,6 +17,7 @@ import {
   PopoverCloseButton,
   PopoverHeader,
   PopoverBody,
+  Input,
 } from '@chakra-ui/react';
 import {
   FaExpandAlt,
@@ -55,6 +56,8 @@ const ChartWrapper = ({
   const [loading, setLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [sensorMap, setSensorMap] = useState('grandfarm'); // State to toggle between map and chart
+  const [userTitle, setUserTitle] = useState('Location Placeholder');
+  const [newTitle, setNewTitle] = useState(title);
 
   const { currentUser } = useAuth();
 
@@ -112,23 +115,24 @@ const ChartWrapper = ({
     setMapToDisplay(metric, currentUser);
   }, [metric, currentUser]);
 
-  const restrictedRoutes = [
-    //   '/TempSensors',
-    //   '/HumiditySensors',
-    //   '/SoilMoistureSensors',
-    //   '/WindSensors',
-    //   '/RainSensors',
-    //   '/WatchdogSensors',
-    //   '/RivercitySensors',
-  ];
-
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
-  // useEffect(() => {
-  //   setShowIcons(!isLargerThan768);
-  // }, []);
 
   const getBackgroundColor = colorMode =>
     colorMode === 'light' ? '#f9f9f9' : 'gray.800';
+
+  useEffect(() => {
+    const savedTitle = localStorage.getItem(`chartTitle_${metric}`);
+    if (savedTitle) {
+      setUserTitle(savedTitle);
+      setNewTitle(savedTitle);
+    }
+  }, [metric]);
+
+  const handleTitleChange = e => setNewTitle(e.target.value);
+  const handleTitleSubmit = () => {
+    setUserTitle(newTitle);
+    localStorage.setItem(`chartTitle_${metric}`, newTitle);
+  };
 
   const handleFormSubmit = () => {
     // let formattedPhoneNumber = phoneNumber.startsWith('+1')
@@ -341,9 +345,53 @@ const ChartWrapper = ({
                     bg={'brand.400'}
                     color={'#212121'}
                   >
-                    <Text fontSize={fontSize}>
-                      Title Placeholder
-                    </Text>
+                    <Popover trigger="hover" placement="bottom">
+                      <PopoverTrigger>
+                        <Text fontSize={fontSize} cursor="pointer">
+                          {userTitle}
+                        </Text>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        bg="brand.50"
+                        color="white"
+                        borderRadius="md"
+                        border="2px solid #212121"
+                        p={0} // Remove padding to ensure the content uses full space
+                        w="auto" // Ensure width adapts to content
+                      >
+                        <PopoverArrow />
+                        <PopoverCloseButton
+                          size={closeSize}
+                          color="white"
+                          mt={[1, -1]}
+                        />
+                        <PopoverHeader
+                          bg="#212121"
+                          fontWeight="bold"
+                          color="white"
+                        >
+                          EDIT TITLE{' '}
+                        </PopoverHeader>
+                        <PopoverBody>
+                          <Input
+                            value={newTitle}
+                            onChange={handleTitleChange}
+                            sx={{
+                              color: 'black',
+                              bg: 'white',
+                              border: '2px solid #fd9801',
+                            }}
+                          />
+                          <Button
+                            mt={2}
+                            onClick={handleTitleSubmit}
+                            variant={'sidebar'}
+                          >
+                            Save
+                          </Button>
+                        </PopoverBody>
+                      </PopoverContent>
+                    </Popover>
                   </Box>
                 </motion.div>
 
@@ -362,9 +410,11 @@ const ChartWrapper = ({
                     bg={'brand.400'}
                     color={'#212121'}
                   >
-                    <Text fontSize={fontSize}>
-                      Current: {formatValue(mostRecentValue)}
-                    </Text>
+                    <Tooltip label="Current Value">
+                      <Text fontSize={fontSize}>
+                        Current: {formatValue(mostRecentValue)}
+                      </Text>
+                    </Tooltip>
                   </Box>
                 </motion.div>
               </>
@@ -447,27 +497,6 @@ const ChartWrapper = ({
                 </Popover>
               </Box>
             </motion.div>
-            {/* <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, delay: 0.2 }}
-              >
-                <Tooltip label="Thresholds">
-                  <MotionIconButton
-                    icon={<FaChessRook />}
-                    variant="outline"
-                    color="#212121"
-                    size="md"
-                    bg={'brand.400'}
-                    _hover={{ bg: 'brand.800' }}
-                    onClick={handleOpenModal}
-                    mr={2}
-                    border={'2px solid #fd9801'}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  />
-                </Tooltip>
-              </motion.div> */}
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
