@@ -21,7 +21,7 @@ import {
 import {
   FaExpandAlt,
   FaChessRook,
-  FaChartBar, 
+  FaChartBar,
   FaChartLine,
   FaMap,
 } from 'react-icons/fa';
@@ -77,10 +77,14 @@ const ChartWrapper = ({
   };
   const setMapToDisplay = (metric, currentUser) => {
     // Check for special case
-    if (currentUser && currentUser.email === 'jerrycromarty@imprimedicine.com') {
+    if (
+      currentUser &&
+      currentUser.email === 'jerrycromarty@imprimedicine.com'
+    ) {
       setSensorMap('imprimed');
       return;
-    }    switch (metric) {
+    }
+    switch (metric) {
       case 'temperature':
       case 'percent_humidity':
       case 'wind_speed':
@@ -108,17 +112,17 @@ const ChartWrapper = ({
     setMapToDisplay(metric, currentUser);
   }, [metric, currentUser]);
 
-   const restrictedRoutes = [
-  //   '/TempSensors',
-  //   '/HumiditySensors',
-  //   '/SoilMoistureSensors',
-  //   '/WindSensors',
-  //   '/RainSensors',
-  //   '/WatchdogSensors',
-  //   '/RivercitySensors',
-   ];
+  const restrictedRoutes = [
+    //   '/TempSensors',
+    //   '/HumiditySensors',
+    //   '/SoilMoistureSensors',
+    //   '/WindSensors',
+    //   '/RainSensors',
+    //   '/WatchdogSensors',
+    //   '/RivercitySensors',
+  ];
 
-   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
+  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   // useEffect(() => {
   //   setShowIcons(!isLargerThan768);
   // }, []);
@@ -184,7 +188,7 @@ const ChartWrapper = ({
         rctemp: 'rci-logo-white.png',
       },
     };
-  
+
     return logoMap[colorMode][metric] || '';
   };
 
@@ -308,117 +312,142 @@ const ChartWrapper = ({
       >
         <Flex justify="space-between" mb="4" align="center">
           <Box fontSize={fontSize} fontWeight="bold">
-          {logo && <img src={logo} alt="logo" width="100px" border="2px solid #212121" mb="2"/>}
+            {logo && (
+              <img
+                src={logo}
+                alt="logo"
+                width="100px"
+                border="2px solid #212121"
+                mb="2"
+              />
+            )}
             {title}
           </Box>
-            <Flex alignItems="center">
-              {isLargerThan768 && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1 }}
-              >
-                <Box
-                  border="2px"
-                  borderColor="#fd9801"
-                  borderRadius="lg"
-                  px={2}
-                  py={1}
-                  mr={2}
-                  bg={'brand.400'}
-                  color={'#212121'}
+          <Flex alignItems="center">
+            {isLargerThan768 && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 1 }}
                 >
-                  <Text fontSize={fontSize}>
-                    Current: {formatValue(mostRecentValue)}
-                  </Text>
-                </Box>
-              </motion.div>
-              )}
-              <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, delay: 0.25 }}
-              >
-                <Box
-                  border="2px"
-                  borderColor="#fd9801"
-                  borderRadius="lg"
-                  px={2}
-                  py={1}
-                  mr={2}
-                  bg={'brand.400'}
-                  color={'#212121'}
-                >
-                  <Popover
-                    trigger="hover"
-                    placement="bottom"
-                    closeOnBlur
-                    closeOnEsc
+                  <Box
+                    border="2px"
+                    borderColor="#fd9801"
+                    borderRadius="lg"
+                    px={2}
+                    py={1}
+                    mr={2}
+                    bg={'brand.400'}
+                    color={'#212121'}
                   >
-                    <PopoverTrigger>
-                      <Text fontSize={fontSize}>Time: {timeOfGraph}</Text>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      bg="brand.50"
+                    <Text fontSize={fontSize}>
+                      Title Placeholder
+                    </Text>
+                  </Box>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 1, delay: 0.15 }}
+                >
+                  <Box
+                    border="2px"
+                    borderColor="#fd9801"
+                    borderRadius="lg"
+                    px={2}
+                    py={1}
+                    mr={2}
+                    bg={'brand.400'}
+                    color={'#212121'}
+                  >
+                    <Text fontSize={fontSize}>
+                      Current: {formatValue(mostRecentValue)}
+                    </Text>
+                  </Box>
+                </motion.div>
+              </>
+            )}
+            <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, delay: 0.25 }}
+            >
+              <Box
+                border="2px"
+                borderColor="#fd9801"
+                borderRadius="lg"
+                px={2}
+                py={1}
+                mr={2}
+                bg={'brand.400'}
+                color={'#212121'}
+              >
+                <Popover
+                  trigger="hover"
+                  placement="bottom"
+                  closeOnBlur
+                  closeOnEsc
+                >
+                  <PopoverTrigger>
+                    <Text fontSize={fontSize}>Time: {timeOfGraph}</Text>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    bg="brand.50"
+                    color="white"
+                    borderRadius="md"
+                    border="2px solid #212121"
+                    p={0} // Remove padding to ensure the content uses full space
+                    w="auto" // Ensure width adapts to content
+                  >
+                    <PopoverArrow bg="#212121" border={'2px solid #212121'} />
+                    <PopoverHeader bg="#212121" fontWeight="bold" color="white">
+                      TIME SELECTOR
+                    </PopoverHeader>
+                    <PopoverCloseButton
+                      size={closeSize}
                       color="white"
-                      borderRadius="md"
-                      border="2px solid #212121"
-                      p={0} // Remove padding to ensure the content uses full space
-                      w="auto" // Ensure width adapts to content
-                    >
-                      <PopoverArrow bg="#212121" border={'2px solid #212121'} />
-                      <PopoverHeader
-                        bg="#212121"
-                        fontWeight="bold"
-                        color="white"
+                      mt={[1, -1]}
+                    />
+                    <PopoverBody color="#212121" p={0}>
+                      {/* Remove padding for full width use */}
+                      <Box
+                        display="flex"
+                        flexWrap="wrap" // Allows buttons to wrap if they don't fit in one line
+                        gap={0.5}
+                        p={2} // Add some padding inside the Box for spacing
+                        w="100%" // Ensure the Box takes full width
                       >
-                        TIME SELECTOR
-                      </PopoverHeader>
-                      <PopoverCloseButton
-                        size={closeSize}
-                        color="white"
-                        mt={[1, -1]}
-                      />
-                      <PopoverBody color="#212121" p={0}>
-                        {/* Remove padding for full width use */}
-                        <Box
-                          display="flex"
-                          flexWrap="wrap" // Allows buttons to wrap if they don't fit in one line
-                          gap={0.5}
-                          p={2} // Add some padding inside the Box for spacing
-                          w="100%" // Ensure the Box takes full width
-                        >
-                          {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map(
-                            timePeriod => (
-                              <MotionButton
-                                key={timePeriod}
-                                variant="pill"
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                                onClick={() =>
-                                  handleTimeButtonClick(timePeriod)
-                                }
-                                bg={
-                                  currentTimePeriod === timePeriod
-                                    ? 'brand.800'
-                                    : 'gray.100'
-                                }
-                                color="black"
-                                fontSize={fontSize}
-                                flex="1 1 0" // Ensures buttons take equal space and grow
-                                m={0} // Remove margin
-                              >
-                                {timePeriod}
-                              </MotionButton>
-                            )
-                          )}
-                        </Box>
-                      </PopoverBody>
-                    </PopoverContent>
-                  </Popover>
-                </Box>
-              </motion.div>
-              {/* <motion.div
+                        {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map(
+                          timePeriod => (
+                            <MotionButton
+                              key={timePeriod}
+                              variant="pill"
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleTimeButtonClick(timePeriod)}
+                              bg={
+                                currentTimePeriod === timePeriod
+                                  ? 'brand.800'
+                                  : 'gray.100'
+                              }
+                              color="black"
+                              fontSize={fontSize}
+                              flex="1 1 0" // Ensures buttons take equal space and grow
+                              m={0} // Remove margin
+                            >
+                              {timePeriod}
+                            </MotionButton>
+                          )
+                        )}
+                      </Box>
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
+              </Box>
+            </motion.div>
+            {/* <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1, delay: 0.2 }}
@@ -439,69 +468,69 @@ const ChartWrapper = ({
                   />
                 </Tooltip>
               </motion.div> */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, delay: 0.35 }}
-              >
-                <Tooltip label="Map">
-                  <MotionIconButton
-                    icon={<FaMap />}
-                    variant="outline"
-                    color="#212121"
-                    size={iconSize}
-                    bg={'brand.400'}
-                    _hover={{ bg: 'brand.800' }}
-                    onClick={toggleMap}
-                    border={'2px solid #fd9801'}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    mr={2}
-                  />
-                </Tooltip>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, delay: 0.35 }}
-              >
-                <Tooltip label="Change Chart Type">
-                  <MotionIconButton
-                    icon={getChartIcon()}
-                    variant="outline"
-                    color="#212121"
-                    size={iconSize}
-                    bg={'brand.400'}
-                    _hover={{ bg: 'brand.800' }}
-                    onClick={handleChartTypeChange}
-                    border={'2px solid #fd9801'}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    mr={2}
-                  />
-                </Tooltip>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, delay: 0.5 }}
-              >
-                <Tooltip label="Expand Chart">
-                  <MotionIconButton
-                    icon={<FaExpandAlt />}
-                    variant="outline"
-                    color="#212121"
-                    size={iconSize}
-                    bg={'brand.400'}
-                    _hover={{ bg: 'brand.800' }}
-                    onClick={onOpen}
-                    border={'2px solid #fd9801'}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  />
-                </Tooltip>
-              </motion.div>
-            </Flex>
+            <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, delay: 0.35 }}
+            >
+              <Tooltip label="Map">
+                <MotionIconButton
+                  icon={<FaMap />}
+                  variant="outline"
+                  color="#212121"
+                  size={iconSize}
+                  bg={'brand.400'}
+                  _hover={{ bg: 'brand.800' }}
+                  onClick={toggleMap}
+                  border={'2px solid #fd9801'}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  mr={2}
+                />
+              </Tooltip>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, delay: 0.35 }}
+            >
+              <Tooltip label="Change Chart Type">
+                <MotionIconButton
+                  icon={getChartIcon()}
+                  variant="outline"
+                  color="#212121"
+                  size={iconSize}
+                  bg={'brand.400'}
+                  _hover={{ bg: 'brand.800' }}
+                  onClick={handleChartTypeChange}
+                  border={'2px solid #fd9801'}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  mr={2}
+                />
+              </Tooltip>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, delay: 0.5 }}
+            >
+              <Tooltip label="Expand Chart">
+                <MotionIconButton
+                  icon={<FaExpandAlt />}
+                  variant="outline"
+                  color="#212121"
+                  size={iconSize}
+                  bg={'brand.400'}
+                  _hover={{ bg: 'brand.800' }}
+                  onClick={onOpen}
+                  border={'2px solid #fd9801'}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                />
+              </Tooltip>
+            </motion.div>
+          </Flex>
         </Flex>
         {showMap && (
           <motion.div
