@@ -6,16 +6,7 @@ import {
   IconButton,
   Tooltip,
   Button,
-  Input,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
+  useMediaQuery,
   useToast,
   useBreakpointValue,
   useDisclosure,
@@ -127,18 +118,10 @@ const ChartWrapper = ({
   //   '/RivercitySensors',
    ];
 
-  useEffect(() => {
-    setShowIcons(!restrictedRoutes.includes(location.pathname));
-
-    const chartSettings = JSON.parse(
-      localStorage.getItem(`chartSettings_${title}`)
-    );
-    if (chartSettings) {
-      setPhoneNumber(chartSettings.phoneNumber || '');
-      setHighThreshold(chartSettings.highThreshold || '');
-      setLowThreshold(chartSettings.lowThreshold || '');
-    }
-  }, [location.pathname, title]);
+   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
+  // useEffect(() => {
+  //   setShowIcons(!isLargerThan768);
+  // }, []);
 
   const getBackgroundColor = colorMode =>
     colorMode === 'light' ? '#f9f9f9' : 'gray.800';
@@ -328,9 +311,9 @@ const ChartWrapper = ({
           {logo && <img src={logo} alt="logo" width="100px" border="2px solid #212121" mb="2"/>}
             {title}
           </Box>
-          {showIcons && (
             <Flex alignItems="center">
-              {/* <motion.div
+              {isLargerThan768 && (
+              <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1 }}
@@ -349,7 +332,8 @@ const ChartWrapper = ({
                     Current: {formatValue(mostRecentValue)}
                   </Text>
                 </Box>
-              </motion.div> */}
+              </motion.div>
+              )}
               <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -518,7 +502,6 @@ const ChartWrapper = ({
                 </Tooltip>
               </motion.div>
             </Flex>
-          )}
         </Flex>
         {showMap && (
           <motion.div
