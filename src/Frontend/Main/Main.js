@@ -76,6 +76,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   //   rivercity: true,
   // });
   const [visibleCharts, setVisibleCharts] = useState({
+    // mainpage: ['temperature', 'humidity', 'wind', 'soilMoisture', 'leafWetness', 'rainfall'],
     grandFarm: ['temperature', 'humidity', 'wind', 'soilMoisture', 'leafWetness', 'rainfall'],
     garage: ['temperature', 'humidity'],
     rivercity: ['temperature', 'humidity'],
@@ -270,42 +271,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
           >
             <Flex justify="space-between" mb="6" alignItems="center">
               <Heading size="lg">Main Dashboard</Heading>
-              {/* <Menu>
-                <MenuButton
-                  as={Button}
-                  rightIcon={<FaChevronDown />}
-                  bg="brand.400"
-                  color="black"
-                  _hover={{ bg: '#d7a247' }}
-                >
-                  Toggle Sections
-                </MenuButton>
-                <MenuList>
-                  <MenuItem onClick={() => toggleSection('grandFarm')}>
-                    {showSections.grandFarm ? 'Hide' : 'Show'} Grand Farm Sensors
-                  </MenuItem>
-                  <MenuItem onClick={() => toggleSection('garage')}>
-                    {showSections.garage ? 'Hide' : 'Show'} Garage Sensors
-                  </MenuItem>
-                  <MenuItem onClick={() => toggleSection('rivercity')}>
-                    {showSections.rivercity ? 'Hide' : 'Show'} Freezer Sensors
-                  </MenuItem>
-                </MenuList>
-              </Menu> */}
-            </Flex>
-            <MotionBox
-              initial={{ opacity: 0, height: 0 }}
-              animate={{
-                opacity: 1 ,
-                height: 'auto',
-              }}
-              transition={{ duration: 0.5 }}
-              mb={'8'}
-            >
-              <Flex justify="center" mb="4">
-                <Menu>
-                  <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
-                    Toggle Charts
+              <Menu>
+                  <MenuButton as={Button} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
+                  <FaChevronDown />
                   </MenuButton>
                   <MenuList>
                     {Object.keys(charts).map(chart => (
@@ -316,9 +284,34 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         </Flex>
                       </MenuItem>
                     ))}
+                    {['temperature', 'humidity'].map(chart => (
+                      <MenuItem key={chart} onClick={() => toggleChartVisibility('garage', chart)}>
+                        <Flex alignItems="center">
+                          {charts[chart]}
+                          <Box ml="2">{visibleCharts.garage.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
+                        </Flex>
+                      </MenuItem>
+                    ))}
+                    {['temperature', 'humidity'].map(chart => (
+                      <MenuItem key={chart} onClick={() => toggleChartVisibility('rivercity', chart)}>
+                        <Flex alignItems="center">
+                          {charts[chart]}
+                          <Box ml="2">{visibleCharts.rivercity.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
+                        </Flex>
+                      </MenuItem>
+                    ))}
                   </MenuList>
                 </Menu>
-              </Flex>
+            </Flex>
+            <MotionBox
+              initial={{ opacity: 0, height: 0 }}
+              animate={{
+                opacity: 1 ,
+                height: 'auto',
+              }}
+              transition={{ duration: 0.5 }}
+              mb={'8'}
+            >
               <Grid
                 templateColumns={{
                   base: '1fr',
@@ -512,7 +505,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               transition={{ duration: 0.5 }}
               mb={8}
             >
-              <Flex justify="center" mb="4">
+              {/* <Flex justify="center" mb="4">
                 <Menu>
                   <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
                     Toggle Charts
@@ -528,7 +521,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     ))}
                   </MenuList>
                 </Menu>
-              </Flex>
+              </Flex> */}
               <Grid
                 templateColumns={{
                   base: '1fr',
@@ -605,7 +598,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               }}
               transition={{ duration: 0.5 }}
             >
-              <Flex justify="center" mb="4">
+              {/* <Flex justify="center" mb="4">
                 <Menu>
                   <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
                     Toggle Charts
@@ -621,7 +614,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     ))}
                   </MenuList>
                 </Menu>
-              </Flex>
+              </Flex> */}
               <Grid
                 templateColumns={{
                   base: '1fr',
