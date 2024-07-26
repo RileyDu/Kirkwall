@@ -19,7 +19,8 @@ import {
   useColorModeValue,
   IconButton,
   Tooltip,
-  useMediaQuery
+  useMediaQuery,
+  useDisclosure,
 } from '@chakra-ui/react';
 import VoiceControl from '../../services/VoiceControl';
 import { LineChart, BarChart } from '../../Charts/Charts';
@@ -36,7 +37,6 @@ import {
   FaWater,
   FaLeaf,
   FaCloudRain,
-  
 } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { useWeatherData } from '../../WeatherDataContext';
@@ -44,7 +44,6 @@ import { handleChartChange } from '../../Charts/ChartUtils';
 import { motion } from 'framer-motion';
 // import { useAuth } from '../AuthComponents/AuthContext.js';
 import ChartExpandModal from '../../Charts/ChartExpandModal';
-
 const MotionBox = motion(Box);
 const MotionTabPanel = motion(TabPanel);
 
@@ -58,10 +57,9 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
     rivercityData,
   } = useWeatherData();
 
-
   const [rivercityTempChartType, setRivercityTempChartType] = useState('bar');
   const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [isReady, setIsReady] = useState(false);
   const [showSections, setShowSections] = useState({
     grandFarm: true,
@@ -242,7 +240,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
       flex="1"
       p="4"
       pt={statusOfAlerts ? '10px' : '74px'}
-      width={isLargerThan768 ? "calc(100% - 70px)" : "100%"}
+      width={isLargerThan768 ? 'calc(100% - 70px)' : '100%'}
       minHeight="100vh"
       display="flex"
       flexDirection="column"
@@ -256,124 +254,119 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
             transition={{ duration: 0.5 }}
             key="main-dashboard"
           >
-            <Flex justifyContent={isLargerThan768 ? 'flex-start' : 'center'} mb="6">
-              <Heading size={isLargerThan768 ? 'lg' : 'xl'} textDecoration={isLargerThan768 ? 'none' : 'underline'}>ImpriMed Dashboard</Heading>
-            </Flex>
-            <MotionBox
-              initial={{ opacity: 0, height: 0 }}
-              animate={{
-                opacity: showSections.rivercity ? 1 : 0,
-                height: showSections.rivercity ? 'auto' : 0,
-              }}
-              transition={{ duration: 0.5 }}
+            <Flex
+              justifyContent={isLargerThan768 ? 'space-between' : 'center'}
+              mb="2"
             >
-              <Flex justify="center" align="center" mb="4">
-  <Heading size="lg" textAlign="center">
-    Freezer Sensors
-  </Heading>
-  <Menu>
-    <MenuButton
-      as={Button}
-      bg="brand.400"
-      color="black"
-      _hover={{ bg: '#d7a247' }}
-      ml={2}
-      size={'xs'}
-      mt={2}
-    >
-      <FaChevronDown />
-    </MenuButton>
-    <MenuList>
-      {['temperature', 'humidity'].map(chart => (
-        <MenuItem
-          key={chart}
-          onClick={() => toggleChartVisibility('rivercity', chart)}
-        >
-          <Flex alignItems="center">
-            {charts[chart]}
-            <Box ml="2">
-              {visibleCharts.rivercity.includes(chart) ? 'Hide' : 'Show'}{' '}
-              {chart.charAt(0).toUpperCase() + chart.slice(1)}
-            </Box>
-          </Flex>
-        </MenuItem>
-      ))}
-    </MenuList>
-  </Menu>
-</Flex>
-
-              <Grid
-                templateColumns={{
-                  base: '1fr',
-                  md: 'repeat(2, 1fr)',
-                  lg: 'repeat(2, 1fr)',
-                }}
-                gap="6"
+              <Heading
+                size={isLargerThan768 ? 'lg' : 'xl'}
+                textDecoration={isLargerThan768 ? 'none' : 'underline'}
               >
-                {visibleCharts.rivercity.includes('temperature') && (
-                  <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    <ChartWrapper
-                      title="Temperature (°F)"
-                      onChartChange={handleChartChange(
-                        setRivercityTempChartType
-                      )}
-                      weatherData={rivercityTempData || rivercityData}
-                      metric="rctemp"
-                      flex="1"
-                      timePeriod={timePeriod}
-                      display="flex"
-                      flexDirection="column"
-                      handleTimePeriodChange={handleTimePeriodChange}
+                ImpriMed Dashboard
+              </Heading>
+              <Menu isOpen={isOpen}>
+                <Tooltip label="Toggle Charts">
+                  <MenuButton
+                    as={Button}
+                    bg="brand.400"
+                    color="black"
+                    _hover={{ bg: '#d7a247' }}
+                    onClick={isOpen ? onClose : onOpen}
+                    size={isLargerThan768 ? 'md' : 'sm'}
+                    ml={isLargerThan768 ? '0' : '4'}
+                  >
+                    <FaChevronDown />
+                  </MenuButton>
+                </Tooltip>
+                <MenuList sx={{ bg: '#212121', border: '2px' }}>
+                  {['temperature', 'humidity'].map(chart => (
+                    <MenuItem
+                      key={chart}
+                      onClick={() => toggleChartVisibility('rivercity', chart)}
                     >
-                      {rivercityTempChartType === 'line' ? (
-                        <LineChart
-                          data={rivercityTempData || rivercityData}
-                          metric="rctemp"
-                          style={{ flex: 1 }}
-                        />
-                      ) : (
-                        <BarChart
-                          data={rivercityTempData || rivercityData}
-                          metric="rctemp"
-                          style={{ flex: 1 }}
-                        />
-                      )}
-                    </ChartWrapper>
-                  </GridItem>
-                )}
-                {visibleCharts.rivercity.includes('humidity') && (
-                  <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    <ChartWrapper
-                      title="Humidity (%)"
-                      onChartChange={handleChartChange(
-                        setRivercityHumChartType
-                      )}
-                      weatherData={rivercityHumData || rivercityData}
-                      metric="humidity"
-                      flex="1"
-                      timePeriod={timePeriod}
-                      display="flex"
-                      flexDirection="column"
-                      handleTimePeriodChange={handleTimePeriodChange}
-                    >
-                      {rivercityHumChartType === 'line' ? (
-                        <LineChart
-                          data={rivercityHumData || rivercityData}
-                          metric="humidity"
-                          style={{ flex: 1 }}
-                        />
-                      ) : (
-                        <BarChart
-                          data={rivercityHumData || rivercityData}
-                          metric="humidity"
-                          style={{ flex: 1 }}
-                        />
-                      )}
-                    </ChartWrapper>
-                  </GridItem>
-                )}
-              </Grid>
-            </MotionBox>
+                      <Flex
+                        alignItems="center"
+                        justifyContent={'center'}
+                        w={'100%'}
+                      >
+                        {charts[chart]}
+                        <Box ml="2">
+                          {chart.charAt(0).toUpperCase() + chart.slice(1)}
+                        </Box>
+                      </Flex>
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </Menu>
+            </Flex>
+            <Grid
+              templateColumns={{
+                base: '1fr',
+                md: 'repeat(2, 1fr)',
+                lg: 'repeat(2, 1fr)',
+              }}
+              gap="6"
+            >
+              {visibleCharts.rivercity.includes('temperature') && (
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Temperature (°F)"
+                    onChartChange={handleChartChange(setRivercityTempChartType)}
+                    weatherData={rivercityTempData || rivercityData}
+                    metric="rctemp"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                  >
+                    {rivercityTempChartType === 'line' ? (
+                      <LineChart
+                        data={rivercityTempData || rivercityData}
+                        metric="rctemp"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={rivercityTempData || rivercityData}
+                        metric="rctemp"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+              )}
+              {visibleCharts.rivercity.includes('humidity') && (
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Humidity (%)"
+                    onChartChange={handleChartChange(setRivercityHumChartType)}
+                    weatherData={rivercityHumData || rivercityData}
+                    metric="humidity"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                  >
+                    {rivercityHumChartType === 'line' ? (
+                      <LineChart
+                        data={rivercityHumData || rivercityData}
+                        metric="humidity"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={rivercityHumData || rivercityData}
+                        metric="humidity"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+              )}
+            </Grid>
+            {/* </MotionBox> */}
           </MotionTabPanel>
         </TabPanels>
       </Tabs>

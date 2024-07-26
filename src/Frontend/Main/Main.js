@@ -88,8 +88,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
       'temperature',
       'humidity',
       'wind',
-      'soilMoisture',
-      'leafWetness',
+      'soil',
+      'leaf',
       'rainfall',
     ],
     garage: ['temperature', 'humidity'],
@@ -328,8 +328,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                   _hover={{ bg: '#d7a247' }}
                   onClick={isOpen ? onClose : onOpen}
                   size={isLargerThan768 ? 'md' : 'sm'}
-                  // mt={isLargerThan768 ? '0' : '4'}
-                  ml={isLargerThan768 ? '0' : '4'}
+                  ml={isLargerThan768 ? '2' : '4'}
                 >
                   <FaChevronDown />
                 </MenuButton>
@@ -528,7 +527,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     </ChartWrapper>
                   </GridItem>
                 )}
-                {visibleCharts.grandFarm.includes('soilMoisture') && (
+                {visibleCharts.grandFarm.includes('soil') && (
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                     <ChartWrapper
                       title="Soil Moisture (centibar)"
@@ -559,7 +558,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     </ChartWrapper>
                   </GridItem>
                 )}
-                {visibleCharts.grandFarm.includes('leafWetness') && (
+                {visibleCharts.grandFarm.includes('leaf') && (
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                     <ChartWrapper
                       title="Leaf Wetness (0-15)"
