@@ -333,7 +333,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                   <FaChevronDown />
                 </MenuButton>
                   </Tooltip>
-                <MenuList placement="top"  bg={colorMode === "light" ? '#212121' : "#fd9801"} border={'2px'} borderColor={colorMode === "light" ? '#212121' : "#fd9801"}>
+                <MenuList placement="top"  bg={colorMode === "light" ? '#212121' : "grey"} border={'2px'} borderColor={colorMode === "light" ? '#212121' : "grey"}>
                   {Object.keys(charts).map(chart => (
                     <MenuItem
                       key={chart}
