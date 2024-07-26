@@ -20,14 +20,26 @@ import {
   IconButton,
   Tooltip,
   Divider,
-  useMediaQuery
+  useMediaQuery,
+  useDisclosure,
 } from '@chakra-ui/react';
 import VoiceControl from '../services/VoiceControl';
 import { LineChart, BarChart } from '../Charts/Charts';
 import Logout from '../../Frontend/AuthComponents/Logout';
 import { auth } from '../../Backend/Firebase';
 import ChartWrapper from '../Charts/ChartWrapper';
-import { FaChessRook, FaChevronDown, FaPlus, FaMinus, FaTemperatureHigh, FaTint, FaWind, FaWater, FaLeaf, FaCloudRain } from 'react-icons/fa';
+import {
+  FaChessRook,
+  FaChevronDown,
+  FaPlus,
+  FaMinus,
+  FaTemperatureHigh,
+  FaTint,
+  FaWind,
+  FaWater,
+  FaLeaf,
+  FaCloudRain,
+} from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { useWeatherData } from '../WeatherDataContext';
 import { handleChartChange } from '../Charts/ChartUtils';
@@ -55,7 +67,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     rivercityTempData,
     rivercityHumData,
     rivercityData,
-    APIIDs
+    APIIDs,
   } = useWeatherData();
 
   const [tempChartType, setTempChartType] = useState('bar');
@@ -65,41 +77,43 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const [soilMoistureChartType, setSoilMoistureChartType] = useState('bar');
   const [leafWetnessChartType, setLeafWetnessChartType] = useState('bar');
   const [watchdogTempChartType, setWatchdogTempChartType] = useState('bar');
-  const [watchdogHumidityChartType, setWatchdogHumidityChartType] = useState('bar');
+  const [watchdogHumidityChartType, setWatchdogHumidityChartType] =
+    useState('bar');
   const [rivercityTempChartType, setRivercityTempChartType] = useState('bar');
   const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
-
   const [isReady, setIsReady] = useState(false);
-  // const [showSections, setShowSections] = useState({
-  //   grandFarm: true,
-  //   garage: true,
-  //   rivercity: true,
-  // });
   const [visibleCharts, setVisibleCharts] = useState({
     // mainpage: ['temperature', 'humidity', 'wind', 'soilMoisture', 'leafWetness', 'rainfall'],
-    grandFarm: ['temperature', 'humidity', 'wind', 'soilMoisture', 'leafWetness', 'rainfall'],
+    grandFarm: [
+      'temperature',
+      'humidity',
+      'wind',
+      'soilMoisture',
+      'leafWetness',
+      'rainfall',
+    ],
     garage: ['temperature', 'humidity'],
     rivercity: ['temperature', 'humidity'],
   });
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalChart, setModalChart] = useState('');
   const [currentTimePeriod, setCurrentTimePeriod] = useState('1H');
-
   const { colorMode } = useColorMode();
   const iconColor = useColorModeValue('black', 'white');
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const showChart = (section, chart) => {
-    setVisibleCharts((prevState) => ({
+    setVisibleCharts(prevState => ({
       ...prevState,
       [section]: [...prevState[section], chart],
     }));
   };
 
   const hideChart = (section, chart) => {
-    setVisibleCharts((prevState) => ({
+    setVisibleCharts(prevState => ({
       ...prevState,
-      [section]: prevState[section].filter((item) => item !== chart),
+      [section]: prevState[section].filter(item => item !== chart),
     }));
   };
 
@@ -155,20 +169,22 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   //   }
   // };
 
-  const openModal = (chart) => {
+  const openModal = chart => {
     setModalChart(chart);
     setIsModalOpen(true);
   };
 
   const logOut = () => {
-    auth.signOut().then(() => {
-      console.log('User logged out');
-      // Additional logout logic if needed
-    }).catch((error) => {
-      console.error('Logout error:', error);
-    });
+    auth
+      .signOut()
+      .then(() => {
+        console.log('User logged out');
+        // Additional logout logic if needed
+      })
+      .catch(error => {
+        console.error('Logout error:', error);
+      });
   };
-
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -190,12 +206,17 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   // };
 
   const toggleChartVisibility = (section, chart) => {
-    setVisibleCharts((prevState) => {
+    setVisibleCharts(prevState => {
       const newSectionCharts = prevState[section].includes(chart)
-        ? prevState[section].filter((item) => item !== chart)
+        ? prevState[section].filter(item => item !== chart)
         : [...prevState[section], chart];
       return { ...prevState, [section]: newSectionCharts };
     });
+  };
+
+  const handleMenuItemClick = (location, chart) => {
+    toggleChartVisibility(location, chart);
+    onOpen(); // Reopen the menu after the user action
   };
 
   const getLogoColor = () => (colorMode === 'light' ? 'black' : 'white');
@@ -224,9 +245,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
         icon={isVisible ? <FaMinus /> : <FaPlus />}
         onClick={onClick}
         mx="1"
-        bg={isVisible ? "red.400" : "green.400"}
+        bg={isVisible ? 'red.400' : 'green.400'}
         color="white"
-        _hover={{ bg: isVisible ? "red.500" : "green.500" }}
+        _hover={{ bg: isVisible ? 'red.500' : 'green.500' }}
         size="sm"
         aria-label={`${isVisible ? 'Hide' : 'Show'} ${chart}`}
       />
@@ -239,7 +260,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     wind: <FaWind />,
     soilMoisture: <FaWater />,
     leafWetness: <FaLeaf />,
-    rainfall: <FaCloudRain />
+    rainfall: <FaCloudRain />,
   };
 
   return (
@@ -256,10 +277,34 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     >
       <Tabs variant="soft-rounded" colorScheme="orange">
         <TabList mb="6">
-          <Tab fontSize={{ base: 'sm', md: 'md' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>Main </Tab>
-          <Tab fontSize={{ base: 'sm', md: 'md' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>Grand Farm </Tab>
-          <Tab fontSize={{ base: 'sm', md: 'md' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>Garage </Tab>
-          <Tab fontSize={{ base: 'sm', md: 'md' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>Freezer</Tab>
+          <Tab
+            fontSize={{ base: 'sm', md: 'md' }}
+            color={colorMode === 'light' ? 'black' : 'white'}
+            _selected={{ color: 'white', bg: 'orange.400' }}
+          >
+            Main{' '}
+          </Tab>
+          <Tab
+            fontSize={{ base: 'sm', md: 'md' }}
+            color={colorMode === 'light' ? 'black' : 'white'}
+            _selected={{ color: 'white', bg: 'orange.400' }}
+          >
+            Grand Farm{' '}
+          </Tab>
+          <Tab
+            fontSize={{ base: 'sm', md: 'md' }}
+            color={colorMode === 'light' ? 'black' : 'white'}
+            _selected={{ color: 'white', bg: 'orange.400' }}
+          >
+            Garage{' '}
+          </Tab>
+          <Tab
+            fontSize={{ base: 'sm', md: 'md' }}
+            color={colorMode === 'light' ? 'black' : 'white'}
+            _selected={{ color: 'white', bg: 'orange.400' }}
+          >
+            Freezer
+          </Tab>
         </TabList>
         <TabPanels>
           <MotionTabPanel
@@ -269,44 +314,99 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             transition={{ duration: 0.5 }}
             key="main-dashboard"
           >
-            <Flex justify="space-between" mb="6" alignItems="center">
-              <Heading size="lg">Main Dashboard</Heading>
-              <Menu>
-                  <MenuButton as={Button} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
+            <Flex justify="space-between">
+              <Heading size="lg" mb="4">
+                Main Dashboard
+              </Heading>
+              <Menu isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
+                <MenuButton
+                  as={Button}
+                  bg="brand.400"
+                  color="black"
+                  _hover={{ bg: '#d7a247' }}
+                >
                   <FaChevronDown />
-                  </MenuButton>
-                  <MenuList>
-                    {Object.keys(charts).map(chart => (
-                      <MenuItem key={chart} onClick={() => toggleChartVisibility('grandFarm', chart)}>
-                        <Flex alignItems="center">
-                          {charts[chart]}
-                          <Box ml="2">{visibleCharts.grandFarm.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
-                        </Flex>
-                      </MenuItem>
-                    ))}
-                    {['temperature', 'humidity'].map(chart => (
-                      <MenuItem key={chart} onClick={() => toggleChartVisibility('garage', chart)}>
-                        <Flex alignItems="center">
-                          {charts[chart]}
-                          <Box ml="2">{visibleCharts.garage.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
-                        </Flex>
-                      </MenuItem>
-                    ))}
-                    {['temperature', 'humidity'].map(chart => (
-                      <MenuItem key={chart} onClick={() => toggleChartVisibility('rivercity', chart)}>
-                        <Flex alignItems="center">
-                          {charts[chart]}
-                          <Box ml="2">{visibleCharts.rivercity.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
-                        </Flex>
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                </Menu>
+                </MenuButton>
+                <MenuList placement="top" sx={{ bg: '#212121', border: '2px' }}>
+                  {Object.keys(charts).map(chart => (
+                    <MenuItem
+                      key={chart}
+                      onClick={() => handleMenuItemClick('grandFarm', chart)}
+                      bg={
+                        visibleCharts.grandFarm.includes(chart)
+                          ? 'brand.50'
+                          : '#212121'
+                      }
+                      color={
+                        visibleCharts.grandFarm.includes(chart)
+                          ? '#212121'
+                          : 'white'
+                      }
+                    >
+                      <Flex
+                        alignItems="center"
+                        justifyContent={'center'}
+                        w={'100%'}
+                      >
+                        {charts[chart]}
+                        <Box ml="2">
+                          {visibleCharts.grandFarm.includes(chart)
+                            ? 'Hide'
+                            : 'Show'}{' '}
+                          {chart.charAt(0).toUpperCase() + chart.slice(1)}
+                        </Box>
+                      </Flex>
+                    </MenuItem>
+                  ))}
+                  {['temperature', 'humidity'].map(chart => (
+                    <MenuItem
+                      key={chart}
+                      onClick={() => handleMenuItemClick('garage', chart)}
+                      bg={'brand.50'}
+                    >
+                      <Flex
+                        alignItems="center"
+                        justifyContent={'center'}
+                        w={'100%'}
+                      >
+                        {charts[chart]}
+                        <Box ml="2">
+                          {visibleCharts.garage.includes(chart)
+                            ? 'Hide'
+                            : 'Show'}{' '}
+                          {chart.charAt(0).toUpperCase() + chart.slice(1)}
+                        </Box>
+                      </Flex>
+                    </MenuItem>
+                  ))}
+                  {['temperature', 'humidity'].map(chart => (
+                    <MenuItem
+                      key={chart}
+                      onClick={() => handleMenuItemClick('rivercity', chart)}
+                      bg={'brand.50'}
+                    >
+                      <Flex
+                        alignItems="center"
+                        justifyContent={'center'}
+                        w={'100%'}
+                      >
+                        {charts[chart]}
+                        <Box ml="2">
+                          {visibleCharts.rivercity.includes(chart)
+                            ? 'Hide'
+                            : 'Show'}{' '}
+                          {chart.charAt(0).toUpperCase() + chart.slice(1)}
+                        </Box>
+                      </Flex>
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </Menu>
             </Flex>
             <MotionBox
               initial={{ opacity: 0, height: 0 }}
               animate={{
-                opacity: 1 ,
+                opacity: 1,
                 height: 'auto',
               }}
               transition={{ duration: 0.5 }}
@@ -411,7 +511,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                     <ChartWrapper
                       title="Soil Moisture (centibar)"
-                      onChartChange={handleChartChange(setSoilMoistureChartType)}
+                      onChartChange={handleChartChange(
+                        setSoilMoistureChartType
+                      )}
                       weatherData={soilMoistureData || weatherData}
                       metric="soil_moisture"
                       flex="1"
@@ -494,9 +596,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     </ChartWrapper>
                   </GridItem>
                 )}
-              </Grid>
-            </MotionBox>
-            <MotionBox
+                {/* <MotionBox
               initial={{ opacity: 0, height: 0 }}
               animate={{
                 opacity: 1,
@@ -504,8 +604,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               }}
               transition={{ duration: 0.5 }}
               mb={8}
-            >
-              {/* <Flex justify="center" mb="4">
+            > */}
+                {/* <Flex justify="center" mb="4">
                 <Menu>
                   <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
                     Toggle Charts
@@ -522,19 +622,21 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                   </MenuList>
                 </Menu>
               </Flex> */}
-              <Grid
+                {/* <Grid
                 templateColumns={{
                   base: '1fr',
                   md: 'repeat(2, 1fr)',
                   lg: 'repeat(2, 1fr)',
                 }}
                 gap="6"
-              >
+              > */}
                 {visibleCharts.garage.includes('temperature') && (
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                     <ChartWrapper
                       title="Temperature (°F)"
-                      onChartChange={handleChartChange(setWatchdogTempChartType)}
+                      onChartChange={handleChartChange(
+                        setWatchdogTempChartType
+                      )}
                       weatherData={watchdogTempData || watchdogData}
                       metric="temp"
                       flex="1"
@@ -563,7 +665,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                     <ChartWrapper
                       title="Humidity (%)"
-                      onChartChange={handleChartChange(setWatchdogHumidityChartType)}
+                      onChartChange={handleChartChange(
+                        setWatchdogHumidityChartType
+                      )}
                       weatherData={watchdogHumData || watchdogData}
                       metric="hum"
                       flex="1"
@@ -588,7 +692,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     </ChartWrapper>
                   </GridItem>
                 )}
-              </Grid>
+                {/* </Grid>
             </MotionBox>
             <MotionBox
               initial={{ opacity: 0, height: 0 }}
@@ -597,8 +701,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                 height:'auto',
               }}
               transition={{ duration: 0.5 }}
-            >
-              {/* <Flex justify="center" mb="4">
+            > */}
+                {/* <Flex justify="center" mb="4">
                 <Menu>
                   <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
                     Toggle Charts
@@ -615,19 +719,21 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                   </MenuList>
                 </Menu>
               </Flex> */}
-              <Grid
+                {/* <Grid
                 templateColumns={{
                   base: '1fr',
                   md: 'repeat(2, 1fr)',
                   lg: 'repeat(2, 1fr)',
                 }}
                 gap="6"
-              >
+              > */}
                 {visibleCharts.rivercity.includes('temperature') && (
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                     <ChartWrapper
                       title="Temperature (°F)"
-                      onChartChange={handleChartChange(setRivercityTempChartType)}
+                      onChartChange={handleChartChange(
+                        setRivercityTempChartType
+                      )}
                       weatherData={rivercityTempData || rivercityData}
                       metric="rctemp"
                       flex="1"
@@ -656,7 +762,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                     <ChartWrapper
                       title="Humidity (%)"
-                      onChartChange={handleChartChange(setRivercityHumChartType)}
+                      onChartChange={handleChartChange(
+                        setRivercityHumChartType
+                      )}
                       weatherData={rivercityHumData || rivercityData}
                       metric="humidity"
                       flex="1"
@@ -691,20 +799,33 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             transition={{ duration: 0.5 }}
             key="grand-farm-sensors"
           >
-            <Heading size="lg" textAlign="center" mb="4">
-              Grand Farm Sensors
-            </Heading>
-            <Flex justify="center" mb="4">
+            <Flex justify="space-between">
+              <Heading size="lg" textAlign="center" mb="4">
+                Grand Farm Sensors
+              </Heading>
               <Menu>
-                <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
-                  Toggle Charts
+                <MenuButton
+                  as={Button}
+                  bg="brand.400"
+                  color="black"
+                  _hover={{ bg: '#d7a247' }}
+                >
+                  <FaChevronDown />
                 </MenuButton>
                 <MenuList>
                   {Object.keys(charts).map(chart => (
-                    <MenuItem key={chart} onClick={() => toggleChartVisibility('grandFarm', chart)}>
+                    <MenuItem
+                      key={chart}
+                      onClick={() => toggleChartVisibility('grandFarm', chart)}
+                    >
                       <Flex alignItems="center">
                         {charts[chart]}
-                        <Box ml="2">{visibleCharts.grandFarm.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
+                        <Box ml="2">
+                          {visibleCharts.grandFarm.includes(chart)
+                            ? 'Hide'
+                            : 'Show'}{' '}
+                          {chart.charAt(0).toUpperCase() + chart.slice(1)}
+                        </Box>
                       </Flex>
                     </MenuItem>
                   ))}
@@ -902,20 +1023,33 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             transition={{ duration: 0.5 }}
             key="garage-sensors"
           >
-            <Heading size="lg" textAlign="center" mb="4">
-              Garage Sensors
-            </Heading>
-            <Flex justify="center" mb="4">
+            <Flex justify="space-between">
+              <Heading size="lg" textAlign="center" mb="4">
+                Garage Sensors
+              </Heading>
               <Menu>
-                <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
-                  Toggle Charts
+                <MenuButton
+                  as={Button}
+                  bg="brand.400"
+                  color="black"
+                  _hover={{ bg: '#d7a247' }}
+                >
+                  <FaChevronDown />
                 </MenuButton>
                 <MenuList>
                   {['temperature', 'humidity'].map(chart => (
-                    <MenuItem key={chart} onClick={() => toggleChartVisibility('garage', chart)}>
+                    <MenuItem
+                      key={chart}
+                      onClick={() => toggleChartVisibility('garage', chart)}
+                    >
                       <Flex alignItems="center">
                         {charts[chart]}
-                        <Box ml="2">{visibleCharts.garage.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
+                        <Box ml="2">
+                          {visibleCharts.garage.includes(chart)
+                            ? 'Hide'
+                            : 'Show'}{' '}
+                          {chart.charAt(0).toUpperCase() + chart.slice(1)}
+                        </Box>
                       </Flex>
                     </MenuItem>
                   ))}
@@ -963,7 +1097,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Humidity (%)"
-                    onChartChange={handleChartChange(setWatchdogHumidityChartType)}
+                    onChartChange={handleChartChange(
+                      setWatchdogHumidityChartType
+                    )}
                     weatherData={watchdogHumData || watchdogData}
                     metric="hum"
                     flex="1"
@@ -997,20 +1133,33 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             transition={{ duration: 0.5 }}
             key="freezer-sensors"
           >
-            <Heading size="lg" textAlign="center" mb="4">
-              Freezer Sensors
-            </Heading>
-            <Flex justify="center" mb="4">
+            <Flex justify="space-between">
+              <Heading size="lg" textAlign="center" mb="4">
+                Freezer Sensors
+              </Heading>
               <Menu>
-                <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
-                  Toggle Charts
+                <MenuButton
+                  as={Button}
+                  bg="brand.400"
+                  color="black"
+                  _hover={{ bg: '#d7a247' }}
+                >
+                  <FaChevronDown />
                 </MenuButton>
                 <MenuList>
                   {['temperature', 'humidity'].map(chart => (
-                    <MenuItem key={chart} onClick={() => toggleChartVisibility('rivercity', chart)}>
+                    <MenuItem
+                      key={chart}
+                      onClick={() => toggleChartVisibility('rivercity', chart)}
+                    >
                       <Flex alignItems="center">
                         {charts[chart]}
-                        <Box ml="2">{visibleCharts.rivercity.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
+                        <Box ml="2">
+                          {visibleCharts.rivercity.includes(chart)
+                            ? 'Hide'
+                            : 'Show'}{' '}
+                          {chart.charAt(0).toUpperCase() + chart.slice(1)}
+                        </Box>
                       </Flex>
                     </MenuItem>
                   ))}
