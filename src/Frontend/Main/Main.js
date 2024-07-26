@@ -70,11 +70,11 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
 
   const [isReady, setIsReady] = useState(false);
-  const [showSections, setShowSections] = useState({
-    grandFarm: true,
-    garage: true,
-    rivercity: true,
-  });
+  // const [showSections, setShowSections] = useState({
+  //   grandFarm: true,
+  //   garage: true,
+  //   rivercity: true,
+  // });
   const [visibleCharts, setVisibleCharts] = useState({
     grandFarm: ['temperature', 'humidity', 'wind', 'soilMoisture', 'leafWetness', 'rainfall'],
     garage: ['temperature', 'humidity'],
@@ -87,20 +87,6 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
 
   const { colorMode } = useColorMode();
   const iconColor = useColorModeValue('black', 'white');
-
-  const showSection = (section) => {
-    setShowSections((prevState) => ({
-      ...prevState,
-      [section]: true,
-    }));
-  };
-
-  const hideSection = (section) => {
-    setShowSections((prevState) => ({
-      ...prevState,
-      [section]: false,
-    }));
-  };
 
   const showChart = (section, chart) => {
     setVisibleCharts((prevState) => ({
@@ -116,69 +102,57 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     }));
   };
 
-  const handleVoiceCommand = (command) => {
-    if (command.includes('show grand farm')) {
-      showSection('grandFarm');
-    } else if (command.includes('hide grand farm')) {
-      hideSection('grandFarm');
-    } else if (command.includes('show garage')) {
-      showSection('garage');
-    } else if (command.includes('hide garage')) {
-      hideSection('garage');
-    } else if (command.includes('show freezer')) {
-      showSection('rivercity');
-    } else if (command.includes('hide freezer')) {
-      hideSection('rivercity');
-    } else if (command.includes('show temperature')) {
-      showChart('grandFarm', 'temperature');
-    } else if (command.includes('hide temperature')) {
-      hideChart('grandFarm', 'temperature');
-    } else if (command.includes('show humidity')) {
-      showChart('grandFarm', 'humidity');
-    } else if (command.includes('hide humidity')) {
-      hideChart('grandFarm', 'humidity');
-    } else if (command.includes('show wind')) {
-      showChart('grandFarm', 'wind');
-    } else if (command.includes('hide wind')) {
-      hideChart('grandFarm', 'wind');
-    } else if (command.includes('show soil moisture')) {
-      showChart('grandFarm', 'soilMoisture');
-    } else if (command.includes('hide soil moisture')) {
-      hideChart('grandFarm', 'soilMoisture');
-    } else if (command.includes('show leaf wetness')) {
-      showChart('grandFarm', 'leafWetness');
-    } else if (command.includes('hide leaf wetness')) {
-      hideChart('grandFarm', 'leafWetness');
-    } else if (command.includes('show rainfall')) {
-      showChart('grandFarm', 'rainfall');
-    } else if (command.includes('hide rainfall')) {
-      hideChart('grandFarm', 'rainfall');
-    } else if (command.includes('expand temperature details')) {
-      openModal('temperature');
-    } else if (command.includes('expand humidity details')) {
-      openModal('percent_humidity');
-    } else if (command.includes('expand wind details')) {
-      openModal('wind_speed');
-    } else if (command.includes('expand soil moisture details')) {
-      openModal('soil_moisture');
-    } else if (command.includes('expand leaf wetness details')) {
-      openModal('leaf_wetness');
-    } else if (command.includes('expand rainfall details')) {
-      openModal('rain_15_min_inches');
-    } else if (command.includes('log out')) {
-      logOut();
-    } else if (command.includes('change temperature chart type to line')) {
-      setTempChartType('line');
-    } else if (command.includes('change temperature chart type to bar')) {
-      setTempChartType('bar');
-    } else if (command.includes('change humidity chart type to line')) {
-      setHumidityChartType('line');
-    } else if (command.includes('change humidity chart type to bar')) {
-      setHumidityChartType('bar');
-    } else {
-      console.log('Command not recognized');
-    }
-  };
+  // const handleVoiceCommand = (command) => {
+  //   if (command.includes('show grand farm')) {
+  //     showChart('grandFarm', 'temperature');
+  //   } else if (command.includes('hide temperature')) {
+  //     hideChart('grandFarm', 'temperature');
+  //   } else if (command.includes('show humidity')) {
+  //     showChart('grandFarm', 'humidity');
+  //   } else if (command.includes('hide humidity')) {
+  //     hideChart('grandFarm', 'humidity');
+  //   } else if (command.includes('show wind')) {
+  //     showChart('grandFarm', 'wind');
+  //   } else if (command.includes('hide wind')) {
+  //     hideChart('grandFarm', 'wind');
+  //   } else if (command.includes('show soil moisture')) {
+  //     showChart('grandFarm', 'soilMoisture');
+  //   } else if (command.includes('hide soil moisture')) {
+  //     hideChart('grandFarm', 'soilMoisture');
+  //   } else if (command.includes('show leaf wetness')) {
+  //     showChart('grandFarm', 'leafWetness');
+  //   } else if (command.includes('hide leaf wetness')) {
+  //     hideChart('grandFarm', 'leafWetness');
+  //   } else if (command.includes('show rainfall')) {
+  //     showChart('grandFarm', 'rainfall');
+  //   } else if (command.includes('hide rainfall')) {
+  //     hideChart('grandFarm', 'rainfall');
+  //   } else if (command.includes('expand temperature details')) {
+  //     openModal('temperature');
+  //   } else if (command.includes('expand humidity details')) {
+  //     openModal('percent_humidity');
+  //   } else if (command.includes('expand wind details')) {
+  //     openModal('wind_speed');
+  //   } else if (command.includes('expand soil moisture details')) {
+  //     openModal('soil_moisture');
+  //   } else if (command.includes('expand leaf wetness details')) {
+  //     openModal('leaf_wetness');
+  //   } else if (command.includes('expand rainfall details')) {
+  //     openModal('rain_15_min_inches');
+  //   } else if (command.includes('log out')) {
+  //     logOut();
+  //   } else if (command.includes('change temperature chart type to line')) {
+  //     setTempChartType('line');
+  //   } else if (command.includes('change temperature chart type to bar')) {
+  //     setTempChartType('bar');
+  //   } else if (command.includes('change humidity chart type to line')) {
+  //     setHumidityChartType('line');
+  //   } else if (command.includes('change humidity chart type to bar')) {
+  //     setHumidityChartType('bar');
+  //   } else {
+  //     console.log('Command not recognized');
+  //   }
+  // };
 
   const openModal = (chart) => {
     setModalChart(chart);
@@ -207,12 +181,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     }
   }, [weatherData]);
 
-  const toggleSection = (section) => {
-    setShowSections((prevState) => ({
-      ...prevState,
-      [section]: !prevState[section],
-    }));
-  };
+  // const toggleSection = (section) => {
+  //   setShowSections((prevState) => ({
+  //     ...prevState,
+  //     [section]: !prevState[section],
+  //   }));
+  // };
 
   const toggleChartVisibility = (section, chart) => {
     setVisibleCharts((prevState) => {
@@ -296,7 +270,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
           >
             <Flex justify="space-between" mb="6" alignItems="center">
               <Heading size="lg">Main Dashboard</Heading>
-              <Menu>
+              {/* <Menu>
                 <MenuButton
                   as={Button}
                   rightIcon={<FaChevronDown />}
@@ -317,20 +291,17 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     {showSections.rivercity ? 'Hide' : 'Show'} Freezer Sensors
                   </MenuItem>
                 </MenuList>
-              </Menu>
+              </Menu> */}
             </Flex>
             <MotionBox
               initial={{ opacity: 0, height: 0 }}
               animate={{
-                opacity: showSections.grandFarm ? 1 : 0,
-                height: showSections.grandFarm ? 'auto' : 0,
+                opacity: 1 ,
+                height: 'auto',
               }}
               transition={{ duration: 0.5 }}
-              mb={showSections.grandFarm ? '8' : 0}
+              mb={'8'}
             >
-              <Heading size="lg" textAlign="center" mb="4">
-                Grand Farm Sensors
-              </Heading>
               <Flex justify="center" mb="4">
                 <Menu>
                   <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
@@ -535,15 +506,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             <MotionBox
               initial={{ opacity: 0, height: 0 }}
               animate={{
-                opacity: showSections.garage ? 1 : 0,
-                height: showSections.garage ? 'auto' : 0,
+                opacity: 1,
+                height:'auto',
               }}
               transition={{ duration: 0.5 }}
               mb={8}
             >
-              <Heading size="lg" textAlign="center" mb="4">
-                Garage Sensors
-              </Heading>
               <Flex justify="center" mb="4">
                 <Menu>
                   <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
@@ -632,14 +600,11 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             <MotionBox
               initial={{ opacity: 0, height: 0 }}
               animate={{
-                opacity: showSections.rivercity ? 1 : 0,
-                height: showSections.rivercity ? 'auto' : 0,
+                opacity: 1,
+                height:'auto',
               }}
               transition={{ duration: 0.5 }}
             >
-              <Heading size="lg" textAlign="center" mb="4">
-                Freezer Sensors
-              </Heading>
               <Flex justify="center" mb="4">
                 <Menu>
                   <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
@@ -756,8 +721,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             <Grid
               templateColumns={{
                 base: '1fr',
-                md: 'repeat(3, 1fr)',
-                lg: 'repeat(3, 1fr)',
+                md: 'repeat(2, 1fr)',
+                lg: 'repeat(2, 1fr)',
               }}
               gap="6"
             >

@@ -57,7 +57,7 @@ const ChartWrapper = ({
   const [showMap, setShowMap] = useState(false);
   const [sensorMap, setSensorMap] = useState('grandfarm'); // State to toggle between map and chart
   const [userTitle, setUserTitle] = useState('Location Placeholder');
-  const [newTitle, setNewTitle] = useState(title);
+  const [newTitle, setNewTitle] = useState('Enter New Location Label');
 
   const { currentUser } = useAuth();
 
