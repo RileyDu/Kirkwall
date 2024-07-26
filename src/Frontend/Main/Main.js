@@ -340,7 +340,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       onClick={() => handleMenuItemClick('grandFarm', chart)}
                       bg={
                         visibleCharts.grandFarm.includes(chart)
-                          ? 'brand.50'
+                          ? 'green.100'
                           : '#212121'
                       }
                       color={
@@ -369,7 +369,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       onClick={() => handleMenuItemClick('garage', chart)}
                       bg={
                         visibleCharts.garage.includes(chart)
-                          ? 'brand.50'
+                          ? 'brand.200'
                           : '#212121'
                       }
                       color={
@@ -398,7 +398,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       onClick={() => handleMenuItemClick('rivercity', chart)}
                       bg={
                         visibleCharts.rivercity.includes(chart)
-                          ? 'brand.50'
+                          ? 'blue.100'
                           : '#212121'
                       }
                       color={
