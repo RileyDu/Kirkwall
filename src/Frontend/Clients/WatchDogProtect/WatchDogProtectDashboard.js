@@ -260,7 +260,7 @@ const WatchdogProtectDashboard = ({ timePeriod, statusOfAlerts }) => {
             key="main-dashboard"
           >
             <Flex justifyContent={isLargerThan768 ? 'space-between' : 'center'} mb="2">
-            <Heading size={isLargerThan768 ? 'lg' : 'xl'} textDecoration={isLargerThan768 ? 'none' : 'underline'}>Watchdog Protect Dashboard</Heading>
+            <Heading size={isLargerThan768 ? 'lg' : 'xl'} textDecoration={isLargerThan768 ? 'none' : 'underline'}>Watchdog Dashboard</Heading>
   <Menu isOpen={isOpen}>
     <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
       <MenuButton
@@ -273,7 +273,7 @@ const WatchdogProtectDashboard = ({ timePeriod, statusOfAlerts }) => {
         aria-label="Toggle Charts"
         size={isLargerThan768 ? 'md' : 'sm'}
         ml={isLargerThan768 ? '0' : '4'}
-        mt={isLargerThan768 ? '1' : '0'}
+        mt={isLargerThan768 ? '0' : '2'}
         onClick={isOpen ? onClose : onOpen}
         />
     </Tooltip>
