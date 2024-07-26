@@ -294,7 +294,7 @@ async function createThreshold(metric, high, low, phone, email, timestamp) {
 async function getAlerts() {
   const query = `
   query {
-    alerts {
+    alert {
       metric
       message
       timestamp
@@ -308,7 +308,7 @@ async function getAlerts() {
 async function createAlert(metric, message, timestamp) {
   const mutation = `
     mutation($i: alertsInput! ) {
-      create_alerts(input: $i) {
+      create_alert(input: $i) {
         metric
         message
         timestamp
