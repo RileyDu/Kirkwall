@@ -71,6 +71,25 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
 
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
+
+  // This is to show chart
+  const initialVisibility = { chart1: true, chart2: true, chart3: true, chart4: true, chart5: true, chart6: true, chart7: true, chart8: true, chart9: true, chart10: true,
+    chart11: true, chart12: true, chart13: true, chart14: true, chart15: true, chart16: true, chart17: true, chart18: true, chart19: true, chart20: true
+   };
+  const [chartVisibility, setChartVisibility] = useState(initialVisibility);
+  
+   const resetMaps = () => {
+    setChartVisibility(initialVisibility);
+   }
+
+  const handleCloseChartWrapper = (chartId) => {
+    setChartVisibility(prevState => ({
+      ...prevState,
+      [chartId]: false,
+    }));
+  };
+
+
   const [isReady, setIsReady] = useState(false);
   const [showSections, setShowSections] = useState({
     grandFarm: true,
@@ -313,6 +332,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
         size={'sm'}
       />
     </Tooltip>
+
     <MenuList>
       <MenuItem onClick={() => toggleSection('grandFarm')}>
         {showSections.grandFarm ? 'Hide' : 'Show'} Grand Farm Sensors
@@ -324,6 +344,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
         {showSections.rivercity ? 'Hide' : 'Show'} Freezer Sensors
       </MenuItem>
     </MenuList>
+    <Button bg={"brand.400"} color={"black"} ml="auto" onClick={resetMaps}>Reset</Button>
   </Menu>
 </Flex>
 )}
@@ -376,7 +397,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               >
                 {visibleCharts.grandFarm.includes('temperature') && (
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    <ChartWrapper
+                    {chartVisibility.chart1 &&<ChartWrapper
                       title="Temperature (°F)"
                       onChartChange={handleChartChange(setTempChartType)}
                       weatherData={tempData || weatherData}
@@ -386,6 +407,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      closeMap={() => handleCloseChartWrapper('chart1')}
                     >
                       {tempChartType === 'line' ? (
                         <LineChart
@@ -400,12 +422,13 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                           style={{ flex: 1 }}
                         />
                       )}
-                    </ChartWrapper>
+                    </ChartWrapper>}
                   </GridItem>
                 )}
                 {visibleCharts.grandFarm.includes('humidity') && (
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    <ChartWrapper
+                    {chartVisibility.chart2 &&
+                      <ChartWrapper
                       title="Humidity (%)"
                       onChartChange={handleChartChange(setHumidityChartType)}
                       weatherData={humidityData || weatherData}
@@ -415,6 +438,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      closeMap={() => handleCloseChartWrapper('chart2')}
                     >
                       {humidityChartType === 'line' ? (
                         <LineChart
@@ -430,11 +454,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         />
                       )}
                     </ChartWrapper>
+                    }
                   </GridItem>
                 )}
                 {visibleCharts.grandFarm.includes('wind') && (
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    <ChartWrapper
+                    {chartVisibility.chart3 && <ChartWrapper
                       title="Wind (mph)"
                       onChartChange={handleChartChange(setWindChartType)}
                       weatherData={windData || weatherData}
@@ -444,6 +469,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      closeMap={() => handleCloseChartWrapper('chart3')}
                     >
                       {windChartType === 'line' ? (
                         <LineChart
@@ -458,12 +484,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                           style={{ flex: 1 }}
                         />
                       )}
-                    </ChartWrapper>
+                    </ChartWrapper>}
                   </GridItem>
                 )}
                 {visibleCharts.grandFarm.includes('soilMoisture') && (
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    <ChartWrapper
+                    {chartVisibility.chart4 && <ChartWrapper
                       title="Soil Moisture (centibar)"
                       onChartChange={handleChartChange(setSoilMoistureChartType)}
                       weatherData={soilMoistureData || weatherData}
@@ -473,6 +499,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      closeMap={() => handleCloseChartWrapper('chart4')}
                     >
                       {soilMoistureChartType === 'line' ? (
                         <LineChart
@@ -487,12 +514,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                           style={{ flex: 1 }}
                         />
                       )}
-                    </ChartWrapper>
+                    </ChartWrapper>}
                   </GridItem>
                 )}
                 {visibleCharts.grandFarm.includes('leafWetness') && (
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    <ChartWrapper
+                    {chartVisibility.chart5 && <ChartWrapper
                       title="Leaf Wetness (0-15)"
                       onChartChange={handleChartChange(setLeafWetnessChartType)}
                       weatherData={leafWetnessData || weatherData}
@@ -502,6 +529,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      closeMap={() => handleCloseChartWrapper('chart5')}
                     >
                       {leafWetnessChartType === 'line' ? (
                         <LineChart
@@ -516,12 +544,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                           style={{ flex: 1 }}
                         />
                       )}
-                    </ChartWrapper>
+                    </ChartWrapper>}
                   </GridItem>
                 )}
                 {visibleCharts.grandFarm.includes('rainfall') && (
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    <ChartWrapper
+                    {chartVisibility.chart6 && <ChartWrapper
                       title="Rainfall (in)"
                       onChartChange={handleChartChange(setRainfallChartType)}
                       weatherData={rainfallData || weatherData}
@@ -531,6 +559,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      closeMap={() => handleCloseChartWrapper('chart6')}
                     >
                       {rainfallChartType === 'line' ? (
                         <LineChart
@@ -545,7 +574,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                           style={{ flex: 1 }}
                         />
                       )}
-                    </ChartWrapper>
+                    </ChartWrapper>}
                   </GridItem>
                 )}
               </Grid>
@@ -600,7 +629,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               >
                 {visibleCharts.garage.includes('temperature') && (
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    <ChartWrapper
+                    {chartVisibility.chart7 && <ChartWrapper
                       title="Temperature (°F)"
                       onChartChange={handleChartChange(setWatchdogTempChartType)}
                       weatherData={watchdogTempData || watchdogData}
@@ -610,6 +639,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      closeMap={() => handleCloseChartWrapper('chart7')}
                     >
                       {watchdogTempChartType === 'line' ? (
                         <LineChart
@@ -624,12 +654,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                           style={{ flex: 1 }}
                         />
                       )}
-                    </ChartWrapper>
+                    </ChartWrapper>}
                   </GridItem>
                 )}
                 {visibleCharts.garage.includes('humidity') && (
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    <ChartWrapper
+                    {chartVisibility.chart8 && <ChartWrapper
                       title="Humidity (%)"
                       onChartChange={handleChartChange(setWatchdogHumidityChartType)}
                       weatherData={watchdogHumData || watchdogData}
@@ -639,6 +669,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      closeMap={() => handleCloseChartWrapper('chart8')}
                     >
                       {watchdogHumidityChartType === 'line' ? (
                         <LineChart
@@ -653,7 +684,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                           style={{ flex: 1 }}
                         />
                       )}
-                    </ChartWrapper>
+                    </ChartWrapper>}
                   </GridItem>
                 )}
               </Grid>
@@ -706,7 +737,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               >
                 {visibleCharts.rivercity.includes('temperature') && (
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    <ChartWrapper
+                    {chartVisibility.chart9 && <ChartWrapper
                       title="Temperature (°F)"
                       onChartChange={handleChartChange(setRivercityTempChartType)}
                       weatherData={rivercityTempData || rivercityData}
@@ -716,6 +747,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      closeMap={() => handleCloseChartWrapper('chart9')}
                     >
                       {rivercityTempChartType === 'line' ? (
                         <LineChart
@@ -730,12 +762,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                           style={{ flex: 1 }}
                         />
                       )}
-                    </ChartWrapper>
+                    </ChartWrapper>}
                   </GridItem>
                 )}
                 {visibleCharts.rivercity.includes('humidity') && (
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    <ChartWrapper
+                   {chartVisibility.chart10 && <ChartWrapper
                       title="Humidity (%)"
                       onChartChange={handleChartChange(setRivercityHumChartType)}
                       weatherData={rivercityHumData || rivercityData}
@@ -745,6 +777,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      closeMap={() => handleCloseChartWrapper('chart10')}
                     >
                       {rivercityHumChartType === 'line' ? (
                         <LineChart
@@ -759,7 +792,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                           style={{ flex: 1 }}
                         />
                       )}
-                    </ChartWrapper>
+                    </ChartWrapper>}
                   </GridItem>
                 )}
               </Grid>
@@ -812,7 +845,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             >
               {visibleCharts.grandFarm.includes('temperature') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  <ChartWrapper
+                  {chartVisibility.chart11 && <ChartWrapper
                     title="Temperature (°F)"
                     onChartChange={handleChartChange(setTempChartType)}
                     weatherData={tempData || weatherData}
@@ -822,6 +855,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseChartWrapper('chart11')}
                   >
                     {tempChartType === 'line' ? (
                       <LineChart
@@ -836,12 +870,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>
+                  </ChartWrapper>}
                 </GridItem>
               )}
               {visibleCharts.grandFarm.includes('humidity') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  <ChartWrapper
+                  {chartVisibility.chart12 && <ChartWrapper
                     title="Humidity (%)"
                     onChartChange={handleChartChange(setHumidityChartType)}
                     weatherData={humidityData || weatherData}
@@ -851,6 +885,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseChartWrapper('chart12')}
                   >
                     {humidityChartType === 'line' ? (
                       <LineChart
@@ -865,12 +900,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>
+                  </ChartWrapper>}
                 </GridItem>
               )}
               {visibleCharts.grandFarm.includes('wind') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  <ChartWrapper
+                  {chartVisibility.chart13 && <ChartWrapper
                     title="Wind (mph)"
                     onChartChange={handleChartChange(setWindChartType)}
                     weatherData={windData || weatherData}
@@ -880,6 +915,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseChartWrapper('chart13')}
                   >
                     {windChartType === 'line' ? (
                       <LineChart
@@ -894,12 +930,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>
+                  </ChartWrapper>}
                 </GridItem>
               )}
               {visibleCharts.grandFarm.includes('soilMoisture') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  <ChartWrapper
+                  {chartVisibility.chart14 && <ChartWrapper
                     title="Soil Moisture (centibar)"
                     onChartChange={handleChartChange(setSoilMoistureChartType)}
                     weatherData={soilMoistureData || weatherData}
@@ -909,6 +945,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseChartWrapper('chart14')}
                   >
                     {soilMoistureChartType === 'line' ? (
                       <LineChart
@@ -923,12 +960,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>
+                  </ChartWrapper>}
                 </GridItem>
               )}
               {visibleCharts.grandFarm.includes('leafWetness') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  <ChartWrapper
+                  {chartVisibility.chart15 && <ChartWrapper
                     title="Leaf Wetness (0-15)"
                     onChartChange={handleChartChange(setLeafWetnessChartType)}
                     weatherData={leafWetnessData || weatherData}
@@ -938,6 +975,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseChartWrapper('chart15')}
                   >
                     {leafWetnessChartType === 'line' ? (
                       <LineChart
@@ -952,12 +990,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>
+                  </ChartWrapper>}
                 </GridItem>
               )}
               {visibleCharts.grandFarm.includes('rainfall') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  <ChartWrapper
+                  {chartVisibility.chart16 && <ChartWrapper
                     title="Rainfall (in)"
                     onChartChange={handleChartChange(setRainfallChartType)}
                     weatherData={rainfallData || weatherData}
@@ -967,6 +1005,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseChartWrapper('chart16')}
                   >
                     {rainfallChartType === 'line' ? (
                       <LineChart
@@ -981,7 +1020,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>
+                  </ChartWrapper>}
                 </GridItem>
               )}
             </Grid>
@@ -1033,7 +1072,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             >
               {visibleCharts.garage.includes('temperature') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  <ChartWrapper
+                  {chartVisibility.chart17 && <ChartWrapper
                     title="Temperature (°F)"
                     onChartChange={handleChartChange(setWatchdogTempChartType)}
                     weatherData={watchdogTempData || watchdogData}
@@ -1043,6 +1082,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseChartWrapper('chart17')}
                   >
                     {watchdogTempChartType === 'line' ? (
                       <LineChart
@@ -1057,12 +1097,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>
+                  </ChartWrapper>}
                 </GridItem>
               )}
               {visibleCharts.garage.includes('humidity') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  <ChartWrapper
+                  {chartVisibility.chart18 && <ChartWrapper
                     title="Humidity (%)"
                     onChartChange={handleChartChange(setWatchdogHumidityChartType)}
                     weatherData={watchdogHumData || watchdogData}
@@ -1072,6 +1112,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseChartWrapper('chart18')}
                   >
                     {watchdogHumidityChartType === 'line' ? (
                       <LineChart
@@ -1086,7 +1127,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>
+                  </ChartWrapper>}
                 </GridItem>
               )}
             </Grid>
@@ -1138,7 +1179,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             >
               {visibleCharts.rivercity.includes('temperature') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  <ChartWrapper
+                  {chartVisibility.chart19 && <ChartWrapper
                     title="Temperature (°F)"
                     onChartChange={handleChartChange(setRivercityTempChartType)}
                     weatherData={rivercityTempData || rivercityData}
@@ -1148,6 +1189,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseChartWrapper('chart19')}
                   >
                     {rivercityTempChartType === 'line' ? (
                       <LineChart
@@ -1162,12 +1204,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>
+                  </ChartWrapper>}
                 </GridItem>
               )}
               {visibleCharts.rivercity.includes('humidity') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  <ChartWrapper
+                  {chartVisibility.chart20 && <ChartWrapper
                     title="Humidity (%)"
                     onChartChange={handleChartChange(setRivercityHumChartType)}
                     weatherData={rivercityHumData || rivercityData}
@@ -1177,6 +1219,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseChartWrapper('chart20')}
                   >
                     {rivercityHumChartType === 'line' ? (
                       <LineChart
@@ -1191,7 +1234,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>
+                  </ChartWrapper>}
                 </GridItem>
               )}
             </Grid>

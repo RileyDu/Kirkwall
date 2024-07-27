@@ -247,6 +247,13 @@ const ChartExpandModal = ({
     }
   };
 
+  const handleFormReset = () => {
+    setHighThreshold('');
+    setLowThreshold('');
+    setPhoneNumber('');
+    setUserEmail('');
+  }
+
   // Clear alerts on button click
   const clearAlerts = () => {
     setAlerts([]);
@@ -465,6 +472,9 @@ const ChartExpandModal = ({
             </Button>
             <Button variant="solid" bg="gray.400" color="white" _hover={{ bg: 'gray.500' }} onClick={handleCloseThresholdModal}>
               Cancel
+            </Button>
+            <Button variant="solid" bg="orange.400" color="white" _hover={{ bg: 'orange.500' }} ml={3} onClick={handleFormReset}>
+              Reset
             </Button>
           </ModalFooter>
         </ModalContent>

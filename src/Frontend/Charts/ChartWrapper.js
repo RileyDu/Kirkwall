@@ -33,6 +33,7 @@ import {
   FaChartBar,
   FaChartLine,
   FaMap,
+  FaTimes
 } from 'react-icons/fa/index.esm.js';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
@@ -48,6 +49,7 @@ import ImpriMiniMap from '../Maps/ImpriMiniMap.js';
 const ChartWrapper = ({
   title,
   children,
+  closeMap,
   onChartChange,
   metric,
   weatherData,
@@ -80,6 +82,11 @@ const ChartWrapper = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const { colorMode } = useColorMode();
+
+
+  const removeMap = () => {
+    
+  }
 
   const toggleMap = () => {
     setShowMap(!showMap);
@@ -230,6 +237,7 @@ const ChartWrapper = ({
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
+
   const calculateTimePeriod = dataLength => {
     const totalMinutes =
       metric === 'temp' ||
@@ -323,6 +331,21 @@ const ChartWrapper = ({
         h="500px"
         w="100%"
       >
+
+        <Flex justify="flex-end" mt="-4" mb={2} mr={-3}>
+          <Tooltip label="Remove Map">
+            <Box
+              as={motion.div}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              cursor="pointer"
+              onClick={closeMap}
+            >
+              <FaTimes color="white" size="16px" />
+            </Box>
+          </Tooltip>
+        </Flex>
+
         <Flex justify="space-between" mb="4" align="center">
           <Box fontSize={fontSize} fontWeight="bold">
           {logo && <img src={logo} alt="logo" width="100px" border="2px solid #212121" mb="2"/>}
