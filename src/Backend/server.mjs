@@ -153,7 +153,7 @@ const checkThresholds = async () => {
       if (currentValue == null) continue;
 
 
-      if (currentValue > high) {
+      if (high !== null && currentValue > high) {
         const now = new Date();
         const formattedDateTime = formatDateTime(now);
         const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high} at ${formattedDateTime}.`;
@@ -162,7 +162,7 @@ const checkThresholds = async () => {
         if (phone || email) sendAlertToDB(metric, alertMessage, now);
       }
 
-      if (currentValue < low) {
+      if (low !== null && currentValue < low) {
         const now = new Date();
         const formattedDateTime = formatDateTime(now);
         const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low} at ${formattedDateTime}.`;

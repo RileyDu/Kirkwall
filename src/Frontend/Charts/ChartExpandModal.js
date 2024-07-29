@@ -373,15 +373,17 @@ const ChartExpandModal = ({
                 <Divider my={8} borderColor={'white'} />
                 {highThreshold || lowThreshold ? (
                   <>
-                    <HStack>
-                      <Text color="white" fontSize="lg" fontWeight="bold">
+                  <Flex width={'100%'} >
+                    <HStack width={'100%'} gap={6} justify={'flex-start'}>
+                      <Text color="white" fontSize="lg" fontWeight="bold" textDecor={'underline'}>
                         Alerts
                       </Text>
-                      <Text color="white">High Threshold: {highThreshold}</Text>
-                      <Text color="white">Low Threshold: {lowThreshold}</Text>
-                      <Text color="white">Phone: {phoneNumber}</Text>
-                      <Text color="white">Email: {userEmail}</Text>
+                      {highThreshold ? <Text color="white"><strong>High Threshold:</strong> {highThreshold}</Text> : null}
+                      {lowThreshold ? <Text color="white"><strong>Low Threshold:</strong> {lowThreshold}</Text> : null}
+                      {phoneNumber ? <Text color="white"><strong>Phone:</strong> {phoneNumber}</Text> : null}
+                      {userEmail ? <Text color="white"><strong>Email:</strong> {userEmail}</Text> : null}
                     </HStack>
+                    </Flex>
                     <Box
                       mt={2}
                       p={2}
