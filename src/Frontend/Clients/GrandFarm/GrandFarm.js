@@ -292,6 +292,16 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
                     <MenuItem
                       key={chart}
                       onClick={() => toggleChartVisibility('grandFarm', chart)}
+                      bg={
+                        visibleCharts.grandFarm.includes(chart)
+                          ? 'green.100'
+                          : '#212121'
+                      }
+                      color={
+                        visibleCharts.grandFarm.includes(chart)
+                          ? '#212121'
+                          : 'white'
+                      }
                     >
                       <Flex alignItems="center" justifyContent={"center"} w={'100%'}>
                         {charts[chart]}
@@ -324,6 +334,9 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'grandFarm'}
+                    chart={'temperature'}
                   >
                     {tempChartType === 'line' ? (
                       <LineChart
@@ -353,6 +366,9 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'grandFarm'}
+                    chart={'humidity'}
                   >
                     {humidityChartType === 'line' ? (
                       <LineChart
@@ -382,6 +398,9 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'grandFarm'}
+                    chart={'wind'}
                   >
                     {windChartType === 'line' ? (
                       <LineChart
@@ -411,6 +430,9 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'grandFarm'}
+                    chart={'soil'}
                   >
                     {soilMoistureChartType === 'line' ? (
                       <LineChart
@@ -440,6 +462,9 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'grandFarm'}
+                    chart={'leaf'}
                   >
                     {leafWetnessChartType === 'line' ? (
                       <LineChart
@@ -469,6 +494,9 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'grandFarm'}
+                    chart={'rainfall'}
                   >
                     {rainfallChartType === 'line' ? (
                       <LineChart
