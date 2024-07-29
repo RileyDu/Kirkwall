@@ -22,11 +22,11 @@ import {
   useMediaQuery,
   useDisclosure,
 } from '@chakra-ui/react';
-import VoiceControl from '../../services/VoiceControl';
-import { LineChart, BarChart } from '../../Charts/Charts';
+// import VoiceControl from '../../services/VoiceControl';
+import { LineChart, BarChart } from '../../Charts/Charts.js';
 // import Logout from '../../Frontend/AuthComponents/Logout';
-import { auth } from '../../../Backend/Firebase';
-import ChartWrapper from '../../Charts/ChartWrapper';
+import { auth } from '../../../Backend/Firebase.js';
+import ChartWrapper from '../../Charts/ChartWrapper.js';
 import {
   FaChessRook,
   FaChevronDown,
@@ -38,13 +38,13 @@ import {
   FaWater,
   FaLeaf,
   FaCloudRain,
-} from 'react-icons/fa';
+} from 'react-icons/fa/index.esm.js';
 import { keyframes } from '@emotion/react';
-import { useWeatherData } from '../../WeatherDataContext';
-import { handleChartChange } from '../../Charts/ChartUtils';
+import { useWeatherData } from '../../WeatherDataContext.js';
+import { handleChartChange } from '../../Charts/ChartUtils.js';
 import { motion } from 'framer-motion';
 // import { useAuth } from '../AuthComponents/AuthContext.js';
-import ChartExpandModal from '../../Charts/ChartExpandModal';
+// import ChartExpandModal from '../../Charts/ChartExpandModal';
 
 const MotionBox = motion(Box);
 const MotionTabPanel = motion(TabPanel);
@@ -292,6 +292,16 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
                     <MenuItem
                       key={chart}
                       onClick={() => toggleChartVisibility('grandFarm', chart)}
+                      bg={
+                        visibleCharts.grandFarm.includes(chart)
+                          ? 'green.100'
+                          : '#212121'
+                      }
+                      color={
+                        visibleCharts.grandFarm.includes(chart)
+                          ? '#212121'
+                          : 'white'
+                      }
                     >
                       <Flex alignItems="center" justifyContent={"center"} w={'100%'}>
                         {charts[chart]}
@@ -324,6 +334,9 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'grandFarm'}
+                    chart={'temperature'}
                   >
                     {tempChartType === 'line' ? (
                       <LineChart
@@ -353,6 +366,9 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'grandFarm'}
+                    chart={'humidity'}
                   >
                     {humidityChartType === 'line' ? (
                       <LineChart
@@ -382,6 +398,9 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'grandFarm'}
+                    chart={'wind'}
                   >
                     {windChartType === 'line' ? (
                       <LineChart
@@ -411,6 +430,9 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'grandFarm'}
+                    chart={'soil'}
                   >
                     {soilMoistureChartType === 'line' ? (
                       <LineChart
@@ -440,6 +462,9 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'grandFarm'}
+                    chart={'leaf'}
                   >
                     {leafWetnessChartType === 'line' ? (
                       <LineChart
@@ -469,6 +494,9 @@ const GrandFarmDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'grandFarm'}
+                    chart={'rainfall'}
                   >
                     {rainfallChartType === 'line' ? (
                       <LineChart

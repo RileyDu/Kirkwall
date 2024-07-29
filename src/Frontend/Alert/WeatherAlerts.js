@@ -24,21 +24,21 @@ import {
   FormLabel,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../../Backend/Firebase';
-import { FaChevronDown } from 'react-icons/fa';
+// import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '../../Backend/Firebase.js';
+import { FaChevronDown } from 'react-icons/fa/index.esm.js';
 import { SettingsIcon } from '@chakra-ui/icons';
 import Marquee from 'react-marquee-slider';
-import { useAuth } from '../AuthComponents/AuthContext';
+import { useAuth } from '../AuthComponents/AuthContext.js';
 
-import { useWeatherData } from '../WeatherDataContext';
+import { useWeatherData } from '../WeatherDataContext.js';
 
 function WeatherAlerts({ isVisible, onClose, isMinimized }) {
   const [alerts, setAlerts] = useState([]);
   const [error, setError] = useState('');
   const [selectedAlert, setSelectedAlert] = useState(null);
   const [showDescription, setShowDescription] = useState(false);
-  const [user] = useAuthState(auth);
+  // const [user] = useAuthState(auth);
   const { loading } = useWeatherData();
 
   const { currentUser } = useAuth();
@@ -114,7 +114,7 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
 
   if (!isVisible) return null; 
 
-  return user ? (
+  return currentUser ? (
     <Center>
       <Box p={0} width="100%" zIndex={999} pt={'64px'} >
         {error && !alerts.length && (

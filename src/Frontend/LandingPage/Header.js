@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Flex, Button, Icon, Heading, Link, useDisclosure, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, DrawerContent, DrawerCloseButton } from '@chakra-ui/react';
-import { FaChessRook, FaBars } from 'react-icons/fa';
+import { FaChessRook, FaBars } from 'react-icons/fa/index.esm.js';
 import { useNavigate } from 'react-router-dom';
 
 

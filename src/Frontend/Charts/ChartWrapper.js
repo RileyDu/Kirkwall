@@ -21,22 +21,21 @@ import {
 } from '@chakra-ui/react';
 import {
   FaExpandAlt,
-  FaChessRook,
+  FaTimes,
   FaChartBar,
   FaChartLine,
   FaMap,
-} from 'react-icons/fa';
+} from 'react-icons/fa/index.esm.js';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
-import ChartExpandModal from './ChartExpandModal'; // Adjust the path as necessary
-import ChartDetails, { getLabelForMetric } from './ChartDetails';
+import ChartExpandModal from './ChartExpandModal.js';
+import ChartDetails, { getLabelForMetric } from './ChartDetails.js';
 import { useColorMode } from '@chakra-ui/react';
-import axios from 'axios';
-import MiniMap from '../Maps/GrandFarmMiniMap';
-import WatchdogMap from '../Maps/WatchdogMiniMap';
-import RivercityMap from '../Maps/RivercityMiniMap';
-import { useAuth } from '../AuthComponents/AuthContext';
-import ImpriMiniMap from '../Maps/ImpriMiniMap';
+import MiniMap from '../Maps/GrandFarmMiniMap.js';
+import WatchdogMap from '../Maps/WatchdogMiniMap.js';
+import RivercityMap from '../Maps/RivercityMiniMap.js';
+import { useAuth } from '../AuthComponents/AuthContext.js';
+import ImpriMiniMap from '../Maps/ImpriMiniMap.js';
 const ChartWrapper = ({
   title,
   children,
@@ -44,14 +43,13 @@ const ChartWrapper = ({
   metric,
   weatherData,
   handleTimePeriodChange,
+  toggleChartVisibility,
+  section,
+  chart
 }) => {
   const [chartType, setChartType] = useState('bar');
   const [showIcons, setShowIcons] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [highThreshold, setHighThreshold] = useState('');
-  const [lowThreshold, setLowThreshold] = useState('');
-  const [lastAlertTime, setLastAlertTime] = useState(null);
   const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
   const [loading, setLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
@@ -74,6 +72,11 @@ const ChartWrapper = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const { colorMode } = useColorMode();
+
+  const renderCloseButton = () => {
+    const routesWithCloseButton = ['/', '/grandfarm', '/watchdogprotect'];
+    return isLargerThan768 && routesWithCloseButton.includes(location.pathname);
+  };
 
   const toggleMap = () => {
     setShowMap(!showMap);
@@ -134,36 +137,6 @@ const ChartWrapper = ({
     localStorage.setItem(`chartTitle_${metric}`, newTitle);
   };
 
-  const handleFormSubmit = () => {
-    // let formattedPhoneNumber = phoneNumber.startsWith('+1')
-    //   ? phoneNumber
-    //   : `+1${phoneNumber}`;
-
-    const chartSettings = {
-      phoneNumber: phoneNumber,
-      highThreshold: parseFloat(highThreshold),
-      lowThreshold: parseFloat(lowThreshold),
-    };
-
-    localStorage.setItem(
-      `chartSettings_${title}`,
-      JSON.stringify(chartSettings)
-    );
-
-    toast({
-      title: 'Settings saved.',
-      description: 'Your chart settings have been saved successfully.',
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
-
-    console.log('phone number', phoneNumber);
-    console.log('high threshold', highThreshold);
-    console.log('low threshold', lowThreshold);
-
-    handleCloseModal();
-  };
 
   const getLogoToDisplay = (metric, colorMode) => {
     const logoMap = {
@@ -295,7 +268,7 @@ const ChartWrapper = ({
     }
   }, [loading, toast]);
 
-  const timeOfGraph = calculateTimePeriod(weatherData.length - 1);
+  const timeOfGraph = (weatherData && calculateTimePeriod(weatherData.length - 1));
 
   const MotionButton = motion(Button);
 
@@ -559,6 +532,27 @@ const ChartWrapper = ({
                 />
               </Tooltip>
             </motion.div>
+            {renderCloseButton() && <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, delay: 0.5 }}
+            >
+              <Tooltip label="Close Chart">
+                <MotionIconButton
+                  icon={<FaTimes />}
+                  variant="outline"
+                  color="#212121"
+                  size={iconSize}
+                  bg={'brand.400'}
+                  _hover={{ bg: 'brand.800' }}
+                  onClick={() => toggleChartVisibility(section, chart)}
+                  border={'2px solid #fd9801'}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  ml={2}
+                />
+              </Tooltip>
+            </motion.div>}
           </Flex>
         </Flex>
         {showMap && (

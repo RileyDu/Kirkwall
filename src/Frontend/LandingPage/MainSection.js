@@ -11,10 +11,8 @@ import {
   Icon,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import { FaArrowUp } from 'react-icons/fa';
-// import dashboard from '../dashboard.png'
+import { FaArrowUp } from 'react-icons/fa/index.esm.js';
 import { useNavigate } from 'react-router-dom';
-import ReactPlayer from 'react-player';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
@@ -40,24 +38,27 @@ const MainSection = () => {
             transition={{ duration: 0.6 }}
             id="overview"
           >
-            <Box mb={4} display={'flex'} justifyContent={'center'} alignContent={'center'}>
-            <Box position="relative" paddingTop="56.25%" width="100%"> {/* 16:9 Aspect Ratio */}
-                <ReactPlayer
-                  url="https://youtu.be/w8drN_JKhT4?si=V_5b6hOOO9vFKQaJ"
-                  width="100%"
-                  height="100%"
-                  style={{ position: 'absolute', top: 0, left: 0 }}
-                  controls
-                  config={{
-                    youtube: {
-                      playerVars: {
-                        modestbranding: 1,
-                        showinfo: 0,
-                        rel: 0,
-                      },
-                    },
+            <Box
+              mb={4}
+              display={'flex'}
+              justifyContent={'center'}
+              alignContent={'center'}
+            >
+              <Box position="relative" paddingTop="56.25%" width="100%">
+                {/* 16:9 Aspect Ratio */}
+                <iframe
+                  src={`https://www.youtube.com/embed/w8drN_JKhT4`}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
                   }}
-                />
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title="Kirkwall Demo"
+                ></iframe>
               </Box>
             </Box>
             <Heading as="h1" size="2xl" mb={4} color="primary.100">

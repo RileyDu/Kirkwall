@@ -16,36 +16,19 @@ import {
   TabPanels,
   Tab,
   TabPanel,
-  useColorModeValue,
   IconButton,
   Tooltip,
   Divider,
   useMediaQuery,
   useDisclosure,
 } from '@chakra-ui/react';
-import VoiceControl from '../services/VoiceControl';
-import { LineChart, BarChart } from '../Charts/Charts';
-import Logout from '../../Frontend/AuthComponents/Logout';
-import { auth } from '../../Backend/Firebase';
-import ChartWrapper from '../Charts/ChartWrapper';
-import {
-  FaChessRook,
-  FaChevronDown,
-  FaPlus,
-  FaMinus,
-  FaTemperatureHigh,
-  FaTint,
-  FaWind,
-  FaWater,
-  FaLeaf,
-  FaCloudRain,
-} from 'react-icons/fa';
+import { LineChart, BarChart } from '../Charts/Charts.js';
+import ChartWrapper from '../Charts/ChartWrapper.js';
+import { FaChessRook, FaChevronDown, FaPlus, FaMinus, FaTemperatureHigh, FaTint, FaWind, FaWater, FaLeaf, FaCloudRain } from 'react-icons/fa/index.esm.js';
 import { keyframes } from '@emotion/react';
-import { useWeatherData } from '../WeatherDataContext';
-import { handleChartChange } from '../Charts/ChartUtils';
+import { useWeatherData } from '../WeatherDataContext.js';
+import { handleChartChange } from '../Charts/ChartUtils.js';
 import { motion } from 'framer-motion';
-// import { useAuth } from '../AuthComponents/AuthContext.js';
-import ChartExpandModal from '../Charts/ChartExpandModal';
 
 const MotionBox = motion(Box);
 const MotionTabPanel = motion(TabPanel);
@@ -95,101 +78,10 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     garage: ['temperature', 'humidity'],
     rivercity: ['temperature', 'humidity'],
   });
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalChart, setModalChart] = useState('');
-  const [currentTimePeriod, setCurrentTimePeriod] = useState('1H');
+
   const { colorMode } = useColorMode();
-  const iconColor = useColorModeValue('black', 'white');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
-
-  const showChart = (section, chart) => {
-    setVisibleCharts(prevState => ({
-      ...prevState,
-      [section]: [...prevState[section], chart],
-    }));
-  };
-
-  const hideChart = (section, chart) => {
-    setVisibleCharts(prevState => ({
-      ...prevState,
-      [section]: prevState[section].filter(item => item !== chart),
-    }));
-  };
-
-  // const handleVoiceCommand = (command) => {
-  //   if (command.includes('show grand farm')) {
-  //     showChart('grandFarm', 'temperature');
-  //   } else if (command.includes('hide temperature')) {
-  //     hideChart('grandFarm', 'temperature');
-  //   } else if (command.includes('show humidity')) {
-  //     showChart('grandFarm', 'humidity');
-  //   } else if (command.includes('hide humidity')) {
-  //     hideChart('grandFarm', 'humidity');
-  //   } else if (command.includes('show wind')) {
-  //     showChart('grandFarm', 'wind');
-  //   } else if (command.includes('hide wind')) {
-  //     hideChart('grandFarm', 'wind');
-  //   } else if (command.includes('show soil moisture')) {
-  //     showChart('grandFarm', 'soilMoisture');
-  //   } else if (command.includes('hide soil moisture')) {
-  //     hideChart('grandFarm', 'soilMoisture');
-  //   } else if (command.includes('show leaf wetness')) {
-  //     showChart('grandFarm', 'leafWetness');
-  //   } else if (command.includes('hide leaf wetness')) {
-  //     hideChart('grandFarm', 'leafWetness');
-  //   } else if (command.includes('show rainfall')) {
-  //     showChart('grandFarm', 'rainfall');
-  //   } else if (command.includes('hide rainfall')) {
-  //     hideChart('grandFarm', 'rainfall');
-  //   } else if (command.includes('expand temperature details')) {
-  //     openModal('temperature');
-  //   } else if (command.includes('expand humidity details')) {
-  //     openModal('percent_humidity');
-  //   } else if (command.includes('expand wind details')) {
-  //     openModal('wind_speed');
-  //   } else if (command.includes('expand soil moisture details')) {
-  //     openModal('soil_moisture');
-  //   } else if (command.includes('expand leaf wetness details')) {
-  //     openModal('leaf_wetness');
-  //   } else if (command.includes('expand rainfall details')) {
-  //     openModal('rain_15_min_inches');
-  //   } else if (command.includes('log out')) {
-  //     logOut();
-  //   } else if (command.includes('change temperature chart type to line')) {
-  //     setTempChartType('line');
-  //   } else if (command.includes('change temperature chart type to bar')) {
-  //     setTempChartType('bar');
-  //   } else if (command.includes('change humidity chart type to line')) {
-  //     setHumidityChartType('line');
-  //   } else if (command.includes('change humidity chart type to bar')) {
-  //     setHumidityChartType('bar');
-  //   } else {
-  //     console.log('Command not recognized');
-  //   }
-  // };
-
-  const openModal = chart => {
-    setModalChart(chart);
-    setIsModalOpen(true);
-  };
-
-  const logOut = () => {
-    auth
-      .signOut()
-      .then(() => {
-        console.log('User logged out');
-        // Additional logout logic if needed
-      })
-      .catch(error => {
-        console.error('Logout error:', error);
-      });
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setModalChart('');
-  };
 
   useEffect(() => {
     setIsReady(false);
@@ -197,13 +89,6 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
       setIsReady(true);
     }
   }, [weatherData]);
-
-  // const toggleSection = (section) => {
-  //   setShowSections((prevState) => ({
-  //     ...prevState,
-  //     [section]: !prevState[section],
-  //   }));
-  // };
 
   const toggleChartVisibility = (section, chart) => {
     setVisibleCharts(prevState => {
@@ -238,21 +123,6 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
       </Flex>
     );
   }
-
-  const ChartToggleButton = ({ isVisible, onClick, chart, icon }) => (
-    <Tooltip label={isVisible ? `Hide ${chart}` : `Show ${chart}`}>
-      <IconButton
-        icon={isVisible ? <FaMinus /> : <FaPlus />}
-        onClick={onClick}
-        mx="1"
-        bg={isVisible ? 'red.400' : 'green.400'}
-        color="white"
-        _hover={{ bg: isVisible ? 'red.500' : 'green.500' }}
-        size="sm"
-        aria-label={`${isVisible ? 'Hide' : 'Show'} ${chart}`}
-      />
-    </Tooltip>
-  );
 
   const charts = {
     temperature: <FaTemperatureHigh />,
@@ -452,6 +322,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      toggleChartVisibility={toggleChartVisibility}
+                      section="grandFarm"
+                      chart="temperature"
                     >
                       {tempChartType === 'line' ? (
                         <LineChart
@@ -481,6 +354,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      toggleChartVisibility={toggleChartVisibility}
+                      section="grandFarm"
+                      chart="humidity"
                     >
                       {humidityChartType === 'line' ? (
                         <LineChart
@@ -510,6 +386,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      toggleChartVisibility={toggleChartVisibility}
+                      section="grandFarm"
+                      chart="wind"
                     >
                       {windChartType === 'line' ? (
                         <LineChart
@@ -541,6 +420,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      toggleChartVisibility={toggleChartVisibility}
+                      section="grandFarm"
+                      chart="soil"
                     >
                       {soilMoistureChartType === 'line' ? (
                         <LineChart
@@ -570,6 +452,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      toggleChartVisibility={toggleChartVisibility}
+                      section="grandFarm"
+                      chart="leaf"
                     >
                       {leafWetnessChartType === 'line' ? (
                         <LineChart
@@ -599,6 +484,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      toggleChartVisibility={toggleChartVisibility}
+                      section="grandFarm"
+                      chart="rainfall"
                     >
                       {rainfallChartType === 'line' ? (
                         <LineChart
@@ -616,40 +504,6 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     </ChartWrapper>
                   </GridItem>
                 )}
-                {/* <MotionBox
-              initial={{ opacity: 0, height: 0 }}
-              animate={{
-                opacity: 1,
-                height:'auto',
-              }}
-              transition={{ duration: 0.5 }}
-              mb={8}
-            > */}
-                {/* <Flex justify="center" mb="4">
-                <Menu>
-                  <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
-                    Toggle Charts
-                  </MenuButton>
-                  <MenuList>
-                    {['temperature', 'humidity'].map(chart => (
-                      <MenuItem key={chart} onClick={() => toggleChartVisibility('garage', chart)}>
-                        <Flex alignItems="center">
-                          {charts[chart]}
-                          <Box ml="2">{visibleCharts.garage.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
-                        </Flex>
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                </Menu>
-              </Flex> */}
-                {/* <Grid
-                templateColumns={{
-                  base: '1fr',
-                  md: 'repeat(2, 1fr)',
-                  lg: 'repeat(2, 1fr)',
-                }}
-                gap="6"
-              > */}
                 {visibleCharts.garage.includes('temperature') && (
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                     <ChartWrapper
@@ -664,6 +518,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      toggleChartVisibility={toggleChartVisibility}
+                      section="garage"
+                      chart="temperature"
                     >
                       {watchdogTempChartType === 'line' ? (
                         <LineChart
@@ -695,6 +552,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      toggleChartVisibility={toggleChartVisibility}
+                      section="garage"
+                      chart="humidity"
                     >
                       {watchdogHumidityChartType === 'line' ? (
                         <LineChart
@@ -712,41 +572,6 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     </ChartWrapper>
                   </GridItem>
                 )}
-                {/* </Grid>
-            </MotionBox>
-            <MotionBox
-              initial={{ opacity: 0, height: 0 }}
-              animate={{
-                opacity: 1,
-                height:'auto',
-              }}
-              transition={{ duration: 0.5 }}
-            > */}
-                {/* <Flex justify="center" mb="4">
-                <Menu>
-                  <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="brand.400" color="black" _hover={{ bg: '#d7a247' }}>
-                    Toggle Charts
-                  </MenuButton>
-                  <MenuList>
-                    {['temperature', 'humidity'].map(chart => (
-                      <MenuItem key={chart} onClick={() => toggleChartVisibility('rivercity', chart)}>
-                        <Flex alignItems="center">
-                          {charts[chart]}
-                          <Box ml="2">{visibleCharts.rivercity.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
-                        </Flex>
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                </Menu>
-              </Flex> */}
-                {/* <Grid
-                templateColumns={{
-                  base: '1fr',
-                  md: 'repeat(2, 1fr)',
-                  lg: 'repeat(2, 1fr)',
-                }}
-                gap="6"
-              > */}
                 {visibleCharts.rivercity.includes('temperature') && (
                   <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                     <ChartWrapper
@@ -761,6 +586,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      toggleChartVisibility={toggleChartVisibility}
+                      section="rivercity"
+                      chart="temperature"
                     >
                       {rivercityTempChartType === 'line' ? (
                         <LineChart
@@ -792,6 +620,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       display="flex"
                       flexDirection="column"
                       handleTimePeriodChange={handleTimePeriodChange}
+                      toggleChartVisibility={toggleChartVisibility}
+                      section="rivercity"
+                      chart="humidity"
                     >
                       {rivercityHumChartType === 'line' ? (
                         <LineChart
@@ -887,6 +718,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section="grandFarm"
+                    chart="temperature"
                   >
                     {tempChartType === 'line' ? (
                       <LineChart
@@ -916,6 +750,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section="grandFarm"
+                    chart="humidity"
                   >
                     {humidityChartType === 'line' ? (
                       <LineChart
@@ -945,6 +782,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section="grandFarm"
+                    chart="wind"
                   >
                     {windChartType === 'line' ? (
                       <LineChart
@@ -962,7 +802,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                   </ChartWrapper>
                 </GridItem>
               )}
-              {visibleCharts.grandFarm.includes('soilMoisture') && (
+              {visibleCharts.grandFarm.includes('soil') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Soil Moisture (centibar)"
@@ -974,6 +814,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section="grandFarm"
+                    chart="soil"
                   >
                     {soilMoistureChartType === 'line' ? (
                       <LineChart
@@ -991,7 +834,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                   </ChartWrapper>
                 </GridItem>
               )}
-              {visibleCharts.grandFarm.includes('leafWetness') && (
+              {visibleCharts.grandFarm.includes('leaf') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Leaf Wetness (0-15)"
@@ -1003,6 +846,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section="grandFarm"
+                    chart="leaf"
                   >
                     {leafWetnessChartType === 'line' ? (
                       <LineChart
@@ -1032,6 +878,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section="grandFarm"
+                    chart="rainfall"
                   >
                     {rainfallChartType === 'line' ? (
                       <LineChart
@@ -1126,6 +975,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section="garage"
+                    chart="temperature"
                   >
                     {watchdogTempChartType === 'line' ? (
                       <LineChart
@@ -1157,6 +1009,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section="garage"
+                    chart="humidity"
                   >
                     {watchdogHumidityChartType === 'line' ? (
                       <LineChart
@@ -1251,6 +1106,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section="rivercity"
+                    chart="temperature"
                   >
                     {rivercityTempChartType === 'line' ? (
                       <LineChart
@@ -1280,6 +1138,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section="rivercity"
+                    chart="humidity"
                   >
                     {rivercityHumChartType === 'line' ? (
                       <LineChart

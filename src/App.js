@@ -14,35 +14,35 @@ import {
   useLocation,
 } from 'react-router-dom';
 
-import { AuthProvider } from './Frontend/AuthComponents/AuthContext';
-import ProtectedRoute from './Frontend/AuthComponents/ProtectedRoute';
-import SignUp from './Frontend/AuthComponents/Signup';
-import Login from './Frontend/AuthComponents/Login';
-import Header from './Frontend/Header/Header';
-import Sidebar from './Frontend/Sidebar/Siderbar';
-import MainContent from './Frontend/Main/Main';
-import TempSensors from './Frontend/Sensors/TempSensors/TempSensors';
-import HumiditySensors from './Frontend/Sensors/HumiditySensors/HumiditySensors';
-import SoilSensors from './Frontend/Sensors/SoilSensors/SoilSensors';
-import RainSensors from './Frontend/Sensors/RainSensors/RainSensors';
-import WindSensors from './Frontend/Sensors/WindSensors/WindSensor';
-import MobileMenu from './Frontend/MobileMenu/MobileMenu';
-import customTheme from './Frontend/Styles/theme';
-import { WeatherDataProvider } from './Frontend/WeatherDataContext';
-import { FaChessRook } from 'react-icons/fa';
+import { AuthProvider } from './Frontend/AuthComponents/AuthContext.js';
+import ProtectedRoute from './Frontend/AuthComponents/ProtectedRoute.js';
+import SignUp from './Frontend/AuthComponents/Signup.js';
+import Login from './Frontend/AuthComponents/Login.js';
+import Header from './Frontend/Header/Header.js';
+import Sidebar from './Frontend/Sidebar/Siderbar.js';
+import MainContent from './Frontend/Main/Main.js';
+import TempSensors from './Frontend/Sensors/TempSensors/TempSensors.js';
+import HumiditySensors from './Frontend/Sensors/HumiditySensors/HumiditySensors.js';
+import SoilSensors from './Frontend/Sensors/SoilSensors/SoilSensors.js';
+import RainSensors from './Frontend/Sensors/RainSensors/RainSensors.js';
+import WindSensors from './Frontend/Sensors/WindSensors/WindSensor.js';
+import MobileMenu from './Frontend/MobileMenu/MobileMenu.js';
+import customTheme from './Frontend/Styles/theme.js';
+import { WeatherDataProvider } from './Frontend/WeatherDataContext.js';
+import { FaChessRook } from 'react-icons/fa/index.esm.js';
 import { keyframes } from '@emotion/react';
-import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors';
-import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySensors';
-import MapComponent from './Frontend/Maps/KirkwallMap';
-import LandingPage from './Frontend/LandingPage/LandingPage';
-import ImpriMedMap from './Frontend/Maps/ImpriMedMap';
-import GrandFarmDashboard from './Frontend/Clients/GrandFarm/GrandFarm';
-import MedDashboard from './Frontend/Clients/ImpriMed/MedDashboard';
-import GrandFarmMap from './Frontend/Maps/GrandFarmMap';
-import RJDashboard from './Frontend/Clients/RjEnergy/RjDashboard';
-import RJMap from './Frontend/Maps/RJMap';
-import WatchDogProtectDashboard from './Frontend/Clients/WatchDogProtect/WatchDogProtectDashboard';
-import WatchdogProtectMap from './Frontend/Maps/WatchdogMap';
+import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors.js';
+import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySensors.js';
+import MapComponent from './Frontend/Maps/KirkwallMap.js';
+import LandingPage from './Frontend/LandingPage/LandingPage.js';
+import ImpriMedMap from './Frontend/Maps/ImpriMedMap.js';
+import GrandFarmDashboard from './Frontend/Clients/GrandFarm/GrandFarm.js';
+import MedDashboard from './Frontend/Clients/ImpriMed/MedDashboard.js';
+import GrandFarmMap from './Frontend/Maps/GrandFarmMap.js';
+import RJDashboard from './Frontend/Clients/RjEnergy/RjDashboard.js';
+import RJMap from './Frontend/Maps/RJMap.js';
+import WatchDogProtectDashboard from './Frontend/Clients/WatchDogProtect/WatchDogProtectDashboard.js';
+import WatchdogProtectMap from './Frontend/Maps/WatchdogMap.js';
 
 const Layout = ({
   children,

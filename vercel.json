@@ -7,18 +7,18 @@
       "config": { "distDir": "build" }
     },
     {
-      "src": "src/Backend/server.js",
+      "src": "src/Backend/server.mjs",
       "use": "@vercel/node"
     }
   ],
   "rewrites": [
     {
       "source": "/send-sms",
-      "destination": "src/Backend/server.js"
+      "destination": "src/Backend/server.mjs"
     },
     {
       "source": "/send-email",
-      "destination": "src/Backend/server.js"
+      "destination": "src/Backend/server.mjs"
     },
     {
       "source": "/(.*)",

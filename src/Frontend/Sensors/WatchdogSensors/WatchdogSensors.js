@@ -9,14 +9,14 @@ import {
   GridItem,
   useColorMode
 } from '@chakra-ui/react';
-import { useWeatherData } from '../../WeatherDataContext';
-import ChartWrapper from '../../Charts/ChartWrapper';
-import { BarChart, LineChart } from '../../Charts/Charts';
-import MiniDashboard from '../../Charts/ChartDashboard';
-import { FaChessRook } from 'react-icons/fa';
+import { useWeatherData } from '../../WeatherDataContext.js';
+import ChartWrapper from '../../Charts/ChartWrapper.js';
+import { BarChart, LineChart } from '../../Charts/Charts.js';
+import MiniDashboard from '../../Charts/ChartDashboard.js';
+import { FaChessRook } from 'react-icons/fa/index.esm.js';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import { handleChartChange } from '../../Charts/ChartUtils';
+import { handleChartChange } from '../../Charts/ChartUtils.js';
 
 export default function WatchdogSensors({ statusOfAlerts }) {
   const { watchdogData, loading, watchdogTempData, watchdogHumData, handleTimePeriodChange } = useWeatherData();

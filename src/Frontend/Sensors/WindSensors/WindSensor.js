@@ -1,15 +1,15 @@
 import React from 'react';
 import { Box, Heading, Text, Spinner, Flex, Divider, useMediaQuery, useColorMode } from '@chakra-ui/react';
 import ReactSpeedometer from 'react-d3-speedometer';
-import ChartWrapper from '../../Charts/ChartWrapper';
-import { BarChart, LineChart } from '../../Charts/Charts';
-import MiniDashboard from '../../Charts/ChartDashboard';
+import ChartWrapper from '../../Charts/ChartWrapper.js';
+import { BarChart, LineChart } from '../../Charts/Charts.js';
+import MiniDashboard from '../../Charts/ChartDashboard.js';
 // import WindGauageStyling from './WindGaugeStyling.css';
-import { useWeatherData } from '../../WeatherDataContext';
-import { FaChessRook } from 'react-icons/fa';
+import { useWeatherData } from '../../WeatherDataContext.js';
+import { FaChessRook } from 'react-icons/fa/index.esm.js';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import { handleChartChange } from '../../Charts/ChartUtils';
+import { handleChartChange } from '../../Charts/ChartUtils.js';
 
 const getCardinalDirection = (degree) => {
   const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
