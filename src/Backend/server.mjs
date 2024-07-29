@@ -80,6 +80,8 @@ const getLatestThresholds = (thresholds) => {
   return Object.values(latestThresholds);
 };
 
+const lastAlertTimes = {};  // In-memory store for last alert times
+
 const checkThresholds = async () => {
   console.log('Checking thresholds...');
 
@@ -94,6 +96,8 @@ const checkThresholds = async () => {
     };
     return new Intl.DateTimeFormat('en-US', options).format(date);
   }
+
+  const debounceTime = 5 * 60 * 1000;  // 5 minutes in milliseconds
 
   try {
     const thresholds = await getLatestThreshold();
@@ -129,22 +133,29 @@ const checkThresholds = async () => {
 
       if (currentValue == null) continue;
 
+      const now = new Date();
+
+      if (lastAlertTimes[id] && (now - lastAlertTimes[id] < debounceTime)) {
+        console.log(`Skipping alert for ${metric}, recently alerted.`);
+        continue;
+      }
+
       if (high !== null && currentValue > high) {
-        const now = new Date();
         const formattedDateTime = formatDateTime(now);
         const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high} at ${formattedDateTime}.`;
         if (phone) await sendSMSAlert(phone, alertMessage);
         if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage, alertMessage);
         if (phone || email) sendAlertToDB(metric, alertMessage, now);
+        lastAlertTimes[id] = now;
       }
 
       if (low !== null && currentValue < low) {
-        const now = new Date();
         const formattedDateTime = formatDateTime(now);
         const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low} at ${formattedDateTime}.`;
         if (phone) await sendSMSAlert(phone, alertMessage);
         if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage, alertMessage);
         if (phone || email) sendAlertToDB(metric, alertMessage, now);
+        lastAlertTimes[id] = now;
       }
     }
   } catch (error) {
