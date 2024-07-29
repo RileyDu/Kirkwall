@@ -22,7 +22,7 @@ jobs:
         run: npm install
 
       - name: Run cron job script
-        run: node path/to/your/checkThresholds.js
+        run: node src/Backend/server.mjs
         env:
           TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
           TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
