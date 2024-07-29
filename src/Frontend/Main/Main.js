@@ -73,14 +73,42 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
 
 
   // This is to show chart
-  const initialVisibility = { chart1: true, chart2: true, chart3: true, chart4: true, chart5: true, chart6: true, chart7: true, chart8: true, chart9: true, chart10: true,
-    chart11: true, chart12: true, chart13: true, chart14: true, chart15: true, chart16: true, chart17: true, chart18: true, chart19: true, chart20: true
-   };
+  const initialVisibility = { chart1: true, chart2: true, chart3: true, chart4: true, chart5: true, chart6: true, chart7: true, chart8: true, chart9: true, chart10: true};
+  
+  const grandFarmInitialVisibility = { chart1: true, chart2: true, chart3: true, chart4: true };
+
+  const garageInitialVisibility = { chart1: true, chart2: true };
+
+  const freezerInitialVisibility = { chart1: true, chart2: true };
+
+  
+
   const [chartVisibility, setChartVisibility] = useState(initialVisibility);
+
+  const [grandFarmChartVisibility, setGrandFarmChartVisibility] = useState(grandFarmInitialVisibility);
+
+  const [garageChartVisibility, setGarageChartVisibility] = useState(garageInitialVisibility);
+
+  const [freezerChartVisibility, setFreezerChartVisibility] = useState(freezerInitialVisibility);
+
   
    const resetMaps = () => {
     setChartVisibility(initialVisibility);
    }
+
+   const resetGrandFarmMaps = () => {
+    setGrandFarmChartVisibility(grandFarmInitialVisibility);
+   }
+
+   const resetGarageMaps = () => {
+    setGarageChartVisibility(garageInitialVisibility);
+   } 
+
+   const resetFreezerMaps = () => {
+    setFreezerChartVisibility(freezerInitialVisibility);
+   } 
+
+
 
   const handleCloseChartWrapper = (chartId) => {
     setChartVisibility(prevState => ({
@@ -88,6 +116,29 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
       [chartId]: false,
     }));
   };
+
+  const handleCloseGrandFarmChartWrapper = (chartId) => {
+    setGrandFarmChartVisibility(prevState => ({
+      ...prevState,
+      [chartId]: false,
+    }));
+  };
+
+  const handleCloseGarageChartWrapper = (chartId) => {
+    setGarageChartVisibility(prevState => ({
+      ...prevState,
+      [chartId]: false,
+    }));
+  };
+
+  const handleCloseFreezerChartWrapper = (chartId) => {
+    setFreezerChartVisibility(prevState => ({
+      ...prevState,
+      [chartId]: false,
+    }));
+  };
+
+
 
 
   const [isReady, setIsReady] = useState(false);
@@ -288,6 +339,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     rainfall: <FaCloudRain />
   };
 
+
   return (
     <Box
       bg={colorMode === 'light' ? 'brand.50' : 'gray.700'}
@@ -317,524 +369,14 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
             key="main-dashboard"
           >
             {isLargerThan768 && (
-           <Flex mb="6" alignItems="center">
-  <Heading size="lg">Main Dashboard</Heading>
-  <Menu>
-    <Tooltip label="Toggle Sensor Sections" aria-label="Toggle Sensor Sections">
-      <MenuButton
-        as={IconButton}
-        icon={<FaChevronDown />}
-        bg="brand.400"
-        color="black"
-        _hover={{ bg: '#d7a247' }}
-        variant="outline"
-        ml={'2'}
-        size={'sm'}
-      />
-    </Tooltip>
-
-    <MenuList>
-      <MenuItem onClick={() => toggleSection('grandFarm')}>
-        {showSections.grandFarm ? 'Hide' : 'Show'} Grand Farm Sensors
-      </MenuItem>
-      <MenuItem onClick={() => toggleSection('garage')}>
-        {showSections.garage ? 'Hide' : 'Show'} Garage Sensors
-      </MenuItem>
-      <MenuItem onClick={() => toggleSection('rivercity')}>
-        {showSections.rivercity ? 'Hide' : 'Show'} Freezer Sensors
-      </MenuItem>
-    </MenuList>
-    <Button bg={"brand.400"} color={"black"} ml="auto" onClick={resetMaps}>Reset</Button>
-  </Menu>
-</Flex>
-)}
-            <MotionBox
-              initial={{ opacity: 0, height: 0 }}
-              animate={{
-                opacity: showSections.grandFarm ? 1 : 0,
-                height: showSections.grandFarm ? 'auto' : 0,
-              }}
-              transition={{ duration: 0.5 }}
-              mb={showSections.grandFarm ? '8' : 0}
-            >
-              <Flex justify="center" mb="4">
-              <Heading size="lg" textAlign="center" mb="4">
-    Grand Farm Sensors
-  </Heading>
-    <Menu>
-      <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
-        <MenuButton
-          as={IconButton}
-          icon={<FaChevronDown />}
-          bg="brand.400"
-          color="black"
-          _hover={{ bg: '#d7a247' }}
-          variant="outline"
-          ml={'2'}
-          size={'sm'}
-          mt={isLargerThan768 ? '1' : '0'}
-        />
-      </Tooltip>
-                  <MenuList>
-                    {Object.keys(charts).map(chart => (
-                      <MenuItem key={chart} onClick={() => toggleChartVisibility('grandFarm', chart)}>
-                        <Flex alignItems="center">
-                          {charts[chart]}
-                          <Box ml="2">{visibleCharts.grandFarm.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
-                        </Flex>
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                </Menu>
+              <Flex mb="6" alignItems="center">
+                <Box flex="1" display="flex" justifyContent="center">
+                  <Heading size="lg">Main Dashboard</Heading>
+                </Box>
+                <Button bg={"brand.400"} color={"black"} ml="auto" onClick={resetMaps}>Reset</Button>
               </Flex>
-              <Grid
-                templateColumns={{
-                  base: '1fr',
-                  md: 'repeat(2, 1fr)',
-                  lg: 'repeat(2, 1fr)',
-                }}
-                gap="6"
-              >
-                {visibleCharts.grandFarm.includes('temperature') && (
-                  <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    {chartVisibility.chart1 &&<ChartWrapper
-                      title="Temperature (°F)"
-                      onChartChange={handleChartChange(setTempChartType)}
-                      weatherData={tempData || weatherData}
-                      metric="temperature"
-                      flex="1"
-                      timePeriod={timePeriod}
-                      display="flex"
-                      flexDirection="column"
-                      handleTimePeriodChange={handleTimePeriodChange}
-                      closeMap={() => handleCloseChartWrapper('chart1')}
-                    >
-                      {tempChartType === 'line' ? (
-                        <LineChart
-                          data={tempData || weatherData}
-                          metric="temperature"
-                          style={{ flex: 1 }}
-                        />
-                      ) : (
-                        <BarChart
-                          data={tempData || weatherData}
-                          metric="temperature"
-                          style={{ flex: 1 }}
-                        />
-                      )}
-                    </ChartWrapper>}
-                  </GridItem>
-                )}
-                {visibleCharts.grandFarm.includes('humidity') && (
-                  <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    {chartVisibility.chart2 &&
-                      <ChartWrapper
-                      title="Humidity (%)"
-                      onChartChange={handleChartChange(setHumidityChartType)}
-                      weatherData={humidityData || weatherData}
-                      metric="percent_humidity"
-                      flex="1"
-                      timePeriod={timePeriod}
-                      display="flex"
-                      flexDirection="column"
-                      handleTimePeriodChange={handleTimePeriodChange}
-                      closeMap={() => handleCloseChartWrapper('chart2')}
-                    >
-                      {humidityChartType === 'line' ? (
-                        <LineChart
-                          data={humidityData || weatherData}
-                          metric="percent_humidity"
-                          style={{ flex: 1 }}
-                        />
-                      ) : (
-                        <BarChart
-                          data={humidityData || weatherData}
-                          metric="percent_humidity"
-                          style={{ flex: 1 }}
-                        />
-                      )}
-                    </ChartWrapper>
-                    }
-                  </GridItem>
-                )}
-                {visibleCharts.grandFarm.includes('wind') && (
-                  <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    {chartVisibility.chart3 && <ChartWrapper
-                      title="Wind (mph)"
-                      onChartChange={handleChartChange(setWindChartType)}
-                      weatherData={windData || weatherData}
-                      metric="wind_speed"
-                      flex="1"
-                      timePeriod={timePeriod}
-                      display="flex"
-                      flexDirection="column"
-                      handleTimePeriodChange={handleTimePeriodChange}
-                      closeMap={() => handleCloseChartWrapper('chart3')}
-                    >
-                      {windChartType === 'line' ? (
-                        <LineChart
-                          data={windData || weatherData}
-                          metric="wind_speed"
-                          style={{ flex: 1 }}
-                        />
-                      ) : (
-                        <BarChart
-                          data={windData || weatherData}
-                          metric="wind_speed"
-                          style={{ flex: 1 }}
-                        />
-                      )}
-                    </ChartWrapper>}
-                  </GridItem>
-                )}
-                {visibleCharts.grandFarm.includes('soilMoisture') && (
-                  <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    {chartVisibility.chart4 && <ChartWrapper
-                      title="Soil Moisture (centibar)"
-                      onChartChange={handleChartChange(setSoilMoistureChartType)}
-                      weatherData={soilMoistureData || weatherData}
-                      metric="soil_moisture"
-                      flex="1"
-                      timePeriod={timePeriod}
-                      display="flex"
-                      flexDirection="column"
-                      handleTimePeriodChange={handleTimePeriodChange}
-                      closeMap={() => handleCloseChartWrapper('chart4')}
-                    >
-                      {soilMoistureChartType === 'line' ? (
-                        <LineChart
-                          data={soilMoistureData || weatherData}
-                          metric="soil_moisture"
-                          style={{ flex: 1 }}
-                        />
-                      ) : (
-                        <BarChart
-                          data={soilMoistureData || weatherData}
-                          metric="soil_moisture"
-                          style={{ flex: 1 }}
-                        />
-                      )}
-                    </ChartWrapper>}
-                  </GridItem>
-                )}
-                {visibleCharts.grandFarm.includes('leafWetness') && (
-                  <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    {chartVisibility.chart5 && <ChartWrapper
-                      title="Leaf Wetness (0-15)"
-                      onChartChange={handleChartChange(setLeafWetnessChartType)}
-                      weatherData={leafWetnessData || weatherData}
-                      metric="leaf_wetness"
-                      flex="1"
-                      timePeriod={timePeriod}
-                      display="flex"
-                      flexDirection="column"
-                      handleTimePeriodChange={handleTimePeriodChange}
-                      closeMap={() => handleCloseChartWrapper('chart5')}
-                    >
-                      {leafWetnessChartType === 'line' ? (
-                        <LineChart
-                          data={leafWetnessData || weatherData}
-                          metric="leaf_wetness"
-                          style={{ flex: 1 }}
-                        />
-                      ) : (
-                        <BarChart
-                          data={leafWetnessData || weatherData}
-                          metric="leaf_wetness"
-                          style={{ flex: 1 }}
-                        />
-                      )}
-                    </ChartWrapper>}
-                  </GridItem>
-                )}
-                {visibleCharts.grandFarm.includes('rainfall') && (
-                  <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    {chartVisibility.chart6 && <ChartWrapper
-                      title="Rainfall (in)"
-                      onChartChange={handleChartChange(setRainfallChartType)}
-                      weatherData={rainfallData || weatherData}
-                      metric="rain_15_min_inches"
-                      flex="1"
-                      timePeriod={timePeriod}
-                      display="flex"
-                      flexDirection="column"
-                      handleTimePeriodChange={handleTimePeriodChange}
-                      closeMap={() => handleCloseChartWrapper('chart6')}
-                    >
-                      {rainfallChartType === 'line' ? (
-                        <LineChart
-                          data={rainfallData || weatherData}
-                          metric="rain_15_min_inches"
-                          style={{ flex: 1 }}
-                        />
-                      ) : (
-                        <BarChart
-                          data={rainfallData || weatherData}
-                          metric="rain_15_min_inches"
-                          style={{ flex: 1 }}
-                        />
-                      )}
-                    </ChartWrapper>}
-                  </GridItem>
-                )}
-              </Grid>
-            </MotionBox>
-            <MotionBox
-              initial={{ opacity: 0, height: 0 }}
-              animate={{
-                opacity: showSections.garage ? 1 : 0,
-                height: showSections.garage ? 'auto' : 0,
-              }}
-              transition={{ duration: 0.5 }}
-              mb={8}
-            >
-              <Flex justify="center" mb="4">
-              <Heading size="lg" textAlign="center" mb="4">
-    Garage Sensors
-  </Heading>
-  <Menu>
-    <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
-      <MenuButton
-        as={IconButton}
-        icon={<FaChevronDown />}
-        bg="brand.400"
-        color="black"
-        _hover={{ bg: '#d7a247' }}
-        variant="outline"
-        aria-label="Toggle Charts"
-        size={"sm"}
-        ml={2}
-        mt={isLargerThan768 ? '1' : '0'}
-        />
-    </Tooltip>
-                  <MenuList>
-                    {['temperature', 'humidity'].map(chart => (
-                      <MenuItem key={chart} onClick={() => toggleChartVisibility('garage', chart)}>
-                        <Flex alignItems="center">
-                          {charts[chart]}
-                          <Box ml="2">{visibleCharts.garage.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
-                        </Flex>
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                </Menu>
-              </Flex>
-              <Grid
-                templateColumns={{
-                  base: '1fr',
-                  md: 'repeat(2, 1fr)',
-                  lg: 'repeat(2, 1fr)',
-                }}
-                gap="6"
-              >
-                {visibleCharts.garage.includes('temperature') && (
-                  <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    {chartVisibility.chart7 && <ChartWrapper
-                      title="Temperature (°F)"
-                      onChartChange={handleChartChange(setWatchdogTempChartType)}
-                      weatherData={watchdogTempData || watchdogData}
-                      metric="temp"
-                      flex="1"
-                      timePeriod={timePeriod}
-                      display="flex"
-                      flexDirection="column"
-                      handleTimePeriodChange={handleTimePeriodChange}
-                      closeMap={() => handleCloseChartWrapper('chart7')}
-                    >
-                      {watchdogTempChartType === 'line' ? (
-                        <LineChart
-                          data={watchdogTempData || watchdogData}
-                          metric="temp"
-                          style={{ flex: 1 }}
-                        />
-                      ) : (
-                        <BarChart
-                          data={watchdogTempData || watchdogData}
-                          metric="temp"
-                          style={{ flex: 1 }}
-                        />
-                      )}
-                    </ChartWrapper>}
-                  </GridItem>
-                )}
-                {visibleCharts.garage.includes('humidity') && (
-                  <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    {chartVisibility.chart8 && <ChartWrapper
-                      title="Humidity (%)"
-                      onChartChange={handleChartChange(setWatchdogHumidityChartType)}
-                      weatherData={watchdogHumData || watchdogData}
-                      metric="hum"
-                      flex="1"
-                      timePeriod={timePeriod}
-                      display="flex"
-                      flexDirection="column"
-                      handleTimePeriodChange={handleTimePeriodChange}
-                      closeMap={() => handleCloseChartWrapper('chart8')}
-                    >
-                      {watchdogHumidityChartType === 'line' ? (
-                        <LineChart
-                          data={watchdogHumData || watchdogData}
-                          metric="hum"
-                          style={{ flex: 1 }}
-                        />
-                      ) : (
-                        <BarChart
-                          data={watchdogHumData || watchdogData}
-                          metric="hum"
-                          style={{ flex: 1 }}
-                        />
-                      )}
-                    </ChartWrapper>}
-                  </GridItem>
-                )}
-              </Grid>
-            </MotionBox>
-            <MotionBox
-              initial={{ opacity: 0, height: 0 }}
-              animate={{
-                opacity: showSections.rivercity ? 1 : 0,
-                height: showSections.rivercity ? 'auto' : 0,
-              }}
-              transition={{ duration: 0.5 }}
-            >
-              <Flex justify="center" mb="4">
-              <Heading size="lg" textAlign="center" mb="4">
-                Freezer Sensors
-              </Heading>
-                <Menu>
-                <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
-    <MenuButton
-      as={IconButton}
-      icon={<FaChevronDown />}
-      bg="brand.400"
-      color="black"
-      _hover={{ bg: '#d7a247' }}
-      variant="outline"
-      size={"sm"}
-      ml={2}
-      mt={isLargerThan768 ? '1' : '0'}
-      />
-  </Tooltip>
-                  <MenuList>
-                    {['temperature', 'humidity'].map(chart => (
-                      <MenuItem key={chart} onClick={() => toggleChartVisibility('rivercity', chart)}>
-                        <Flex alignItems="center">
-                          {charts[chart]}
-                          <Box ml="2">{visibleCharts.rivercity.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
-                        </Flex>
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                </Menu>
-              </Flex>
-              <Grid
-                templateColumns={{
-                  base: '1fr',
-                  md: 'repeat(2, 1fr)',
-                  lg: 'repeat(2, 1fr)',
-                }}
-                gap="6"
-              >
-                {visibleCharts.rivercity.includes('temperature') && (
-                  <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                    {chartVisibility.chart9 && <ChartWrapper
-                      title="Temperature (°F)"
-                      onChartChange={handleChartChange(setRivercityTempChartType)}
-                      weatherData={rivercityTempData || rivercityData}
-                      metric="rctemp"
-                      flex="1"
-                      timePeriod={timePeriod}
-                      display="flex"
-                      flexDirection="column"
-                      handleTimePeriodChange={handleTimePeriodChange}
-                      closeMap={() => handleCloseChartWrapper('chart9')}
-                    >
-                      {rivercityTempChartType === 'line' ? (
-                        <LineChart
-                          data={rivercityTempData || rivercityData}
-                          metric="rctemp"
-                          style={{ flex: 1 }}
-                        />
-                      ) : (
-                        <BarChart
-                          data={rivercityTempData || rivercityData}
-                          metric="rctemp"
-                          style={{ flex: 1 }}
-                        />
-                      )}
-                    </ChartWrapper>}
-                  </GridItem>
-                )}
-                {visibleCharts.rivercity.includes('humidity') && (
-                  <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                   {chartVisibility.chart10 && <ChartWrapper
-                      title="Humidity (%)"
-                      onChartChange={handleChartChange(setRivercityHumChartType)}
-                      weatherData={rivercityHumData || rivercityData}
-                      metric="humidity"
-                      flex="1"
-                      timePeriod={timePeriod}
-                      display="flex"
-                      flexDirection="column"
-                      handleTimePeriodChange={handleTimePeriodChange}
-                      closeMap={() => handleCloseChartWrapper('chart10')}
-                    >
-                      {rivercityHumChartType === 'line' ? (
-                        <LineChart
-                          data={rivercityHumData || rivercityData}
-                          metric="humidity"
-                          style={{ flex: 1 }}
-                        />
-                      ) : (
-                        <BarChart
-                          data={rivercityHumData || rivercityData}
-                          metric="humidity"
-                          style={{ flex: 1 }}
-                        />
-                      )}
-                    </ChartWrapper>}
-                  </GridItem>
-                )}
-              </Grid>
-            </MotionBox>
-          </MotionTabPanel>
-          <MotionTabPanel
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.5 }}
-            key="grand-farm-sensors"
-          >
-            <Flex justify="center" mb="4">
-            <Heading size="lg" textAlign="center" mb="4">
-              Grand Farm Sensors
-            </Heading>
-              <Menu>
-              <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
-    <MenuButton
-      as={IconButton}
-      icon={<FaChevronDown />}
-      bg="brand.400"
-      color="black"
-      _hover={{ bg: '#d7a247' }}
-      variant="outline"
-      size={"sm"}
-      ml={2}
-      mt={isLargerThan768 ? '1' : '0'}
-      />
-  </Tooltip>
-                <MenuList>
-                  {Object.keys(charts).map(chart => (
-                    <MenuItem key={chart} onClick={() => toggleChartVisibility('grandFarm', chart)}>
-                      <Flex alignItems="center">
-                        {charts[chart]}
-                        <Box ml="2">{visibleCharts.grandFarm.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
-                      </Flex>
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </Menu>
-            </Flex>
+            )}
+  
             <Grid
               templateColumns={{
                 base: '1fr',
@@ -843,9 +385,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
               }}
               gap="6"
             >
-              {visibleCharts.grandFarm.includes('temperature') && (
+              {visibleCharts.grandFarm.includes('temperature') && chartVisibility.chart1 && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  {chartVisibility.chart11 && <ChartWrapper
+                  <ChartWrapper
                     title="Temperature (°F)"
                     onChartChange={handleChartChange(setTempChartType)}
                     weatherData={tempData || weatherData}
@@ -855,7 +397,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
-                    closeMap={() => handleCloseChartWrapper('chart11')}
+                    closeMap={() => handleCloseChartWrapper('chart1')}
                   >
                     {tempChartType === 'line' ? (
                       <LineChart
@@ -870,12 +412,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>}
+                  </ChartWrapper>
                 </GridItem>
               )}
-              {visibleCharts.grandFarm.includes('humidity') && (
+              {visibleCharts.grandFarm.includes('humidity') && chartVisibility.chart2 && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  {chartVisibility.chart12 && <ChartWrapper
+                  <ChartWrapper
                     title="Humidity (%)"
                     onChartChange={handleChartChange(setHumidityChartType)}
                     weatherData={humidityData || weatherData}
@@ -885,7 +427,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
-                    closeMap={() => handleCloseChartWrapper('chart12')}
+                    closeMap={() => handleCloseChartWrapper('chart2')}
                   >
                     {humidityChartType === 'line' ? (
                       <LineChart
@@ -900,12 +442,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>}
+                  </ChartWrapper>
                 </GridItem>
               )}
-              {visibleCharts.grandFarm.includes('wind') && (
+              {visibleCharts.grandFarm.includes('wind') && chartVisibility.chart3 && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  {chartVisibility.chart13 && <ChartWrapper
+                  <ChartWrapper
                     title="Wind (mph)"
                     onChartChange={handleChartChange(setWindChartType)}
                     weatherData={windData || weatherData}
@@ -915,7 +457,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
-                    closeMap={() => handleCloseChartWrapper('chart13')}
+                    closeMap={() => handleCloseChartWrapper('chart3')}
                   >
                     {windChartType === 'line' ? (
                       <LineChart
@@ -930,12 +472,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>}
+                  </ChartWrapper>
                 </GridItem>
               )}
-              {visibleCharts.grandFarm.includes('soilMoisture') && (
+              {visibleCharts.grandFarm.includes('soilMoisture') && chartVisibility.chart4 && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  {chartVisibility.chart14 && <ChartWrapper
+                  <ChartWrapper
                     title="Soil Moisture (centibar)"
                     onChartChange={handleChartChange(setSoilMoistureChartType)}
                     weatherData={soilMoistureData || weatherData}
@@ -945,7 +487,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
-                    closeMap={() => handleCloseChartWrapper('chart14')}
+                    closeMap={() => handleCloseChartWrapper('chart4')}
                   >
                     {soilMoistureChartType === 'line' ? (
                       <LineChart
@@ -960,12 +502,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>}
+                  </ChartWrapper>
                 </GridItem>
               )}
-              {visibleCharts.grandFarm.includes('leafWetness') && (
+              {visibleCharts.grandFarm.includes('leafWetness') && chartVisibility.chart5 && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  {chartVisibility.chart15 && <ChartWrapper
+                  <ChartWrapper
                     title="Leaf Wetness (0-15)"
                     onChartChange={handleChartChange(setLeafWetnessChartType)}
                     weatherData={leafWetnessData || weatherData}
@@ -975,7 +517,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
-                    closeMap={() => handleCloseChartWrapper('chart15')}
+                    closeMap={() => handleCloseChartWrapper('chart5')}
                   >
                     {leafWetnessChartType === 'line' ? (
                       <LineChart
@@ -990,12 +532,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>}
+                  </ChartWrapper>
                 </GridItem>
               )}
-              {visibleCharts.grandFarm.includes('rainfall') && (
+              {visibleCharts.grandFarm.includes('rainfall') && chartVisibility.chart6 && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  {chartVisibility.chart16 && <ChartWrapper
+                  <ChartWrapper
                     title="Rainfall (in)"
                     onChartChange={handleChartChange(setRainfallChartType)}
                     weatherData={rainfallData || weatherData}
@@ -1005,7 +547,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
-                    closeMap={() => handleCloseChartWrapper('chart16')}
+                    closeMap={() => handleCloseChartWrapper('chart6')}
                   >
                     {rainfallChartType === 'line' ? (
                       <LineChart
@@ -1020,59 +562,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>}
+                  </ChartWrapper>
                 </GridItem>
               )}
-            </Grid>
-          </MotionTabPanel>
-          <MotionTabPanel
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.5 }}
-            key="garage-sensors"
-          >
-            <Flex justify="center" mb="4">
-            <Heading size="lg" textAlign="center" mb="4">
-              Garage Sensors
-            </Heading>
-              <Menu>
-              <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
-    <MenuButton
-      as={IconButton}
-      icon={<FaChevronDown />}
-      bg="brand.400"
-      color="black"
-      _hover={{ bg: '#d7a247' }}
-      variant="outline"
-      size={"sm"}
-      ml={2}
-      mt={isLargerThan768 ? '1' : '0'}
-      />
-  </Tooltip>
-                <MenuList>
-                  {['temperature', 'humidity'].map(chart => (
-                    <MenuItem key={chart} onClick={() => toggleChartVisibility('garage', chart)}>
-                      <Flex alignItems="center">
-                        {charts[chart]}
-                        <Box ml="2">{visibleCharts.garage.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
-                      </Flex>
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </Menu>
-            </Flex>
-            <Grid
-              templateColumns={{
-                base: '1fr',
-                md: 'repeat(2, 1fr)',
-                lg: 'repeat(2, 1fr)',
-              }}
-              gap="6"
-            >
-              {visibleCharts.garage.includes('temperature') && (
+              {visibleCharts.garage.includes('temperature') && chartVisibility.chart7 && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  {chartVisibility.chart17 && <ChartWrapper
+                  <ChartWrapper
                     title="Temperature (°F)"
                     onChartChange={handleChartChange(setWatchdogTempChartType)}
                     weatherData={watchdogTempData || watchdogData}
@@ -1082,7 +577,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
-                    closeMap={() => handleCloseChartWrapper('chart17')}
+                    closeMap={() => handleCloseChartWrapper('chart7')}
                   >
                     {watchdogTempChartType === 'line' ? (
                       <LineChart
@@ -1097,12 +592,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>}
+                  </ChartWrapper>
                 </GridItem>
               )}
-              {visibleCharts.garage.includes('humidity') && (
+              {visibleCharts.garage.includes('humidity') && chartVisibility.chart8 && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  {chartVisibility.chart18 && <ChartWrapper
+                  <ChartWrapper
                     title="Humidity (%)"
                     onChartChange={handleChartChange(setWatchdogHumidityChartType)}
                     weatherData={watchdogHumData || watchdogData}
@@ -1112,7 +607,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
-                    closeMap={() => handleCloseChartWrapper('chart18')}
+                    closeMap={() => handleCloseChartWrapper('chart8')}
                   >
                     {watchdogHumidityChartType === 'line' ? (
                       <LineChart
@@ -1127,59 +622,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>}
+                  </ChartWrapper>
                 </GridItem>
               )}
-            </Grid>
-          </MotionTabPanel>
-          <MotionTabPanel
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.5 }}
-            key="freezer-sensors"
-          >
-            <Flex justify="center" mb="4">
-            <Heading size="lg" textAlign="center" mb="4">
-              Freezer Sensors
-            </Heading>
-              <Menu>
-              <Tooltip label="Toggle Charts" aria-label="Toggle Charts">
-    <MenuButton
-      as={IconButton}
-      icon={<FaChevronDown />}
-      bg="brand.400"
-      color="black"
-      _hover={{ bg: '#d7a247' }}
-      variant="outline"
-      size={"sm"}
-      ml={2}
-      mt={1}
-    />
-  </Tooltip>
-                <MenuList>
-                  {['temperature', 'humidity'].map(chart => (
-                    <MenuItem key={chart} onClick={() => toggleChartVisibility('rivercity', chart)}>
-                      <Flex alignItems="center">
-                        {charts[chart]}
-                        <Box ml="2">{visibleCharts.rivercity.includes(chart) ? 'Hide' : 'Show'} {chart.charAt(0).toUpperCase() + chart.slice(1)}</Box>
-                      </Flex>
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </Menu>
-            </Flex>
-            <Grid
-              templateColumns={{
-                base: '1fr',
-                md: 'repeat(2, 1fr)',
-                lg: 'repeat(2, 1fr)',
-              }}
-              gap="6"
-            >
-              {visibleCharts.rivercity.includes('temperature') && (
+              {visibleCharts.rivercity.includes('temperature') && chartVisibility.chart9 && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  {chartVisibility.chart19 && <ChartWrapper
+                  <ChartWrapper
                     title="Temperature (°F)"
                     onChartChange={handleChartChange(setRivercityTempChartType)}
                     weatherData={rivercityTempData || rivercityData}
@@ -1189,7 +637,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
-                    closeMap={() => handleCloseChartWrapper('chart19')}
+                    closeMap={() => handleCloseChartWrapper('chart9')}
                   >
                     {rivercityTempChartType === 'line' ? (
                       <LineChart
@@ -1204,12 +652,12 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>}
+                  </ChartWrapper>
                 </GridItem>
               )}
-              {visibleCharts.rivercity.includes('humidity') && (
+              {visibleCharts.rivercity.includes('humidity') && chartVisibility.chart10 && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
-                  {chartVisibility.chart20 && <ChartWrapper
+                  <ChartWrapper
                     title="Humidity (%)"
                     onChartChange={handleChartChange(setRivercityHumChartType)}
                     weatherData={rivercityHumData || rivercityData}
@@ -1219,7 +667,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
-                    closeMap={() => handleCloseChartWrapper('chart20')}
+                    closeMap={() => handleCloseChartWrapper('chart10')}
                   >
                     {rivercityHumChartType === 'line' ? (
                       <LineChart
@@ -1234,53 +682,419 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         style={{ flex: 1 }}
                       />
                     )}
-                  </ChartWrapper>}
+                  </ChartWrapper>
                 </GridItem>
               )}
             </Grid>
           </MotionTabPanel>
+
+
+          <MotionTabPanel
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.5 }}
+            key="main-dashboard"
+          >
+            {isLargerThan768 && (
+              <Flex mb="6" alignItems="center">
+                <Box flex="1" display="flex" justifyContent="center">
+                  <Heading size="lg">Grand Farm Sensors</Heading>
+                </Box>
+                <Button bg={"brand.400"} color={"black"} ml="auto" onClick={resetGrandFarmMaps}>Reset</Button>
+              </Flex>
+            )}
+  
+            <Grid
+              templateColumns={{
+                base: '1fr',
+                md: 'repeat(2, 1fr)',
+                lg: 'repeat(2, 1fr)',
+              }}
+              gap="6"
+            >
+
+              {visibleCharts.grandFarm.includes('temperature') && grandFarmChartVisibility.chart1 && (
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Temperature (°F)"
+                    onChartChange={handleChartChange(setTempChartType)}
+                    weatherData={tempData || weatherData}
+                    metric="temperature"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseGrandFarmChartWrapper('chart1')}
+                  >
+                    {tempChartType === 'line' ? (
+                      <LineChart
+                        data={tempData || weatherData}
+                        metric="temperature"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={tempData || weatherData}
+                        metric="temperature"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+              )}
+              {visibleCharts.grandFarm.includes('humidity') && grandFarmChartVisibility.chart2 && (
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Humidity (%)"
+                    onChartChange={handleChartChange(setHumidityChartType)}
+                    weatherData={humidityData || weatherData}
+                    metric="percent_humidity"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseGrandFarmChartWrapper('chart2')}
+                  >
+                    {humidityChartType === 'line' ? (
+                      <LineChart
+                        data={humidityData || weatherData}
+                        metric="percent_humidity"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={humidityData || weatherData}
+                        metric="percent_humidity"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+              )}
+              {visibleCharts.grandFarm.includes('wind') && grandFarmChartVisibility.chart3 && (
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Wind (mph)"
+                    onChartChange={handleChartChange(setWindChartType)}
+                    weatherData={windData || weatherData}
+                    metric="wind_speed"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseGrandFarmChartWrapper('chart3')}
+                  >
+                    {windChartType === 'line' ? (
+                      <LineChart
+                        data={windData || weatherData}
+                        metric="wind_speed"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={windData || weatherData}
+                        metric="wind_speed"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+              )}
+              
+              
+              {visibleCharts.grandFarm.includes('rainfall') && grandFarmChartVisibility.chart4 && (
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Rainfall (in)"
+                    onChartChange={handleChartChange(setRainfallChartType)}
+                    weatherData={rainfallData || weatherData}
+                    metric="rain_15_min_inches"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseGrandFarmChartWrapper('chart4')}
+                  >
+                    {rainfallChartType === 'line' ? (
+                      <LineChart
+                        data={rainfallData || weatherData}
+                        metric="rain_15_min_inches"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={rainfallData || weatherData}
+                        metric="rain_15_min_inches"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+              )}
+            </Grid>
+          </MotionTabPanel>
+          
+          
+          <MotionTabPanel
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.5 }}
+            key="main-dashboard"
+          >
+            {isLargerThan768 && (
+              <Flex mb="6" alignItems="center">
+                <Box flex="1" display="flex" justifyContent="center">
+                  <Heading size="lg">Garage Sensors</Heading>
+                </Box>
+                <Button bg={"brand.400"} color={"black"} ml="auto" onClick={resetGarageMaps}>Reset</Button>
+              </Flex>
+            )}
+
+            <Grid
+              templateColumns={{
+                base: '1fr',
+                md: 'repeat(2, 1fr)',
+                lg: 'repeat(2, 1fr)',
+              }}
+              gap="6"
+            >
+
+
+{/*
+
+  const initialVisibility = { chart1: true, chart2: true, chart3: true, chart4: true, chart5: true, chart6: true, chart7: true, chart8: true, chart9: true, chart10: true};
+  
+  const grandFarmInitialVisibility = { chart1: true, chart2: true, chart3: true, chart4: true };
+
+  const garageInitialVisibility = { chart1: true, chart2: true };
+
+  const freezerInitialVisibility = { chart1: true, chart2: true };
+
+  
+
+  const [chartVisibility, setChartVisibility] = useState(initialVisibility);
+
+  const [grandFarmChartVisibility, setGrandFarmChartVisibility] = useState(grandFarmInitialVisibility);
+
+  const [garageChartVisibility, setGarageChartVisibility] = useState(garageInitialVisibility);
+
+  const [freezerChartVisibility, setFreezerChartVisibility] = useState(freezerInitialVisibility);
+
+  const resetMaps = () => {
+    setChartVisibility(initialVisibility);
+   }
+
+   const resetGrandFarmMaps = () => {
+    setGrandFarmChartVisibility(grandFarmInitialVisibility);
+   }
+
+   const resetGarageMaps = () => {
+    setGarageChartVisibility(garageInitialVisibility);
+   } 
+
+   const resetFreezerMaps = () => {
+    setFreezerChartVisibility(freezerInitialVisibility);
+   } 
+
+
+
+   const handleCloseChartWrapper = (chartId) => {
+    setChartVisibility(prevState => ({
+      ...prevState,
+      [chartId]: false,
+    }));
+  };
+
+  const handleCloseGrandFarmChartWrapper = (chartId) => {
+    setGrandFarmChartVisibility(prevState => ({
+      ...prevState,
+      [chartId]: false,
+    }));
+  };
+
+  const handleCloseGarageChartWrapper = (chartId) => {
+    setGarageChartVisibility(prevState => ({
+      ...prevState,
+      [chartId]: false,
+    }));
+  };
+
+  const handleCloseFreezerChartWrapper = (chartId) => {
+    setFreezerChartVisibility(prevState => ({
+      ...prevState,
+      [chartId]: false,
+    }));
+  };
+
+*/}
+        {visibleCharts.garage.includes('temperature') && garageChartVisibility.chart1 && (
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Temperature (°F)"
+                    onChartChange={handleChartChange(setWatchdogTempChartType)}
+                    weatherData={watchdogTempData || watchdogData}
+                    metric="temp"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseGarageChartWrapper('chart1')}
+                  >
+                    {watchdogTempChartType === 'line' ? (
+                      <LineChart
+                        data={watchdogTempData || watchdogData}
+                        metric="temp"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={watchdogTempData || watchdogData}
+                        metric="temp"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+              )}
+              {visibleCharts.garage.includes('humidity') && garageChartVisibility.chart2 && (
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Humidity (%)"
+                    onChartChange={handleChartChange(setWatchdogHumidityChartType)}
+                    weatherData={watchdogHumData || watchdogData}
+                    metric="hum"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseGarageChartWrapper('chart2')}
+                  >
+                    {watchdogHumidityChartType === 'line' ? (
+                      <LineChart
+                        data={watchdogHumData || watchdogData}
+                        metric="hum"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={watchdogHumData || watchdogData}
+                        metric="hum"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+              )}
+
+
+            </Grid>
+          </MotionTabPanel>
+
+
+          <MotionTabPanel
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.5 }}
+            key="main-dashboard"
+          >
+            {isLargerThan768 && (
+              <Flex mb="6" alignItems="center">
+                <Box flex="1" display="flex" justifyContent="center">
+                  <Heading size="lg">Freezer Sensors</Heading>
+                </Box>
+                <Button bg={"brand.400"} color={"black"} ml="auto" onClick={resetFreezerMaps}>Reset</Button>
+              </Flex>
+            )}
+  
+            <Grid
+              templateColumns={{
+                base: '1fr',
+                md: 'repeat(2, 1fr)',
+                lg: 'repeat(2, 1fr)',
+              }}
+              gap="6"
+            >
+              {visibleCharts.rivercity.includes('temperature') && freezerChartVisibility.chart1 && (
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Temperature (°F)"
+                    onChartChange={handleChartChange(setRivercityTempChartType)}
+                    weatherData={rivercityTempData || rivercityData}
+                    metric="rctemp"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseFreezerChartWrapper('chart1')}
+                  >
+                    {rivercityTempChartType === 'line' ? (
+                      <LineChart
+                        data={rivercityTempData || rivercityData}
+                        metric="rctemp"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={rivercityTempData || rivercityData}
+                        metric="rctemp"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+              )}
+              {visibleCharts.rivercity.includes('humidity') && freezerChartVisibility.chart2 && (
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Humidity (%)"
+                    onChartChange={handleChartChange(setRivercityHumChartType)}
+                    weatherData={rivercityHumData || rivercityData}
+                    metric="humidity"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                    closeMap={() => handleCloseFreezerChartWrapper('chart2')}
+                  >
+                    {rivercityHumChartType === 'line' ? (
+                      <LineChart
+                        data={rivercityHumData || rivercityData}
+                        metric="humidity"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={rivercityHumData || rivercityData}
+                        metric="humidity"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+              )}
+            </Grid>
+          </MotionTabPanel>
+
+
+
+
         </TabPanels>
       </Tabs>
-      {/* <VoiceControl onCommand={handleVoiceCommand} />
-      {isModalOpen && (
-        <ChartExpandModal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          title={`${modalChart.charAt(0).toUpperCase() + modalChart.slice(1)} Chart`}
-          weatherData={weatherData}
-          metric={modalChart}
-          onChartChange={(type) => {
-            switch (modalChart) {
-              case 'temperature':
-                setTempChartType(type);
-                break;
-              case 'humidity':
-                setHumidityChartType(type);
-                break;
-              case 'wind':
-                setWindChartType(type);
-                break;
-              case 'soilMoisture':
-                setSoilMoistureChartType(type);
-                break;
-              case 'leafWetness':
-                setLeafWetnessChartType(type);
-                break;
-              case 'rainfall':
-                setRainfallChartType(type);
-                break;
-              default:
-                break;
-            }
-          }}
-          handleTimePeriodChange={handleTimePeriodChange}
-          currentTimePeriod={currentTimePeriod}
-          setCurrentTimePeriod={setCurrentTimePeriod}
-          sensorMap="grandfarm"
-        />
-      )} */}
     </Box>
   );
+  
+  
 };
 
 export default MainContent;
