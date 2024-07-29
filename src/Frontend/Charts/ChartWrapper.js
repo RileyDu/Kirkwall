@@ -31,7 +31,6 @@ import { useLocation } from 'react-router-dom';
 import ChartExpandModal from './ChartExpandModal.js';
 import ChartDetails, { getLabelForMetric } from './ChartDetails.js';
 import { useColorMode } from '@chakra-ui/react';
-import axios from 'axios';
 import MiniMap from '../Maps/GrandFarmMiniMap.js';
 import WatchdogMap from '../Maps/WatchdogMiniMap.js';
 import RivercityMap from '../Maps/RivercityMiniMap.js';
@@ -51,10 +50,6 @@ const ChartWrapper = ({
   const [chartType, setChartType] = useState('bar');
   const [showIcons, setShowIcons] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [highThreshold, setHighThreshold] = useState('');
-  const [lowThreshold, setLowThreshold] = useState('');
-  const [lastAlertTime, setLastAlertTime] = useState(null);
   const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
   const [loading, setLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
@@ -77,6 +72,11 @@ const ChartWrapper = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const { colorMode } = useColorMode();
+
+  const renderCloseButton = () => {
+    const routesWithCloseButton = ['/', '/grandfarm', '/watchdogprotect'];
+    return isLargerThan768 && routesWithCloseButton.includes(location.pathname);
+  };
 
   const toggleMap = () => {
     setShowMap(!showMap);
@@ -137,36 +137,6 @@ const ChartWrapper = ({
     localStorage.setItem(`chartTitle_${metric}`, newTitle);
   };
 
-  const handleFormSubmit = () => {
-    // let formattedPhoneNumber = phoneNumber.startsWith('+1')
-    //   ? phoneNumber
-    //   : `+1${phoneNumber}`;
-
-    const chartSettings = {
-      phoneNumber: phoneNumber,
-      highThreshold: parseFloat(highThreshold),
-      lowThreshold: parseFloat(lowThreshold),
-    };
-
-    localStorage.setItem(
-      `chartSettings_${title}`,
-      JSON.stringify(chartSettings)
-    );
-
-    toast({
-      title: 'Settings saved.',
-      description: 'Your chart settings have been saved successfully.',
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
-
-    console.log('phone number', phoneNumber);
-    console.log('high threshold', highThreshold);
-    console.log('low threshold', lowThreshold);
-
-    handleCloseModal();
-  };
 
   const getLogoToDisplay = (metric, colorMode) => {
     const logoMap = {
@@ -562,7 +532,7 @@ const ChartWrapper = ({
                 />
               </Tooltip>
             </motion.div>
-            {isLargerThan768 && <motion.div
+            {renderCloseButton() && <motion.div
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.5 }}

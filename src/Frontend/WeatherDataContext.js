@@ -137,7 +137,7 @@ export const WeatherDataProvider = ({ children }) => {
   const fetchAlertsThreshold = async () => {
     try {
       const response = await getAlerts();
-      console.log('Alerts Threshold 0:', response.data.alerts);
+      // console.log('Alerts Threshold 0:', response.data.alerts);
       if (Array.isArray(response.data.alerts)) {
         const groupedAlerts = response.data.alerts.reduce((acc, alert) => {
           const { metric } = alert;
@@ -148,7 +148,7 @@ export const WeatherDataProvider = ({ children }) => {
           return acc;
         }, {});
         setAlertsThreshold(groupedAlerts);
-        console.log('Alerts Threshold 1st:', groupedAlerts);
+        // console.log('Alerts Threshold 1st:', groupedAlerts);
       } else {
         setAlertsThreshold({ 'not set': ['not set'] });
         // console.log('Alerts Threshold 2nd:', { 'not set': ['not set'] });
