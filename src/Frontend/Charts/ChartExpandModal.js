@@ -392,7 +392,8 @@ const ChartExpandModal = ({
                       borderRadius="md"
                       overflowY="scroll"
                       minHeight="160px"
-                      maxHeight="160px"
+                      maxHeight="200px"
+                      height={'100%'}
                     >
                       <Stack spacing={2}>
                         {alertsThreshold[metric]?.map((alert, index) => (

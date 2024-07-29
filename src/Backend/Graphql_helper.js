@@ -293,7 +293,7 @@ async function createThreshold(metric, high, low, phone, email, timestamp) {
 async function getAlerts() {
   const query = `
   query {
-    alerts {
+    alerts(ordering: "timestamp desc") {
       id
       metric
       message
