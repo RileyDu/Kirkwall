@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -22,16 +22,22 @@ import {
   Input,
   ModalFooter,
   HStack,
+  IconButton,
 } from '@chakra-ui/react';
-import MiniDashboard from './ChartDashboard';
-import MiniMap from '../Maps/GrandFarmMiniMap';
-import WatchdogMap from '../Maps/WatchdogMiniMap';
-import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
+import MiniDashboard from './ChartDashboard.js';
+import MiniMap from '../Maps/GrandFarmMiniMap.js';
+import WatchdogMap from '../Maps/WatchdogMiniMap.js';
+import {
+  FaChartLine,
+  FaChartBar,
+  FaBell,
+  FaTrash,
+} from 'react-icons/fa/index.esm.js';
 import { motion } from 'framer-motion';
-import { LineChart, BarChart } from '../Charts/Charts';
+import { LineChart, BarChart } from '../Charts/Charts.js';
 import axios from 'axios';
-// import { getDatabase, ref, set, get, child } from 'firebase/database';
-
+import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
+import { useWeatherData } from '../WeatherDataContext.js';
 
 const ChartExpandModal = ({
   isOpen,
@@ -54,26 +60,59 @@ const ChartExpandModal = ({
   const [userEmail, setUserEmail] = useState('');
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
-  const [alerts, setAlerts] = useState(JSON.parse(localStorage.getItem('alerts')) || []);
+  // const [alerts, setAlerts] = useState(JSON.parse(localStorage.getItem('alerts')) || []);
   const [timer, setTimer] = useState(30);
   const [currentValue, setCurrentValue] = useState(null);
-  const [lastAlertTime, setLastAlertTime] = useState(null); 
+  // const [lastAlertTime, setLastAlertTime] = useState(null);
+  const { thresholds, alertsThreshold, fetchAlertsThreshold } =
+    useWeatherData();
 
-  const apiUrl = process.env.NODE_ENV === 'production'
-    ? 'https://kirkwall-demo.vercel.app'
-    : 'http://localhost:3001';
+  // Find the latest threshold for the selected metric, assign a graph to the threshold
+  const findLatestThreshold = metric => {
+    const threshold = thresholds.find(threshold => threshold.metric === metric);
+    const highThreshold = threshold?.high ?? '';
+    const lowThreshold = threshold?.low ?? '';
+    const phone = threshold?.phone ?? '';
+    const email = threshold?.email ?? '';
+    return { highThreshold, lowThreshold, phone, email };
+  };
+
+  // Update the threshold values when the metric or thresholds change, fetched from the database
+  useEffect(() => {
+    const latestThreshold = findLatestThreshold(metric);
+    setHighThreshold(latestThreshold.highThreshold);
+    setLowThreshold(latestThreshold.lowThreshold);
+    setPhoneNumber(latestThreshold.phone);
+    setUserEmail(latestThreshold.email);
+  }, [metric, thresholds]);
+
+  // Group alerts by metric
+  // const alertsThresholdGrouped = alertsThreshold.reduce((acc, alert) => {
+  //   const { metric } = alert;
+  //   if (!acc[metric]) {
+  //     acc[metric] = [];
+  //   }
+  //   acc[metric].push(alert);
+  //   return acc;
+  // }, {});
+
+  const apiUrl =
+    process.env.NODE_ENV === 'production'
+      ? 'https://kirkwall-demo.vercel.app'
+      : 'http://localhost:3001';
 
   const MotionButton = motion(Button);
   const toast = useToast();
-  // const db = getDatabase();
-
 
   const getBackgroundColor = () => 'gray.700';
-  const getContentBackgroundColor = () => (colorMode === 'light' ? 'brand.50' : 'gray.800');
+  const getContentBackgroundColor = () =>
+    colorMode === 'light' ? 'brand.50' : 'gray.800';
   const getTextColor = () => (colorMode === 'light' ? 'black' : 'white');
-  const getModalBackgroundColor = () => (colorMode === 'light' ? 'whitesmoke' : 'gray.700');
+  const getModalBackgroundColor = () =>
+    colorMode === 'light' ? 'whitesmoke' : 'gray.700';
 
-  const handleTimeButtonClick = async (timePeriod) => {
+  // Handle time period button click
+  const handleTimeButtonClick = async timePeriod => {
     if (timePeriod === currentTimePeriod) return;
 
     setLoading(true);
@@ -88,144 +127,16 @@ const ChartExpandModal = ({
     }
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimer((prevTimer) => {
-        if (prevTimer <= 1) {
-          checkThresholds();
-          return 300;
-        }
-        return prevTimer - 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [currentValue, highThreshold, lowThreshold]);
+  // Set the font size based on the breakpoint
+  const fontSize = useBreakpointValue({
+    base: 'xs',
+    md: 'md',
+    lg: 'md',
+    xl: 'lg',
+    xxl: 'lg',
+  });
 
-  useEffect(() => {
-    const savedChartSettings = JSON.parse(localStorage.getItem(`chartSettings_${metric}`));
-
-    if (savedChartSettings) {
-      setPhoneNumber(savedChartSettings.phoneNumber || '');
-      setUserEmail(savedChartSettings.userEmail || '');
-      setHighThreshold(savedChartSettings.highThreshold || '');
-      setLowThreshold(savedChartSettings.lowThreshold || '');
-    }
-  }, [title]);
-
-//   useEffect(() => {
-//     const fetchChartSettings = async () => {
-//         try {
-//             const dbRef = ref(db);
-//             const snapshot = await get(child(dbRef, `chartSettings/${metric}`));
-
-//             if (snapshot.exists()) {
-//                 const savedChartSettings = snapshot.val();
-//                 setPhoneNumber(savedChartSettings.phoneNumber || '');
-//                 setUserEmail(savedChartSettings.userEmail || '');
-//                 setHighThreshold(savedChartSettings.highThreshold || '');
-//                 setLowThreshold(savedChartSettings.lowThreshold || '');
-//             } else {
-//                 console.log('No data available');
-//             }
-//         } catch (error) {
-//             console.error('Error fetching chart settings:', error);
-//         }
-//     };
-
-//     fetchChartSettings();
-// }, [metric]);
-
-useEffect(() => {
-  const savedChartSettings = JSON.parse(localStorage.getItem(`chartSettings_${metric}`));
-
-  if (savedChartSettings) {
-    setPhoneNumber(savedChartSettings.phoneNumber || '');
-    setUserEmail(savedChartSettings.userEmail || '');
-    setHighThreshold(savedChartSettings.highThreshold || '');
-    setLowThreshold(savedChartSettings.lowThreshold || '');
-  }
-}, [metric]);
-
-
-  const sendSMSAlert = async (to, body) => {
-    try {
-      const response = await axios.post(`${apiUrl}/send-sms`, { to, body });
-      toast({
-        title: 'Alert sent.',
-        description: response.data.message,
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (error) {
-      toast({
-        title: 'Error sending alert.',
-        description: error.message,
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const sendEmailAlert = async (to, subject, text, html) => {
-    try {
-      const response = await axios.post(`${apiUrl}/send-email`, { to, subject, text, html });
-      toast({
-        title: 'Alert sent.',
-        description: response.data.message,
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (error) {
-      toast({
-        title: 'Error sending alert.',
-        description: error.message,
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const checkThresholds = () => {
-    if (currentValue != null) {
-      const now = new Date();
-      const lastAlertTimeObj = lastAlertTime ? new Date(lastAlertTime) : null;
-
-      if (highThreshold < currentValue) {
-        const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${highThreshold}.`;
-        if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
-          (phoneNumber) && sendSMSAlert(phoneNumber, alertMessage);
-          (userEmail) && sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
-          setLastAlertTime(now);
-        }
-        setAlerts((prevAlerts) => {
-          const newAlerts = [...prevAlerts, alertMessage];
-          localStorage.setItem('alerts', JSON.stringify(newAlerts));
-          return newAlerts;
-        });
-      }
-
-      if (lowThreshold > currentValue) {
-        const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${lowThreshold}.`;
-        if (!lastAlertTimeObj || now - lastAlertTimeObj >= 5 * 60 * 1000) {
-          sendSMSAlert(phoneNumber, alertMessage);
-          sendEmailAlert(userEmail, 'Threshold Alert', alertMessage);
-          setLastAlertTime(now);
-        }
-        setAlerts((prevAlerts) => {
-          const newAlerts = [...prevAlerts, alertMessage];
-          localStorage.setItem('alerts', JSON.stringify(newAlerts));
-          return newAlerts;
-        });
-      }
-    }
-  };
-
-  const fontSize = useBreakpointValue({ base: 'xs', md: 'md', lg: 'md', xl: 'lg', xxl: 'lg' });
-
+  // Render the chart based on the selected chart type
   const renderChart = () => {
     switch (chartType) {
       case 'line':
@@ -237,70 +148,96 @@ useEffect(() => {
     }
   };
 
+  // Open and close threshold modal functions
   const handleOpenThresholdModal = () => setIsThresholdModalOpen(true);
   const handleCloseThresholdModal = () => setIsThresholdModalOpen(false);
 
-  // const handleFormSubmit = () => {
-//     const chartSettings = {
-//         phoneNumber: phoneNumber,
-//         userEmail: userEmail,
-//         highThreshold: parseFloat(highThreshold),
-//         lowThreshold: parseFloat(lowThreshold),
-//     };
-
-//     set(ref(db, `chartSettings/${metric}`), chartSettings)
-//         .then(() => {
-//             toast({
-//                 title: 'Settings saved.',
-//                 description: 'Your chart settings have been saved.',
-//                 status: 'success',
-//                 duration: 3000,
-//                 isClosable: true,
-//             });
-//             setIsThresholdModalOpen(false);
-//         })
-//         .catch((error) => {
-//             toast({
-//                 title: 'Error saving settings.',
-//                 description: error.message,
-//                 status: 'error',
-//                 duration: 3000,
-//                 isClosable: true,
-//             });
-//         });
-// };
-
-const handleFormSubmit = () => {
-  const chartSettings = {
-    phoneNumber: phoneNumber,
-    userEmail: userEmail,
-    highThreshold: parseFloat(highThreshold),
-    lowThreshold: parseFloat(lowThreshold),
+  // Send threshold data to the backend
+  const handleFormSubmit = async () => {
+    const timestamp = new Date().toISOString();
+    try {
+      await createThreshold(
+        metric,
+        parseFloat(highThreshold),
+        parseFloat(lowThreshold),
+        phoneNumber,
+        userEmail,
+        timestamp
+      );
+    } catch (error) {
+      console.error('Error creating threshold:', error);
+    } finally {
+      setIsThresholdModalOpen(false);
+    }
   };
 
-
-  localStorage.setItem(`chartSettings_${metric}`, JSON.stringify(chartSettings));
-
-  setIsThresholdModalOpen(false);
-};
-
-  const clearAlerts = () => {
-    setAlerts([]);
-    localStorage.setItem('alerts', JSON.stringify([]));
+  const handleFormClear = async () => {
+    const timestamp = new Date().toISOString();
+    setHighThreshold('');
+    setLowThreshold('');
+    setPhoneNumber('');
+    setUserEmail('');
+    try {
+      await createThreshold(
+        metric,
+        highThreshold,
+        lowThreshold,
+        phoneNumber,
+        userEmail,
+        timestamp
+      );
+    } catch (error) {
+      console.error('Error clearing threshold:', error);
+    } finally {
+      setIsThresholdModalOpen(false);
+    }
   };
 
-  useEffect(() => {
-    return () => {
-      clearAlerts();
-    };
-  }, []);
+  const clearAlerts = async (id) => {
+    const toastId = 'delete-alert-toast';
+  
+    // Show loading toast notification
+    toast({
+      id: toastId,
+      title: "Deleting alert...",
+      description: `The alert is being deleted.`,
+      status: "loading",
+      duration: null,
+      isClosable: true,
+    });
+  
+    try {
+      await deleteAlert(id);
+      await fetchAlertsThreshold(); // Fetch alerts after deleting
+  
+      // Update the toast to success
+      toast.update(toastId, {
+        title: "Alert deleted.",
+        description: `The alert has been successfully deleted.`,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Error deleting alert:", error);
+  
+      // Update the toast to error
+      toast.update(toastId, {
+        title: "Error deleting alert.",
+        description: "There was an error deleting the alert. Please try again.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
 
   return (
-    <Box >
+    <Box>
       <Modal onClose={onClose} isOpen={isOpen}>
         <ModalOverlay />
         <ModalContent
-        marginTop={'15px'}
+          marginTop={'15px'}
           width="90%"
           maxWidth="100%"
           height="90vh"
@@ -321,16 +258,26 @@ const handleFormSubmit = () => {
             {title}
           </ModalHeader>
           <ModalCloseButton size="lg" color="white" mt={1} />
-          <ModalBody display="flex" flexDirection="column" flexGrow={1} p={4} bg={getContentBackgroundColor()} borderBottomRadius={'md'} boxShadow="md">
+          <ModalBody
+            display="flex"
+            flexDirection="column"
+            flexGrow={1}
+            p={4}
+            bg={getContentBackgroundColor()}
+            borderBottomRadius={'md'}
+            boxShadow="md"
+          >
             <Box display="flex" justifyContent="space-between" mb={2} mt={-2}>
-              {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map((timePeriod) => (
+              {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map(timePeriod => (
                 <MotionButton
                   key={timePeriod}
                   variant="solid"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => handleTimeButtonClick(timePeriod)}
-                  bg={currentTimePeriod === timePeriod ? 'orange.400' : 'gray.100'}
+                  bg={
+                    currentTimePeriod === timePeriod ? 'orange.400' : 'gray.100'
+                  }
                   color={currentTimePeriod === timePeriod ? 'white' : 'black'}
                   size={['sm', 'md']}
                 >
@@ -338,13 +285,31 @@ const handleFormSubmit = () => {
                 </MotionButton>
               ))}
             </Box>
-            <Flex justify="center" alignItems="center" flexGrow={2} bg={getContentBackgroundColor()} p={4} borderRadius="md" boxShadow="md" border="2px solid #fd9801" mb={4} h={'40vh'}>
-              {loading ? <CircularProgress isIndeterminate color="brand.800" /> : renderChart()}
+            <Flex
+              justify="center"
+              alignItems="center"
+              flexGrow={2}
+              bg={getContentBackgroundColor()}
+              p={4}
+              borderRadius="md"
+              boxShadow="md"
+              border="2px solid #fd9801"
+              mb={4}
+              h={'40vh'}
+            >
+              {loading ? (
+                <CircularProgress isIndeterminate color="brand.800" />
+              ) : (
+                renderChart()
+              )}
             </Flex>
             <Box display="flex" justifyContent="center" mb={4}>
               <MotionButton
                 variant={'solid'}
-                onClick={() => { setChartType('line'); onChartChange('line'); }}
+                onClick={() => {
+                  setChartType('line');
+                  onChartChange('line');
+                }}
                 leftIcon={<FaChartLine />}
                 size={['sm', 'md']}
                 mx={1}
@@ -357,7 +322,10 @@ const handleFormSubmit = () => {
               </MotionButton>
               <MotionButton
                 variant={'solid'}
-                onClick={() => { setChartType('bar'); onChartChange('bar'); }}
+                onClick={() => {
+                  setChartType('bar');
+                  onChartChange('bar');
+                }}
                 leftIcon={<FaChartBar />}
                 mx={1}
                 whileHover={{ scale: 1.1 }}
@@ -383,31 +351,39 @@ const handleFormSubmit = () => {
               </MotionButton>
             </Box>
             <Divider />
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mt={4} flexGrow={1}>
-              <Box bg="gray.700" borderRadius="md" boxShadow="md" p={4} height="430px">
-                <MiniDashboard weatherData={weatherData} metric={metric} setCurrentValue={setCurrentValue} mt={2} />
+            <SimpleGrid
+              columns={{ base: 1, md: 2 }}
+              spacing={4}
+              mt={4}
+              flexGrow={1}
+            >
+              <Box
+                bg="gray.700"
+                borderRadius="md"
+                boxShadow="md"
+                p={4}
+                height="430px"
+              >
+                <MiniDashboard
+                  weatherData={weatherData}
+                  metric={metric}
+                  setCurrentValue={setCurrentValue}
+                  mt={2}
+                />
                 <Divider my={8} borderColor={'white'} />
                 {highThreshold || lowThreshold ? (
                   <>
-                    <HStack>
-                      <Text color='white' fontSize="lg" fontWeight="bold">Alerts</Text>
-                      <Text color='white'>High Threshold: {highThreshold}</Text>
-                      <Text color='white'>Low Threshold: {lowThreshold}</Text>
-                      <Text color='white'>Timer: {timer}s</Text>
-                      <MotionButton
-                        variant="solid"
-                        onClick={clearAlerts}
-                        leftIcon={<FaTrash />}
-                        size={['sm', 'sm']}
-                        mx={1}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        bg={'gray.100'}
-                        color={'black'}
-                      >
-                        CLEAR
-                      </MotionButton>
+                  <Flex width={'100%'} >
+                    <HStack width={'100%'} gap={6} justify={'flex-start'}>
+                      <Text color="white" fontSize="lg" fontWeight="bold" textDecor={'underline'}>
+                        Alerts
+                      </Text>
+                      {highThreshold ? <Text color="white"><strong>High Threshold:</strong> {highThreshold}</Text> : null}
+                      {lowThreshold ? <Text color="white"><strong>Low Threshold:</strong> {lowThreshold}</Text> : null}
+                      {phoneNumber ? <Text color="white"><strong>Phone:</strong> {phoneNumber}</Text> : null}
+                      {userEmail ? <Text color="white"><strong>Email:</strong> {userEmail}</Text> : null}
                     </HStack>
+                    </Flex>
                     <Box
                       mt={2}
                       p={2}
@@ -419,19 +395,36 @@ const handleFormSubmit = () => {
                       maxHeight="160px"
                     >
                       <Stack spacing={2}>
-                        {alerts.map((alert, index) => (
+                        {alertsThreshold[metric]?.map((alert, index) => (
                           <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
-                            <Text color="#212121">{alert}</Text>
-                          </Box>
+                          <Flex justify="space-between" align="center" mr={1}>
+                            <Text color="#212121">{alert.message}</Text>
+                            <FaTrash
+                              color="white"
+                              onClick={() => clearAlerts(alert.id)}
+                              aria-label="Delete alert"
+                              cursor="pointer"
+                              size={20}
+                            />
+                          </Flex>
+                        </Box>
                         ))}
                       </Stack>
                     </Box>
                   </>
                 ) : (
-                  <Text color={'white'} mt={4}>Set thresholds to see alerts</Text>
+                  <Text color={'white'} mt={4}>
+                    Set thresholds to see alerts
+                  </Text>
                 )}
               </Box>
-              <Box bg="gray.700" borderRadius="md" boxShadow="md" p={4} height="430px">
+              <Box
+                bg="gray.700"
+                borderRadius="md"
+                boxShadow="md"
+                p={4}
+                height="430px"
+              >
                 <Box height="100%">
                   {sensorMap === 'grandfarm' ? <MiniMap /> : <WatchdogMap />}
                 </Box>
@@ -442,7 +435,9 @@ const handleFormSubmit = () => {
       </Modal>
       <Modal isOpen={isThresholdModalOpen} onClose={handleCloseThresholdModal}>
         <ModalOverlay />
-        <ModalContent sx={{ border: '2px solid black', bg: getModalBackgroundColor() }}>
+        <ModalContent
+          sx={{ border: '2px solid black', bg: getModalBackgroundColor() }}
+        >
           <ModalHeader bg={'gray.800'} color={'white'}>
             Add Thresholds for {title}
           </ModalHeader>
@@ -453,7 +448,7 @@ const handleFormSubmit = () => {
               <Input
                 type="text"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={e => setPhoneNumber(e.target.value)}
                 bg={'white'}
                 border={'2px solid #fd9801'}
                 color={'#212121'}
@@ -464,7 +459,7 @@ const handleFormSubmit = () => {
               <Input
                 type="text"
                 value={userEmail}
-                onChange={(e) => setUserEmail(e.target.value)}
+                onChange={e => setUserEmail(e.target.value)}
                 bg={'white'}
                 border={'2px solid #fd9801'}
                 color={'#212121'}
@@ -475,7 +470,7 @@ const handleFormSubmit = () => {
               <Input
                 type="number"
                 value={highThreshold}
-                onChange={(e) => setHighThreshold(e.target.value)}
+                onChange={e => setHighThreshold(e.target.value)}
                 bg={'white'}
                 border={'2px solid #fd9801'}
                 color={'#212121'}
@@ -486,7 +481,7 @@ const handleFormSubmit = () => {
               <Input
                 type="number"
                 value={lowThreshold}
-                onChange={(e) => setLowThreshold(e.target.value)}
+                onChange={e => setLowThreshold(e.target.value)}
                 bg={'white'}
                 border={'2px solid #fd9801'}
                 color={'#212121'}
@@ -494,10 +489,33 @@ const handleFormSubmit = () => {
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button variant="solid" bg="orange.400" color="white" _hover={{ bg: 'orange.500' }} mr={3} onClick={handleFormSubmit}>
+          <Button
+              variant="solid"
+              bg="red.400"
+              color="white"
+              _hover={{ bg: 'red.500' }}
+              mr={3}
+              onClick={handleFormClear}
+            >
+              Clear Form
+            </Button>
+            <Button
+              variant="solid"
+              bg="orange.400"
+              color="white"
+              _hover={{ bg: 'orange.500' }}
+              mr={3}
+              onClick={handleFormSubmit}
+            >
               Save
             </Button>
-            <Button variant="solid" bg="gray.400" color="white" _hover={{ bg: 'gray.500' }} onClick={handleCloseThresholdModal}>
+            <Button
+              variant="solid"
+              bg="gray.400"
+              color="white"
+              _hover={{ bg: 'gray.500' }}
+              onClick={handleCloseThresholdModal}
+            >
               Cancel
             </Button>
           </ModalFooter>

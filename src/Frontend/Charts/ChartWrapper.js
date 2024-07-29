@@ -25,18 +25,18 @@ import {
   FaChartBar,
   FaChartLine,
   FaMap,
-} from 'react-icons/fa';
+} from 'react-icons/fa/index.esm.js';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
-import ChartExpandModal from './ChartExpandModal'; // Adjust the path as necessary
-import ChartDetails, { getLabelForMetric } from './ChartDetails';
+import ChartExpandModal from './ChartExpandModal.js';
+import ChartDetails, { getLabelForMetric } from './ChartDetails.js';
 import { useColorMode } from '@chakra-ui/react';
 import axios from 'axios';
-import MiniMap from '../Maps/GrandFarmMiniMap';
-import WatchdogMap from '../Maps/WatchdogMiniMap';
-import RivercityMap from '../Maps/RivercityMiniMap';
-import { useAuth } from '../AuthComponents/AuthContext';
-import ImpriMiniMap from '../Maps/ImpriMiniMap';
+import MiniMap from '../Maps/GrandFarmMiniMap.js';
+import WatchdogMap from '../Maps/WatchdogMiniMap.js';
+import RivercityMap from '../Maps/RivercityMiniMap.js';
+import { useAuth } from '../AuthComponents/AuthContext.js';
+import ImpriMiniMap from '../Maps/ImpriMiniMap.js';
 const ChartWrapper = ({
   title,
   children,
@@ -295,7 +295,7 @@ const ChartWrapper = ({
     }
   }, [loading, toast]);
 
-  const timeOfGraph = calculateTimePeriod(weatherData.length - 1);
+  const timeOfGraph = (weatherData && calculateTimePeriod(weatherData.length - 1));
 
   const MotionButton = motion(Button);
 

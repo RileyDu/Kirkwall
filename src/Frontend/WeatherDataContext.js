@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getWeatherData, getWatchdogData, getRivercityData, getAPIIds } from '../Backend/Graphql_helper';
+import { getWeatherData, getWatchdogData, getRivercityData, getAlerts, getLatestThreshold } from '../Backend/Graphql_helper.js';
 
 const WeatherDataContext = createContext();
 
@@ -32,7 +32,8 @@ export const WeatherDataProvider = ({ children }) => {
   const [rivercityHumData, setRivercityHumData] = useState(null);
   const [watchdogTempData, setWatchdogTempData] = useState(null);
   const [watchdogHumData, setWatchdogHumData] = useState(null);
-  const [APIIds, setAPIIds] = useState([]);
+  const [alertsThreshold, setAlertsThreshold] = useState({});
+  const [thresholds, setThresholds] = useState([]);
   const [dataLoaded, setDataLoaded] = useState({
     temperature: false,
     humidity: false,
@@ -45,6 +46,23 @@ export const WeatherDataProvider = ({ children }) => {
     rivercityTemp: false,
     rivercityHum: false,
   });
+
+    useEffect(() => {
+      const fetchThresholds = async () => {
+        try {
+          const result = await getLatestThreshold();
+          if (Array.isArray(result.data.thresholds)) {
+            setThresholds(result.data.thresholds);
+          }
+          // console.log('Thresholds from DB:', thresholds);
+        } catch (error) {
+          console.error('Error fetching thresholds:', error);
+        }
+      };
+
+      fetchThresholds();
+
+    }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -116,18 +134,40 @@ export const WeatherDataProvider = ({ children }) => {
     return () => clearInterval(intervalId);
   }, []);
 
-  useEffect(() => {
-    const fetchAPIIds = async () => {
-      try {
-        const response = await getAPIIds();
-        setAPIIds(response.data.data);
-        // console.log('API IDs:', APIIds);
-      } catch (error) {
-        console.error('Error fetching API IDs:', error);
+  const fetchAlertsThreshold = async () => {
+    try {
+      const response = await getAlerts();
+      console.log('Alerts Threshold 0:', response.data.alerts);
+      if (Array.isArray(response.data.alerts)) {
+        const groupedAlerts = response.data.alerts.reduce((acc, alert) => {
+          const { metric } = alert;
+          if (!acc[metric]) {
+            acc[metric] = [];
+          }
+          acc[metric].push(alert);
+          return acc;
+        }, {});
+        setAlertsThreshold(groupedAlerts);
+        console.log('Alerts Threshold 1st:', groupedAlerts);
+      } else {
+        setAlertsThreshold({ 'not set': ['not set'] });
+        // console.log('Alerts Threshold 2nd:', { 'not set': ['not set'] });
       }
-    };
-    fetchAPIIds();
-  }, []);
+      // console.log('Alerts Threshold 3rd:', alertsThreshold);
+    } catch (error) {
+      console.error('Error fetching alerts', error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchAlertsThreshold();
+  
+    const intervalId = setInterval(() => {
+      fetchAlertsThreshold();
+    }, 30000); // 30 seconds
+  
+    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+  }, [getAlerts]);
     
 
   useEffect(() => {
@@ -382,7 +422,9 @@ export const WeatherDataProvider = ({ children }) => {
         rivercityData,
         rivercityTempData,
         rivercityHumData,
-        APIIds,
+        thresholds,
+        alertsThreshold,
+        fetchAlertsThreshold,
       }}
     >
       {children}

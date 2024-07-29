@@ -3,9 +3,9 @@ import { motion } from 'framer-motion';
 import {
   Button
 } from '@chakra-ui/react';
-import { useWeatherData } from '../WeatherDataContext';
-import { useAuth } from '../AuthComponents/AuthContext';
-import SummaryModal from '../Modals/SummaryModal';
+import { useWeatherData } from '../WeatherDataContext.js';
+import { useAuth } from '../AuthComponents/AuthContext.js';
+import SummaryModal from '../Modals/SummaryModal.js';
 
 const SummaryButton = ({ isSummaryOpen, onSummaryToggle, summaryMetrics }) => {
   const {

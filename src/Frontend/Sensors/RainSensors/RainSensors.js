@@ -8,11 +8,11 @@ import {
   Flex,
   useColorMode,
 } from '@chakra-ui/react';
-import MiniDashboard from '../../Charts/ChartDashboard';
-import ChartWrapper from '../../Charts/ChartWrapper';
-import { BarChart, LineChart } from '../../Charts/Charts';
-import { useWeatherData } from '../../WeatherDataContext';
-import { FaChessRook } from 'react-icons/fa';
+import MiniDashboard from '../../Charts/ChartDashboard.js';
+import ChartWrapper from '../../Charts/ChartWrapper.js';
+import { BarChart, LineChart } from '../../Charts/Charts.js';
+import { useWeatherData } from '../../WeatherDataContext.js';
+import { FaChessRook } from 'react-icons/fa/index.esm.js';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { handleChartChange } from '../../Charts/ChartUtils';
