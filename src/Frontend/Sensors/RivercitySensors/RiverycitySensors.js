@@ -17,6 +17,8 @@ import {
   import { FaChessRook } from 'react-icons/fa/index.esm.js';
   import { keyframes } from '@emotion/react';
   import { useEffect, useState } from 'react';
+  import { handleChartChange } from '../../Charts/ChartUtils.js';
+
   
   export default function RivercitySensors({ statusOfAlerts }) {
     const { rivercityData, rivercityTempData, rivercityHumData, loading, handleTimePeriodChange } = useWeatherData();
