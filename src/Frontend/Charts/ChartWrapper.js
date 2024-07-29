@@ -385,7 +385,7 @@ const ChartWrapper = ({
                   >
                     <Tooltip label="Current Value">
                       <Text fontSize={fontSize}>
-                        Current: {formatValue(mostRecentValue)}
+                         {formatValue(mostRecentValue)}
                       </Text>
                     </Tooltip>
                   </Box>
@@ -414,7 +414,7 @@ const ChartWrapper = ({
                   closeOnEsc
                 >
                   <PopoverTrigger>
-                    <Text fontSize={fontSize}>Time: {timeOfGraph}</Text>
+                    <Text fontSize={fontSize}>{timeOfGraph}</Text>
                   </PopoverTrigger>
                   <PopoverContent
                     bg="brand.50"
