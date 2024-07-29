@@ -149,7 +149,7 @@ const checkThresholds = async () => {
         const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high}.`;
         if (phone) await sendSMSAlert(phone, alertMessage);
         if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage, alertMessage);
-        sendAlertToDB(metric, alertMessage, new Date());
+        if (phone || email) sendAlertToDB(metric, alertMessage, new Date());
         // lastAlertTimes[id] = now;
       }
 
@@ -157,7 +157,7 @@ const checkThresholds = async () => {
         const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low}.`;
         if (phone) await sendSMSAlert(phone, alertMessage);
         if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage, alertMessage);
-        sendAlertToDB(metric, alertMessage, new Date());
+        if (phone || email) sendAlertToDB(metric, alertMessage, new Date());
         // lastAlertTimes[id] = now;
       }
     }
