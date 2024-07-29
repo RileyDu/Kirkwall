@@ -1,34 +1,19 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import twilio from 'twilio';
-import sgMail from '@sendgrid/mail';
-import cron from 'node-cron';
+// checkThresholds.js
 import dotenv from 'dotenv';
-import cors from 'cors';
 dotenv.config();
 import { getWeatherData, getWatchdogData, getRivercityData, getLatestThreshold, createAlert } from './Graphql_helper.js';
+import twilio from 'twilio';
+import sgMail from '@sendgrid/mail';
 
-const app = express();
-const port = process.env.PORT || 3001;
-
-app.use(express.json());
-app.use(cors());
-
-// Twilio credentials from environment variables
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
 
 const client = twilio(accountSid, authToken);
 
-// Initialize SendGrid keys
 const sendGridApiKey = process.env.SENDGRID_API_KEY;
 sgMail.setApiKey(sendGridApiKey);
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-// Function to send SMS alert
 const sendSMSAlert = async (to, body) => {
   try {
     console.log(`Sending SMS to ${to}: ${body}`);
@@ -42,7 +27,6 @@ const sendSMSAlert = async (to, body) => {
   }
 };
 
-// Function to send Email alert
 const sendEmailAlert = async (to, subject, text, html) => {
   const msg = {
     to: to,
@@ -67,9 +51,8 @@ const sendAlertToDB = async (metric, message, timestamp) => {
   } catch (error) {
     console.error('Error sending alert to database:', error);
   }
-}
+};
 
-// Utility function to extract current value based on the metric and response structure
 const extractCurrentValue = (response, metric) => {
   if (Array.isArray(response.data.weather_data)) {
     return response.data.weather_data[0]?.[metric];
@@ -81,10 +64,6 @@ const extractCurrentValue = (response, metric) => {
   return null;
 };
 
-// In-memory store to track last alert times for debouncing
-// const lastAlertTimes = {};
-
-// Function to get the latest thresholds for each metric
 const getLatestThresholds = (thresholds) => {
   const latestThresholds = {};
 
@@ -99,8 +78,6 @@ const getLatestThresholds = (thresholds) => {
   return Object.values(latestThresholds);
 };
 
-
-// Function to check thresholds and send alerts
 const checkThresholds = async () => {
   console.log('Checking thresholds...');
 
@@ -115,8 +92,6 @@ const checkThresholds = async () => {
     };
     return new Intl.DateTimeFormat('en-US', options).format(date);
   }
-  
-
 
   try {
     const thresholds = await getLatestThreshold();
@@ -152,7 +127,6 @@ const checkThresholds = async () => {
 
       if (currentValue == null) continue;
 
-
       if (high !== null && currentValue > high) {
         const now = new Date();
         const formattedDateTime = formatDateTime(now);
@@ -176,10 +150,4 @@ const checkThresholds = async () => {
   }
 };
 
-// Schedule the threshold check function to run every 5 minutes
-console.log('Scheduling cron job for checking thresholds every 5 minutes...');
-cron.schedule('*/5 * * * *', checkThresholds);
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+checkThresholds();
