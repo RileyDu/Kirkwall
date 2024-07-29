@@ -99,25 +99,25 @@ const getLatestThresholds = (thresholds) => {
   return Object.values(latestThresholds);
 };
 
-function formatDateTime(date) {
-  const options = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    hour12: true,
-  };
-  return new Intl.DateTimeFormat('en-US', options).format(date);
-}
-
-const now = new Date();
-const formattedDateTime = formatDateTime(now);
 
 // Function to check thresholds and send alerts
 const checkThresholds = async () => {
   console.log('Checking thresholds...');
+
+  function formatDateTime(date) {
+    const options = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+    };
+    return new Intl.DateTimeFormat('en-US', options).format(date);
+  }
+  
+
+
   try {
     const thresholds = await getLatestThreshold();
     const latestThresholds = getLatestThresholds(thresholds.data.thresholds);
@@ -154,6 +154,8 @@ const checkThresholds = async () => {
 
 
       if (currentValue > high) {
+        const now = new Date();
+        const formattedDateTime = formatDateTime(now);
         const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high} at ${formattedDateTime}.`;
         if (phone) await sendSMSAlert(phone, alertMessage);
         if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage, alertMessage);
@@ -161,6 +163,8 @@ const checkThresholds = async () => {
       }
 
       if (currentValue < low) {
+        const now = new Date();
+        const formattedDateTime = formatDateTime(now);
         const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low} at ${formattedDateTime}.`;
         if (phone) await sendSMSAlert(phone, alertMessage);
         if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage, alertMessage);

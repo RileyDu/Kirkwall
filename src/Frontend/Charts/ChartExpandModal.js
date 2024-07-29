@@ -171,13 +171,42 @@ const ChartExpandModal = ({
     }
   };
 
-  // Clear alert by ID from the database and refetch alerts
-  const clearAlerts = async id => {
+  const clearAlerts = async (id) => {
+    const toastId = 'delete-alert-toast';
+  
+    // Show loading toast notification
+    toast({
+      id: toastId,
+      title: "Deleting alert...",
+      description: `The alert is being deleted.`,
+      status: "loading",
+      duration: null,
+      isClosable: true,
+    });
+  
     try {
       await deleteAlert(id);
       await fetchAlertsThreshold(); // Fetch alerts after deleting
+  
+      // Update the toast to success
+      toast.update(toastId, {
+        title: "Alert deleted.",
+        description: `The alert has been successfully deleted.`,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
     } catch (error) {
-      console.error('Error deleting alert:', error);
+      console.error("Error deleting alert:", error);
+  
+      // Update the toast to error
+      toast.update(toastId, {
+        title: "Error deleting alert.",
+        description: "There was an error deleting the alert. Please try again.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
@@ -344,13 +373,12 @@ const ChartExpandModal = ({
                       <Stack spacing={2}>
                         {alertsThreshold[metric]?.map((alert, index) => (
                           <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
-                          <Flex justify="space-between" align="center">
+                          <Flex justify="space-between" align="center" mr={1}>
                             <Text color="#212121">{alert.message}</Text>
                             <FaTrash
                               color="white"
                               onClick={() => clearAlerts(alert.id)}
                               aria-label="Delete alert"
-                              pr={4}
                               cursor="pointer"
                               size={20}
                             />
