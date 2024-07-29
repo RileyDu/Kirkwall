@@ -3,6 +3,7 @@ name: Run Backend Cron Job
 on:
   schedule:
     - cron: '*/5 * * * *'  # Every 5 minutes
+  workflow_dispatch:  # This adds a manual trigger
 
 jobs:
   run-cron-job:
@@ -21,7 +22,7 @@ jobs:
         run: npm install
 
       - name: Run cron job script
-        run: node src/Backend/server.mjs
+        run: node path/to/your/checkThresholds.js
         env:
           TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
           TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
