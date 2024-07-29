@@ -134,32 +134,39 @@ export const WeatherDataProvider = ({ children }) => {
     return () => clearInterval(intervalId);
   }, []);
 
-  useEffect(() => {
-    const fetchAlertsThreshold = async () => {
-      try {
-        const response = await getAlerts();
-        console.log('Alerts Threshold 0:', response.data.alerts);
-        if (Array.isArray(response.data.alerts)) {
-          const groupedAlerts = response.data.alerts.reduce((acc, alert) => {
-            const { metric } = alert;
-            if (!acc[metric]) {
-              acc[metric] = [];
-            }
-            acc[metric].push(alert);
-            return acc;
-          }, {});
-          setAlertsThreshold(groupedAlerts);
-          console.log('Alerts Threshold 1st:', groupedAlerts);
-        } else {
-          setAlertsThreshold({ 'not set': ['not set'] });
-          // console.log('Alerts Threshold 2nd:', { 'not set': ['not set'] });
-        }
-        // console.log('Alerts Threshold 3rd:', alertsThreshold);
-      } catch (error) {
-        console.error('Error fetching alerts', error);
+  const fetchAlertsThreshold = async () => {
+    try {
+      const response = await getAlerts();
+      console.log('Alerts Threshold 0:', response.data.alerts);
+      if (Array.isArray(response.data.alerts)) {
+        const groupedAlerts = response.data.alerts.reduce((acc, alert) => {
+          const { metric } = alert;
+          if (!acc[metric]) {
+            acc[metric] = [];
+          }
+          acc[metric].push(alert);
+          return acc;
+        }, {});
+        setAlertsThreshold(groupedAlerts);
+        console.log('Alerts Threshold 1st:', groupedAlerts);
+      } else {
+        setAlertsThreshold({ 'not set': ['not set'] });
+        // console.log('Alerts Threshold 2nd:', { 'not set': ['not set'] });
       }
-    };
+      // console.log('Alerts Threshold 3rd:', alertsThreshold);
+    } catch (error) {
+      console.error('Error fetching alerts', error);
+    }
+  };
+  
+  useEffect(() => {
     fetchAlertsThreshold();
+  
+    const intervalId = setInterval(() => {
+      fetchAlertsThreshold();
+    }, 30000); // 30 seconds
+  
+    return () => clearInterval(intervalId); // Cleanup interval on component unmount
   }, [getAlerts]);
     
 
@@ -416,7 +423,8 @@ export const WeatherDataProvider = ({ children }) => {
         rivercityTempData,
         rivercityHumData,
         thresholds,
-        alertsThreshold
+        alertsThreshold,
+        fetchAlertsThreshold,
       }}
     >
       {children}

@@ -22,18 +22,22 @@ import {
   Input,
   ModalFooter,
   HStack,
-  Icon,
+  IconButton,
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard.js';
 import MiniMap from '../Maps/GrandFarmMiniMap.js';
 import WatchdogMap from '../Maps/WatchdogMiniMap.js';
-import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa/index.esm.js';
+import {
+  FaChartLine,
+  FaChartBar,
+  FaBell,
+  FaTrash,
+} from 'react-icons/fa/index.esm.js';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts.js';
 import axios from 'axios';
 import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
 import { useWeatherData } from '../WeatherDataContext.js';
-
 
 const ChartExpandModal = ({
   isOpen,
@@ -59,19 +63,20 @@ const ChartExpandModal = ({
   // const [alerts, setAlerts] = useState(JSON.parse(localStorage.getItem('alerts')) || []);
   const [timer, setTimer] = useState(30);
   const [currentValue, setCurrentValue] = useState(null);
-  // const [lastAlertTime, setLastAlertTime] = useState(null); 
-  const { thresholds, alertsThreshold } = useWeatherData();
+  // const [lastAlertTime, setLastAlertTime] = useState(null);
+  const { thresholds, alertsThreshold, fetchAlertsThreshold } =
+    useWeatherData();
 
   // Find the latest threshold for the selected metric, assign a graph to the threshold
-  const findLatestThreshold = (metric) => {
-    const threshold = thresholds.find((threshold) => threshold.metric === metric);
-    const highThreshold = threshold?.high ?? ''; 
-    const lowThreshold = threshold?.low ?? '';  
+  const findLatestThreshold = metric => {
+    const threshold = thresholds.find(threshold => threshold.metric === metric);
+    const highThreshold = threshold?.high ?? '';
+    const lowThreshold = threshold?.low ?? '';
     const phone = threshold?.phone ?? '';
     const email = threshold?.email ?? '';
     return { highThreshold, lowThreshold, phone, email };
   };
-  
+
   // Update the threshold values when the metric or thresholds change, fetched from the database
   useEffect(() => {
     const latestThreshold = findLatestThreshold(metric);
@@ -82,30 +87,32 @@ const ChartExpandModal = ({
   }, [metric, thresholds]);
 
   // Group alerts by metric
-// const alertsThresholdGrouped = alertsThreshold.reduce((acc, alert) => {
-//   const { metric } = alert;
-//   if (!acc[metric]) {
-//     acc[metric] = [];
-//   }
-//   acc[metric].push(alert);
-//   return acc;
-// }, {});
+  // const alertsThresholdGrouped = alertsThreshold.reduce((acc, alert) => {
+  //   const { metric } = alert;
+  //   if (!acc[metric]) {
+  //     acc[metric] = [];
+  //   }
+  //   acc[metric].push(alert);
+  //   return acc;
+  // }, {});
 
-  const apiUrl = process.env.NODE_ENV === 'production'
-    ? 'https://kirkwall-demo.vercel.app'
-    : 'http://localhost:3001';
+  const apiUrl =
+    process.env.NODE_ENV === 'production'
+      ? 'https://kirkwall-demo.vercel.app'
+      : 'http://localhost:3001';
 
   const MotionButton = motion(Button);
   const toast = useToast();
 
   const getBackgroundColor = () => 'gray.700';
-  const getContentBackgroundColor = () => (colorMode === 'light' ? 'brand.50' : 'gray.800');
+  const getContentBackgroundColor = () =>
+    colorMode === 'light' ? 'brand.50' : 'gray.800';
   const getTextColor = () => (colorMode === 'light' ? 'black' : 'white');
-  const getModalBackgroundColor = () => (colorMode === 'light' ? 'whitesmoke' : 'gray.700');
-
+  const getModalBackgroundColor = () =>
+    colorMode === 'light' ? 'whitesmoke' : 'gray.700';
 
   // Handle time period button click
-  const handleTimeButtonClick = async (timePeriod) => {
+  const handleTimeButtonClick = async timePeriod => {
     if (timePeriod === currentTimePeriod) return;
 
     setLoading(true);
@@ -120,10 +127,14 @@ const ChartExpandModal = ({
     }
   };
 
-
-
   // Set the font size based on the breakpoint
-  const fontSize = useBreakpointValue({ base: 'xs', md: 'md', lg: 'md', xl: 'lg', xxl: 'lg' });
+  const fontSize = useBreakpointValue({
+    base: 'xs',
+    md: 'md',
+    lg: 'md',
+    xl: 'lg',
+    xxl: 'lg',
+  });
 
   // Render the chart based on the selected chart type
   const renderChart = () => {
@@ -141,12 +152,18 @@ const ChartExpandModal = ({
   const handleOpenThresholdModal = () => setIsThresholdModalOpen(true);
   const handleCloseThresholdModal = () => setIsThresholdModalOpen(false);
 
-
   // Send threshold data to the backend
   const handleFormSubmit = async () => {
     const timestamp = new Date().toISOString();
     try {
-      await createThreshold(metric, parseFloat(highThreshold), parseFloat(lowThreshold), phoneNumber, userEmail, timestamp);
+      await createThreshold(
+        metric,
+        parseFloat(highThreshold),
+        parseFloat(lowThreshold),
+        phoneNumber,
+        userEmail,
+        timestamp
+      );
     } catch (error) {
       console.error('Error creating threshold:', error);
     } finally {
@@ -154,10 +171,11 @@ const ChartExpandModal = ({
     }
   };
 
-  // Clear alert by ID
-  const clearAlerts = async (id) => {
+  // Clear alert by ID from the database and refetch alerts
+  const clearAlerts = async id => {
     try {
       await deleteAlert(id);
+      await fetchAlertsThreshold(); // Fetch alerts after deleting
     } catch (error) {
       console.error('Error deleting alert:', error);
     }
@@ -189,16 +207,26 @@ const ChartExpandModal = ({
             {title}
           </ModalHeader>
           <ModalCloseButton size="lg" color="white" mt={1} />
-          <ModalBody display="flex" flexDirection="column" flexGrow={1} p={4} bg={getContentBackgroundColor()} borderBottomRadius={'md'} boxShadow="md">
+          <ModalBody
+            display="flex"
+            flexDirection="column"
+            flexGrow={1}
+            p={4}
+            bg={getContentBackgroundColor()}
+            borderBottomRadius={'md'}
+            boxShadow="md"
+          >
             <Box display="flex" justifyContent="space-between" mb={2} mt={-2}>
-              {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map((timePeriod) => (
+              {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map(timePeriod => (
                 <MotionButton
                   key={timePeriod}
                   variant="solid"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => handleTimeButtonClick(timePeriod)}
-                  bg={currentTimePeriod === timePeriod ? 'orange.400' : 'gray.100'}
+                  bg={
+                    currentTimePeriod === timePeriod ? 'orange.400' : 'gray.100'
+                  }
                   color={currentTimePeriod === timePeriod ? 'white' : 'black'}
                   size={['sm', 'md']}
                 >
@@ -206,13 +234,31 @@ const ChartExpandModal = ({
                 </MotionButton>
               ))}
             </Box>
-            <Flex justify="center" alignItems="center" flexGrow={2} bg={getContentBackgroundColor()} p={4} borderRadius="md" boxShadow="md" border="2px solid #fd9801" mb={4} h={'40vh'}>
-              {loading ? <CircularProgress isIndeterminate color="brand.800" /> : renderChart()}
+            <Flex
+              justify="center"
+              alignItems="center"
+              flexGrow={2}
+              bg={getContentBackgroundColor()}
+              p={4}
+              borderRadius="md"
+              boxShadow="md"
+              border="2px solid #fd9801"
+              mb={4}
+              h={'40vh'}
+            >
+              {loading ? (
+                <CircularProgress isIndeterminate color="brand.800" />
+              ) : (
+                renderChart()
+              )}
             </Flex>
             <Box display="flex" justifyContent="center" mb={4}>
               <MotionButton
                 variant={'solid'}
-                onClick={() => { setChartType('line'); onChartChange('line'); }}
+                onClick={() => {
+                  setChartType('line');
+                  onChartChange('line');
+                }}
                 leftIcon={<FaChartLine />}
                 size={['sm', 'md']}
                 mx={1}
@@ -225,7 +271,10 @@ const ChartExpandModal = ({
               </MotionButton>
               <MotionButton
                 variant={'solid'}
-                onClick={() => { setChartType('bar'); onChartChange('bar'); }}
+                onClick={() => {
+                  setChartType('bar');
+                  onChartChange('bar');
+                }}
                 leftIcon={<FaChartBar />}
                 mx={1}
                 whileHover={{ scale: 1.1 }}
@@ -251,31 +300,36 @@ const ChartExpandModal = ({
               </MotionButton>
             </Box>
             <Divider />
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mt={4} flexGrow={1}>
-              <Box bg="gray.700" borderRadius="md" boxShadow="md" p={4} height="430px">
-                <MiniDashboard weatherData={weatherData} metric={metric} setCurrentValue={setCurrentValue} mt={2} />
+            <SimpleGrid
+              columns={{ base: 1, md: 2 }}
+              spacing={4}
+              mt={4}
+              flexGrow={1}
+            >
+              <Box
+                bg="gray.700"
+                borderRadius="md"
+                boxShadow="md"
+                p={4}
+                height="430px"
+              >
+                <MiniDashboard
+                  weatherData={weatherData}
+                  metric={metric}
+                  setCurrentValue={setCurrentValue}
+                  mt={2}
+                />
                 <Divider my={8} borderColor={'white'} />
                 {highThreshold || lowThreshold ? (
                   <>
                     <HStack>
-                      <Text color='white' fontSize="lg" fontWeight="bold">Alerts</Text>
-                      <Text color='white'>High Threshold: {highThreshold}</Text>
-                      <Text color='white'>Low Threshold: {lowThreshold}</Text>
-                      <Text color='white'>Phone: {phoneNumber}</Text>
-                      <Text color='white'>Email: {userEmail}</Text>
-                      {/* <MotionButton
-                        variant="solid"
-                        onClick={clearAlerts}
-                        leftIcon={<FaTrash />}
-                        size={['sm', 'sm']}
-                        mx={1}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        bg={'gray.100'}
-                        color={'black'}
-                      >
-                        CLEAR
-                      </MotionButton> */}
+                      <Text color="white" fontSize="lg" fontWeight="bold">
+                        Alerts
+                      </Text>
+                      <Text color="white">High Threshold: {highThreshold}</Text>
+                      <Text color="white">Low Threshold: {lowThreshold}</Text>
+                      <Text color="white">Phone: {phoneNumber}</Text>
+                      <Text color="white">Email: {userEmail}</Text>
                     </HStack>
                     <Box
                       mt={2}
@@ -290,18 +344,35 @@ const ChartExpandModal = ({
                       <Stack spacing={2}>
                         {alertsThreshold[metric]?.map((alert, index) => (
                           <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
+                          <Flex justify="space-between" align="center">
                             <Text color="#212121">{alert.message}</Text>
-                            <Button as={FaTrash} color="white" onClick={() => clearAlerts(alert.id)} />
-                          </Box>
+                            <FaTrash
+                              color="white"
+                              onClick={() => clearAlerts(alert.id)}
+                              aria-label="Delete alert"
+                              pr={4}
+                              cursor="pointer"
+                              size={20}
+                            />
+                          </Flex>
+                        </Box>
                         ))}
                       </Stack>
                     </Box>
                   </>
                 ) : (
-                  <Text color={'white'} mt={4}>Set thresholds to see alerts</Text>
+                  <Text color={'white'} mt={4}>
+                    Set thresholds to see alerts
+                  </Text>
                 )}
               </Box>
-              <Box bg="gray.700" borderRadius="md" boxShadow="md" p={4} height="430px">
+              <Box
+                bg="gray.700"
+                borderRadius="md"
+                boxShadow="md"
+                p={4}
+                height="430px"
+              >
                 <Box height="100%">
                   {sensorMap === 'grandfarm' ? <MiniMap /> : <WatchdogMap />}
                 </Box>
@@ -312,7 +383,9 @@ const ChartExpandModal = ({
       </Modal>
       <Modal isOpen={isThresholdModalOpen} onClose={handleCloseThresholdModal}>
         <ModalOverlay />
-        <ModalContent sx={{ border: '2px solid black', bg: getModalBackgroundColor() }}>
+        <ModalContent
+          sx={{ border: '2px solid black', bg: getModalBackgroundColor() }}
+        >
           <ModalHeader bg={'gray.800'} color={'white'}>
             Add Thresholds for {title}
           </ModalHeader>
@@ -323,7 +396,7 @@ const ChartExpandModal = ({
               <Input
                 type="text"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={e => setPhoneNumber(e.target.value)}
                 bg={'white'}
                 border={'2px solid #fd9801'}
                 color={'#212121'}
@@ -334,8 +407,7 @@ const ChartExpandModal = ({
               <Input
                 type="text"
                 value={userEmail}
-                onChange={(e) => setUserEmail(e.target.value)}
-                
+                onChange={e => setUserEmail(e.target.value)}
                 bg={'white'}
                 border={'2px solid #fd9801'}
                 color={'#212121'}
@@ -346,7 +418,7 @@ const ChartExpandModal = ({
               <Input
                 type="number"
                 value={highThreshold}
-                onChange={(e) => setHighThreshold(e.target.value)}
+                onChange={e => setHighThreshold(e.target.value)}
                 bg={'white'}
                 border={'2px solid #fd9801'}
                 color={'#212121'}
@@ -357,7 +429,7 @@ const ChartExpandModal = ({
               <Input
                 type="number"
                 value={lowThreshold}
-                onChange={(e) => setLowThreshold(e.target.value)}
+                onChange={e => setLowThreshold(e.target.value)}
                 bg={'white'}
                 border={'2px solid #fd9801'}
                 color={'#212121'}
@@ -365,10 +437,23 @@ const ChartExpandModal = ({
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button variant="solid" bg="orange.400" color="white" _hover={{ bg: 'orange.500' }} mr={3} onClick={handleFormSubmit}>
+            <Button
+              variant="solid"
+              bg="orange.400"
+              color="white"
+              _hover={{ bg: 'orange.500' }}
+              mr={3}
+              onClick={handleFormSubmit}
+            >
               Save
             </Button>
-            <Button variant="solid" bg="gray.400" color="white" _hover={{ bg: 'gray.500' }} onClick={handleCloseThresholdModal}>
+            <Button
+              variant="solid"
+              bg="gray.400"
+              color="white"
+              _hover={{ bg: 'gray.500' }}
+              onClick={handleCloseThresholdModal}
+            >
               Cancel
             </Button>
           </ModalFooter>
