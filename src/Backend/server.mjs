@@ -5,6 +5,8 @@ import { getWeatherData, getWatchdogData, getRivercityData, getLatestThreshold, 
 import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
 
+console.log('Initializing script...');
+
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
@@ -147,6 +149,7 @@ const checkThresholds = async () => {
     }
   } catch (error) {
     console.error('Error checking thresholds:', error);
+    process.exit(1);  // Ensure the script exits with an error code if there's an issue
   }
 };
 
