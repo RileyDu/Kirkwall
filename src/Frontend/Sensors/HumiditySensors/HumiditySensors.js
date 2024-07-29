@@ -7,12 +7,36 @@ import { useWeatherData } from '../../WeatherDataContext.js';
 import { FaChessRook } from 'react-icons/fa/index.esm.js';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
+import { handleChartChange } from '../../Charts/ChartUtils.js';
 
 export default function HumiditySensors({ statusOfAlerts }) {
 
-  const { weatherData, humidityData, loading } = useWeatherData();
+  const { 
+
+    weatherData,
+    tempData,
+    humidityData,
+    windData,
+    rainfallData,
+    soilMoistureData,
+    leafWetnessData,
+    loading,
+    handleTimePeriodChange,
+    watchdogData,
+    watchdogTempData,
+    watchdogHumData,
+    rivercityTempData,
+    rivercityHumData,
+    rivercityData,
+    APIIDs,
+
+   } = useWeatherData();
 
   const [isReady, setIsReady] = useState(false);
+  const [humidityChartType, setHumidityChartType] = useState('bar');
+  const [tempChartType, setTempChartType] = useState('bar');
+
+
 
   const { colorMode } = useColorMode();
 
@@ -52,11 +76,31 @@ export default function HumiditySensors({ statusOfAlerts }) {
         <MiniDashboard metric="percent_humidity" weatherData={humidityData || weatherData} />
       </Box>
       <Box color={colorMode === 'light' ? 'black' : 'white'}>
-      <ChartWrapper title="Humidity (%)" weatherData={humidityData || weatherData} metric={"percent_humidity"}>
-        <BarChart data={humidityData || weatherData} metric="percent_humidity" />
+      <ChartWrapper
+        title="Humidity (%)"
+        onChartChange={handleChartChange(setHumidityChartType)}
+        weatherData={humidityData || weatherData} 
+        metric="percent_humidity"
+        handleTimePeriodChange={handleTimePeriodChange}
+        >
+        
+        {humidityChartType === 'line' ? (
+                        <LineChart
+                          data={humidityData || weatherData}
+                          metric="percent_humidity"
+                          style={{ flex: 1 }}
+                        />
+                      ) : (
+                        <BarChart
+                          data={humidityData || weatherData}
+                          metric="percent_humidity"
+                          style={{ flex: 1 }}
+                        />
+                      )}
+
       </ChartWrapper>
       </Box>
-      <Divider
+      {/* <Divider
         my={'8'}
         borderWidth="4px"
         borderRadius={'full'}
@@ -65,7 +109,7 @@ export default function HumiditySensors({ statusOfAlerts }) {
       <ChartWrapper title="Humidity (%)" weatherData={humidityData || weatherData} metric={"percent_humidity"}>
         <LineChart data={humidityData || weatherData} metric="percent_humidity" />
       </ChartWrapper>
-      </Box>
+      </Box> */}
     </Box>
   );
 }

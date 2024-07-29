@@ -16,12 +16,16 @@ import MiniDashboard from '../../Charts/ChartDashboard.js';
 import { FaChessRook } from 'react-icons/fa/index.esm.js';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
+import { handleChartChange } from '../../Charts/ChartUtils.js';
 
 export default function WatchdogSensors({ statusOfAlerts }) {
-  const { watchdogData, loading, watchdogTempData, watchdogHumData, } = useWeatherData();
+  const { watchdogData, loading, watchdogTempData, watchdogHumData, handleTimePeriodChange } = useWeatherData();
   const [isReady, setIsReady] = useState(false);
+  const [watchdogTempChartType, setWatchdogTempChartType] = useState('bar');
+  const [watchdogHumidityChartType, setWatchdogHumidityChartType] = useState('bar');
 
   const { colorMode } = useColorMode();
+
 
   useEffect(() => {
     setIsReady(false);
@@ -85,12 +89,26 @@ export default function WatchdogSensors({ statusOfAlerts }) {
         <Box width="100%">
           <Box color={colorMode === 'light' ? 'black' : 'white'}>
           <ChartWrapper
-            title="Temperature in Garage (°F)"
-            weatherData={watchdogTempData || watchdogData}
-            metric="temp"
-          >
-            <LineChart data={watchdogTempData || watchdogData} metric="temp" />
-          </ChartWrapper>
+                      title="Temperature in Garage (°F)"
+                      onChartChange={handleChartChange(setWatchdogTempChartType)}
+                      weatherData={watchdogTempData || watchdogData}
+                      metric="temp"
+                      handleTimePeriodChange={handleTimePeriodChange}
+                    >
+                      {watchdogTempChartType === 'line' ? (
+                        <LineChart
+                          data={watchdogTempData || watchdogData}
+                          metric="temp"
+                          style={{ flex: 1 }}
+                        />
+                      ) : (
+                        <BarChart
+                          data={watchdogTempData || watchdogData}
+                          metric="temp"
+                          style={{ flex: 1 }}
+                        />
+                      )}
+                    </ChartWrapper>
           </Box>
           <Divider
             my="8"
@@ -102,13 +120,27 @@ export default function WatchdogSensors({ statusOfAlerts }) {
             <MiniDashboard weatherData={watchdogHumData || watchdogData} metric="hum" />
           </Box>
           <Box color={colorMode === 'light' ? 'black' : 'white'}>
-          <ChartWrapper
-            title="Humidity in Garage (%)"
-            weatherData={watchdogHumData || watchdogData}
-            metric="hum"
-          >
-            <BarChart data={watchdogHumData || watchdogData} metric="hum" />
-          </ChartWrapper>
+            <ChartWrapper
+                      title="Humidity (%)"
+                      onChartChange={handleChartChange(setWatchdogHumidityChartType)}
+                      weatherData={watchdogHumData || watchdogData}
+                      metric="hum"
+                      handleTimePeriodChange={handleTimePeriodChange}
+                    >
+                      {watchdogHumidityChartType === 'line' ? (
+                        <LineChart
+                          data={watchdogHumData || watchdogData}
+                          metric="hum"
+                          style={{ flex: 1 }}
+                        />
+                      ) : (
+                        <BarChart
+                          data={watchdogHumData || watchdogData}
+                          metric="hum"
+                          style={{ flex: 1 }}
+                        />
+                      )}
+                    </ChartWrapper>
           </Box>
         </Box>
       </Flex>

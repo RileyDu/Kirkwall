@@ -9,6 +9,7 @@ import { useWeatherData } from '../../WeatherDataContext.js';
 import { FaChessRook } from 'react-icons/fa/index.esm.js';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
+import { handleChartChange } from '../../Charts/ChartUtils.js';
 
 const getCardinalDirection = (degree) => {
   const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
@@ -21,7 +22,8 @@ const getCardinalDirection = (degree) => {
 export default function WindSensors({ statusOfAlerts }) {
   const [isMobile] = useMediaQuery("(max-width: 767px)");
 
-  const { weatherData, windData, loading } = useWeatherData();
+  const { weatherData, windData, loading, handleTimePeriodChange } = useWeatherData();
+  const [windChartType, setWindChartType] = useState('bar');
 
   const { colorMode } = useColorMode();
 
@@ -75,7 +77,7 @@ export default function WindSensors({ statusOfAlerts }) {
         Wind Sensors
       </Heading>
       <Box width="100%" mb="4">
-        <MiniDashboard metric="wind_speed" weatherData={weatherData} />
+        <MiniDashboard metric="wind_speed" weatherData={windData || weatherData} />
       </Box>
       {!isMobile && (
         <>
@@ -145,13 +147,30 @@ export default function WindSensors({ statusOfAlerts }) {
           />
         </>
       )}
-      <Box width="100%" mb="4"       color={colorMode === 'light' ? 'black' : 'white'}
->
-        <ChartWrapper title="Wind Speed (MPH)" weatherData={windData || weatherData} metric={'wind_speed'}>
-          <LineChart data={windData || weatherData} metric="wind_speed" />
+      <Box width="100%" mb="4" color={colorMode === 'light' ? 'black' : 'white'}>
+        <ChartWrapper
+          title="Wind Speed (mph)"
+          onChartChange={handleChartChange(setWindChartType)}
+          weatherData={windData || weatherData}
+          metric="wind_speed"
+          handleTimePeriodChange={handleTimePeriodChange}
+        >
+          {windChartType === 'line' ? (
+            <LineChart
+              data={windData || weatherData}
+              metric="wind_speed"
+              style={{ flex: 1 }}
+            />
+          ) : (
+            <BarChart
+              data={windData || weatherData}
+              metric="wind_speed"
+              style={{ flex: 1 }}
+            />
+          )}
         </ChartWrapper>
       </Box>
-      <Divider
+      {/* <Divider
         my={'8'}
         borderWidth="4px"
         borderRadius={'full'}
@@ -160,7 +179,7 @@ export default function WindSensors({ statusOfAlerts }) {
         <ChartWrapper title="Wind Speed (MPH)" weatherData={windData || weatherData} metric={'wind_speed'}>
           <BarChart data={windData || weatherData} metric="wind_speed" />
         </ChartWrapper>
-      </Box>
+      </Box> */}
     </Box>
   );
 }
