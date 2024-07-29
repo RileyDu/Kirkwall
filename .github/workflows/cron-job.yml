@@ -2,7 +2,7 @@ name: Run Backend Cron Job
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Every 5 minutes
+    - cron: '5,10,15,20,25,30,35,40,45,50,55 * * * *'  # Every 5 minutes starting at the 5th minute
   workflow_dispatch:  # This adds a manual trigger
 
 jobs:
@@ -11,18 +11,18 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3  # Updated to v3
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3  # Updated to v3
+        uses: actions/setup-node@v3
         with:
-          node-version: '20'  # Using the latest LTS version
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
 
       - name: Run cron job script
-        run: node src/Backend/server.mjs
+        run: node path/to/your/checkThresholds.js
         env:
           TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
           TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
