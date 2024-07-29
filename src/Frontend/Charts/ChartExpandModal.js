@@ -22,6 +22,7 @@ import {
   Input,
   ModalFooter,
   HStack,
+  Icon,
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard.js';
 import MiniMap from '../Maps/GrandFarmMiniMap.js';
@@ -30,7 +31,7 @@ import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa/index.e
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts.js';
 import axios from 'axios';
-import { createThreshold } from '../../Backend/Graphql_helper.js';
+import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 
 
@@ -59,7 +60,7 @@ const ChartExpandModal = ({
   const [timer, setTimer] = useState(30);
   const [currentValue, setCurrentValue] = useState(null);
   // const [lastAlertTime, setLastAlertTime] = useState(null); 
-  const { thresholds } = useWeatherData();
+  const { thresholds, alertsThreshold } = useWeatherData();
 
   // Find the latest threshold for the selected metric, assign a graph to the threshold
   const findLatestThreshold = (metric) => {
@@ -79,6 +80,16 @@ const ChartExpandModal = ({
     setPhoneNumber(latestThreshold.phone);
     setUserEmail(latestThreshold.email);
   }, [metric, thresholds]);
+
+  // Group alerts by metric
+// const alertsThresholdGrouped = alertsThreshold.reduce((acc, alert) => {
+//   const { metric } = alert;
+//   if (!acc[metric]) {
+//     acc[metric] = [];
+//   }
+//   acc[metric].push(alert);
+//   return acc;
+// }, {});
 
   const apiUrl = process.env.NODE_ENV === 'production'
     ? 'https://kirkwall-demo.vercel.app'
@@ -143,18 +154,14 @@ const ChartExpandModal = ({
     }
   };
 
-  // Clear alerts on button click
-  // const clearAlerts = () => {
-  //   setAlerts([]);
-  //   localStorage.setItem('alerts', JSON.stringify([]));
-  // };
-
-  // // Clear alerts on unmount
-  // useEffect(() => {
-  //   return () => {
-  //     clearAlerts();
-  //   };
-  // }, []);
+  // Clear alert by ID
+  const clearAlerts = async (id) => {
+    try {
+      await deleteAlert(id);
+    } catch (error) {
+      console.error('Error deleting alert:', error);
+    }
+  };
 
   return (
     <Box>
@@ -280,13 +287,14 @@ const ChartExpandModal = ({
                       minHeight="160px"
                       maxHeight="160px"
                     >
-                      {/* <Stack spacing={2}>
-                        {alerts.map((alert, index) => (
+                      <Stack spacing={2}>
+                        {alertsThreshold[metric]?.map((alert, index) => (
                           <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
-                            <Text color="#212121">{alert}</Text>
+                            <Text color="#212121">{alert.message}</Text>
+                            <Button as={FaTrash} color="white" onClick={() => clearAlerts(alert.id)} />
                           </Box>
                         ))}
-                      </Stack> */}
+                      </Stack>
                     </Box>
                   </>
                 ) : (

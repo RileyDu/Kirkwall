@@ -295,6 +295,7 @@ async function getAlerts() {
   const query = `
   query {
     alerts {
+      id
       metric
       message
       timestamp
@@ -321,6 +322,20 @@ async function createAlert(metric, message, timestamp) {
       message: message,
       timestamp: timestamp,
     },
+  };
+  return executeGraphqlQuery(mutation, variables);
+}
+
+async function deleteAlert(id) {
+  const mutation = `
+      mutation($id: ID!) {
+      delete_alerts(id: $id) {
+        id
+      }
+    }
+  `;
+  const variables = {
+    id: id,
   };
   return executeGraphqlQuery(mutation, variables);
 }
@@ -392,4 +407,5 @@ export {
   createThreshold,
   getAlerts,
   createAlert,
+  deleteAlert,
 };
