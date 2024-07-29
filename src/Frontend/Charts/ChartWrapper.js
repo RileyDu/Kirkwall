@@ -21,7 +21,7 @@ import {
 } from '@chakra-ui/react';
 import {
   FaExpandAlt,
-  FaChessRook,
+  FaTimes,
   FaChartBar,
   FaChartLine,
   FaMap,
@@ -44,6 +44,9 @@ const ChartWrapper = ({
   metric,
   weatherData,
   handleTimePeriodChange,
+  toggleChartVisibility,
+  section,
+  chart
 }) => {
   const [chartType, setChartType] = useState('bar');
   const [showIcons, setShowIcons] = useState(true);
@@ -559,6 +562,27 @@ const ChartWrapper = ({
                 />
               </Tooltip>
             </motion.div>
+            {isLargerThan768 && <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, delay: 0.5 }}
+            >
+              <Tooltip label="Close Chart">
+                <MotionIconButton
+                  icon={<FaTimes />}
+                  variant="outline"
+                  color="#212121"
+                  size={iconSize}
+                  bg={'brand.400'}
+                  _hover={{ bg: 'brand.800' }}
+                  onClick={() => toggleChartVisibility(section, chart)}
+                  border={'2px solid #fd9801'}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  ml={2}
+                />
+              </Tooltip>
+            </motion.div>}
           </Flex>
         </Flex>
         {showMap && (
