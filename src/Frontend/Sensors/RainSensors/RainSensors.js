@@ -15,7 +15,7 @@ import { useWeatherData } from '../../WeatherDataContext.js';
 import { FaChessRook } from 'react-icons/fa/index.esm.js';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import { handleChartChange } from '../../Charts/ChartUtils';
+import { handleChartChange } from '../../Charts/ChartUtils.js';
 
 export default function RainSensors({ statusOfAlerts }) {
   const { weatherData, rainfallData, loading, handleTimePeriodChange } = useWeatherData();

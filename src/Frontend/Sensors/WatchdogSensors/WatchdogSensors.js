@@ -16,7 +16,7 @@ import MiniDashboard from '../../Charts/ChartDashboard.js';
 import { FaChessRook } from 'react-icons/fa/index.esm.js';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import { handleChartChange } from '../../Charts/ChartUtils';
+import { handleChartChange } from '../../Charts/ChartUtils.js';
 
 export default function WatchdogSensors({ statusOfAlerts }) {
   const { watchdogData, loading, watchdogTempData, watchdogHumData, handleTimePeriodChange } = useWeatherData();
