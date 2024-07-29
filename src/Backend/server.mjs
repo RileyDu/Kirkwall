@@ -4,6 +4,7 @@ dotenv.config();
 import { getWeatherData, getWatchdogData, getRivercityData, getLatestThreshold, createAlert } from './Graphql_helper.js';
 import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
+import moment from 'moment-timezone';
 
 console.log('Initializing script...');
 
@@ -86,15 +87,9 @@ const checkThresholds = async () => {
   console.log('Checking thresholds...');
 
   function formatDateTime(date) {
-    const options = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true,
-    };
-    return new Intl.DateTimeFormat('en-US', options).format(date);
+    const timezone = 'America/Chicago'; // Set your desired timezone here
+    const localDate = moment(date).tz(timezone);
+    return localDate.format('MMMM D, YYYY h:mm A');
   }
 
   const debounceTime = 5 * 60 * 1000;  // 5 minutes in milliseconds
