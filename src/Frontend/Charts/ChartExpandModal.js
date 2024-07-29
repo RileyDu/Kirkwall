@@ -171,6 +171,28 @@ const ChartExpandModal = ({
     }
   };
 
+  const handleFormClear = async () => {
+    const timestamp = new Date().toISOString();
+    setHighThreshold('');
+    setLowThreshold('');
+    setPhoneNumber('');
+    setUserEmail('');
+    try {
+      await createThreshold(
+        metric,
+        highThreshold,
+        lowThreshold,
+        phoneNumber,
+        userEmail,
+        timestamp
+      );
+    } catch (error) {
+      console.error('Error clearing threshold:', error);
+    } finally {
+      setIsThresholdModalOpen(false);
+    }
+  };
+
   const clearAlerts = async (id) => {
     const toastId = 'delete-alert-toast';
   
@@ -465,6 +487,16 @@ const ChartExpandModal = ({
             </FormControl>
           </ModalBody>
           <ModalFooter>
+          <Button
+              variant="solid"
+              bg="red.400"
+              color="white"
+              _hover={{ bg: 'red.500' }}
+              mr={3}
+              onClick={handleFormClear}
+            >
+              Clear Form
+            </Button>
             <Button
               variant="solid"
               bg="orange.400"
