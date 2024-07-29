@@ -99,6 +99,22 @@ const getLatestThresholds = (thresholds) => {
   return Object.values(latestThresholds);
 };
 
+function formatDateTime(date) {
+  const options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: true,
+  };
+  return new Intl.DateTimeFormat('en-US', options).format(date);
+}
+
+const now = new Date();
+const formattedDateTime = formatDateTime(now);
+
 // Function to check thresholds and send alerts
 const checkThresholds = async () => {
   console.log('Checking thresholds...');
@@ -136,29 +152,19 @@ const checkThresholds = async () => {
 
       if (currentValue == null) continue;
 
-      // const now = new Date();
-      // const lastAlertTime = lastAlertTimes[id] || 0;
-      // const timeSinceLastAlert = now - lastAlertTime;
-
-      // if (timeSinceLastAlert < 300000) { // 5 minutes in milliseconds
-      //   console.log(`Skipping alert for ${metric}, recently alerted.`);
-      //   continue;
-      // }
 
       if (currentValue > high) {
-        const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high}.`;
+        const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high} at ${formattedDateTime}.`;
         if (phone) await sendSMSAlert(phone, alertMessage);
         if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage, alertMessage);
-        if (phone || email) sendAlertToDB(metric, alertMessage, new Date());
-        // lastAlertTimes[id] = now;
+        if (phone || email) sendAlertToDB(metric, alertMessage, now);
       }
 
       if (currentValue < low) {
-        const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low}.`;
+        const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low} at ${formattedDateTime}.`;
         if (phone) await sendSMSAlert(phone, alertMessage);
         if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage, alertMessage);
-        if (phone || email) sendAlertToDB(metric, alertMessage, new Date());
-        // lastAlertTimes[id] = now;
+        if (phone || email) sendAlertToDB(metric, alertMessage, now);
       }
     }
   } catch (error) {
