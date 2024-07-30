@@ -146,8 +146,6 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const toggleLayout = () => {
     if (chartLayout === 1) {
       setChartLayout(2);
-    } else if (chartLayout === 2) {
-      setChartLayout(1);
     } else {
       setChartLayout(1);
     }
@@ -223,6 +221,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 1, delay: 0.35 }}
                 >
+                  {isLargerThan768 && (
                   <Tooltip label="Toggle Layout">
                     <MotionIconButton
                       icon={<RiLayoutGridFill />}
@@ -236,7 +235,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                       mr={2}
                     />
                   </Tooltip>
-
+                  )}
                   <Tooltip label="Toggle Charts">
                     <MenuButton
                       as={Button}
@@ -358,8 +357,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                 <Grid
                   templateColumns={{
                     base: '1fr',
-                    md: chartLayout === 2 ? 'repeat(2, 1fr)' : '1fr',
-                    lg: chartLayout === 2 ? 'repeat(2, 1fr)' : '1fr',
+                    md: `repeat(${chartLayout}, 1fr)`,
+                    lg: `repeat(${chartLayout}, 1fr)`,
                   }}
                   gap="6"
                 >
