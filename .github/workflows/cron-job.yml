@@ -1,9 +1,11 @@
 name: Run Backend Cron Job
 
+
 'on':
   schedule:
     - cron: '*/15 * * * *'
   workflow_dispatch: {}
+
 
 jobs:
   run-cron-job:
@@ -11,7 +13,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -19,11 +20,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-
       - name: Run cron job script
         run: node src/Backend/server.mjs
         env:
-          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
-          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
-          TWILIO_PHONE_NUMBER: ${{ secrets.TWILIO_PHONE_NUMBER }}
-          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          TWILIO_ACCOUNT_SID: '${{ secrets.TWILIO_ACCOUNT_SID }}'
+          TWILIO_AUTH_TOKEN: '${{ secrets.TWILIO_AUTH_TOKEN }}'
+          TWILIO_PHONE_NUMBER: '${{ secrets.TWILIO_PHONE_NUMBER }}'
+          SENDGRID_API_KEY: '${{ secrets.SENDGRID_API_KEY }}'
+
