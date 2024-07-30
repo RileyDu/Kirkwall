@@ -30,13 +30,16 @@ const sendSMSAlert = async (to, body) => {
   }
 };
 
-const sendEmailAlert = async (to, subject, text, html) => {
+const sendEmailAlert = async (to, subject, currentValue, highThreshold, lowThreshold) => {
   const msg = {
     to: to,
     from: 'alerts@kirkwall.io', // Replace with your verified email
     subject: subject,
-    text: text,
-    html: html,
+    templateId: 'd-c08fa5ae191549b3aa405cfbc16cd1cd', // Replace with your SendGrid template ID
+    dynamic_template_data: {
+      currenttemp: currentValue,
+      thresholdtemp: highThreshold || lowThreshold
+    }
   };
 
   try {
@@ -141,8 +144,8 @@ const checkThresholds = async () => {
         const message = `${alertMessage} at ${formattedDateTime}.`;
 
         if (phone) await sendSMSAlert(phone, message);
-        if (email) await sendEmailAlert(email, 'Threshold Alert', message, message);
-        if (phone || email) await sendAlertToDB(metric, message, now);
+        if (email) await sendEmailAlert(email, 'Threshold Alert', currentValue, high, low);
+        if (phone || email) await sendAlertToDB(metric, message, now, );
 
         lastAlertTimes[id] = now;  // Update last alert time
       };

@@ -1,8 +1,12 @@
 name: Run Backend Cron Job
+
+
 'on':
   schedule:
     - cron: '*/15 * * * *'
-  workflow_dispatch: null
+  workflow_dispatch: {}
+
+
 jobs:
   run-cron-job:
     runs-on: ubuntu-latest
@@ -12,7 +16,8 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: 'lts/*'  # Use the latest LTS version of Node.js
+
       - name: Install dependencies
         run: npm install
       - name: Run cron job script
@@ -22,3 +27,4 @@ jobs:
           TWILIO_AUTH_TOKEN: '${{ secrets.TWILIO_AUTH_TOKEN }}'
           TWILIO_PHONE_NUMBER: '${{ secrets.TWILIO_PHONE_NUMBER }}'
           SENDGRID_API_KEY: '${{ secrets.SENDGRID_API_KEY }}'
+
