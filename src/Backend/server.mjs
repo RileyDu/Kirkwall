@@ -161,4 +161,6 @@ const checkThresholds = async () => {
   }
 };
 
-checkThresholds();
+if (require.main === module) {
+  checkThresholds();
+}
