@@ -35,7 +35,7 @@ const sendEmailAlert = async (to, subject, currentValue, highThreshold, lowThres
     to: to,
     from: 'alerts@kirkwall.io', // Replace with your verified email
     subject: subject,
-    templateId: 'Kirkwall_TempAlerts_v2', // Replace with your SendGrid template ID
+    templateId: 'd-c08fa5ae191549b3aa405cfbc16cd1cd', // Replace with your SendGrid template ID
     dynamic_template_data: {
       currenttemp: currentValue,
       thresholdtemp: highThreshold || lowThreshold
