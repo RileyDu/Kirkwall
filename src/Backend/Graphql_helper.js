@@ -326,6 +326,7 @@ async function createAlert(metric, message, timestamp) {
   return executeGraphqlQuery(mutation, variables);
 }
 
+// Function to delete an alert from the database via user action
 async function deleteAlert(id) {
   const mutation = `
       mutation($id: ID!) {
