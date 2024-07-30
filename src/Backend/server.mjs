@@ -38,7 +38,7 @@ const sendEmailAlert = async (to, subject, currentValue, highThreshold, lowThres
     templateId: 'Kirkwall_TempAlerts_v2', // Replace with your SendGrid template ID
     dynamic_template_data: {
       currenttemp: currentValue,
-      thresholdtemp: [highThreshold, lowThreshold]
+      thresholdtemp: highThreshold || lowThreshold
     }
   };
 
