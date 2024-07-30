@@ -60,10 +60,8 @@ const ChartExpandModal = ({
   const [userEmail, setUserEmail] = useState('');
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
-  // const [alerts, setAlerts] = useState(JSON.parse(localStorage.getItem('alerts')) || []);
   const [timer, setTimer] = useState(30);
   const [currentValue, setCurrentValue] = useState(null);
-  // const [lastAlertTime, setLastAlertTime] = useState(null);
   const { thresholds, alertsThreshold, fetchAlertsThreshold } =
     useWeatherData();
 

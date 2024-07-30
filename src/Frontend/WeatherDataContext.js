@@ -415,6 +415,7 @@ export const WeatherDataProvider = ({ children }) => {
         soilMoistureData,
         leafWetnessData,
         loading,
+        setLoading,
         handleTimePeriodChange,
         watchdogData,
         watchdogTempData,
