@@ -256,6 +256,7 @@ async function getLatestThreshold() {
         phone
         email
         timestamp
+        id
       }
     }
   `;
