@@ -130,27 +130,29 @@ const checkThresholds = async () => {
 
       const now = new Date();
 
+      // Check if the alert was recently sent
       if (lastAlertTimes[id] && (now - lastAlertTimes[id] < debounceTime)) {
         console.log(`Skipping alert for ${metric}, recently alerted.`);
         continue;
       }
 
-      if (high !== null && currentValue > high) {
+      const sendAlert = async (alertMessage) => {
         const formattedDateTime = formatDateTime(now);
-        const alertMessage = `Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high} at ${formattedDateTime}.`;
-        if (phone) await sendSMSAlert(phone, alertMessage);
-        if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage, alertMessage);
-        if (phone || email) sendAlertToDB(metric, alertMessage, now);
-        lastAlertTimes[id] = now;
+        const message = `${alertMessage} at ${formattedDateTime}.`;
+
+        if (phone) await sendSMSAlert(phone, message);
+        if (email) await sendEmailAlert(email, 'Threshold Alert', message, message);
+        if (phone || email) await sendAlertToDB(metric, message, now);
+
+        lastAlertTimes[id] = now;  // Update last alert time
+      };
+
+      if (high !== null && currentValue > high) {
+        await sendAlert(`Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high}`);
       }
 
       if (low !== null && currentValue < low) {
-        const formattedDateTime = formatDateTime(now);
-        const alertMessage = `Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low} at ${formattedDateTime}.`;
-        if (phone) await sendSMSAlert(phone, alertMessage);
-        if (email) await sendEmailAlert(email, 'Threshold Alert', alertMessage, alertMessage);
-        if (phone || email) sendAlertToDB(metric, alertMessage, now);
-        lastAlertTimes[id] = now;
+        await sendAlert(`Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low}`);
       }
     }
   } catch (error) {
