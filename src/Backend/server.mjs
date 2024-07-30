@@ -30,7 +30,7 @@ const sendSMSAlert = async (to, body) => {
   }
 };
 
-const sendEmailAlert = async (to, subject, currentValue, highThreshold, lowThreshold) => {
+const sendEmailAlert = async (to, subject, currentValue, thresholdValue) => {
   const msg = {
     to: to,
     from: 'alerts@kirkwall.io', // Replace with your verified email
@@ -38,7 +38,7 @@ const sendEmailAlert = async (to, subject, currentValue, highThreshold, lowThres
     templateId: 'd-c08fa5ae191549b3aa405cfbc16cd1cd', // Replace with your SendGrid template ID
     dynamic_template_data: {
       currenttemp: currentValue,
-      thresholdtemp: highThreshold || lowThreshold
+      thresholdtemp: thresholdValue,
     }
   };
 
@@ -139,24 +139,22 @@ const checkThresholds = async () => {
         continue;
       }
 
-      const sendAlert = async (alertMessage) => {
+      const sendAlert = async (alertMessage, thresholdValue) => {
         const formattedDateTime = formatDateTime(now);
         const message = `${alertMessage} at ${formattedDateTime}.`;
-
+      
         if (phone) await sendSMSAlert(phone, message);
-        if (email) await sendEmailAlert(email, 'Threshold Alert', currentValue, high, low);
-        if (phone || email) await sendAlertToDB(metric, message, now, );
-
+        if (email) await sendEmailAlert(email, 'Threshold Alert', currentValue, thresholdValue);
+        if (phone || email) await sendAlertToDB(metric, message, now);
+      
         lastAlertTimes[id] = now;  // Update last alert time
       };
-
+      
       if (high !== null && currentValue > high) {
-        await sendAlert(`Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high}`);
-      }
-
-      if (low !== null && currentValue < low) {
-        await sendAlert(`Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low}`);
-      }
+        await sendAlert(`Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high}`, high);
+      } else if (low !== null && currentValue < low) {
+        await sendAlert(`Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low}`, low);
+      }      
     }
   } catch (error) {
     console.error('Error checking thresholds:', error);
