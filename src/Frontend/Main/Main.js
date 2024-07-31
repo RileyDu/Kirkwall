@@ -63,19 +63,20 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     rivercityTempData,
     rivercityHumData,
     rivercityData,
+    chartData,
   } = useWeatherData();
 
-  const [tempChartType, setTempChartType] = useState('bar');
-  const [humidityChartType, setHumidityChartType] = useState('bar');
-  const [windChartType, setWindChartType] = useState('bar');
-  const [rainfallChartType, setRainfallChartType] = useState('bar');
-  const [soilMoistureChartType, setSoilMoistureChartType] = useState('bar');
-  const [leafWetnessChartType, setLeafWetnessChartType] = useState('bar');
-  const [watchdogTempChartType, setWatchdogTempChartType] = useState('bar');
+  const [tempChartType, setTempChartType] = useState('');
+  const [humidityChartType, setHumidityChartType] = useState('');
+  const [windChartType, setWindChartType] = useState('');
+  const [rainfallChartType, setRainfallChartType] = useState('');
+  const [soilMoistureChartType, setSoilMoistureChartType] = useState('');
+  const [leafWetnessChartType, setLeafWetnessChartType] = useState('');
+  const [watchdogTempChartType, setWatchdogTempChartType] = useState('');
   const [watchdogHumidityChartType, setWatchdogHumidityChartType] =
-    useState('bar');
-  const [rivercityTempChartType, setRivercityTempChartType] = useState('bar');
-  const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
+    useState('');
+  const [rivercityTempChartType, setRivercityTempChartType] = useState('');
+  const [rivercityHumChartType, setRivercityHumChartType] = useState('');
   const [isReady, setIsReady] = useState(false);
   const [chartLayout, setChartLayout] = useState(2);
   const [layoutStable, setLayoutStable] = useState(true);
@@ -91,6 +92,52 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const MotionIconButton = motion(IconButton);
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
+
+  const updateChartTypes = (chartData) => {
+    chartData.forEach(chart => {
+      switch (chart.metric) {
+        case 'temperature':
+          setTempChartType(chart.type);
+          break;
+        case 'percent_humidity':
+          setHumidityChartType(chart.type);
+          break;
+        case 'wind_speed':
+          setWindChartType(chart.type);
+          break;
+        case 'rain_15_min_inches':
+          setRainfallChartType(chart.type);
+          break;
+        case 'soil_moisture':
+          setSoilMoistureChartType(chart.type);
+          break;
+        case 'leaf_wetness':
+          setLeafWetnessChartType(chart.type);
+          break;
+        case 'temp':
+          setWatchdogTempChartType(chart.type);
+          break;
+        case 'hum':
+          setWatchdogHumidityChartType(chart.type);
+          break;
+        case 'rctemp':
+          setRivercityTempChartType(chart.type);
+          break;
+        case 'humidity':
+          setRivercityHumChartType(chart.type);
+          break;
+        default:
+          break;
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (chartData.length > 0) {
+      updateChartTypes(chartData);
+      console.log('chartData:', chartData);
+    }
+  }, [chartData]);
 
   useEffect(() => {
     setIsReady(false);
