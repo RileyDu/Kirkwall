@@ -471,6 +471,7 @@ export const WeatherDataProvider = ({ children }) => {
         thresholds,
         alertsThreshold,
         fetchAlertsThreshold,
+        chartData,
       }}
     >
       {children}
