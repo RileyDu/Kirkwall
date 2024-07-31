@@ -53,7 +53,6 @@ const ChartWrapper = ({
   chart,
   chartLayout,
 }) => {
-  const [chartType, setChartType] = useState('bar');
   const [showIcons, setShowIcons] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
@@ -61,13 +60,23 @@ const ChartWrapper = ({
   const [showMap, setShowMap] = useState(false);
   const [sensorMap, setSensorMap] = useState('grandfarm'); // State to toggle between map and chart
   const [userTitle, setUserTitle] = useState('Location');
-
+  
   const { chartData } = useWeatherData();
+  
   const chartDataForMetric = chartData.find(chart => chart.metric === metric);
-
   const [newTitle, setNewTitle] = useState(chartDataForMetric?.location);
-
-  // console.log('chartDataForMetric:', chartDataForMetric);
+  const [chartType, setChartType] = useState(chartDataForMetric?.type);
+  
+  const handleChartTypeChange = () => {
+    const newChartType = chartType === 'line' ? 'bar' : 'line';
+    setChartType(newChartType);
+    onChartChange(newChartType);
+  };
+  
+  // Call handleChartEdit after chartType is updated
+  useEffect(() => {
+    handleChartEdit();
+  }, [chartType]);
 
   const { currentUser } = useAuth();
 
@@ -226,11 +235,6 @@ const ChartWrapper = ({
     }
   };
 
-  const handleChartTypeChange = () => {
-    const newChartType = chartType === 'bar' ? 'line' : 'bar';
-    setChartType(newChartType);
-    onChartChange(newChartType);
-  };
 
   const getChartIcon = () => {
     switch (chartType) {
@@ -297,7 +301,7 @@ const ChartWrapper = ({
     const id = chartDataForMetric?.id;
     const metric = chartDataForMetric?.metric;
     const timeperiod = chartDataForMetric?.timeperiod;
-    const type = chartDataForMetric?.type;
+    const type = chartType;
     const location = newTitle || chartDataForMetric?.location;
     const hidden = chartDataForMetric?.hidden;
     editChart(id, metric, timeperiod, type, location, hidden);
