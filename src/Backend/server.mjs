@@ -30,15 +30,14 @@ const sendSMSAlert = async (to, body) => {
   }
 };
 
-const sendEmailAlert = async (to, subject, currentValue, thresholdValue) => {
+const sendEmailAlert = async (to, subject, alertMessage) => {
   const msg = {
     to: to,
     from: 'alerts@kirkwall.io', // Replace with your verified email
     subject: subject,
     templateId: 'd-c08fa5ae191549b3aa405cfbc16cd1cd', // Replace with your SendGrid template ID
     dynamic_template_data: {
-      currenttemp: currentValue,
-      thresholdtemp: thresholdValue,
+      alertmessage: alertMessage,
     }
   };
 
@@ -139,21 +138,21 @@ const checkThresholds = async () => {
         continue;
       }
 
-      const sendAlert = async (alertMessage, thresholdValue) => {
+      const sendAlert = async (alertMessage) => {
         const formattedDateTime = formatDateTime(now);
         const message = `${alertMessage} at ${formattedDateTime}.`;
       
         if (phone) await sendSMSAlert(phone, message);
-        if (email) await sendEmailAlert(email, 'Threshold Alert', currentValue, thresholdValue);
+        if (email) await sendEmailAlert(email, 'Threshold Alert', message);
         if (phone || email) await sendAlertToDB(metric, message, now);
       
         lastAlertTimes[id] = now;  // Update last alert time
       };
       
       if (high !== null && currentValue > high) {
-        await sendAlert(`Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high}`, high);
+        await sendAlert(`Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high}!`);
       } else if (low !== null && currentValue < low) {
-        await sendAlert(`Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low}`, low);
+        await sendAlert(`Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low}!`);
       }      
     }
   } catch (error) {
