@@ -1,5 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getWeatherData, getWatchdogData, getRivercityData, getAlerts, getLatestThreshold } from '../Backend/Graphql_helper.js';
+import {
+  getWeatherData,
+  getWatchdogData,
+  getRivercityData,
+  getAlerts,
+  getLatestThreshold,
+  getChartData,
+} from '../Backend/Graphql_helper.js';
 
 const WeatherDataContext = createContext();
 
@@ -11,14 +18,20 @@ export const WeatherDataProvider = ({ children }) => {
   const [weatherData, setWeatherData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTimePeriodTemp, setSelectedTimePeriodTemp] = useState('3H');
-  const [selectedTimePeriodHumidity, setSelectedTimePeriodHumidity] = useState('3H');
+  const [selectedTimePeriodHumidity, setSelectedTimePeriodHumidity] =
+    useState('3H');
   const [selectedTimePeriodWind, setSelectedTimePeriodWind] = useState('3H');
-  const [selectedTimePeriodRainfall, setSelectedTimePeriodRainfall] = useState('3H');
-  const [selectedTimePeriodSoilMoisture, setSelectedTimePeriodSoilMoisture] = useState('3H');
-  const [selectedTimePeriodLeafWetness, setSelectedTimePeriodLeafWetness] = useState('3H');
-  const [selectedTimePeriodWDTemp, setSelectedTimePeriodWDTemp] = useState('3H');
+  const [selectedTimePeriodRainfall, setSelectedTimePeriodRainfall] =
+    useState('3H');
+  const [selectedTimePeriodSoilMoisture, setSelectedTimePeriodSoilMoisture] =
+    useState('3H');
+  const [selectedTimePeriodLeafWetness, setSelectedTimePeriodLeafWetness] =
+    useState('3H');
+  const [selectedTimePeriodWDTemp, setSelectedTimePeriodWDTemp] =
+    useState('3H');
   const [selectedTimePeriodWDHum, setSelectedTimePeriodWDHum] = useState('3H');
-  const [selectedTimePeriodRCTemp, setSelectedTimePeriodRCTemp] = useState('3H');
+  const [selectedTimePeriodRCTemp, setSelectedTimePeriodRCTemp] =
+    useState('3H');
   const [selectedTimePeriodRCHum, setSelectedTimePeriodRCHum] = useState('3H');
   const [tempData, setTempData] = useState(null);
   const [humidityData, setHumidityData] = useState(null);
@@ -34,6 +47,7 @@ export const WeatherDataProvider = ({ children }) => {
   const [watchdogHumData, setWatchdogHumData] = useState(null);
   const [alertsThreshold, setAlertsThreshold] = useState({});
   const [thresholds, setThresholds] = useState([]);
+  const [chartData, setChartData] = useState([]);
   const [dataLoaded, setDataLoaded] = useState({
     temperature: false,
     humidity: false,
@@ -47,22 +61,36 @@ export const WeatherDataProvider = ({ children }) => {
     rivercityHum: false,
   });
 
-    useEffect(() => {
-      const fetchThresholds = async () => {
-        try {
-          const result = await getLatestThreshold();
-          if (Array.isArray(result.data.thresholds)) {
-            setThresholds(result.data.thresholds);
-          }
-          // console.log('Thresholds from DB:', thresholds);
-        } catch (error) {
-          console.error('Error fetching thresholds:', error);
+  useEffect(() => {
+    const fetchThresholds = async () => {
+      try {
+        const result = await getLatestThreshold();
+        if (Array.isArray(result.data.thresholds)) {
+          setThresholds(result.data.thresholds);
         }
-      };
+        // console.log('Thresholds from DB:', thresholds);
+      } catch (error) {
+        console.error('Error fetching thresholds:', error);
+      }
+    };
 
-      fetchThresholds();
+    fetchThresholds();
+  }, []);
 
-    }, []);
+  useEffect(() => {
+    const fetchChartData = async () => {
+      try {
+        const response = await getChartData();
+        if (Array.isArray(response.data.charts)) {
+          setChartData(response.data.charts);
+          console.log('Chart data:', chartData);
+        }
+      } catch (error) {
+        console.error('Error fetching chart data:', error);
+      }
+    };
+    fetchChartData();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -100,7 +128,6 @@ export const WeatherDataProvider = ({ children }) => {
       } catch (error) {
         console.error('Error fetching watchdog data:', error);
         setWatchdogData([]);
-        
       }
     };
 
@@ -123,7 +150,6 @@ export const WeatherDataProvider = ({ children }) => {
       } catch (error) {
         console.error('Error fetching watchdog data:', error);
         setRivercityData([]);
-        
       }
     };
 
@@ -158,17 +184,16 @@ export const WeatherDataProvider = ({ children }) => {
       console.error('Error fetching alerts', error);
     }
   };
-  
+
   useEffect(() => {
     fetchAlertsThreshold();
-  
+
     const intervalId = setInterval(() => {
       fetchAlertsThreshold();
     }, 30000); // 30 seconds
-  
+
     return () => clearInterval(intervalId); // Cleanup interval on component unmount
   }, [getAlerts]);
-    
 
   useEffect(() => {
     if (Object.values(dataLoaded).some(loaded => loaded)) {
@@ -268,10 +293,16 @@ export const WeatherDataProvider = ({ children }) => {
     return fetchSpecificData(metric, timePeriod); // Return the promise
   };
 
-  const weatherMetrics = ['temperature', 'percent_humidity', 'wind_speed', 'rain_15_min_inches', 'soil_moisture', 'leaf_wetness'];
+  const weatherMetrics = [
+    'temperature',
+    'percent_humidity',
+    'wind_speed',
+    'rain_15_min_inches',
+    'soil_moisture',
+    'leaf_wetness',
+  ];
   const watchdogMetrics = ['temp', 'hum'];
   const rivercityMetrics = ['rctemp', 'humidity'];
-  
 
   const determineLimitBasedOnTimePeriod = timePeriod => {
     console.log('Determining limit for time period (weatherData):', timePeriod);
@@ -296,7 +327,10 @@ export const WeatherDataProvider = ({ children }) => {
   };
 
   const watchdogDetermineLimitBasedOnTimePeriod = timePeriod => {
-    console.log('Determining limit for time period (watchdogData):', timePeriod);
+    console.log(
+      'Determining limit for time period (watchdogData):',
+      timePeriod
+    );
     switch (timePeriod) {
       case '1H':
         return 7;
@@ -318,7 +352,10 @@ export const WeatherDataProvider = ({ children }) => {
   };
 
   const rivercityDetermineLimitBasedOnTimePeriod = timePeriod => {
-    console.log('Determining limit for time period (rivercityData):', timePeriod);
+    console.log(
+      'Determining limit for time period (rivercityData):',
+      timePeriod
+    );
     switch (timePeriod) {
       case '1H':
         return 7;
@@ -342,7 +379,10 @@ export const WeatherDataProvider = ({ children }) => {
   const fetchSpecificData = async (metric, timePeriod) => {
     try {
       if (watchdogMetrics.includes(metric)) {
-        const response = await getWatchdogData(metric, watchdogDetermineLimitBasedOnTimePeriod(timePeriod));
+        const response = await getWatchdogData(
+          metric,
+          watchdogDetermineLimitBasedOnTimePeriod(timePeriod)
+        );
         switch (metric) {
           case 'temp':
             setWatchdogTempData(response.data.watchdog_data);
@@ -354,7 +394,10 @@ export const WeatherDataProvider = ({ children }) => {
             break;
         }
       } else if (rivercityMetrics.includes(metric)) {
-        const response = await getRivercityData(metric, rivercityDetermineLimitBasedOnTimePeriod(timePeriod));
+        const response = await getRivercityData(
+          metric,
+          rivercityDetermineLimitBasedOnTimePeriod(timePeriod)
+        );
         switch (metric) {
           case 'rctemp':
             setRivercityTempData(response.data.rivercity_data);
@@ -365,9 +408,11 @@ export const WeatherDataProvider = ({ children }) => {
           default:
             break;
         }
-      }
-       else if (weatherMetrics.includes(metric)) {
-        const response = await getWeatherData(metric, determineLimitBasedOnTimePeriod(timePeriod));
+      } else if (weatherMetrics.includes(metric)) {
+        const response = await getWeatherData(
+          metric,
+          determineLimitBasedOnTimePeriod(timePeriod)
+        );
         switch (metric) {
           case 'temperature':
             setTempData(response.data.weather_data);
