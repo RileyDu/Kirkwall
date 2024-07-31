@@ -36,6 +36,10 @@ import WatchdogMap from '../Maps/WatchdogMiniMap.js';
 import RivercityMap from '../Maps/RivercityMiniMap.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import ImpriMiniMap from '../Maps/ImpriMiniMap.js';
+import { useWeatherData } from '../WeatherDataContext.js';
+import { updateChart } from '../../Backend/Graphql_helper.js';
+
+
 const ChartWrapper = ({
   title,
   children,
@@ -57,6 +61,7 @@ const ChartWrapper = ({
   const [sensorMap, setSensorMap] = useState('grandfarm'); // State to toggle between map and chart
   const [userTitle, setUserTitle] = useState('Location');
   const [newTitle, setNewTitle] = useState('Enter New Location Label');
+  const { chartData } = useWeatherData();
 
   const { currentUser } = useAuth();
 

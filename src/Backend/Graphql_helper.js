@@ -458,4 +458,5 @@ export {
   createAlert,
   deleteAlert,
   getChartData,
+  updateChart,
 };
