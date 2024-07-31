@@ -45,7 +45,8 @@ const ChartWrapper = ({
   handleTimePeriodChange,
   toggleChartVisibility,
   section,
-  chart
+  chart,
+  chartLayout,
 }) => {
   const [chartType, setChartType] = useState('bar');
   const [showIcons, setShowIcons] = useState(true);
@@ -332,7 +333,7 @@ const ChartWrapper = ({
                         p={0} // Remove padding to ensure the content uses full space
                         w="auto" // Ensure width adapts to content
                       >
-                        <PopoverArrow />
+                        <PopoverArrow bg="#212121" border={'2px solid #212121'}/>
                         <PopoverCloseButton
                           size={closeSize}
                           color="white"
@@ -367,7 +368,7 @@ const ChartWrapper = ({
                     </Popover>
                   </Box>
                 </motion.div>
-
+              {chartLayout !== 3 && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -390,6 +391,7 @@ const ChartWrapper = ({
                     </Tooltip>
                   </Box>
                 </motion.div>
+              )}
               </>
             )}
             <motion.div
@@ -470,6 +472,8 @@ const ChartWrapper = ({
                 </Popover>
               </Box>
             </motion.div>
+            {chartLayout !== 3 && (
+              <>
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -512,6 +516,8 @@ const ChartWrapper = ({
                 />
               </Tooltip>
             </motion.div>
+            </>
+            )}
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
