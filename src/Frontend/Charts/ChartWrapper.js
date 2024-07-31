@@ -38,6 +38,7 @@ import { useAuth } from '../AuthComponents/AuthContext.js';
 import ImpriMiniMap from '../Maps/ImpriMiniMap.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { updateChart } from '../../Backend/Graphql_helper.js';
+import e from 'cors';
 
 
 const ChartWrapper = ({
@@ -60,8 +61,13 @@ const ChartWrapper = ({
   const [showMap, setShowMap] = useState(false);
   const [sensorMap, setSensorMap] = useState('grandfarm'); // State to toggle between map and chart
   const [userTitle, setUserTitle] = useState('Location');
-  const [newTitle, setNewTitle] = useState('Enter New Location Label');
+
   const { chartData } = useWeatherData();
+  const chartDataForMetric = chartData.find(chart => chart.metric === metric);
+
+  const [newTitle, setNewTitle] = useState(chartDataForMetric?.location);
+
+  // console.log('chartDataForMetric:', chartDataForMetric);
 
   const { currentUser } = useAuth();
 
@@ -129,19 +135,19 @@ const ChartWrapper = ({
   const getBackgroundColor = colorMode =>
     colorMode === 'light' ? '#f9f9f9' : 'gray.800';
 
-  useEffect(() => {
-    const savedTitle = localStorage.getItem(`chartTitle_${metric}`);
-    if (savedTitle) {
-      setUserTitle(savedTitle);
-      setNewTitle(savedTitle);
-    }
-  }, [metric]);
+  // useEffect(() => {
+  //   const savedTitle = localStorage.getItem(`chartTitle_${metric}`);
+  //   if (savedTitle) {
+  //     setUserTitle(savedTitle);
+  //     setNewTitle(savedTitle);
+  //   }
+  // }, [metric]);
 
   const handleTitleChange = e => setNewTitle(e.target.value);
   const handleTitleSubmit = () => {
     setUserTitle(newTitle);
-    localStorage.setItem(`chartTitle_${metric}`, newTitle);
-  };
+    handleChartEdit();
+ };
 
 
   const getLogoToDisplay = (metric, colorMode) => {
@@ -196,9 +202,6 @@ const ChartWrapper = ({
   const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
   const closeSize = useBreakpointValue({ base: 'sm', md: 'lg' });
-
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
 
   const calculateTimePeriod = dataLength => {
     const totalMinutes =
@@ -280,6 +283,29 @@ const ChartWrapper = ({
 
   const MotionIconButton = motion(IconButton);
 
+  const editChart = async (id, metric, timeperiod, type, location, hidden) => {
+    try {
+      const result = await updateChart(id, metric, timeperiod, type, location, hidden);
+      console.log('result:', result);
+    }
+    catch (error) {
+      console.error('Error updating chart:', error);
+    }
+  }
+
+  const handleChartEdit = () => {
+    const id = chartDataForMetric?.id;
+    const metric = chartDataForMetric?.metric;
+    const timeperiod = chartDataForMetric?.timeperiod;
+    const type = chartDataForMetric?.type;
+    const location = newTitle || chartDataForMetric?.location;
+    const hidden = chartDataForMetric?.hidden;
+    editChart(id, metric, timeperiod, type, location, hidden);
+  }
+
+
+
+
   return (
     <>
       <Box
@@ -327,7 +353,7 @@ const ChartWrapper = ({
                     <Popover trigger="hover" placement="bottom">
                       <PopoverTrigger>
                         <Text fontSize={fontSize} cursor="pointer">
-                          {userTitle}
+                          {newTitle || chartDataForMetric?.location}
                         </Text>
                       </PopoverTrigger>
                       <PopoverContent
