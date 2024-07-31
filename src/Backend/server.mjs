@@ -1,7 +1,7 @@
 // checkThresholds.js
 import dotenv from 'dotenv';
 dotenv.config();
-import { getWeatherData, getWatchdogData, getRivercityData, getLatestThreshold, createAlert } from './Graphql_helper.js';
+import { getWeatherData, getWatchdogData, getRivercityData, getLatestThreshold, createAlert, getChartData } from './Graphql_helper.js';
 import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
 import moment from 'moment-timezone';
@@ -57,6 +57,18 @@ const sendAlertToDB = async (metric, message, timestamp) => {
     console.error('Error sending alert to database:', error);
   }
 };
+
+const getLocationforAlert = async (metric) => {
+  try {
+    console.log('Getting location data for alert message...');
+    const response = await getChartData();
+    const charts = response.data.charts;
+    const location = charts.find(chart => chart.metric === metric)?.location;
+    return location;
+  } catch (error) {
+    console.error('Error getting location for alert:', error);
+  }
+}
 
 const extractCurrentValue = (response, metric) => {
   if (Array.isArray(response.data.weather_data)) {
@@ -128,6 +140,36 @@ const checkThresholds = async () => {
 
       const currentValue = extractCurrentValue(responseData, metric);
 
+      const getLabelForMetric = (metric) => {
+        switch (metric) {
+          case 'temperature':
+            return { label: '°F', addSpace: false };
+          case 'temp':
+            return { label: '°F', addSpace: false };
+            case 'rctemp':
+              return { label: '°F', addSpace: false };
+          case 'hum':
+            return { label: '%', addSpace: false };
+          case 'percent_humidity':
+            return { label: '%', addSpace: false };
+          case 'humidity':
+            return { label: '%', addSpace: false };
+          case 'rain_15_min_inches':
+            return { label: 'inches', addSpace: true };
+          case 'wind_speed':
+            return { label: 'MPH', addSpace: true };
+          case 'soil_moisture':
+            return { label: 'centibars', addSpace: true };
+          case 'leaf_wetness':
+            return { label: 'out of 15', addSpace: true };
+          default:
+            return { label: '', addSpace: false };
+        }
+      };
+
+      const { label, addSpace } = getLabelForMetric(metric);
+      const formatValue = (value) => `${value}${addSpace ? ' ' : ''}${label}`;
+
       if (currentValue == null) continue;
 
       const now = new Date();
@@ -140,7 +182,8 @@ const checkThresholds = async () => {
 
       const sendAlert = async (alertMessage) => {
         const formattedDateTime = formatDateTime(now);
-        const message = `${alertMessage} at ${formattedDateTime}.`;
+        const location = await getLocationforAlert(metric);
+        const message = `${alertMessage} at ${formattedDateTime} for ${location}.`;
       
         if (phone) await sendSMSAlert(phone, message);
         if (email) await sendEmailAlert(email, 'Threshold Alert', message);
@@ -150,9 +193,9 @@ const checkThresholds = async () => {
       };
       
       if (high !== null && currentValue > high) {
-        await sendAlert(`Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high}`);
+        await sendAlert(`Alert: The ${metric} value of ${formatValue(currentValue)} exceeds the high threshold of ${formatValue(high)}`);
       } else if (low !== null && currentValue < low) {
-        await sendAlert(`Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low}`);
+        await sendAlert(`Alert: The ${metric} value of ${formatValue(currentValue)} is below the low threshold of ${formatValue(low)}`);
       }      
     }
   } catch (error) {

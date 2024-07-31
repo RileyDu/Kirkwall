@@ -63,7 +63,6 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     rivercityTempData,
     rivercityHumData,
     rivercityData,
-    setLoading,
   } = useWeatherData();
 
   const [tempChartType, setTempChartType] = useState('bar');
