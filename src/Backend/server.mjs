@@ -1,7 +1,7 @@
 // checkThresholds.js
 import dotenv from 'dotenv';
 dotenv.config();
-import { getWeatherData, getWatchdogData, getRivercityData, getLatestThreshold, createAlert } from './Graphql_helper.js';
+import { getWeatherData, getWatchdogData, getRivercityData, getLatestThreshold, createAlert, getChartData } from './Graphql_helper.js';
 import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
 import moment from 'moment-timezone';
@@ -57,6 +57,18 @@ const sendAlertToDB = async (metric, message, timestamp) => {
     console.error('Error sending alert to database:', error);
   }
 };
+
+const getLocationforAlert = async (metric) => {
+  try {
+    console.log('Getting location data for alert message...');
+    const response = await getChartData();
+    const charts = response.data.charts;
+    const location = charts.find(chart => chart.metric === metric)?.location;
+    return location;
+  } catch (error) {
+    console.error('Error getting location for alert:', error);
+  }
+}
 
 const extractCurrentValue = (response, metric) => {
   if (Array.isArray(response.data.weather_data)) {
@@ -140,7 +152,8 @@ const checkThresholds = async () => {
 
       const sendAlert = async (alertMessage) => {
         const formattedDateTime = formatDateTime(now);
-        const message = `${alertMessage} at ${formattedDateTime}.`;
+        const location = await getLocationforAlert(metric);
+        const message = `${alertMessage} at ${formattedDateTime} for ${location}.`;
       
         if (phone) await sendSMSAlert(phone, message);
         if (email) await sendEmailAlert(email, 'Threshold Alert', message);
