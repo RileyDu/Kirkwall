@@ -140,6 +140,36 @@ const checkThresholds = async () => {
 
       const currentValue = extractCurrentValue(responseData, metric);
 
+      const getLabelForMetric = (metric) => {
+        switch (metric) {
+          case 'temperature':
+            return { label: '°F', addSpace: false };
+          case 'temp':
+            return { label: '°F', addSpace: false };
+            case 'rctemp':
+              return { label: '°F', addSpace: false };
+          case 'hum':
+            return { label: '%', addSpace: false };
+          case 'percent_humidity':
+            return { label: '%', addSpace: false };
+          case 'humidity':
+            return { label: '%', addSpace: false };
+          case 'rain_15_min_inches':
+            return { label: 'inches', addSpace: true };
+          case 'wind_speed':
+            return { label: 'MPH', addSpace: true };
+          case 'soil_moisture':
+            return { label: 'centibars', addSpace: true };
+          case 'leaf_wetness':
+            return { label: 'out of 15', addSpace: true };
+          default:
+            return { label: '', addSpace: false };
+        }
+      };
+
+      const { label, addSpace } = getLabelForMetric(metric);
+      const formatValue = (value) => `${value}${addSpace ? ' ' : ''}${label}`;
+
       if (currentValue == null) continue;
 
       const now = new Date();
@@ -163,9 +193,9 @@ const checkThresholds = async () => {
       };
       
       if (high !== null && currentValue > high) {
-        await sendAlert(`Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high}`);
+        await sendAlert(`Alert: The ${metric} value of ${formatValue(currentValue)} exceeds the high threshold of ${formatValue(high)}`);
       } else if (low !== null && currentValue < low) {
-        await sendAlert(`Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low}`);
+        await sendAlert(`Alert: The ${metric} value of ${formatValue(currentValue)} is below the low threshold of ${formatValue(low)}`);
       }      
     }
   } catch (error) {
