@@ -361,6 +361,34 @@ async function getChartData() {
   return executeGraphqlQuery(query);
 }
 
+// Function to update a chart in the database
+async function updateChart(id, metric, timeperiod, type, location, hidden) {
+  const mutation = `mutation($i: chartsInput!, $j: ID!) {
+  update_charts(input: $i, id: $j) {
+    id
+    metric
+    timeperiod
+    type
+    location
+    hidden
+  }
+}
+  `;
+  const variables = {
+    j: id,
+    i: {
+      metric: metric,
+      timeperiod: timeperiod,
+      type: type,
+      location: location,
+      hidden: hidden,
+    },
+  };
+  return executeGraphqlQuery(mutation, variables);
+}
+
+
+
 // Function to get API ID of user
 // async function getAPIIds() {
 //   const query = `
