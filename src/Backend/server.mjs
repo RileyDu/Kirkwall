@@ -150,9 +150,9 @@ const checkThresholds = async () => {
       };
       
       if (high !== null && currentValue > high) {
-        await sendAlert(`Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high}!`);
+        await sendAlert(`Alert: The ${metric} value of ${currentValue} exceeds the high threshold of ${high}`);
       } else if (low !== null && currentValue < low) {
-        await sendAlert(`Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low}!`);
+        await sendAlert(`Alert: The ${metric} value of ${currentValue} is below the low threshold of ${low}`);
       }      
     }
   } catch (error) {
