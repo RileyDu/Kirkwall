@@ -16,6 +16,7 @@ const chartComponents = {
 const ModularDashboard = () => {
   const { currentUser } = useAuth();
   const [customerMetrics, setCustomerMetrics] = useState([]);
+  const [customerName, setCustomerName] = useState('');
   const [metricSettings, setMetricSettings] = useState([]);
   const { colorMode } = useColorMode();
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
@@ -48,6 +49,7 @@ const ModularDashboard = () => {
       );
       if (customer) {
         setCustomerMetrics(customer.metric);
+        setCustomerName(customer.name);
       }
     }
   }, [currentUser]);
@@ -76,7 +78,7 @@ const ModularDashboard = () => {
       flexDirection="column"
     >
       <Heading size="lg" mb="4">
-        Modular Dashboard
+        {customerName} Dashboard
       </Heading>
 
       <Grid
