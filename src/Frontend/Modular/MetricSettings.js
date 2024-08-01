@@ -7,7 +7,7 @@ export const MetricSettings = [
         color:"green",
         company:"Grand Farm",
         sourceData:"weatherData",
-        solodata:"tempData",
+        soloData:"tempData",
     },
     {
         id:2,

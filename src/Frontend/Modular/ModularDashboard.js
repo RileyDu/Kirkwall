@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { CustomerSettings } from './CustomerSettings.js';
+import { MetricSettings } from './MetricSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
-import { Box, useColorMode, useMediaQuery, Heading, Grid, GridItem } from '@chakra-ui/react';
-// import ChartWrapper from './ChartWrapper'; // Uncomment if used
-// import LineChart from './LineChart'; // Import if not already
-// import BarChart from './BarChart'; // Import if not already
+import { Box, useColorMode, useMediaQuery, Heading, Grid, GridItem, Divider } from '@chakra-ui/react';
 import ChartWrapper from '../Charts/ChartWrapper.js';
 import { LineChart, BarChart } from '../Charts/Charts.js';
+import { m } from 'framer-motion';
 
 const ModularDashboard = () => {
   const { currentUser } = useAuth();
   const [customerMetrics, setCustomerMetrics] = useState([]);
+  const [metricSettings, setMetricSettings] = useState([]);
   const { colorMode } = useColorMode();
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const statusOfAlerts = true; // Example default value; update as necessary
@@ -31,17 +31,16 @@ const ModularDashboard = () => {
     }
   }, [currentUser]);
 
-  const handleChartChange = (setChartType) => {
-    // Define the function logic
-  };
-
-  const handleTimePeriodChange = () => {
-    // Define the function logic
-  };
-
-  const toggleChartVisibility = () => {
-    // Define the function logic
-  };
+useEffect(() => {
+    if (customerMetrics.length > 0) {
+        const metricSettings = MetricSettings.filter(metric =>
+            customerMetrics.includes(metric.metric)
+        );
+        if (metricSettings) {
+        setMetricSettings(metricSettings);
+        }
+    }
+}, [customerMetrics]);
 
   return (
     <Box
@@ -59,7 +58,22 @@ const ModularDashboard = () => {
         Modular Dashboard
       </Heading>
 
-      <Grid
+        <div>
+      {metricSettings.map(metric => (
+        <>
+        <p key={metric.id}>{metric.metric}</p>
+        <p key={metric.id}>{metric.name}</p>
+        <p key={metric.id}>{metric.unit}</p>
+        <p key={metric.id}>{metric.color}</p>
+        <p key={metric.id}>{metric.company}</p>
+        <p key={metric.id}>{metric.sourceData}</p>
+        <p key={metric.id}>{metric.soloData}</p>
+        <Divider />
+        </>
+    ))}
+    </div>
+
+      {/* <Grid
         templateColumns={{
           base: '1fr',
           md: `repeat(${chartLayout}, 1fr)`,
@@ -99,7 +113,7 @@ const ModularDashboard = () => {
             </ChartWrapper>
           </GridItem>
         ))}
-      </Grid>
+      </Grid> */}
     </Box>
   );
 };
