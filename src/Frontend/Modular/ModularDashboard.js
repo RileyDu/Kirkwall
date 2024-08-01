@@ -86,7 +86,7 @@ const ModularDashboard = () => {
         {customerMetrics.map(metric => {
           const settingsOfMetric = metricSettings.find(m => m.metric === metric);
           const title = settingsOfMetric ? settingsOfMetric.name : 'Metric Title';
-          const dataForMetric = settingsOfMetric.soloData;
+          const dataForMetric = settingsOfMetric?.soloData;
 
           // Ensure dataForMetric is pointing to the correct dataset, like tempData, humidityData, etc.
           let chartData;
