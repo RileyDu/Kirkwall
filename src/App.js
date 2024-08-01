@@ -43,6 +43,7 @@ import RJDashboard from './Frontend/Clients/RjEnergy/RjDashboard.js';
 import RJMap from './Frontend/Maps/RJMap.js';
 import WatchDogProtectDashboard from './Frontend/Clients/WatchDogProtect/WatchDogProtectDashboard.js';
 import WatchdogProtectMap from './Frontend/Maps/WatchdogMap.js';
+import ModularDashboard from './Frontend/Modular/ModularDashboard.js';
 
 const Layout = ({
   children,
@@ -172,6 +173,14 @@ return (
                   timePeriod={timePeriod}
                   statusOfAlerts={showAlerts}
                 />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/test"
+            element={
+              <ProtectedRoute>
+                <ModularDashboard />
               </ProtectedRoute>
             }
           />
