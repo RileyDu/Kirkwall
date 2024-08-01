@@ -1,5 +1,5 @@
 // customers.js
-export const customers = [
+export const CustomerSettings = [
     {
         id:1,
         name:"Kirkwall",
