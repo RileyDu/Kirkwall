@@ -7,6 +7,12 @@ import ChartWrapper from '../Charts/ChartWrapper.js';
 import { LineChart, BarChart } from '../Charts/Charts.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 
+const chartComponents = {
+  line: LineChart,
+  bar: BarChart,
+  // Add more chart types here as needed
+};
+
 const ModularDashboard = () => {
   const { currentUser } = useAuth();
   const [customerMetrics, setCustomerMetrics] = useState([]);
@@ -15,8 +21,6 @@ const ModularDashboard = () => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const statusOfAlerts = true; // Example default value; update as necessary
   const chartLayout = 2; // Example default value; update as necessary
-  const tempChartType = 'line'; // Example default value; update as necessary
-  const timePeriod = '3H'; // Example default value; update as necessary
 
   const {
     weatherData,
@@ -40,7 +44,7 @@ const ModularDashboard = () => {
   useEffect(() => {
     if (currentUser) {
       const customer = CustomerSettings.find(
-        customer => customer.email === currentUser.email
+        (customer) => customer.email === currentUser.email
       );
       if (customer) {
         setCustomerMetrics(customer.metric);
@@ -50,7 +54,7 @@ const ModularDashboard = () => {
 
   useEffect(() => {
     if (customerMetrics.length > 0) {
-      const selectedMetrics = MetricSettings.filter(metric =>
+      const selectedMetrics = MetricSettings.filter((metric) =>
         customerMetrics.includes(metric.metric)
       );
       if (selectedMetrics) {
@@ -83,47 +87,53 @@ const ModularDashboard = () => {
         }}
         gap="6"
       >
-        {customerMetrics.map(metric => {
-          const settingsOfMetric = metricSettings.find(m => m.metric === metric);
+        {customerMetrics.map((metric) => {
+          const settingsOfMetric = metricSettings.find((m) => m.metric === metric);
           const title = settingsOfMetric ? settingsOfMetric.name : 'Metric Title';
           const dataForMetric = settingsOfMetric?.soloData;
+          const chartDataForMetric = chartData.find((chart) => chart.metric === metric);
+          const chartType = chartDataForMetric?.type || 'bar';
 
           // Ensure dataForMetric is pointing to the correct dataset, like tempData, humidityData, etc.
-          let chartData;
+          let dataForChart;
           switch (dataForMetric) {
             case 'tempData':
-              chartData = tempData || weatherData;
+              dataForChart = tempData || weatherData;
               break;
             case 'humidityData':
-              chartData = humidityData || weatherData;
+              dataForChart = humidityData || weatherData;
               break;
             case 'windData':
-              chartData = windData || weatherData;
+              dataForChart = windData || weatherData;
               break;
             case 'rainfallData':
-              chartData = rainfallData || weatherData;
+              dataForChart = rainfallData || weatherData;
               break;
             case 'soilMoistureData':
-              chartData = soilMoistureData || weatherData;
+              dataForChart = soilMoistureData || weatherData;
               break;
             case 'leafWetnessData':
-              chartData = leafWetnessData || weatherData;
+              dataForChart = leafWetnessData || weatherData;
               break;
             case 'watchdogTempData':
-              chartData = watchdogTempData || watchdogData;
+              dataForChart = watchdogTempData || watchdogData;
               break;
             case 'watchdogHumData':
-              chartData = watchdogHumData || watchdogData;
+              dataForChart = watchdogHumData || watchdogData;
               break;
             case 'rivercityTempData':
-              chartData = rivercityTempData || rivercityData;
+              dataForChart = rivercityTempData || rivercityData;
               break;
             case 'rivercityHumData':
-              chartData = rivercityHumData || rivercityData;
+              dataForChart = rivercityHumData || rivercityData;
               break;
             default:
-              chartData = weatherData;
+              dataForChart = weatherData;
           }
+          
+
+          // Access the appropriate chart component
+          const ChartComponent = chartComponents[chartType] || LineChart;
 
           return (
             <GridItem key={metric} colSpan={{ base: 1, lg: 1 }} display="flex">
@@ -131,26 +141,19 @@ const ModularDashboard = () => {
                 title={title}
                 metric={metric}
                 flex="1"
-                timePeriod={timePeriod}
                 display="flex"
                 flexDirection="column"
                 chart="temperature"
+                weatherData={dataForChart}
+                handleTimePeriodChange={handleTimePeriodChange}
+                // onChartChange={}
               >
-                {tempChartType === 'line' ? (
-                  <LineChart
-                    data={chartData}
-                    metric={metric}
-                    style={{ flex: 1 }}
-                  />
-                ) : (
-                  <BarChart
-                    data={chartData}
-                    metric={metric}
-                    style={{ flex: 1 }}
-                  />
-                )}
+                <ChartComponent
+                  data={dataForChart}
+                  metric={metric}
+                  style={{ flex: 1 }}
+                />
               </ChartWrapper>
-              <p>{}</p>
             </GridItem>
           );
         })}

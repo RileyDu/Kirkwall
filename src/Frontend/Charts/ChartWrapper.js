@@ -44,7 +44,7 @@ import e from 'cors';
 const ChartWrapper = ({
   title,
   children,
-  onChartChange,
+  // onChartChange,
   metric,
   weatherData,
   handleTimePeriodChange,
@@ -70,7 +70,7 @@ const ChartWrapper = ({
   const handleChartTypeChange = () => {
     const newChartType = chartType === 'line' ? 'bar' : 'line';
     setChartType(newChartType);
-    onChartChange(newChartType);
+    // onChartChange(newChartType);
   };
   
   // Call handleChartEdit after chartType is updated
@@ -614,7 +614,7 @@ const ChartWrapper = ({
         children={children}
         weatherData={weatherData}
         metric={metric}
-        onChartChange={onChartChange}
+        // onChartChange={onChartChange}
         // adjustTimePeriod={adjustTimePeriod}
         handleTimePeriodChange={handleTimePeriodChange}
         currentTimePeriod={currentTimePeriod}
