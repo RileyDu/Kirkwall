@@ -100,3 +100,19 @@ export const MetricSettings = [
         sourceData: "rivercityData"
     },
 ];
+
+
+// <div>
+// {metricSettings.map(metric => (
+//   <>
+//   <p key={metric.id}>{metric.metric}</p>
+//   <p key={metric.id}>{metric.name}</p>
+//   <p key={metric.id}>{metric.unit}</p>
+//   <p key={metric.id}>{metric.color}</p>
+//   <p key={metric.id}>{metric.company}</p>
+//   <p key={metric.id}>{metric.sourceData}</p>
+//   <p key={metric.id}>{metric.soloData}</p>
+//   <Divider />
+//   </>
+// ))}
+// </div>

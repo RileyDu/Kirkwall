@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { CustomerSettings } from './CustomerSettings.js';
 import { MetricSettings } from './MetricSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
-import { Box, useColorMode, useMediaQuery, Heading, Grid, GridItem, Divider } from '@chakra-ui/react';
+import { Box, useColorMode, useMediaQuery, Heading, Grid, GridItem } from '@chakra-ui/react';
 import ChartWrapper from '../Charts/ChartWrapper.js';
 import { LineChart, BarChart } from '../Charts/Charts.js';
-import { m } from 'framer-motion';
+import { useWeatherData } from '../WeatherDataContext.js';
 
 const ModularDashboard = () => {
   const { currentUser } = useAuth();
@@ -15,10 +15,27 @@ const ModularDashboard = () => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const statusOfAlerts = true; // Example default value; update as necessary
   const chartLayout = 2; // Example default value; update as necessary
-  const tempData = []; // Example default value; update as necessary
-  const weatherData = []; // Example default value; update as necessary
   const tempChartType = 'line'; // Example default value; update as necessary
-  const timePeriod = 'week'; // Example default value; update as necessary
+  const timePeriod = '3H'; // Example default value; update as necessary
+
+  const {
+    weatherData,
+    tempData,
+    humidityData,
+    windData,
+    rainfallData,
+    soilMoistureData,
+    leafWetnessData,
+    loading,
+    handleTimePeriodChange,
+    watchdogData,
+    watchdogTempData,
+    watchdogHumData,
+    rivercityTempData,
+    rivercityHumData,
+    rivercityData,
+    chartData,
+  } = useWeatherData();
 
   useEffect(() => {
     if (currentUser) {
@@ -31,16 +48,16 @@ const ModularDashboard = () => {
     }
   }, [currentUser]);
 
-useEffect(() => {
+  useEffect(() => {
     if (customerMetrics.length > 0) {
-        const metricSettings = MetricSettings.filter(metric =>
-            customerMetrics.includes(metric.metric)
-        );
-        if (metricSettings) {
-        setMetricSettings(metricSettings);
-        }
+      const selectedMetrics = MetricSettings.filter(metric =>
+        customerMetrics.includes(metric.metric)
+      );
+      if (selectedMetrics) {
+        setMetricSettings(selectedMetrics);
+      }
     }
-}, [customerMetrics]);
+  }, [customerMetrics]);
 
   return (
     <Box
@@ -58,22 +75,7 @@ useEffect(() => {
         Modular Dashboard
       </Heading>
 
-        <div>
-      {metricSettings.map(metric => (
-        <>
-        <p key={metric.id}>{metric.metric}</p>
-        <p key={metric.id}>{metric.name}</p>
-        <p key={metric.id}>{metric.unit}</p>
-        <p key={metric.id}>{metric.color}</p>
-        <p key={metric.id}>{metric.company}</p>
-        <p key={metric.id}>{metric.sourceData}</p>
-        <p key={metric.id}>{metric.soloData}</p>
-        <Divider />
-        </>
-    ))}
-    </div>
-
-      {/* <Grid
+      <Grid
         templateColumns={{
           base: '1fr',
           md: `repeat(${chartLayout}, 1fr)`,
@@ -81,39 +83,78 @@ useEffect(() => {
         }}
         gap="6"
       >
-        {customerMetrics.map(metric => (
-          <GridItem key={metric} colSpan={{ base: 1, lg: 1 }} display="flex">
-            <ChartWrapper
-              title="Temperature (°F)"
-            //   onChartChange={handleChartChange}
-            //   weatherData={tempData || weatherData}
-              metric={metric}
-              flex="1"
-              timePeriod={timePeriod}
-              display="flex"
-              flexDirection="column"
-            //   handleTimePeriodChange={handleTimePeriodChange}
-            //   toggleChartVisibility={toggleChartVisibility}
-              chart="temperature"
-            //   chartLayout={chartLayout}
-            >
-              {tempChartType === 'line' ? (
-                <LineChart
-                  data={tempData || weatherData}
-                  metric="temperature"
-                  style={{ flex: 1 }}
-                />
-              ) : (
-                <BarChart
-                  data={tempData || weatherData}
-                  metric="temperature"
-                  style={{ flex: 1 }}
-                />
-              )}
-            </ChartWrapper>
-          </GridItem>
-        ))}
-      </Grid> */}
+        {customerMetrics.map(metric => {
+          const settingsOfMetric = metricSettings.find(m => m.metric === metric);
+          const title = settingsOfMetric ? settingsOfMetric.name : 'Metric Title';
+          const dataForMetric = settingsOfMetric.soloData;
+
+          // Ensure dataForMetric is pointing to the correct dataset, like tempData, humidityData, etc.
+          let chartData;
+          switch (dataForMetric) {
+            case 'tempData':
+              chartData = tempData || weatherData;
+              break;
+            case 'humidityData':
+              chartData = humidityData || weatherData;
+              break;
+            case 'windData':
+              chartData = windData || weatherData;
+              break;
+            case 'rainfallData':
+              chartData = rainfallData || weatherData;
+              break;
+            case 'soilMoistureData':
+              chartData = soilMoistureData || weatherData;
+              break;
+            case 'leafWetnessData':
+              chartData = leafWetnessData || weatherData;
+              break;
+            case 'watchdogTempData':
+              chartData = watchdogTempData || watchdogData;
+              break;
+            case 'watchdogHumData':
+              chartData = watchdogHumData || watchdogData;
+              break;
+            case 'rivercityTempData':
+              chartData = rivercityTempData || rivercityData;
+              break;
+            case 'rivercityHumData':
+              chartData = rivercityHumData || rivercityData;
+              break;
+            default:
+              chartData = weatherData;
+          }
+
+          return (
+            <GridItem key={metric} colSpan={{ base: 1, lg: 1 }} display="flex">
+              <ChartWrapper
+                title={title}
+                metric={metric}
+                flex="1"
+                timePeriod={timePeriod}
+                display="flex"
+                flexDirection="column"
+                chart="temperature"
+              >
+                {tempChartType === 'line' ? (
+                  <LineChart
+                    data={chartData}
+                    metric={metric}
+                    style={{ flex: 1 }}
+                  />
+                ) : (
+                  <BarChart
+                    data={chartData}
+                    metric={metric}
+                    style={{ flex: 1 }}
+                  />
+                )}
+              </ChartWrapper>
+              <p>{}</p>
+            </GridItem>
+          );
+        })}
+      </Grid>
     </Box>
   );
 };
