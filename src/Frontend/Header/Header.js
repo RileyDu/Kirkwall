@@ -23,6 +23,7 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverBody,
+  useDisclosure
 } from '@chakra-ui/react';
 import {
   FaBars,
@@ -45,6 +46,8 @@ import { useNavigate } from 'react-router-dom';
 import { useWeatherData } from '../WeatherDataContext.js';
 import WeatherAlerts from '../Alert/WeatherAlerts.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
+import Admin from './Admin.js';
+import AdminExpandModal from '../Modals/AdminExpandModal.js';
 
 const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
@@ -74,6 +77,10 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   const { currentUser } = useAuth();
   const user = currentUser;
   const userEmail = user ? user.email : 'default';
+
+  // This is to open and close the AdminExpand Modal
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
 
   const buttonConfig = {
     'pmo@grandfarm.com': [
@@ -411,7 +418,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
             </Tooltip>
           </motion.div>
           {isLargerThan768 ? (
-            user ? (
+            user ? 
+            (
               <motion.div {...motionProps}>
                 <Popover>
                   <PopoverTrigger>
@@ -429,8 +437,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                           : currentUser.email === 'trey@watchdogprotect.com'
                           ? '/RookLogoWhite.png'
                           : '/RookLogoWhite.png'
-                          
-
                       }
                       cursor="pointer"
                       ml="4"
@@ -460,6 +466,11 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                     </PopoverHeader>
                     <PopoverBody>
                       <Logout />
+                      
+                      <Admin onClick={onOpen}>Admin</Admin>
+                      <AdminExpandModal isOpen={isOpen} onClose={onClose} title="Admin Panel" userEmail={currentUser.email} />
+
+                      
                     </PopoverBody>
                   </PopoverContent>
                 </Popover>

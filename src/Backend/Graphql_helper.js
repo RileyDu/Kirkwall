@@ -203,6 +203,8 @@ async function getWatchdogData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
+
+
 // Generalized function to get rivercity data based on requested metric
 // All is triggerd on page load
 async function getRivercityData(type, limit) {
@@ -259,6 +261,7 @@ async function getLatestThreshold() {
         id
       }
     }
+      
   `;
   return executeGraphqlQuery(query);
 }
@@ -340,6 +343,66 @@ async function deleteAlert(id) {
   return executeGraphqlQuery(mutation, variables);
 }
 
+
+// This is a query to get the details of the admin that is logged in based on their email
+const getAdminById = async () => {
+  const query = `
+    query {
+      admin(filter: "id = 4") {
+        id
+        firstname
+        lastname
+        email
+        phone
+        company
+        thresh_kill
+      }
+    }
+  `;
+
+  // const variables = {
+  //   email: email,
+  // };
+
+  return executeGraphqlQuery(query);
+};
+
+
+// Update admin query
+
+const updateAdmin = async (id, firstname, lastname, email, phone, company, threshKill) => {
+  const mutation = `
+    mutation UpdateAdmin($id: ID!, $input: adminInput!) {
+      update_admin(id: $id, input: $input) {
+        id
+        firstname
+        lastname
+        email
+        phone
+        company
+        thresh_kill
+      }
+    }
+  `;
+
+  const variables = {
+    id: id,
+    input: {
+      firstname: firstname,
+      lastname: lastname,
+      email: email,
+      phone: phone,
+      company: company,
+      thresh_kill: threshKill,
+    },
+  };
+
+  return executeGraphqlQuery(mutation, variables);
+};
+
+
+
+
 // Function to get API ID of user
 // async function getAPIIds() {
 //   const query = `
@@ -408,4 +471,6 @@ export {
   getAlerts,
   createAlert,
   deleteAlert,
+  getAdminById,
+  updateAdmin
 };

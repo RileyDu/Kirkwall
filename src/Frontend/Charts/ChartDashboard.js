@@ -7,7 +7,7 @@ const getLabelForMetric = (metric) => {
       return { label: '°F', addSpace: false };
     case 'temp':
       return { label: '°F', addSpace: false };
-      case 'rctemp':
+    case 'rctemp':
         return { label: '°F', addSpace: false };
     case 'hum':
       return { label: '%', addSpace: false };
