@@ -1,5 +1,6 @@
-// import { getAdminByEmail } from '../../Backend/Graphql_helper.js';
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Image } from 'cloudinary-react';
 import {
   Box,
   Button,
@@ -11,7 +12,6 @@ import {
   ModalBody,
   Grid,
   GridItem,
-  Avatar,
   Text,
   Heading,
   Flex,
@@ -25,7 +25,6 @@ import {
   TabPanel,
   Stack,
   useToast,
-  useQuery
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { useWeatherData } from '../WeatherDataContext.js';
@@ -40,7 +39,6 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
   const dividerColor = colorMode === 'light' ? 'brand.50' : 'white';
   const { thresholds, alertsThreshold, fetchAlertsThreshold } = useWeatherData();
   const [selectedFile, setSelectedFile] = useState(null);
-  const [profilePicture, setProfilePicture] = useState('/RookLogoWhite.png');
   const toast = useToast();
 
   const [isModalOpen, setModalOpen] = useState(false);
@@ -50,51 +48,53 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
 
+  // All the stuff related to image upload and cloudinary
+  const [imageSelected, setImageSelected] = useState('');
+  const [uploadedImageUrl, setUploadedImageUrl] = useState('https://res.cloudinary.com/dklraztco/image/upload/v1722668171/silj1djvozfhtmssyaqz.png');
 
+  const uploadImage = (event) => {
+    const file = event.target.files[0];
+    setImageSelected(file); // Set the selected image in state
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "v0b3yxc7");
+
+    axios.post("https://api.cloudinary.com/v1_1/dklraztco/image/upload", formData)
+      .then((response) => {
+        console.log(response);
+        setUploadedImageUrl(response.data.secure_url); // Set the URL of the uploaded image
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
     const fetchAdmin = async () => {
-      try{
+      try {
         const data = await getAdminById();
-        // const stringData = JSON.stringify(data);
-        // const parsedData = JSON.parse(stringData);
-
-          setFirstName(data["data"]["admin"][0]["firstname"]);
-          setLastName(data["data"]["admin"][0]["lastname"]);
-          setPhone(data["data"]["admin"][0]["phone"]);
-          setEmail(data["data"]["admin"][0]["email"]);
-          setCompany(data["data"]["admin"][0]["company"]);
-        // console.log(data["data"]["admin"][0]["firstname"])
-      }catch(error){
-        console.log(error)
+        setFirstName(data["data"]["admin"][0]["firstname"]);
+        setLastName(data["data"]["admin"][0]["lastname"]);
+        setPhone(data["data"]["admin"][0]["phone"]);
+        setEmail(data["data"]["admin"][0]["email"]);
+        setCompany(data["data"]["admin"][0]["company"]);
+      } catch (error) {
+        console.log(error);
       }
     };
 
     fetchAdmin();
   }, []);
 
-
-  
-
   const handleOpenModal = () => setModalOpen(true);
   const handleCloseModal = () => setModalOpen(false);
-
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfilePicture(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   return (
     <Box>
       <Modal onClose={onClose} isOpen={isOpen}>
         <ModalOverlay />
-        <ModalContent 
+        <ModalContent
           width="90%"
           maxWidth="100%"
           height="80vh"
@@ -105,25 +105,21 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
               {title}
             </Heading>
           </ModalHeader>
-          
+
           <ModalCloseButton color="white" />
-          
+
           <ModalBody>
             <Grid templateColumns="1fr auto 1fr" gap={6} height="100%">
               <GridItem w="100%" h="100%" border="5px solid #fd9801" p={3}>
                 <Heading mb={3} fontSize="2xl">
                   Profile
                 </Heading>
-                
+
                 <Flex alignItems="center">
-                  <Box 
+                  <Box
                     alignContent="center" textAlign="center" boxSize="150px" border="5px solid #fd9801" borderRadius="150px"
                   >
-                    <Avatar   
-                      boxSize="120px"
-                      name="Kirkwall"
-                      src={profilePicture}
-                    />
+                    <Image cloudName="dklraztco" publicId={uploadedImageUrl} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%'  }} />
                   </Box>
                   <Box ml={3}>
                     <Text fontSize="md" fontWeight="bold">Name: {firstName + " " + lastName}</Text>
@@ -131,20 +127,20 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                     <Text fontSize="md" fontWeight="bold">Email: {email}</Text>
                     <Text fontSize="md" fontWeight="bold">Company: {company}</Text>
                   </Box>
-                </Flex> 
+                </Flex>
 
                 <Box mt="7" ml={2} alignContent="center">
                   <Button as="label" cursor="pointer">
                     Upload Profile Photo
-                    <Input type="file" display="none" onChange={handleFileChange} />
+                    <Input type="file" display="none" onChange={uploadImage} />
                   </Button>
 
                   <Button ml={5} onClick={handleOpenModal}>
                     Edit information
                   </Button>
 
-                  <AddInformationFormModal 
-                    isOpen={isModalOpen} 
+                  <AddInformationFormModal
+                    isOpen={isModalOpen}
                     onClose={handleCloseModal}
                     id={adminId}
                     firstName={firstName}
@@ -163,11 +159,11 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
 
               <GridItem>
                 <Flex justify="center" height="100%">
-                  <Divider 
-                    orientation="vertical" 
+                  <Divider
+                    orientation="vertical"
                     border="solid"
-                    borderColor="#fd9801" 
-                    height="100%" 
+                    borderColor="#fd9801"
+                    height="100%"
                     borderWidth="2px"
                   />
                 </Flex>
@@ -178,7 +174,7 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                   <Heading justifyContent="center" mb={3} fontSize="2xl">
                     Threshold Logs
                   </Heading>
-                  
+
                   <Tabs variant="soft-rounded" colorScheme="orange">
                     <TabList mb="4">
                       <Tab
@@ -188,7 +184,7 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                       >
                         Temperature
                       </Tab>
-                      
+
                       <Tab
                         fontSize={{ base: 'xs', md: 'sm' }}
                         color={colorMode === 'light' ? 'black' : 'white'}
@@ -196,7 +192,7 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                       >
                         Humidity
                       </Tab>
-                        
+
                       <Tab
                         fontSize={{ base: 'xs', md: 'sm' }}
                         color={colorMode === 'light' ? 'black' : 'white'}
@@ -204,7 +200,7 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                       >
                         Wind
                       </Tab>
-                      
+
                       <Tab
                         fontSize={{ base: 'xs', md: 'sm' }}
                         color={colorMode === 'light' ? 'black' : 'white'}
@@ -236,7 +232,7 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                       >
                         Watchdog Temperature
                       </Tab>
-                      
+
                       <Tab
                         fontSize={{ base: 'xs', md: 'sm' }}
                         color={colorMode === 'light' ? 'black' : 'white'}
@@ -262,9 +258,9 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                       </Tab>
 
                     </TabList>
-                    
+
                     <Divider mt={'1'} w={'100%'} />
-                    
+
                     <TabPanels>
                       <MotionTabPanel
                         initial={{ opacity: 0, y: 10 }}
@@ -282,15 +278,15 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                                     <Text color="#212121" fontSize="sm">{alert.message}</Text>
                                   </Flex>
                                 </Box>
-                            ))}
-                          </Stack>
-                        ) : (
-                          <Text fontSize="xl">No logs to show</Text>
-                        )}
-                      </Box>
+                              ))}
+                            </Stack>
+                          ) : (
+                            <Text fontSize="xl">No logs to show</Text>
+                          )}
+                        </Box>
 
                       </MotionTabPanel>
-                        
+
                       <MotionTabPanel
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -307,12 +303,12 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                                     <Text color="#212121" fontSize="sm">{alert.message}</Text>
                                   </Flex>
                                 </Box>
-                            ))}
-                          </Stack>
-                        ) : (
-                          <Text fontSize="xl">No logs to show</Text>
-                        )}
-                      </Box>
+                              ))}
+                            </Stack>
+                          ) : (
+                            <Text fontSize="xl">No logs to show</Text>
+                          )}
+                        </Box>
                       </MotionTabPanel>
 
                       <MotionTabPanel
@@ -331,14 +327,14 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                                     <Text color="#212121" fontSize="sm">{alert.message}</Text>
                                   </Flex>
                                 </Box>
-                            ))}
-                          </Stack>
-                        ) : (
-                          <Text fontSize="xl">No logs to show</Text>
-                        )}
-                      </Box>
+                              ))}
+                            </Stack>
+                          ) : (
+                            <Text fontSize="xl">No logs to show</Text>
+                          )}
+                        </Box>
                       </MotionTabPanel>
-                        
+
                       <MotionTabPanel
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -355,12 +351,12 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                                     <Text color="#212121" fontSize="sm">{alert.message}</Text>
                                   </Flex>
                                 </Box>
-                            ))}
-                          </Stack>
-                        ) : (
-                          <Text fontSize="xl">No logs to show</Text>
-                        )}
-                      </Box>
+                              ))}
+                            </Stack>
+                          ) : (
+                            <Text fontSize="xl">No logs to show</Text>
+                          )}
+                        </Box>
                       </MotionTabPanel>
 
                       <MotionTabPanel
@@ -379,12 +375,12 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                                     <Text color="#212121" fontSize="sm">{alert.message}</Text>
                                   </Flex>
                                 </Box>
-                            ))}
-                          </Stack>
-                        ) : (
-                          <Text fontSize="xl">No logs to show</Text>
-                        )}
-                      </Box>
+                              ))}
+                            </Stack>
+                          ) : (
+                            <Text fontSize="xl">No logs to show</Text>
+                          )}
+                        </Box>
                       </MotionTabPanel>
 
                       <MotionTabPanel
@@ -403,12 +399,12 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                                     <Text color="#212121" fontSize="sm">{alert.message}</Text>
                                   </Flex>
                                 </Box>
-                            ))}
-                          </Stack>
-                        ) : (
-                          <Text fontSize="xl">No logs to show</Text>
-                        )}
-                      </Box>
+                              ))}
+                            </Stack>
+                          ) : (
+                            <Text fontSize="xl">No logs to show</Text>
+                          )}
+                        </Box>
                       </MotionTabPanel>
 
                       <MotionTabPanel
@@ -427,12 +423,12 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                                     <Text color="#212121" fontSize="sm">{alert.message}</Text>
                                   </Flex>
                                 </Box>
-                            ))}
-                          </Stack>
-                        ) : (
-                          <Text fontSize="xl">No logs to show</Text>
-                        )}
-                      </Box>
+                              ))}
+                            </Stack>
+                          ) : (
+                            <Text fontSize="xl">No logs to show</Text>
+                          )}
+                        </Box>
                       </MotionTabPanel>
 
                       <MotionTabPanel
@@ -451,12 +447,12 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                                     <Text color="#212121" fontSize="sm">{alert.message}</Text>
                                   </Flex>
                                 </Box>
-                            ))}
-                          </Stack>
-                        ) : (
-                          <Text fontSize="xl">No logs to show</Text>
-                        )}
-                      </Box>
+                              ))}
+                            </Stack>
+                          ) : (
+                            <Text fontSize="xl">No logs to show</Text>
+                          )}
+                        </Box>
                       </MotionTabPanel>
 
                       <MotionTabPanel
@@ -475,12 +471,12 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                                     <Text color="#212121" fontSize="sm">{alert.message}</Text>
                                   </Flex>
                                 </Box>
-                            ))}
-                          </Stack>
-                        ) : (
-                          <Text fontSize="xl">No logs to show</Text>
-                        )}
-                      </Box>
+                              ))}
+                            </Stack>
+                          ) : (
+                            <Text fontSize="xl">No logs to show</Text>
+                          )}
+                        </Box>
                       </MotionTabPanel>
 
                       <MotionTabPanel
@@ -499,12 +495,12 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
                                     <Text color="#212121" fontSize="sm">{alert.message}</Text>
                                   </Flex>
                                 </Box>
-                            ))}
-                          </Stack>
-                        ) : (
-                          <Text fontSize="xl">No logs to show</Text>
-                        )}
-                      </Box>
+                              ))}
+                            </Stack>
+                          ) : (
+                            <Text fontSize="xl">No logs to show</Text>
+                          )}
+                        </Box>
                       </MotionTabPanel>
 
                     </TabPanels>
