@@ -111,22 +111,38 @@ const createCustomChartOptions = (metric, data, colorMode) => {
         callbacks: {
           label: function (context) {
             const labelMap = {
-              'temperature': '°F',
-              'rctemp': '°F',
-              'impriTemp': '°C',
-              'percent_humidity': '% Humidity',
-              'humidity': '% Humidity',
-              'rain_15_min_inches': 'inches',
-              'wind_speed': 'MPH',
-              'temp' : '°F',
-              'hum' : '% Humidity',
-              'soil_moisture': 'centibars',
-              'leaf_wetness': 'out of 15',
+              temperature: '°F',
+              temp: '°F',
+              rctemp: '°F',
+              impriTemp: '°C',
+              imFreezerOneTemp: '°C',
+              imFreezerTwoTemp: '°C',
+              imFreezerThreeTemp: '°C',
+              imFridgeOneTemp: '°C',
+              imFridgeTwoTemp: '°C',
+              imIncubatorOneTemp: '°C',
+              imIncubatorTwoTemp: '°C',
+              imFreezerOneHum: '% Humidity',
+              imFreezerTwoHum: '% Humidity',
+              imFreezerThreeHum: '% Humidity',
+              imFridgeOneHum: '% Humidity',
+              imFridgeTwoHum: '% Humidity',
+              imIncubatorOneHum: '% Humidity',
+              imIncubatorTwoHum: '% Humidity',
+              hum: '% Humidity',
+              percent_humidity: '% Humidity',
+              humidity: '% Humidity',
+              rain_15_min_inches: 'inches',
+              wind_speed: 'MPH',
+              soil_moisture: 'centibars',
+              leaf_wetness: 'out of 15',
             };
-            const label = labelMap[metric] || '';
+            
+            const label = labelMap[context.dataset.label] || '';
             const value = context.raw;
             return `${value} ${label}`;
           }
+          
         },
       },
       legend: {

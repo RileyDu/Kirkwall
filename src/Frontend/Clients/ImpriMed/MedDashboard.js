@@ -80,40 +80,6 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
 
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
-  //   useEffect(() => {
-  //   console.log('ImpriMed Data:', {
-  //     impriFreezerOneTempData,
-  //     impriFreezerOneHumData,
-  //     impriFreezerTwoTempData,
-  //     impriFreezerTwoHumData,
-  //     impriFreezerThreeTempData,
-  //     impriFreezerThreeHumData,
-  //     impriFridgeOneTempData,
-  //     impriFridgeOneHumData,
-  //     impriFridgeTwoTempData,
-  //     impriFridgeTwoHumData,
-  //     impriIncuOneTempData,
-  //     impriIncuOneHumData,
-  //     impriIncuTwoTempData,
-  //     impriIncuTwoHumData,
-  //   });
-  // }, [
-  //   impriFreezerOneTempData,
-  //   impriFreezerOneHumData,
-  //   impriFreezerTwoTempData,
-  //   impriFreezerTwoHumData,
-  //   impriFreezerThreeTempData,
-  //   impriFreezerThreeHumData,
-  //   impriFridgeOneTempData,
-  //   impriFridgeOneHumData,
-  //   impriFridgeTwoTempData,
-  //   impriFridgeTwoHumData,
-  //   impriIncuOneTempData,
-  //   impriIncuOneHumData,
-  //   impriIncuTwoTempData,
-  //   impriIncuTwoHumData,
-  // ]);
-
   const { colorMode } = useColorMode();
 
   const showChart = (section, chart) => {
