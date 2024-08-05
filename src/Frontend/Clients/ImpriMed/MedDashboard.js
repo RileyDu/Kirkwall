@@ -268,7 +268,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
               {visibleCharts.rivercity.includes('temperature') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
-                    title="Temperature (°F)"
+                    title="Temperature (°C)"
                     onChartChange={handleChartChange(setRivercityTempChartType)}
                     weatherData={impriFreezerTwoTempData}
                     metric="impriTemp"
