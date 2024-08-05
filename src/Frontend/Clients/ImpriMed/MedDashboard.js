@@ -55,6 +55,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
     rivercityTempData,
     rivercityHumData,
     rivercityData,
+    impriMedData,
   } = useWeatherData();
 
   const [rivercityTempChartType, setRivercityTempChartType] = useState('bar');
@@ -343,22 +344,6 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
           </MotionTabPanel>
         </TabPanels>
       </Tabs>
-      {/* <VoiceControl onCommand={handleVoiceCommand} />
-      {isModalOpen && (
-        <ChartExpandModal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          title={`${
-            modalChart.charAt(0).toUpperCase() + modalChart.slice(1)
-          } Chart`}
-          weatherData={weatherData}
-          metric={modalChart}
-          handleTimePeriodChange={handleTimePeriodChange}
-          currentTimePeriod={currentTimePeriod}
-          setCurrentTimePeriod={setCurrentTimePeriod}
-          sensorMap="grandfarm"
-        />
-      )} */}
     </Box>
   );
 };

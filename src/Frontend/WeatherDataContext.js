@@ -489,6 +489,7 @@ export const WeatherDataProvider = ({ children }) => {
         rivercityData,
         rivercityTempData,
         rivercityHumData,
+        impriMedData,
         thresholds,
         alertsThreshold,
         fetchAlertsThreshold,
