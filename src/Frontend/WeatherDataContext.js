@@ -156,12 +156,12 @@ const fetchDeviceData = async (deviceKey, setTempData, setHumData, limit) => {
 
 useEffect(() => {
   const fetchAllDeviceData = () => {
-    fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData, 7);
+    // fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData, 7);
     fetchDeviceData('freezerTwo', setImpriFreezerTwoTempData, setImpriFreezerTwoHumData, 7);
     fetchDeviceData('freezerThree', setImpriFreezerThreeTempData, setImpriFreezerThreeHumData, 7);
     fetchDeviceData('fridgeOne', setImpriFridgeOneTempData, setImpriFridgeOneHumData, 7);
     fetchDeviceData('fridgeTwo', setImpriFridgeTwoTempData, setImpriFridgeTwoHumData, 7);
-    fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData, 7);
+    // fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData, 7);
     fetchDeviceData('incubatorTwo', setImpriIncubatorTwoTempData, setImpriIncubatorTwoHumData, 7);
   };
 

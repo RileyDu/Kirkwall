@@ -171,7 +171,20 @@ const ChartWrapper = ({
         hum: 'WatchdogLogoBlack.png',
         humidity: 'rci-logo-blue.png',
         rctemp: 'rci-logo-blue.png',
-        impriTemp: 'rci-logo-blue.png',
+        imFreezerOneTemp: 'rci-logo-blue.png',
+        imFreezerOneHum: 'rci-logo-blue.png',
+        imFreezerTwoTemp: 'rci-logo-blue.png',
+        imFreezerTwoHum: 'rci-logo-blue.png',
+        imFreezerThreeTemp: 'rci-logo-blue.png',
+        imFreezerThreeHum: 'rci-logo-blue.png',
+        imFridgeOneTemp: 'rci-logo-blue.png',
+        imFridgeOneHum: 'rci-logo-blue.png',
+        imFridgeTwoTemp: 'rci-logo-blue.png',
+        imFridgeTwoHum: 'rci-logo-blue.png',
+        imIncubatorOneTemp: 'rci-logo-blue.png',
+        imIncubatorOneHum: 'rci-logo-blue.png',
+        imIncubatorTwoTemp: 'rci-logo-blue.png',
+        imIncubatorTwoHum: 'rci-logo-blue.png',
       },
       dark: {
         temperature: 'DavisLogoWhite.png',
@@ -185,6 +198,18 @@ const ChartWrapper = ({
         humidity: 'rci-logo-white.png',
         rctemp: 'rci-logo-white.png',
         impriTemp: 'rci-logo-white.png',
+        imFreezerOneTemp: 'rci-logo-white.png',
+        imFreezerOneHum: 'rci-logo-white.png',
+        imFreezerTwoTemp: 'rci-logo-white.png',
+        imFreezerTwoHum: 'rci-logo-white.png',
+        imFreezerThreeTemp: 'rci-logo-white.png',
+        imFreezerThreeHum: 'rci-logo-white.png',
+        imFridgeOneTemp: 'rci-logo-white.png',
+        imFridgeOneHum: 'rci-logo-white.png',
+        imFridgeTwoTemp: 'rci-logo-white.png',
+        imFridgeTwoHum: 'rci-logo-white.png',
+        imIncubatorOneTemp: 'rci-logo-white.png',
+        imIncubatorOneHum: 'rci-logo-white.png',
       },
     };
 
@@ -215,13 +240,14 @@ const ChartWrapper = ({
 
   const calculateTimePeriod = dataLength => {
     const totalMinutes =
-      metric === 'temp' ||
-      metric === 'hum' ||
-      metric === 'humidity' ||
-      metric === 'rctemp' ||
-      metric === 'impriTemp'
-        ? dataLength * 10
-        : dataLength * 5;
+      metric === 'temperature' ||
+      metric === 'percent_humidity' ||
+      metric === 'wind_speed' ||
+      metric === 'rain_15_min_inches' ||
+      metric === 'soil_moisture' ||
+      metric === 'leaf_wetness'
+        ? dataLength * 5
+        : dataLength * 10;
     const totalHours = Math.floor(totalMinutes / 60);
 
     if (totalHours < 24) {
@@ -423,7 +449,7 @@ const ChartWrapper = ({
                   >
                     <Tooltip label="Current Value">
                       <Text fontSize={fontSize}>
-                         {formatValue(mostRecentValue || weatherData[0].rctemp || weatherData[0].humidity)}
+                         {formatValue(mostRecentValue)}
                       </Text>
                     </Tooltip>
                   </Box>
