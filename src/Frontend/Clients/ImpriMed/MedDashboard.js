@@ -271,7 +271,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     title="Temperature (°C)"
                     onChartChange={handleChartChange(setRivercityTempChartType)}
                     weatherData={impriFreezerTwoTempData}
-                    metric="impriTemp"
+                    metric="imFreezerTwoTemp"
                     flex="1"
                     timePeriod={timePeriod}
                     display="flex"
@@ -281,13 +281,13 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     {rivercityTempChartType === 'line' ? (
                       <LineChart
                         data={impriFreezerTwoTempData}
-                        metric="rctemp"
+                        metric="imFreezerTwoTemp"
                         style={{ flex: 1 }}
                       />
                     ) : (
                       <BarChart
                         data={impriFreezerTwoTempData}
-                        metric="rctemp"
+                        metric="imFreezerTwoTemp"
                         style={{ flex: 1 }}
                       />
                     )}
@@ -299,8 +299,8 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                   <ChartWrapper
                     title="Humidity (%)"
                     onChartChange={handleChartChange(setRivercityHumChartType)}
-                    weatherData={rivercityHumData || rivercityData}
-                    metric="humidity"
+                    weatherData={impriFreezerTwoHumData}
+                    metric="imFreezerTwoHum"
                     flex="1"
                     timePeriod={timePeriod}
                     display="flex"
@@ -309,14 +309,14 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                   >
                     {rivercityHumChartType === 'line' ? (
                       <LineChart
-                        data={rivercityHumData || rivercityData}
-                        metric="humidity"
+                        data={impriFreezerTwoHumData}
+                        metric="imFreezerTwoHum"
                         style={{ flex: 1 }}
                       />
                     ) : (
                       <BarChart
-                        data={rivercityHumData || rivercityData}
-                        metric="humidity"
+                        data={impriFreezerTwoHumData}
+                        metric="imFreezerTwoHum"
                         style={{ flex: 1 }}
                       />
                     )}

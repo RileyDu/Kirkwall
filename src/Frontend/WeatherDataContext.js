@@ -93,15 +93,52 @@ const fetchDeviceData = async (deviceKey, setTempData, setHumData, limit) => {
     const response = await getImpriMedData(devices[deviceKey], limit); // Adjust the limit as needed
     if (Array.isArray(response.data.rivercity_data) && response.data.rivercity_data.length > 0) {
       const latestData = response.data.rivercity_data;
-      
-      // Assuming latestData is an array of objects with rctemp and humidity properties
+
+      // Determine the new keys based on the deviceKey
+      let tempKey = 'rctemp';
+      let humKey = 'humidity';
+
+      switch (deviceKey) {
+        case 'freezerOne':
+          tempKey = 'imFreezerOneTemp';
+          humKey = 'imFreezerOneHum';
+          break;
+        case 'freezerTwo':
+          tempKey = 'imFreezerTwoTemp';
+          humKey = 'imFreezerTwoHum';
+          break;
+        case 'freezerThree':
+          tempKey = 'imFreezerThreeTemp';
+          humKey = 'imFreezerThreeHum';
+          break;
+        case 'fridgeOne':
+          tempKey = 'imFridgeOneTemp';
+          humKey = 'imFridgeOneHum';
+          break;
+        case 'fridgeTwo':
+          tempKey = 'imFridgeTwoTemp';
+          humKey = 'imFridgeTwoHum';
+          break;
+        case 'incubatorOne':
+          tempKey = 'imIncubatorOneTemp';
+          humKey = 'imIncubatorOneHum';
+          break;
+        case 'incubatorTwo':
+          tempKey = 'imIncubatorTwoTemp';
+          humKey = 'imIncubatorTwoHum';
+          break;
+        default:
+          break;
+      }
+
+      // Map the data to new keys
       const tempDataArray = latestData.map(data => ({
-        rctemp: data.rctemp,
+        [tempKey]: data.rctemp,
         publishedat: data.publishedat
       }));
 
       const humDataArray = latestData.map(data => ({
-        humidity: data.humidity,
+        [humKey]: data.humidity,
         publishedat: data.publishedat
       }));
 
@@ -119,12 +156,12 @@ const fetchDeviceData = async (deviceKey, setTempData, setHumData, limit) => {
 
 useEffect(() => {
   const fetchAllDeviceData = () => {
-    // fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData, 7);
+    fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData, 7);
     fetchDeviceData('freezerTwo', setImpriFreezerTwoTempData, setImpriFreezerTwoHumData, 7);
     fetchDeviceData('freezerThree', setImpriFreezerThreeTempData, setImpriFreezerThreeHumData, 7);
     fetchDeviceData('fridgeOne', setImpriFridgeOneTempData, setImpriFridgeOneHumData, 7);
     fetchDeviceData('fridgeTwo', setImpriFridgeTwoTempData, setImpriFridgeTwoHumData, 7);
-    // fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData, 7);
+    fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData, 7);
     fetchDeviceData('incubatorTwo', setImpriIncubatorTwoTempData, setImpriIncubatorTwoHumData, 7);
   };
 
