@@ -86,7 +86,7 @@ const createCustomChartOptions = (metric, data, colorMode) => {
         },
       },
       y: {
-        min: min > 1 ? min - 1 : 0,
+        min: min > 1 ? min - 1 : min,
         max: max > 1 ? Math.round(max + 1) : 1,
         ticks: {
           color: labelColor,  // Set label color based on color mode
@@ -158,6 +158,7 @@ export const BarChart = ({ data, metric }) => {
   const { colorMode } = useColorMode();
   const chartData = processWeatherData(data, metric, colorMode);
   if (!chartData) return <Spinner size="xl" />;
+  console.log('chartData:', chartData);
 
   const dataKey = chartData.datasets[0].data;
   const options = createCustomChartOptions(metric, dataKey, colorMode);

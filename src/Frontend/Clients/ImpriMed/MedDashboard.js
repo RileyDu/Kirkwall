@@ -281,13 +281,13 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     {rivercityTempChartType === 'line' ? (
                       <LineChart
                         data={impriFreezerTwoTempData}
-                        metric="impriTemp"
+                        metric="rctemp"
                         style={{ flex: 1 }}
                       />
                     ) : (
                       <BarChart
                         data={impriFreezerTwoTempData}
-                        metric="impriTemp"
+                        metric="rctemp"
                         style={{ flex: 1 }}
                       />
                     )}
