@@ -3,6 +3,7 @@ import {
   getWeatherData,
   getWatchdogData,
   getRivercityData,
+  getImpriMedData,
   getAlerts,
   getLatestThreshold,
   getChartData,
@@ -41,6 +42,7 @@ export const WeatherDataProvider = ({ children }) => {
   const [leafWetnessData, setLeafWetnessData] = useState(null);
   const [watchdogData, setWatchdogData] = useState([]);
   const [rivercityData, setRivercityData] = useState(null);
+  const [impriMedData, setImpriMedData] = useState(null);
   const [rivercityTempData, setRivercityTempData] = useState(null);
   const [rivercityHumData, setRivercityHumData] = useState(null);
   const [watchdogTempData, setWatchdogTempData] = useState(null);
@@ -157,6 +159,25 @@ export const WeatherDataProvider = ({ children }) => {
 
     const intervalId = setInterval(fetchData, 30000);
 
+    return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getImpriMedData();
+        if (Array.isArray(response.data.rivercity_data)) {
+          setImpriMedData(response.data.rivercity_data);
+        } else {
+          setImpriMedData([]);
+        }
+      } catch (error) {
+        console.error('Error fetching impriMed data:', error);
+        setImpriMedData([]);
+      }
+    };
+    fetchData();
+    const intervalId = setInterval(fetchData, 30000);
     return () => clearInterval(intervalId);
   }, []);
 
