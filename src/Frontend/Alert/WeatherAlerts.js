@@ -149,32 +149,33 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
               </Tooltip>
               <AlertTitle w={'150px'}>{stateCode} Weather Alerts:</AlertTitle>
               {alerts.length > 15 ? (
-                <Marquee velocity={7} pauseOnHover={true} loop={true} direction='ltr'>
-                  {alerts.map((alert) => (
-                    <Button
-                      border="2px"
-                      borderColor="black"
-                      borderRadius="xl"
-                      p="1"
-                      bg="gray.50"
-                      mx={1}
-                      cursor="pointer"
-                      key={alert.id}
-                      onClick={() => handleAlertClick(alert)}
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      textAlign={'center'}
-                      fontWeight={'regular'}
-                    >
-                      <Tooltip label={`Location: ${alert.properties.areaDesc}`} aria-label="Area Description">
-                        <AlertDescription px={1} fontSize='xs' color="red.500">
-                          {alert.properties.event}
-                        </AlertDescription>
-                      </Tooltip>
-                    </Button>
-                  ))}
-                </Marquee>
+                // <Marquee velocity={7} pauseOnHover={true} loop={true} direction='ltr'>
+                //   {alerts.map((alert) => (
+                //     <Button
+                //       border="2px"
+                //       borderColor="black"
+                //       borderRadius="xl"
+                //       p="1"
+                //       bg="gray.50"
+                //       mx={1}
+                //       cursor="pointer"
+                //       key={alert.id}
+                //       onClick={() => handleAlertClick(alert)}
+                //       display="flex"
+                //       alignItems="center"
+                //       justifyContent="center"
+                //       textAlign={'center'}
+                //       fontWeight={'regular'}
+                //     >
+                //       <Tooltip label={`Location: ${alert.properties.areaDesc}`} aria-label="Area Description">
+                //         <AlertDescription px={1} fontSize='xs' color="red.500">
+                //           {alert.properties.event}
+                //         </AlertDescription>
+                //       </Tooltip>
+                //     </Button>
+                //   ))}
+                // </Marquee>
+                <></>
               ) : (
                 alerts.map((alert) => (
                   <Box
