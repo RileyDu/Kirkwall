@@ -245,6 +245,21 @@ async function getRivercityData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
+async function getImpriMedData( ) {
+  const query = `query impriMedData {
+        rivercity_data (ordering: "publishedat desc", limit:30, filter: "gatewayid = 'ac1f09fffe10987f'") {
+          rctemp
+          humidity
+          publishedat
+          dataid
+    			gatewayid
+    			deveui
+        }
+      }
+      `;
+  return executeGraphqlQuery(query);
+}
+
 // Function to get the latest threshold data from the database
 // This is used to compare against the current weather data in the cron job
 async function getLatestThreshold() {
@@ -452,6 +467,7 @@ export {
   getWeatherData,
   getWatchdogData,
   getRivercityData,
+  getImpriMedData,
   getLatestThreshold,
   createThreshold,
   getAlerts,
