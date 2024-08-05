@@ -289,6 +289,60 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                   </ChartWrapper>
                 </GridItem>
               )}
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Temperature (°C)"
+                    onChartChange={handleChartChange(setRivercityTempChartType)}
+                    weatherData={impriFreezerThreeTempData}
+                    metric="imFreezerThreeTemp"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                  >
+                    {rivercityTempChartType === 'line' ? (
+                      <LineChart
+                        data={impriFreezerThreeTempData}
+                        metric="imFreezerThreeTemp"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={impriFreezerThreeTempData}
+                        metric="imFreezerThreeTemp"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Humidity (%)"
+                    onChartChange={handleChartChange(setRivercityHumChartType)}
+                    weatherData={impriFreezerThreeHumData}
+                    metric="imFreezerThreeHum"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                  >
+                    {rivercityHumChartType === 'line' ? (
+                      <LineChart
+                        data={impriFreezerThreeHumData}
+                        metric="imFreezerThreeHum"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={impriFreezerThreeHumData}
+                        metric="imFreezerThreeHum"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
             </Grid>
             {/* </MotionBox> */}
           </MotionTabPanel>
