@@ -42,11 +42,25 @@ export const WeatherDataProvider = ({ children }) => {
   const [leafWetnessData, setLeafWetnessData] = useState(null);
   const [watchdogData, setWatchdogData] = useState([]);
   const [rivercityData, setRivercityData] = useState(null);
-  const [impriMedData, setImpriMedData] = useState(null);
   const [rivercityTempData, setRivercityTempData] = useState(null);
   const [rivercityHumData, setRivercityHumData] = useState(null);
   const [watchdogTempData, setWatchdogTempData] = useState(null);
   const [watchdogHumData, setWatchdogHumData] = useState(null);
+  const [impriFreezerOneTempData, setImpriFreezerOneTempData] = useState(null); // NOT WORKING
+  const [impriFreezerOneHumData, setImpriFreezerOneHumData] = useState(null); // NOT WORKING
+  const [impriFreezerTwoHumData, setImpriFreezerTwoHumData] = useState(null);
+  const [impriFreezerTwoTempData, setImpriFreezerTwoTempData] = useState(null);
+  const [impriFreezerThreeTempData, setImpriFreezerThreeTempData] = useState(null);
+  const [impriFreezerThreeHumData, setImpriFreezerThreeHumData] = useState(null);
+  const [impriFridgeOneTempData, setImpriFridgeOneTempData] = useState(null);
+  const [impriFridgeOneHumData, setImpriFridgeOneHumData] = useState(null);
+  const [impriFridgeTwoTempData, setImpriFridgeTwoTempData] = useState(null);
+  const [impriFridgeTwoHumData, setImpriFridgeTwoHumData] = useState(null);
+  const [impriIncuOneTempData, setImpriIncubatorOneTempData] = useState(null); // NOT WORKING
+  const [impriIncuOneHumData, setImpriIncubatorOneHumData] = useState(null); // NOT WORKING
+  const [impriIncuTwoTempData, setImpriIncubatorTwoTempData] = useState(null);
+  const [impriIncuTwoHumData, setImpriIncubatorTwoHumData] = useState(null);
+
   const [alertsThreshold, setAlertsThreshold] = useState({});
   const [thresholds, setThresholds] = useState([]);
   const [chartData, setChartData] = useState([]);
@@ -62,6 +76,47 @@ export const WeatherDataProvider = ({ children }) => {
     rivercityTemp: false,
     rivercityHum: false,
   });
+
+// IMPRIMED DATA FEED LOGIC
+const devices = {
+  freezerOne: '0080E1150618C9DE',
+  freezerTwo: '0080E115054FC6DF',
+  freezerThree: '0080E1150618B549',
+  fridgeOne: '0080E1150619155F',
+  fridgeTwo: '0080E115061924EA',
+  incubatorOne: '0080E115054FF1DC',
+  incubatorTwo: '0080E1150618B45F',
+};
+
+const fetchDeviceData = async (deviceKey, setTempData, setHumData) => {
+  try {
+    const response = await getImpriMedData(devices[deviceKey], 10); // Adjust the limit as needed
+    if (Array.isArray(response.data.rivercity_data) && response.data.rivercity_data.length > 0) {
+      const latestData = response.data.rivercity_data[0];
+      setTempData(latestData.rctemp);
+      setHumData(latestData.humidity);
+    }
+  } catch (error) {
+    console.error(`Error fetching data for ${deviceKey}:`, error);
+  }
+};
+
+useEffect(() => {
+  const fetchAllDeviceData = () => {
+    // fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData);
+    fetchDeviceData('freezerTwo', setImpriFreezerTwoTempData, setImpriFreezerTwoHumData);
+    fetchDeviceData('freezerThree', setImpriFreezerThreeTempData, setImpriFreezerThreeHumData);
+    fetchDeviceData('fridgeOne', setImpriFridgeOneTempData, setImpriFridgeOneHumData);
+    fetchDeviceData('fridgeTwo', setImpriFridgeTwoTempData, setImpriFridgeTwoHumData);
+    // fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData);
+    fetchDeviceData('incubatorTwo', setImpriIncubatorTwoTempData, setImpriIncubatorTwoHumData);
+  };
+
+  fetchAllDeviceData();
+  const intervalId = setInterval(fetchAllDeviceData, 60000); // Fetch data every 60 seconds
+
+  return () => clearInterval(intervalId); // Cleanup on component unmount
+}, []);
 
   useEffect(() => {
     const fetchThresholds = async () => {
@@ -162,24 +217,6 @@ export const WeatherDataProvider = ({ children }) => {
     return () => clearInterval(intervalId);
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getImpriMedData();
-        if (Array.isArray(response.data.rivercity_data)) {
-          setImpriMedData(response.data.rivercity_data);
-        } else {
-          setImpriMedData([]);
-        }
-      } catch (error) {
-        console.error('Error fetching impriMed data:', error);
-        setImpriMedData([]);
-      }
-    };
-    fetchData();
-    const intervalId = setInterval(fetchData, 30000);
-    return () => clearInterval(intervalId);
-  }, []);
 
   const fetchAlertsThreshold = async () => {
     try {
@@ -489,11 +526,24 @@ export const WeatherDataProvider = ({ children }) => {
         rivercityData,
         rivercityTempData,
         rivercityHumData,
-        impriMedData,
         thresholds,
         alertsThreshold,
         fetchAlertsThreshold,
         chartData,
+        impriFreezerOneTempData,
+        impriFreezerOneHumData,
+        impriFreezerTwoTempData,
+        impriFreezerTwoHumData,
+        impriFreezerThreeTempData,
+        impriFreezerThreeHumData,
+        impriFridgeOneTempData,
+        impriFridgeOneHumData,
+        impriFridgeTwoTempData,
+        impriFridgeTwoHumData,
+        impriIncuOneTempData,
+        impriIncuOneHumData,
+        impriIncuTwoTempData,
+        impriIncuTwoHumData,
       }}
     >
       {children}
