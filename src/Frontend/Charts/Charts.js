@@ -113,6 +113,7 @@ const createCustomChartOptions = (metric, data, colorMode) => {
             const labelMap = {
               'temperature': '°F',
               'rctemp': '°F',
+              'impriTemp': '°C',
               'percent_humidity': '% Humidity',
               'humidity': '% Humidity',
               'rain_15_min_inches': 'inches',
@@ -142,7 +143,7 @@ export const LineChart = ({ data, metric }) => {
   const { colorMode } = useColorMode();
   const chartData = processWeatherData(data, metric, colorMode);
   if (!chartData) return <Spinner size="xl" />;
-
+  console.log('chartData:', chartData);
   const dataKey = chartData.datasets[0].data;
   const options = createCustomChartOptions(metric, dataKey, colorMode);
 

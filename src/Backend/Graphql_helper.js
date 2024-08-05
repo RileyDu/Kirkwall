@@ -251,8 +251,6 @@ async function getImpriMedData(deveui, limit) {
     rctemp
     humidity
     publishedat
-    dataid
-    gatewayid
     deveui
   }
 }

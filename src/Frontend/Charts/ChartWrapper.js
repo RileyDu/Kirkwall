@@ -38,7 +38,6 @@ import { useAuth } from '../AuthComponents/AuthContext.js';
 import ImpriMiniMap from '../Maps/ImpriMiniMap.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { updateChart } from '../../Backend/Graphql_helper.js';
-import e from 'cors';
 
 
 const ChartWrapper = ({
@@ -172,6 +171,7 @@ const ChartWrapper = ({
         hum: 'WatchdogLogoBlack.png',
         humidity: 'rci-logo-blue.png',
         rctemp: 'rci-logo-blue.png',
+        impriTemp: 'rci-logo-blue.png',
       },
       dark: {
         temperature: 'DavisLogoWhite.png',
@@ -184,6 +184,7 @@ const ChartWrapper = ({
         hum: 'WatchdogLogoWhite.png',
         humidity: 'rci-logo-white.png',
         rctemp: 'rci-logo-white.png',
+        impriTemp: 'rci-logo-white.png',
       },
     };
 
@@ -217,7 +218,8 @@ const ChartWrapper = ({
       metric === 'temp' ||
       metric === 'hum' ||
       metric === 'humidity' ||
-      metric === 'rctemp'
+      metric === 'rctemp' ||
+      metric === 'impriTemp'
         ? dataLength * 10
         : dataLength * 5;
     const totalHours = Math.floor(totalMinutes / 60);
@@ -290,7 +292,7 @@ const ChartWrapper = ({
   const editChart = async (id, metric, timeperiod, type, location, hidden) => {
     try {
       const result = await updateChart(id, metric, timeperiod, type, location, hidden);
-      console.log('result:', result);
+      // console.log('result:', result);
     }
     catch (error) {
       console.error('Error updating chart:', error);
@@ -421,7 +423,7 @@ const ChartWrapper = ({
                   >
                     <Tooltip label="Current Value">
                       <Text fontSize={fontSize}>
-                         {formatValue(mostRecentValue)}
+                         {formatValue(mostRecentValue || weatherData[0].rctemp || weatherData[0].humidity)}
                       </Text>
                     </Tooltip>
                   </Box>

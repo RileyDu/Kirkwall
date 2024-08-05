@@ -79,13 +79,13 @@ export const WeatherDataProvider = ({ children }) => {
 
 // IMPRIMED DATA FEED LOGIC
 const devices = {
-  freezerOne: '0080E1150618C9DE',
-  freezerTwo: '0080E115054FC6DF',
-  freezerThree: '0080E1150618B549',
-  fridgeOne: '0080E1150619155F',
-  fridgeTwo: '0080E115061924EA',
-  incubatorOne: '0080E115054FF1DC',
-  incubatorTwo: '0080E1150618B45F',
+  freezerOne: "deveui = '0080E1150618C9DE'",
+  freezerTwo: "deveui = '0080E115054FC6DF'",
+  freezerThree: "deveui = '0080E1150618B549'",
+  fridgeOne: "deveui = '0080E1150619155F'",
+  fridgeTwo: "deveui = '0080E115061924EA'",
+  incubatorOne: "deveui = '0080E115054FF1DC'",
+  incubatorTwo: "deveui = '0080E1150618B45F'",
 };
 
 const fetchDeviceData = async (deviceKey, setTempData, setHumData, limit) => {
@@ -93,8 +93,24 @@ const fetchDeviceData = async (deviceKey, setTempData, setHumData, limit) => {
     const response = await getImpriMedData(devices[deviceKey], limit); // Adjust the limit as needed
     if (Array.isArray(response.data.rivercity_data) && response.data.rivercity_data.length > 0) {
       const latestData = response.data.rivercity_data;
-      setTempData(latestData.rctemp);
-      setHumData(latestData.humidity);
+      
+      // Assuming latestData is an array of objects with rctemp and humidity properties
+      const tempDataArray = latestData.map(data => ({
+        rctemp: data.rctemp,
+        publishedat: data.publishedat
+      }));
+
+      const humDataArray = latestData.map(data => ({
+        humidity: data.humidity,
+        publishedat: data.publishedat
+      }));
+
+      // Set the entire array of temperature and humidity data
+      setTempData(tempDataArray);
+      setHumData(humDataArray);
+
+      // console.log(`Latest temperature data for ${deviceKey}:`, tempDataArray);
+      // console.log(`Latest humidity data for ${deviceKey}:`, humDataArray);
     }
   } catch (error) {
     console.error(`Error fetching data for ${deviceKey}:`, error);
@@ -140,7 +156,7 @@ useEffect(() => {
         const response = await getChartData();
         if (Array.isArray(response.data.charts)) {
           setChartData(response.data.charts);
-          console.log('Chart data:', chartData);
+          // console.log('Chart data:', chartData);
         }
       } catch (error) {
         console.error('Error fetching chart data:', error);
@@ -474,27 +490,27 @@ useEffect(() => {
         switch (metric) {
           case 'temperature':
             setTempData(response.data.weather_data);
-            console.log('Temperature data:', response.data.weather_data);
+            // console.log('Temperature data:', response.data.weather_data);
             break;
           case 'percent_humidity':
             setHumidityData(response.data.weather_data);
-            console.log('Humidity data:', response.data.weather_data);
+            // console.log('Humidity data:', response.data.weather_data);
             break;
           case 'wind_speed':
             setWindData(response.data.weather_data);
-            console.log('Wind data:', response.data.weather_data);
+            // console.log('Wind data:', response.data.weather_data);
             break;
           case 'rain_15_min_inches':
             setRainfallData(response.data.weather_data);
-            console.log('Rainfall data:', response.data.weather_data);
+            // console.log('Rainfall data:', response.data.weather_data);
             break;
           case 'soil_moisture':
             setSoilMoistureData(response.data.weather_data);
-            console.log('Soil moisture data:', response.data.weather_data);
+            // console.log('Soil moisture data:', response.data.weather_data);
             break;
           case 'leaf_wetness':
             setLeafWetnessData(response.data.weather_data);
-            console.log('Leaf wetness data:', response.data.weather_data);
+            // console.log('Leaf wetness data:', response.data.weather_data);
             break;
           default:
             break;

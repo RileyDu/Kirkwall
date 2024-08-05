@@ -12,9 +12,7 @@ import {
   MenuItem,
   Button,
   Tabs,
-  TabList,
   TabPanels,
-  Tab,
   TabPanel,
   useColorModeValue,
   IconButton,
@@ -22,9 +20,7 @@ import {
   useMediaQuery,
   useDisclosure,
 } from '@chakra-ui/react';
-// import VoiceControl from '../../services/VoiceControl';
 import { LineChart, BarChart } from '../../Charts/Charts.js';
-import { auth } from '../../../Backend/Firebase.js';
 import ChartWrapper from '../../Charts/ChartWrapper.js';
 import {
   FaChessRook,
@@ -55,8 +51,21 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
     rivercityTempData,
     rivercityHumData,
     rivercityData,
+    impriFreezerOneTempData,
+    impriFreezerOneHumData,
+    impriFreezerTwoTempData,
+    impriFreezerTwoHumData,
+    impriFreezerThreeTempData,
+    impriFreezerThreeHumData,
+    impriFridgeOneTempData,
+    impriFridgeOneHumData,
+    impriFridgeTwoTempData,
+    impriFridgeTwoHumData,
+    impriIncuOneTempData,
+    impriIncuOneHumData,
+    impriIncuTwoTempData,
+    impriIncuTwoHumData,
   } = useWeatherData();
-
 
   const [rivercityTempChartType, setRivercityTempChartType] = useState('bar');
   const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
@@ -64,27 +73,48 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
   const [isReady, setIsReady] = useState(false);
 
   const [visibleCharts, setVisibleCharts] = useState({
-    grandFarm: [
-      'temperature',
-      'humidity',
-      'wind',
-      'soil',
-      'leaf',
-      'rainfall',
-    ],
+    grandFarm: ['temperature', 'humidity', 'wind', 'soil', 'leaf', 'rainfall'],
     garage: ['temperature', 'humidity'],
     rivercity: ['temperature', 'humidity'],
   });
 
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalChart, setModalChart] = useState('');
-  const [currentTimePeriod, setCurrentTimePeriod] = useState('1H');
+  //   useEffect(() => {
+  //   console.log('ImpriMed Data:', {
+  //     impriFreezerOneTempData,
+  //     impriFreezerOneHumData,
+  //     impriFreezerTwoTempData,
+  //     impriFreezerTwoHumData,
+  //     impriFreezerThreeTempData,
+  //     impriFreezerThreeHumData,
+  //     impriFridgeOneTempData,
+  //     impriFridgeOneHumData,
+  //     impriFridgeTwoTempData,
+  //     impriFridgeTwoHumData,
+  //     impriIncuOneTempData,
+  //     impriIncuOneHumData,
+  //     impriIncuTwoTempData,
+  //     impriIncuTwoHumData,
+  //   });
+  // }, [
+  //   impriFreezerOneTempData,
+  //   impriFreezerOneHumData,
+  //   impriFreezerTwoTempData,
+  //   impriFreezerTwoHumData,
+  //   impriFreezerThreeTempData,
+  //   impriFreezerThreeHumData,
+  //   impriFridgeOneTempData,
+  //   impriFridgeOneHumData,
+  //   impriFridgeTwoTempData,
+  //   impriFridgeTwoHumData,
+  //   impriIncuOneTempData,
+  //   impriIncuOneHumData,
+  //   impriIncuTwoTempData,
+  //   impriIncuTwoHumData,
+  // ]);
 
   const { colorMode } = useColorMode();
-  const iconColor = useColorModeValue('black', 'white');
-
 
   const showChart = (section, chart) => {
     setVisibleCharts(prevState => ({
@@ -100,51 +130,6 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
     }));
   };
 
-  const handleVoiceCommand = command => {
- if (command.includes('log out')) {
-      logOut();
-    } else if (command.includes('show temperature')) {
-      showChart('rivercity', 'temperature');
-    } else if (command.includes('hide temperature')) {
-      hideChart('rivercity', 'temperature');
-    } else if (command.includes('show humidity')) {
-      showChart('rivercity', 'humidity');
-    } else if (command.includes('hide humidity')) {
-      hideChart('rivercity', 'humidity');
-    } else if (command.includes('change temperature chart type to line')) {
-      setRivercityTempChartType('line');
-    } else if (command.includes('change temperature chart type to bar')) {
-      setRivercityTempChartType('bar');
-    } else if (command.includes('change humidity chart type to line')) {
-      setRivercityHumChartType('line');
-    } else if (command.includes('change humidity chart type to bar')) {
-      setRivercityHumChartType('bar');
-    } else {
-      console.log('Command not recognized');
-    }
-  };
-
-  const openModal = chart => {
-    setModalChart(chart);
-    setIsModalOpen(true);
-  };
-
-  const logOut = () => {
-    auth
-      .signOut()
-      .then(() => {
-        console.log('User logged out');
-        // Additional logout logic if needed
-      })
-      .catch(error => {
-        console.error('Logout error:', error);
-      });
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setModalChart('');
-  };
 
   useEffect(() => {
     setIsReady(false);
@@ -152,7 +137,6 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
       setIsReady(true);
     }
   }, [weatherData]);
-
 
   const toggleChartVisibility = (section, chart) => {
     setVisibleCharts(prevState => {
@@ -286,8 +270,8 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                   <ChartWrapper
                     title="Temperature (°F)"
                     onChartChange={handleChartChange(setRivercityTempChartType)}
-                    weatherData={rivercityTempData || rivercityData}
-                    metric="rctemp"
+                    weatherData={impriFreezerTwoTempData}
+                    metric="impriTemp"
                     flex="1"
                     timePeriod={timePeriod}
                     display="flex"
@@ -296,14 +280,14 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                   >
                     {rivercityTempChartType === 'line' ? (
                       <LineChart
-                        data={rivercityTempData || rivercityData}
-                        metric="rctemp"
+                        data={impriFreezerTwoTempData}
+                        metric="impriTemp"
                         style={{ flex: 1 }}
                       />
                     ) : (
                       <BarChart
-                        data={rivercityTempData || rivercityData}
-                        metric="rctemp"
+                        data={impriFreezerTwoTempData}
+                        metric="impriTemp"
                         style={{ flex: 1 }}
                       />
                     )}
