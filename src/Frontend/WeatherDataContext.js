@@ -88,11 +88,11 @@ const devices = {
   incubatorTwo: '0080E1150618B45F',
 };
 
-const fetchDeviceData = async (deviceKey, setTempData, setHumData) => {
+const fetchDeviceData = async (deviceKey, setTempData, setHumData, limit) => {
   try {
-    const response = await getImpriMedData(devices[deviceKey], 10); // Adjust the limit as needed
+    const response = await getImpriMedData(devices[deviceKey], limit); // Adjust the limit as needed
     if (Array.isArray(response.data.rivercity_data) && response.data.rivercity_data.length > 0) {
-      const latestData = response.data.rivercity_data[0];
+      const latestData = response.data.rivercity_data;
       setTempData(latestData.rctemp);
       setHumData(latestData.humidity);
     }
@@ -103,13 +103,13 @@ const fetchDeviceData = async (deviceKey, setTempData, setHumData) => {
 
 useEffect(() => {
   const fetchAllDeviceData = () => {
-    // fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData);
-    fetchDeviceData('freezerTwo', setImpriFreezerTwoTempData, setImpriFreezerTwoHumData);
-    fetchDeviceData('freezerThree', setImpriFreezerThreeTempData, setImpriFreezerThreeHumData);
-    fetchDeviceData('fridgeOne', setImpriFridgeOneTempData, setImpriFridgeOneHumData);
-    fetchDeviceData('fridgeTwo', setImpriFridgeTwoTempData, setImpriFridgeTwoHumData);
-    // fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData);
-    fetchDeviceData('incubatorTwo', setImpriIncubatorTwoTempData, setImpriIncubatorTwoHumData);
+    // fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData, 7);
+    fetchDeviceData('freezerTwo', setImpriFreezerTwoTempData, setImpriFreezerTwoHumData, 7);
+    fetchDeviceData('freezerThree', setImpriFreezerThreeTempData, setImpriFreezerThreeHumData, 7);
+    fetchDeviceData('fridgeOne', setImpriFridgeOneTempData, setImpriFridgeOneHumData, 7);
+    fetchDeviceData('fridgeTwo', setImpriFridgeTwoTempData, setImpriFridgeTwoHumData, 7);
+    // fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData, 7);
+    fetchDeviceData('incubatorTwo', setImpriIncubatorTwoTempData, setImpriIncubatorTwoHumData, 7);
   };
 
   fetchAllDeviceData();
