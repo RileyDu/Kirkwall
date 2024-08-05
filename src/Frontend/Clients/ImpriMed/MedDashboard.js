@@ -58,6 +58,8 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
     impriMedData,
   } = useWeatherData();
 
+
+  console.log('impriMedData', impriMedData);
   const [rivercityTempChartType, setRivercityTempChartType] = useState('bar');
   const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
   const { isOpen, onOpen, onClose } = useDisclosure();

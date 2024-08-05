@@ -245,19 +245,23 @@ async function getRivercityData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
-async function getImpriMedData( ) {
-  const query = `query impriMedData {
-        rivercity_data (ordering: "publishedat desc", limit:30, filter: "gatewayid = 'ac1f09fffe10987f'") {
-          rctemp
-          humidity
-          publishedat
-          dataid
-    			gatewayid
-    			deveui
-        }
-      }
+async function getImpriMedData(deveui, limit) {
+  const query = `query impriMedData($limit: Int, $deveui: String!) {
+  rivercity_data(ordering: "publishedat desc", limit: $limit, filter: $deveui) {
+    rctemp
+    humidity
+    publishedat
+    dataid
+    gatewayid
+    deveui
+  }
+}
       `;
-  return executeGraphqlQuery(query);
+      const variables = {
+        limit: limit,
+        deveui: deveui,
+      };
+  return executeGraphqlQuery(query, variables);
 }
 
 // Function to get the latest threshold data from the database
@@ -401,8 +405,6 @@ async function updateChart(id, metric, timeperiod, type, location, hidden) {
   };
   return executeGraphqlQuery(mutation, variables);
 }
-
-
 
 // Function to get API ID of user
 // async function getAPIIds() {
