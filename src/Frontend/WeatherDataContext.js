@@ -210,7 +210,9 @@ export const WeatherDataProvider = ({ children }) => {
       };
 
       fetchAllDeviceData();
-      const intervalId = setInterval(fetchAllDeviceData, 60000); // Fetch data every 60 seconds
+
+      
+      const intervalId = setInterval(fetchAllDeviceData, 600000); // Fetch data every 10 minutes
 
       return () => clearInterval(intervalId); // Cleanup on component unmount
     }
@@ -716,18 +718,24 @@ export const WeatherDataProvider = ({ children }) => {
             break;
         }
       } else if (impriMedMetrics.includes(metric)) {
+        const renameKeyToMetric = (data, metric) => {
+          return data.map(d => {
+            const value = metric.endsWith('Temp') ? d.rctemp : d.humidity;
+            return {
+              [metric]: value,
+              publishedat: d.publishedat,
+            };
+          });
+        };
+        
+        // Usage example:
         const deveui = deveuiPerMetric[metric];
         const response = await getImpriMedData(
           deveui,
           rivercityDetermineLimitBasedOnTimePeriod(timePeriod)
         );
         const latestData = response.data.rivercity_data;
-        const renameKeyToMetric = (data, metric) => {
-          return data.map(d => ({
-            [metric]: d[metric],
-            publishedat: d.publishedat,
-          }));
-        }
+        
         switch (metric) {
           case 'imFreezerOneTemp':
             setImpriFreezerOneTempData(renameKeyToMetric(latestData, 'imFreezerOneTemp'));
