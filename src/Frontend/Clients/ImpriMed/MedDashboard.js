@@ -79,7 +79,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
   const [imIncubatorOneHumChartType, setImIncubatorOneHumChartType] = useState('');
   const [imIncubatorTwoTempChartType, setImIncubatorTwoTempChartType] = useState('');
   const [imIncubatorTwoHumChartType, setImIncubatorTwoHumChartType] = useState('');
-  
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isReady, setIsReady] = useState(false);
 
@@ -92,6 +92,64 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
   const { colorMode } = useColorMode();
+
+  const updateChartTypes = (chartData) => {
+    chartData.forEach(chart => {
+      switch (chart.metric) {
+        case 'imFreezerOneTemp':
+          setImFreezerOneTempChartType(chart.type);
+          break;
+        case 'imFreezerOneHum':
+          setImFreezerOneHumChartType(chart.type);
+          break;
+        case 'imFreezerTwoTemp':
+          setImFreezerTwoTempChartType(chart.type);
+          break;
+        case 'imFreezerTwoHum':
+          setImFreezerTwoHumChartType(chart.type);
+          break;
+        case 'imFreezerThreeTemp':
+          setImFreezerThreeTempChartType(chart.type);
+          break;
+        case 'imFreezerThreeHum':
+          setImFreezerThreeHumChartType(chart.type);
+          break;
+        case 'imFridgeOneTemp':
+          setImFridgeOneTempChartType(chart.type);
+          break;
+        case 'imFridgeOneHum':
+          setImFridgeOneHumChartType(chart.type);
+          break;
+        case 'imFridgeTwoTemp':
+          setImFridgeTwoTempChartType(chart.type);
+          break;
+        case 'imFridgeTwoHum':
+          setImFridgeTwoHumChartType(chart.type);
+          break;
+        case 'imIncubatorOneTemp':
+          setImIncubatorOneTempChartType(chart.type);
+          break;
+        case 'imIncubatorOneHum':
+          setImIncubatorOneHumChartType(chart.type);
+          break;
+        case 'imIncubatorTwoTemp':
+          setImIncubatorTwoTempChartType(chart.type);
+          break;
+        case 'imIncubatorTwoHum':
+          setImIncubatorTwoHumChartType(chart.type);
+          break;
+        default:
+          break;
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (chartData.length > 0) {
+      updateChartTypes(chartData);
+      // console.log('chartData:', chartData);
+    }
+  }, [chartData]);
 
   const showChart = (section, chart) => {
     setVisibleCharts(prevState => ({

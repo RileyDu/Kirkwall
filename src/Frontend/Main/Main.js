@@ -135,7 +135,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   useEffect(() => {
     if (chartData.length > 0) {
       updateChartTypes(chartData);
-      console.log('chartData:', chartData);
+      // console.log('chartData:', chartData);
     }
   }, [chartData]);
 
