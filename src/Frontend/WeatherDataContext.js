@@ -188,7 +188,6 @@ export const WeatherDataProvider = ({ children }) => {
         // Set the entire array of temperature and humidity data
         setTempData(tempDataArray);
         setHumData(humDataArray);
-        setLoading(false);
         // console.log(`Latest temperature data for ${deviceKey}:`, tempDataArray);
         // console.log(`Latest humidity data for ${deviceKey}:`, humDataArray);
       }
@@ -199,19 +198,22 @@ export const WeatherDataProvider = ({ children }) => {
 
   useEffect(() => {
     if (currentUser && currentUser.email === 'jerrycromarty@imprimedicine.com') {
-      const fetchAllDeviceData = () => {
-        // fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData, 19);
-        fetchDeviceData('freezerTwo', setImpriFreezerTwoTempData, setImpriFreezerTwoHumData, 19);
-        fetchDeviceData('freezerThree', setImpriFreezerThreeTempData, setImpriFreezerThreeHumData, 19);
-        fetchDeviceData('fridgeOne', setImpriFridgeOneTempData, setImpriFridgeOneHumData, 19);
-        fetchDeviceData('fridgeTwo', setImpriFridgeTwoTempData, setImpriFridgeTwoHumData, 19);
-        // fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData, 19);
-        fetchDeviceData('incubatorTwo', setImpriIncubatorTwoTempData, setImpriIncubatorTwoHumData, 19);
+      const fetchAllDeviceData = async () => {
+        await Promise.all([
+        // fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData, 19),
+        fetchDeviceData('freezerTwo', setImpriFreezerTwoTempData, setImpriFreezerTwoHumData, 19),
+        fetchDeviceData('freezerThree', setImpriFreezerThreeTempData, setImpriFreezerThreeHumData, 19),
+        fetchDeviceData('fridgeOne', setImpriFridgeOneTempData, setImpriFridgeOneHumData, 19),
+        fetchDeviceData('fridgeTwo', setImpriFridgeTwoTempData, setImpriFridgeTwoHumData, 19),
+        // fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData, 19),
+        fetchDeviceData('incubatorTwo', setImpriIncubatorTwoTempData, setImpriIncubatorTwoHumData, 19),
+        ]);
+        setLoading(false);
       };
 
       fetchAllDeviceData();
 
-      
+
       const intervalId = setInterval(fetchAllDeviceData, 600000); // Fetch data every 10 minutes
 
       return () => clearInterval(intervalId); // Cleanup on component unmount

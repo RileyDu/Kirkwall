@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -61,7 +61,8 @@ const ChartWrapper = ({
   const [userTitle, setUserTitle] = useState('Location');
   
   const { chartData } = useWeatherData();
-  
+  const isMounted = useRef(false);
+
   const chartDataForMetric = chartData.find(chart => chart.metric === metric);
   const [newTitle, setNewTitle] = useState(chartDataForMetric?.location);
   const [chartType, setChartType] = useState(chartDataForMetric?.type);
@@ -73,9 +74,13 @@ const ChartWrapper = ({
   };
   
   // Call handleChartEdit after chartType is updated
-  // useEffect(() => {
-  //   handleChartEdit();
-  // }, [chartType]);
+  useEffect(() => {
+    if (isMounted.current) {
+      handleChartEdit();
+    } else {
+      isMounted.current = true;
+    }
+  }, [chartType]);
 
   const { currentUser } = useAuth();
 
@@ -347,6 +352,7 @@ const ChartWrapper = ({
     const type = chartType;
     const location = newTitle || chartDataForMetric?.location;
     const hidden = chartDataForMetric?.hidden;
+    console.log('id:', id, 'metric:', metric, 'timeperiod:', timeperiod, 'type:', type, 'location:', location, 'hidden:', hidden);
     editChart(id, metric, timeperiod, type, location, hidden);
   }
 
