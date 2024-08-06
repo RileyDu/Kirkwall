@@ -48,9 +48,6 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
     weatherData,
     loading,
     handleTimePeriodChange,
-    rivercityTempData,
-    rivercityHumData,
-    rivercityData,
     impriFreezerOneTempData,
     impriFreezerOneHumData,
     impriFreezerTwoTempData,
@@ -65,10 +62,24 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
     impriIncuOneHumData,
     impriIncuTwoTempData,
     impriIncuTwoHumData,
+    chartData,
   } = useWeatherData();
 
-  const [rivercityTempChartType, setRivercityTempChartType] = useState('bar');
-  const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
+  const [imFreezerOneTempChartType, setImFreezerOneTempChartType] = useState('');
+  const [imFreezerOneHumChartType, setImFreezerOneHumChartType] = useState('');
+  const [imFreezerTwoTempChartType, setImFreezerTwoTempChartType] = useState('');
+  const [imFreezerTwoHumChartType, setImFreezerTwoHumChartType] = useState('');
+  const [imFreezerThreeTempChartType, setImFreezerThreeTempChartType] = useState('');
+  const [imFreezerThreeHumChartType, setImFreezerThreeHumChartType] = useState('');
+  const [imFridgeOneTempChartType, setImFridgeOneTempChartType] = useState('');
+  const [imFridgeOneHumChartType, setImFridgeOneHumChartType] = useState('');
+  const [imFridgeTwoTempChartType, setImFridgeTwoTempChartType] = useState('');
+  const [imFridgeTwoHumChartType, setImFridgeTwoHumChartType] = useState('');
+  const [imIncubatorOneTempChartType, setImIncubatorOneTempChartType] = useState('');
+  const [imIncubatorOneHumChartType, setImIncubatorOneHumChartType] = useState('');
+  const [imIncubatorTwoTempChartType, setImIncubatorTwoTempChartType] = useState('');
+  const [imIncubatorTwoHumChartType, setImIncubatorTwoHumChartType] = useState('');
+  
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isReady, setIsReady] = useState(false);
 
