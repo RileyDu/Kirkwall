@@ -312,7 +312,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                   flexDirection="column"
                   handleTimePeriodChange={handleTimePeriodChange}
                 >
-                  {rivercityTempChartType === 'line' ? (
+                  {imFreezerOneTempChartType === 'line' ? (
                     <LineChart
                       data={impriFreezerOneTempData}
                       metric="imFreezerOneTemp"
@@ -339,7 +339,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                   flexDirection="column"
                   handleTimePeriodChange={handleTimePeriodChange}
                 >
-                  {rivercityHumChartType === 'line' ? (
+                  {imFreezerOneHumChartType === 'line' ? (
                     <LineChart
                       data={impriFreezerOneHumData}
                       metric="imFreezerOneHum"
@@ -367,7 +367,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
                   >
-                    {rivercityTempChartType === 'line' ? (
+                    {imFreezerTwoTempChartType === 'line' ? (
                       <LineChart
                         data={impriFreezerTwoTempData}
                         metric="imFreezerTwoTemp"
@@ -396,7 +396,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
                   >
-                    {rivercityHumChartType === 'line' ? (
+                    {imFreezerTwoHumChartType === 'line' ? (
                       <LineChart
                         data={impriFreezerTwoHumData}
                         metric="imFreezerTwoHum"
@@ -424,7 +424,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
                   >
-                    {rivercityTempChartType === 'line' ? (
+                    {imFreezerThreeTempChartType === 'line' ? (
                       <LineChart
                         data={impriFreezerThreeTempData}
                         metric="imFreezerThreeTemp"
@@ -451,7 +451,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
                   >
-                    {rivercityHumChartType === 'line' ? (
+                    {imFreezerThreeHumChartType === 'line' ? (
                       <LineChart
                         data={impriFreezerThreeHumData}
                         metric="imFreezerThreeHum"
@@ -478,7 +478,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
                   >
-                    {rivercityTempChartType === 'line' ? (
+                    {imFridgeOneTempChartType === 'line' ? (
                       <LineChart
                         data={impriFridgeOneTempData}
                         metric="imFridgeOneTemp"
@@ -505,7 +505,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
                   >
-                    {rivercityHumChartType === 'line' ? (
+                    {imFridgeOneHumChartType === 'line' ? (
                       <LineChart
                         data={impriFridgeOneHumData}
                         metric="imFridgeOneHum"
@@ -532,7 +532,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
                   >
-                    {rivercityTempChartType === 'line' ? (
+                    {imFridgeTwoTempChartType === 'line' ? (
                       <LineChart
                         data={impriFridgeTwoTempData}
                         metric="imFridgeTwoTemp"
@@ -559,7 +559,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
                   >
-                    {rivercityHumChartType === 'line' ? (
+                    {imFridgeTwoHumChartType === 'line' ? (
                       <LineChart
                         data={impriFridgeTwoHumData}
                         metric="imFridgeTwoHum"
@@ -586,7 +586,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
                   >
-                    {rivercityTempChartType === 'line' ? (
+                    {imIncubatorOneTempChartType === 'line' ? (
                       <LineChart
                         data={impriIncuOneTempData}
                         metric="imIncubatorOneTemp"
@@ -613,7 +613,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
                   >
-                    {rivercityHumChartType === 'line' ? (
+                    {imIncubatorOneHumChartType === 'line' ? (
                       <LineChart
                         data={impriIncuOneHumData}
                         metric="imIncubatorOneHum"
@@ -640,7 +640,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
                   >
-                    {rivercityTempChartType === 'line' ? (
+                    {imIncubatorTwoTempChartType === 'line' ? (
                       <LineChart
                         data={impriIncuTwoTempData}
                         metric="imIncubatorTwoTemp"
@@ -667,7 +667,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
                   >
-                    {rivercityHumChartType === 'line' ? (
+                    {imIncubatorTwoHumChartType === 'line' ? (
                       <LineChart
                         data={impriIncuTwoHumData}
                         metric="imIncubatorTwoHum"
