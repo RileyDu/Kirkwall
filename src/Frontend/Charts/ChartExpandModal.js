@@ -51,6 +51,7 @@ const ChartExpandModal = ({
   currentTimePeriod,
   setCurrentTimePeriod,
   sensorMap,
+  MapComponent,
 }) => {
   const { colorMode } = useColorMode();
   const [loading, setLoading] = useState(false);
@@ -425,7 +426,7 @@ const ChartExpandModal = ({
                 height="430px"
               >
                 <Box height="100%">
-                  {sensorMap === 'grandfarm' ? <MiniMap /> : <WatchdogMap />}
+                  <MapComponent />
                 </Box>
               </Box>
             </SimpleGrid>

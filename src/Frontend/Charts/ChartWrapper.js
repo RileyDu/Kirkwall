@@ -127,6 +127,21 @@ const ChartWrapper = ({
       case 'rctemp':
         setSensorMap('freezer');
         break;
+      case 'imFreezerOneTemp':
+      case 'imFreezerOneHum':
+      case 'imFreezerTwoTemp':
+      case 'imFreezerTwoHum':
+      case 'imFreezerThreeTemp':
+      case 'imFreezerThreeHum':
+      case 'imFridgeOneTemp':
+      case 'imFridgeOneHum':
+      case 'imFridgeTwoTemp':
+      case 'imFridgeTwoHum':
+      case 'imIncubatorOneTemp':
+      case 'imIncubatorOneHum':
+      case 'imIncubatorTwoTemp':
+      case 'imIncubatorTwoHum':
+        setSensorMap('imprimed');
       default:
         console.error(`Unknown metric: ${metric}`);
     }
@@ -648,6 +663,7 @@ const ChartWrapper = ({
         currentTimePeriod={currentTimePeriod}
         setCurrentTimePeriod={setCurrentTimePeriod}
         sensorMap={sensorMap}
+        MapComponent={MapComponent}
       />
     </>
   );
