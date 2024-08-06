@@ -303,7 +303,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
               <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                 <ChartWrapper
                   title="Temperature (°C)"
-                  onChartChange={handleChartChange(setRivercityTempChartType)}
+                  onChartChange={handleChartChange(setImFreezerOneTempChartType)}
                   weatherData={impriFreezerOneTempData}
                   metric="imFreezerOneTemp"
                   flex="1"
@@ -330,7 +330,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
               <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                 <ChartWrapper
                   title="Humidity (%)"
-                  onChartChange={handleChartChange(setRivercityHumChartType)}
+                  onChartChange={handleChartChange(setImFreezerOneHumChartType)}
                   weatherData={impriFreezerOneHumData}
                   metric="imFreezerOneHum"
                   flex="1"
@@ -358,7 +358,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Temperature (°C)"
-                    onChartChange={handleChartChange(setRivercityTempChartType)}
+                    onChartChange={handleChartChange(setImFreezerTwoTempChartType)}
                     weatherData={impriFreezerTwoTempData}
                     metric="imFreezerTwoTemp"
                     flex="1"
@@ -387,7 +387,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Humidity (%)"
-                    onChartChange={handleChartChange(setRivercityHumChartType)}
+                    onChartChange={handleChartChange(setImFreezerTwoHumChartType)}
                     weatherData={impriFreezerTwoHumData}
                     metric="imFreezerTwoHum"
                     flex="1"
@@ -415,7 +415,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Temperature (°C)"
-                    onChartChange={handleChartChange(setRivercityTempChartType)}
+                    onChartChange={handleChartChange(setImFreezerThreeTempChartType)}
                     weatherData={impriFreezerThreeTempData}
                     metric="imFreezerThreeTemp"
                     flex="1"
@@ -442,7 +442,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Humidity (%)"
-                    onChartChange={handleChartChange(setRivercityHumChartType)}
+                    onChartChange={handleChartChange(setImFreezerThreeHumChartType)}
                     weatherData={impriFreezerThreeHumData}
                     metric="imFreezerThreeHum"
                     flex="1"
@@ -469,7 +469,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Temperature (°C)"
-                    onChartChange={handleChartChange(setRivercityTempChartType)}
+                    onChartChange={handleChartChange(setImFridgeOneTempChartType)}
                     weatherData={impriFridgeOneTempData}
                     metric="imFridgeOneTemp"
                     flex="1"
@@ -496,7 +496,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Humidity (%)"
-                    onChartChange={handleChartChange(setRivercityHumChartType)}
+                    onChartChange={handleChartChange(setImFridgeOneHumChartType)}
                     weatherData={impriFridgeOneHumData}
                     metric="imFridgeOneHum"
                     flex="1"
@@ -523,7 +523,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Temperature (°C)"
-                    onChartChange={handleChartChange(setRivercityTempChartType)}
+                    onChartChange={handleChartChange(setImFridgeTwoHumChartType)}
                     weatherData={impriFridgeTwoTempData}
                     metric="imFridgeTwoTemp"
                     flex="1"
@@ -550,7 +550,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Humidity (%)"
-                    onChartChange={handleChartChange(setRivercityHumChartType)}
+                    onChartChange={handleChartChange(setImFridgeTwoHumChartType)}
                     weatherData={impriFridgeTwoHumData}
                     metric="imFridgeTwoHum"
                     flex="1"
@@ -577,7 +577,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Temperature (°C)"
-                    onChartChange={handleChartChange(setRivercityTempChartType)}
+                    onChartChange={handleChartChange(setImIncubatorOneTempChartType)}
                     weatherData={impriIncuOneTempData}
                     metric="imIncubatorOneTemp"
                     flex="1"
@@ -604,7 +604,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Humidity (%)"
-                    onChartChange={handleChartChange(setRivercityHumChartType)}
+                    onChartChange={handleChartChange(setImIncubatorOneHumChartType)}
                     weatherData={impriIncuOneHumData}
                     metric="imIncubatorOneHum"
                     flex="1"
@@ -631,7 +631,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Temperature (°C)"
-                    onChartChange={handleChartChange(setRivercityTempChartType)}
+                    onChartChange={handleChartChange(setImIncubatorTwoTempChartType)}
                     weatherData={impriIncuTwoTempData}
                     metric="imIncubatorTwoTemp"
                     flex="1"
@@ -658,7 +658,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Humidity (%)"
-                    onChartChange={handleChartChange(setRivercityHumChartType)}
+                    onChartChange={handleChartChange(setImIncubatorTwoHumChartType)}
                     weatherData={impriIncuTwoHumData}
                     metric="imIncubatorTwoHum"
                     flex="1"
