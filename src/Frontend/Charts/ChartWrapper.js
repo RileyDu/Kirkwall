@@ -73,9 +73,9 @@ const ChartWrapper = ({
   };
   
   // Call handleChartEdit after chartType is updated
-  useEffect(() => {
-    handleChartEdit();
-  }, [chartType]);
+  // useEffect(() => {
+  //   handleChartEdit();
+  // }, [chartType]);
 
   const { currentUser } = useAuth();
 

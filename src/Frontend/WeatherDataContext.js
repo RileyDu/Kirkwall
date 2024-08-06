@@ -721,52 +721,59 @@ export const WeatherDataProvider = ({ children }) => {
           deveui,
           rivercityDetermineLimitBasedOnTimePeriod(timePeriod)
         );
+        const latestData = response.data.rivercity_data;
+        const renameKeyToMetric = (data, metric) => {
+          return data.map(d => ({
+            [metric]: d[metric],
+            publishedat: d.publishedat,
+          }));
+        }
         switch (metric) {
           case 'imFreezerOneTemp':
-            setImpriFreezerOneTempData(response.data.rivercity_data);
+            setImpriFreezerOneTempData(renameKeyToMetric(latestData, 'imFreezerOneTemp'));
             break;
           case 'imFreezerOneHum':
-            setImpriFreezerOneHumData(response.data.rivercity_data);
+            setImpriFreezerOneHumData(renameKeyToMetric(latestData, 'imFreezerOneHum'));
             break;
           case 'imFreezerTwoTemp':
-            setImpriFreezerTwoTempData(response.data.rivercity_data);
+            setImpriFreezerTwoTempData(renameKeyToMetric(latestData, 'imFreezerTwoTemp'));
             break;
           case 'imFreezerTwoHum':
-            setImpriFreezerTwoHumData(response.data.rivercity_data);
+            setImpriFreezerTwoHumData(renameKeyToMetric(latestData, 'imFreezerTwoHum'));
             break;
           case 'imFreezerThreeTemp':
-            setImpriFreezerThreeTempData(response.data.rivercity_data);
+            setImpriFreezerThreeTempData(renameKeyToMetric(latestData, 'imFreezerThreeTemp'));
             break;
           case 'imFreezerThreeHum':
-            setImpriFreezerThreeHumData(response.data.rivercity_data);
+            setImpriFreezerThreeHumData(renameKeyToMetric(latestData, 'imFreezerThreeHum'));
             break;
           case 'imFridgeOneTemp':
-            setImpriFridgeOneTempData(response.data.rivercity_data);
+            setImpriFridgeOneTempData(renameKeyToMetric(latestData, 'imFridgeOneTemp'));
             break;
           case 'imFridgeOneHum':
-            setImpriFridgeOneHumData(response.data.rivercity_data);
+            setImpriFridgeOneHumData(renameKeyToMetric(latestData, 'imFridgeOneHum'));
             break;
           case 'imFridgeTwoTemp':
-            setImpriFridgeTwoTempData(response.data.rivercity_data);
+            setImpriFridgeTwoTempData(renameKeyToMetric(latestData, 'imFridgeTwoTemp'));
             break;
           case 'imFridgeTwoHum':
-            setImpriFridgeTwoHumData(response.data.rivercity_data);
+            setImpriFridgeTwoHumData(renameKeyToMetric(latestData, 'imFridgeTwoHum'));
             break;
           case 'imIncubatorOneTemp':
-            setImpriIncubatorOneTempData(response.data.rivercity_data);
+            setImpriIncubatorOneTempData(renameKeyToMetric(latestData, 'imIncubatorOneTemp'));
             break;
           case 'imIncubatorOneHum':
-            setImpriIncubatorOneHumData(response.data.rivercity_data);
+            setImpriIncubatorOneHumData(renameKeyToMetric(latestData, 'imIncubatorOneHum'));
             break;
           case 'imIncubatorTwoTemp':
-            setImpriIncubatorTwoTempData(response.data.rivercity_data);
+            setImpriIncubatorTwoTempData(renameKeyToMetric(latestData, 'imIncubatorTwoTemp'));
             break;
           case 'imIncubatorTwoHum':
-            setImpriIncubatorTwoHumData(response.data.rivercity_data);
+            setImpriIncubatorTwoHumData(renameKeyToMetric(latestData, 'imIncubatorTwoHum'));
             break;
           default:
             break;
-        }
+        }        
       } else {
         console.warn(`Unknown metric: ${metric}`);
       }
