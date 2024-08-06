@@ -24,8 +24,6 @@ import {
   FormLabel,
 } from '@chakra-ui/react';
 import axios from 'axios';
-// import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../../Backend/Firebase.js';
 import { FaChevronDown } from 'react-icons/fa/index.esm.js';
 import { SettingsIcon } from '@chakra-ui/icons';
 import { useAuth } from '../AuthComponents/AuthContext.js';

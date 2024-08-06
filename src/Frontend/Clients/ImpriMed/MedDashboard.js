@@ -523,7 +523,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Temperature (°C)"
-                    onChartChange={handleChartChange(setImFridgeTwoHumChartType)}
+                    onChartChange={handleChartChange(setImFridgeTwoTempChartType)}
                     weatherData={impriFridgeTwoTempData}
                     metric="imFridgeTwoTemp"
                     flex="1"

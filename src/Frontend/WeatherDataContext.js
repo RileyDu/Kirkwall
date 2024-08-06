@@ -8,7 +8,7 @@ import {
   getLatestThreshold,
   getChartData,
 } from '../Backend/Graphql_helper.js';
-
+import { useAuth } from '../AuthComponents/AuthContext.js';
 const WeatherDataContext = createContext();
 
 export const useWeatherData = () => {
@@ -76,6 +76,8 @@ export const WeatherDataProvider = ({ children }) => {
     rivercityTemp: false,
     rivercityHum: false,
   });
+
+  const { currentUser } = useAuth();
 
 // IMPRIMED DATA FEED LOGIC
 const devices = {

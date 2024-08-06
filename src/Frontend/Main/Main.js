@@ -29,8 +29,6 @@ import ChartWrapper from '../Charts/ChartWrapper.js';
 import {
   FaChessRook,
   FaChevronDown,
-  FaPlus,
-  FaMinus,
   FaTemperatureHigh,
   FaTint,
   FaWind,
