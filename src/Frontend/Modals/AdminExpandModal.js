@@ -29,12 +29,13 @@ import {
 import { motion } from 'framer-motion';
 import { useWeatherData } from '../WeatherDataContext.js';
 import AddInformationFormModal from './AddInformationFormModal.js';
-import { getAdminById } from '../../Backend/Graphql_helper.js';
+import { getAdminByEmail, getIdByEmail, updateProfileUrl} from '../../Backend/Graphql_helper.js';
 
 const MotionTabPanel = motion(TabPanel);
 
 const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
-  const [adminId, setAdminId] = useState(4);
+
+  const [adminId, setAdminId] = useState();
   const { colorMode } = useColorMode();
   const dividerColor = colorMode === 'light' ? 'brand.50' : 'white';
   const { thresholds, alertsThreshold, fetchAlertsThreshold } = useWeatherData();
@@ -47,14 +48,12 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
+  const [threshKill, setThreshKill] = useState(false);
 
-  // All the stuff related to image upload and cloudinary
-  const [imageSelected, setImageSelected] = useState('');
-  const [uploadedImageUrl, setUploadedImageUrl] = useState('https://res.cloudinary.com/dklraztco/image/upload/v1722668171/silj1djvozfhtmssyaqz.png');
+  const [uploadedImageUrl, setUploadedImageUrl] = useState('');
 
   const uploadImage = (event) => {
     const file = event.target.files[0];
-    setImageSelected(file); // Set the selected image in state
 
     const formData = new FormData();
     formData.append("file", file);
@@ -63,7 +62,24 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
     axios.post("https://api.cloudinary.com/v1_1/dklraztco/image/upload", formData)
       .then((response) => {
         console.log(response);
-        setUploadedImageUrl(response.data.secure_url); // Set the URL of the uploaded image
+        const uploadedImageUrl = response.data.secure_url;
+        setUploadedImageUrl(uploadedImageUrl);
+
+        const userId = adminId;
+
+        updateProfileUrl(userId, firstName, lastName, email, phone, company, threshKill, uploadedImageUrl)
+          .then((graphqlResponse) => {
+            console.log("Profile URL updated:", graphqlResponse);
+            if (graphqlResponse.data) {
+              console.log("Updated Admin Data:", graphqlResponse.data.update_admin);
+            }
+            if (graphqlResponse.errors) {
+              console.error("Errors:", graphqlResponse.errors);
+            }
+          })
+          .catch((graphqlError) => {
+            console.log("Error updating profile URL:", graphqlError);
+          });
       })
       .catch((err) => {
         console.log(err);
@@ -73,12 +89,16 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
   useEffect(() => {
     const fetchAdmin = async () => {
       try {
-        const data = await getAdminById();
+        const data = await getAdminByEmail(userEmail);
+        setAdminId(data["data"]["admin"][0]["id"])
         setFirstName(data["data"]["admin"][0]["firstname"]);
         setLastName(data["data"]["admin"][0]["lastname"]);
         setPhone(data["data"]["admin"][0]["phone"]);
         setEmail(data["data"]["admin"][0]["email"]);
         setCompany(data["data"]["admin"][0]["company"]);
+        setThreshKill(data["data"]["admin"][0]["thresh_kill"]);
+        setUploadedImageUrl(data["data"]["admin"][0]["profile_url"]);
+        console.log(data)
       } catch (error) {
         console.log(error);
       }
@@ -89,6 +109,25 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
 
   const handleOpenModal = () => setModalOpen(true);
   const handleCloseModal = () => setModalOpen(false);
+
+  const userConfig = {
+    'pmo@grandfarm.com': ['Temperature', 'Humidity', 'Wind Speed', 'Soil Moisture', 'Leaf Wetness', 'Rainfall'],
+    'jerrycromarty@imprimedicine.com': ['Rivercity Temperature', 'Rivercity Humidity'],
+    'russell@rjenergysolutions.com': ['Rivercity Temperature', 'Rivercity Humidity'],
+    'trey@watchdogprotect.com': ['Watchdog Temperature', 'Watchdog Humidity'],
+    'test@kirkwall.io': ['Temperature', 'Humidity', 'Wind Speed', 'Soil Moisture', 'Leaf Wetness', 'Rainfall', 'Watchdog Temperature', 'Watchdog Humidity', 'Rivercity Temperature', 'Rivercity Humidity']
+  };
+
+
+  // const userId = {
+  //   'pmo@grandfarm.com': ['Temperature', 'Humidity', 'Wind Speed', 'Soil Moisture', 'Leaf Wetness', 'Rainfall'],
+  //   'jerrycromarty@imprimedicine.com': ['Rivercity Temperature', 'Rivercity Humidity'],
+  //   'russell@rjenergysolutions.com': ['Rivercity Temperature', 'Rivercity Humidity'],
+  //   'trey@watchdogprotect.com': ['Watchdog Temperature', 'Watchdog Humidity'],
+  //   'test@kirkwall.io': ['Temperature', 'Humidity', 'Wind Speed', 'Soil Moisture', 'Leaf Wetness', 'Rainfall', 'Watchdog Temperature', 'Watchdog Humidity', 'Rivercity Temperature', 'Rivercity Humidity']
+  // };
+
+  const tabsToRender = userConfig[userEmail] || [];
 
   return (
     <Box>
@@ -108,406 +147,126 @@ const AdminExpandModal = ({ isOpen, onClose, title, userEmail }) => {
 
           <ModalCloseButton color="white" />
 
-          <ModalBody>
-            <Grid templateColumns="1fr auto 1fr" gap={6} height="100%">
-              <GridItem w="100%" h="100%" border="5px solid #fd9801" p={3}>
-                <Heading mb={3} fontSize="2xl">
-                  Profile
-                </Heading>
-
-                <Flex alignItems="center">
-                  <Box
-                    alignContent="center" textAlign="center" boxSize="150px" border="5px solid #fd9801" borderRadius="150px"
-                  >
-                    <Image cloudName="dklraztco" publicId={uploadedImageUrl} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%'  }} />
-                  </Box>
-                  <Box ml={3}>
-                    <Text fontSize="md" fontWeight="bold">Name: {firstName + " " + lastName}</Text>
-                    <Text fontSize="md" fontWeight="bold">Phone: {phone}</Text>
-                    <Text fontSize="md" fontWeight="bold">Email: {email}</Text>
-                    <Text fontSize="md" fontWeight="bold">Company: {company}</Text>
-                  </Box>
-                </Flex>
-
-                <Box mt="7" ml={2} alignContent="center">
-                  <Button as="label" cursor="pointer">
-                    Upload Profile Photo
-                    <Input type="file" display="none" onChange={uploadImage} />
-                  </Button>
-
-                  <Button ml={5} onClick={handleOpenModal}>
-                    Edit information
-                  </Button>
-
-                  <AddInformationFormModal
-                    isOpen={isModalOpen}
-                    onClose={handleCloseModal}
-                    id={adminId}
-                    firstName={firstName}
-                    lastName={lastName}
-                    phone={phone}
-                    email={email}
-                    company={company}
-                    setFirstName={setFirstName}
-                    setLastName={setLastName}
-                    setPhone={setPhone}
-                    setEmail={setEmail}
-                    setCompany={setCompany}
-                  />
-                </Box>
-              </GridItem>
-
-              <GridItem>
-                <Flex justify="center" height="100%">
-                  <Divider
-                    orientation="vertical"
-                    border="solid"
-                    borderColor="#fd9801"
-                    height="100%"
-                    borderWidth="2px"
-                  />
-                </Flex>
-              </GridItem>
-
-              <GridItem w="100%" h="100%" border="5px solid #fd9801" p={3}>
-                <Box>
-                  <Heading justifyContent="center" mb={3} fontSize="2xl">
-                    Threshold Logs
+          <ModalBody overflowY="auto">
+            <Box overflowY="auto">
+              <Grid templateColumns={{ base: '1fr', md: '1fr auto 1fr' }} gap={6} height="100%">
+                <GridItem w="100%" h="100%" border="5px solid #fd9801" p={3}>
+                  <Heading mb={3} fontSize="2xl">
+                    Profile
                   </Heading>
 
-                  <Tabs variant="soft-rounded" colorScheme="orange">
-                    <TabList mb="4">
-                      <Tab
-                        fontSize={{ base: 'xs', md: 'sm' }}
-                        color={colorMode === 'light' ? 'black' : 'white'}
-                        _selected={{ color: 'white', bg: 'orange.400' }}
-                      >
-                        Temperature
-                      </Tab>
+                  <Flex alignItems="center">
+                    <Box
+                      alignContent="center" textAlign="center" boxSize="150px" border="5px solid #fd9801" borderRadius="150px"
+                    >
+                      <Image cloudName="dklraztco" publicId={uploadedImageUrl} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                    </Box>
+                    <Box ml={3}>
+                      {/* <p>{getIdByEmail("test@kirkwall.io")}</p> */}
+                      <Text fontSize="md" fontWeight="bold">Name: {firstName + " " + lastName}</Text>
+                      <Text fontSize="md" fontWeight="bold">Phone: {phone}</Text>
+                      <Text fontSize="md" fontWeight="bold">Email: {email}</Text>
+                      <Text fontSize="md" fontWeight="bold">Company: {company}</Text>
+                    </Box>
+                  </Flex>
 
-                      <Tab
-                        fontSize={{ base: 'xs', md: 'sm' }}
-                        color={colorMode === 'light' ? 'black' : 'white'}
-                        _selected={{ color: 'white', bg: 'orange.400' }}
-                      >
-                        Humidity
-                      </Tab>
+                  <Box mt="7" ml={2} alignContent="center">
+                    <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
+                      <Button as="label" cursor="pointer">
+                        Upload Profile Photo
+                        <Input type="file" display="none" onChange={uploadImage} />
+                      </Button>
 
-                      <Tab
-                        fontSize={{ base: 'xs', md: 'sm' }}
-                        color={colorMode === 'light' ? 'black' : 'white'}
-                        _selected={{ color: 'white', bg: 'orange.400' }}
-                      >
-                        Wind
-                      </Tab>
+                      <Button onClick={handleOpenModal}>
+                        Edit information
+                      </Button>
+                    </Stack>
 
-                      <Tab
-                        fontSize={{ base: 'xs', md: 'sm' }}
-                        color={colorMode === 'light' ? 'black' : 'white'}
-                        _selected={{ color: 'white', bg: 'orange.400' }}
-                      >
-                        Soil Moisture
-                      </Tab>
+                    <AddInformationFormModal
+                      isOpen={isModalOpen}
+                      onClose={handleCloseModal}
+                      id={adminId}
+                      firstName={firstName}
+                      lastName={lastName}
+                      phone={phone}
+                      email={email}
+                      company={company}
+                      setFirstName={setFirstName}
+                      setLastName={setLastName}
+                      setPhone={setPhone}
+                      setEmail={setEmail}
+                      setCompany={setCompany}
+                    />
+                  </Box>
+                </GridItem>
 
-                      <Tab
-                        fontSize={{ base: 'xs', md: 'sm' }}
-                        color={colorMode === 'light' ? 'black' : 'white'}
-                        _selected={{ color: 'white', bg: 'orange.400' }}
-                      >
-                        Leaf Wetness
-                      </Tab>
+                <GridItem>
+                  <Flex justify="center" height="100%">
+                    <Divider
+                      orientation="vertical"
+                      border="solid"
+                      borderColor="#fd9801"
+                      height="100%"
+                      borderWidth="2px"
+                    />
+                  </Flex>
+                </GridItem>
 
-                      <Tab
-                        fontSize={{ base: 'xs', md: 'sm' }}
-                        color={colorMode === 'light' ? 'black' : 'white'}
-                        _selected={{ color: 'white', bg: 'orange.400' }}
-                      >
-                        Rainfall
-                      </Tab>
+                <GridItem w="100%" h="100%" border="5px solid #fd9801" p={3}>
+                  <Box>
+                    <Heading justifyContent="center" mb={3} fontSize="2xl">
+                      Threshold Logs
+                    </Heading>
 
-                      <Tab
-                        fontSize={{ base: 'xs', md: 'sm' }}
-                        color={colorMode === 'light' ? 'black' : 'white'}
-                        _selected={{ color: 'white', bg: 'orange.400' }}
-                      >
-                        Watchdog Temperature
-                      </Tab>
+                    <Tabs variant="soft-rounded" colorScheme="orange" isFitted>
+                      <TabList mb="4" overflowX="auto">
+                        {tabsToRender.map((tabName, index) => (
+                          <Tab
+                            key={index}
+                            fontSize={{ base: 'xs', md: 'sm' }}
+                            p={{ base: '2', md: '3' }}
+                            color={colorMode === 'light' ? 'black' : 'white'}
+                            _selected={{ color: 'white', bg: 'orange.400' }}
+                          >
+                            {tabName}
+                          </Tab>
+                        ))}
+                      </TabList>
 
-                      <Tab
-                        fontSize={{ base: 'xs', md: 'sm' }}
-                        color={colorMode === 'light' ? 'black' : 'white'}
-                        _selected={{ color: 'white', bg: 'orange.400' }}
-                      >
-                        Watchdog Humidity
-                      </Tab>
+                      <Divider mt={'1'} w={'100%'} />
 
-                      <Tab
-                        fontSize={{ base: 'xs', md: 'sm' }}
-                        color={colorMode === 'light' ? 'black' : 'white'}
-                        _selected={{ color: 'white', bg: 'orange.400' }}
-                      >
-                        Rivercity Temperature
-                      </Tab>
-
-                      <Tab
-                        fontSize={{ base: 'xs', md: 'sm' }}
-                        color={colorMode === 'light' ? 'black' : 'white'}
-                        _selected={{ color: 'white', bg: 'orange.400' }}
-                      >
-                        Rivercity Humidity
-                      </Tab>
-
-                    </TabList>
-
-                    <Divider mt={'1'} w={'100%'} />
-
-                    <TabPanels>
-                      <MotionTabPanel
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.5 }}
-                        key="temperature-logs"
-                      >
-                        <Box maxH="360px" overflowY="auto">
-                          {alertsThreshold["temperature"]?.length ? (
-                            <Stack spacing={2}>
-                              {alertsThreshold["temperature"].map((alert, index) => (
-                                <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
-                                  <Flex justify="space-between" align="center">
-                                    <Text color="#212121" fontSize="sm">{alert.message}</Text>
-                                  </Flex>
-                                </Box>
-                              ))}
-                            </Stack>
-                          ) : (
-                            <Text fontSize="xl">No logs to show</Text>
-                          )}
-                        </Box>
-
-                      </MotionTabPanel>
-
-                      <MotionTabPanel
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.5 }}
-                        key="humidity-logs"
-                      >
-                        <Box maxH="360px" overflowY="auto">
-                          {alertsThreshold["percent_humidity"]?.length ? (
-                            <Stack spacing={2}>
-                              {alertsThreshold["percent_humidity"].map((alert, index) => (
-                                <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
-                                  <Flex justify="space-between" align="center">
-                                    <Text color="#212121" fontSize="sm">{alert.message}</Text>
-                                  </Flex>
-                                </Box>
-                              ))}
-                            </Stack>
-                          ) : (
-                            <Text fontSize="xl">No logs to show</Text>
-                          )}
-                        </Box>
-                      </MotionTabPanel>
-
-                      <MotionTabPanel
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.5 }}
-                        key="wind-logs"
-                      >
-                        <Box maxH="360px" overflowY="auto">
-                          {alertsThreshold["wind_speed"]?.length ? (
-                            <Stack spacing={2}>
-                              {alertsThreshold["wind_speed"].map((alert, index) => (
-                                <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
-                                  <Flex justify="space-between" align="center">
-                                    <Text color="#212121" fontSize="sm">{alert.message}</Text>
-                                  </Flex>
-                                </Box>
-                              ))}
-                            </Stack>
-                          ) : (
-                            <Text fontSize="xl">No logs to show</Text>
-                          )}
-                        </Box>
-                      </MotionTabPanel>
-
-                      <MotionTabPanel
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.5 }}
-                        key="soil-moisture-logs"
-                      >
-                        <Box maxH="360px" overflowY="auto">
-                          {alertsThreshold["rain_15_min_inches"]?.length ? (
-                            <Stack spacing={2}>
-                              {alertsThreshold["rain_15_min_inches"].map((alert, index) => (
-                                <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
-                                  <Flex justify="space-between" align="center">
-                                    <Text color="#212121" fontSize="sm">{alert.message}</Text>
-                                  </Flex>
-                                </Box>
-                              ))}
-                            </Stack>
-                          ) : (
-                            <Text fontSize="xl">No logs to show</Text>
-                          )}
-                        </Box>
-                      </MotionTabPanel>
-
-                      <MotionTabPanel
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.5 }}
-                        key="leaf-wetness-logs"
-                      >
-                        <Box maxH="360px" overflowY="auto">
-                          {alertsThreshold["soil_moisture"]?.length ? (
-                            <Stack spacing={2}>
-                              {alertsThreshold["soil_moisture"].map((alert, index) => (
-                                <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
-                                  <Flex justify="space-between" align="center">
-                                    <Text color="#212121" fontSize="sm">{alert.message}</Text>
-                                  </Flex>
-                                </Box>
-                              ))}
-                            </Stack>
-                          ) : (
-                            <Text fontSize="xl">No logs to show</Text>
-                          )}
-                        </Box>
-                      </MotionTabPanel>
-
-                      <MotionTabPanel
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.5 }}
-                        key="rainfall-logs"
-                      >
-                        <Box maxH="360px" overflowY="auto">
-                          {alertsThreshold["wind_speed"]?.length ? (
-                            <Stack spacing={2}>
-                              {alertsThreshold["wind_speed"].map((alert, index) => (
-                                <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
-                                  <Flex justify="space-between" align="center">
-                                    <Text color="#212121" fontSize="sm">{alert.message}</Text>
-                                  </Flex>
-                                </Box>
-                              ))}
-                            </Stack>
-                          ) : (
-                            <Text fontSize="xl">No logs to show</Text>
-                          )}
-                        </Box>
-                      </MotionTabPanel>
-
-                      <MotionTabPanel
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.5 }}
-                        key="watchdog-temperature-logs"
-                      >
-                        <Box maxH="360px" overflowY="auto">
-                          {alertsThreshold["wind_speed"]?.length ? (
-                            <Stack spacing={2}>
-                              {alertsThreshold["wind_speed"].map((alert, index) => (
-                                <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
-                                  <Flex justify="space-between" align="center">
-                                    <Text color="#212121" fontSize="sm">{alert.message}</Text>
-                                  </Flex>
-                                </Box>
-                              ))}
-                            </Stack>
-                          ) : (
-                            <Text fontSize="xl">No logs to show</Text>
-                          )}
-                        </Box>
-                      </MotionTabPanel>
-
-                      <MotionTabPanel
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.5 }}
-                        key="watchdog-humidity-logs"
-                      >
-                        <Box maxH="360px" overflowY="auto">
-                          {alertsThreshold["wind_speed"]?.length ? (
-                            <Stack spacing={2}>
-                              {alertsThreshold["wind_speed"].map((alert, index) => (
-                                <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
-                                  <Flex justify="space-between" align="center">
-                                    <Text color="#212121" fontSize="sm">{alert.message}</Text>
-                                  </Flex>
-                                </Box>
-                              ))}
-                            </Stack>
-                          ) : (
-                            <Text fontSize="xl">No logs to show</Text>
-                          )}
-                        </Box>
-                      </MotionTabPanel>
-
-                      <MotionTabPanel
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.5 }}
-                        key="rivercity-temperature-logs"
-                      >
-                        <Box maxH="360px" overflowY="auto">
-                          {alertsThreshold["wind_speed"]?.length ? (
-                            <Stack spacing={2}>
-                              {alertsThreshold["wind_speed"].map((alert, index) => (
-                                <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
-                                  <Flex justify="space-between" align="center">
-                                    <Text color="#212121" fontSize="sm">{alert.message}</Text>
-                                  </Flex>
-                                </Box>
-                              ))}
-                            </Stack>
-                          ) : (
-                            <Text fontSize="xl">No logs to show</Text>
-                          )}
-                        </Box>
-                      </MotionTabPanel>
-
-                      <MotionTabPanel
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.5 }}
-                        key="rivercity-humidity-logs"
-                      >
-                        <Box maxH="360px" overflowY="auto">
-                          {alertsThreshold["wind_speed"]?.length ? (
-                            <Stack spacing={2}>
-                              {alertsThreshold["wind_speed"].map((alert, index) => (
-                                <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
-                                  <Flex justify="space-between" align="center">
-                                    <Text color="#212121" fontSize="sm">{alert.message}</Text>
-                                  </Flex>
-                                </Box>
-                              ))}
-                            </Stack>
-                          ) : (
-                            <Text fontSize="xl">No logs to show</Text>
-                          )}
-                        </Box>
-                      </MotionTabPanel>
-
-                    </TabPanels>
-                  </Tabs>
-                </Box>
-              </GridItem>
-            </Grid>
+                      <TabPanels>
+                        {tabsToRender.map((tabName, index) => (
+                          <MotionTabPanel
+                            key={index}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            transition={{ duration: 0.5 }}
+                          >
+                            <Box maxH="360px" overflowY="auto">
+                              {alertsThreshold[tabName.toLowerCase().replace(/ /g, '_')]?.length ? (
+                                <Stack spacing={2}>
+                                  {alertsThreshold[tabName.toLowerCase().replace(/ /g, '_')].map((alert, index) => (
+                                    <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
+                                      <Flex justify="space-between" align="center">
+                                        <Text color="#212121" fontSize="sm">{alert.message}</Text>
+                                      </Flex>
+                                    </Box>
+                                  ))}
+                                </Stack>
+                              ) : (
+                                <Text fontSize="xl">No logs to show</Text>
+                              )}
+                            </Box>
+                          </MotionTabPanel>
+                        ))}
+                      </TabPanels>
+                    </Tabs>
+                  </Box>
+                </GridItem>
+              </Grid>
+            </Box>
           </ModalBody>
         </ModalContent>
       </Modal>

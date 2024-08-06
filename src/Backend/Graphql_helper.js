@@ -345,10 +345,10 @@ async function deleteAlert(id) {
 
 
 // This is a query to get the details of the admin that is logged in based on their email
-const getAdminById = async () => {
+const getAdminByEmail = async (userEmail) => {
   const query = `
     query {
-      admin(filter: "id = 4") {
+      admin(filter: "email = '${userEmail}'") {
         id
         firstname
         lastname
@@ -356,6 +356,7 @@ const getAdminById = async () => {
         phone
         company
         thresh_kill
+        profile_url
       }
     }
   `;
@@ -367,6 +368,20 @@ const getAdminById = async () => {
   return executeGraphqlQuery(query);
 };
 
+
+
+// Get Id by Email
+
+const getIdByEmail = async (email) => {
+  const query = `
+    query {
+      admin(filter: "email = '${email}'") {
+        id
+      }
+    } 
+`;
+  return executeGraphqlQuery(query);
+}
 
 // Update admin query
 
@@ -399,6 +414,40 @@ const updateAdmin = async (id, firstname, lastname, email, phone, company, thres
 
   return executeGraphqlQuery(mutation, variables);
 };
+
+
+const updateProfileUrl = async (id, firstname, lastname, email, phone, company, threshKill, profile_url) => {
+  const mutation = `
+    mutation UpdateAdmin($id: ID!, $input: adminInput!) {
+      update_admin(id: $id, input: $input) {
+        id
+        firstname
+        lastname
+        email
+        phone
+        company
+        thresh_kill
+        profile_url
+      }
+    }
+  `;
+
+  const variables = {
+    id: id,
+    input: {
+      firstname: firstname,
+      lastname: lastname,
+      email: email,
+      phone: phone,
+      company: company,
+      thresh_kill: threshKill,
+      profile_url: profile_url
+    },
+  };
+
+  return executeGraphqlQuery(mutation, variables);
+};
+
 
 
 
@@ -471,6 +520,8 @@ export {
   getAlerts,
   createAlert,
   deleteAlert,
-  getAdminById,
-  updateAdmin
+  getAdminByEmail,
+  updateAdmin,
+  updateProfileUrl,
+  getIdByEmail
 };

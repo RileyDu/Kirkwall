@@ -117,11 +117,11 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   };
 
   const userConfig = {
-    'pmo@grandfarm.com': ['Average Temp (°F)', 'Average Humidity (%)', 'Average Wind Speed (mph)', 'Average Soil Moisture (centibars)', 'Total Rainfall (inches)', 'Average Leaf Wetness (0-15)'],
-    'jerrycromarty@imprimedicine.com': ['Rivercity Temperature (°F)', 'Rivercity Humidity (%)'],
-    'russell@rjenergysolutions.com': ['Rivercity Temperature (°F)', 'Rivercity Humidity (%)'],
-    'trey@watchdogprotect.com': ['Garage Average Temp (°F)', 'Garage Humidity (%)'],
-    'test@kirkwall.io': ['Average Temp (°F)', 'Average Humidity (%)', 'Average Wind Speed (mph)', 'Average Soil Moisture (centibars)', 'Total Rainfall (inches)', 'Average Leaf Wetness (0-15)', 'Garage Average Temp (°F)', 'Garage Humidity (%)', 'Rivercity Temperature (°F)', 'Rivercity Humidity (%)']
+    'pmo@grandfarm.com': ['Temperature', 'Humidity', 'Wind Speed', 'Soil Moisture', 'Leaf Wetness', 'Rainfall'],
+    'jerrycromarty@imprimedicine.com': ['Rivercity Temperature', 'Rivercity Humidity'],
+    'russell@rjenergysolutions.com': ['Rivercity Temperature', 'Rivercity Humidity'],
+    'trey@watchdogprotect.com': ['Watchdog Temperature', 'Watchdog Humidity'],
+    'test@kirkwall.io': ['Temperature', 'Humidity', 'Wind Speed', 'Soil Moisture', 'Leaf Wetness', 'Rainfall', 'Watchdog Temperature', 'Watchdog Humidity', 'Rivercity Temperature', 'Rivercity Humidity']
   };
 
   const summaryMetrics = [
@@ -465,10 +465,12 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                         : 'Kirkwall'}
                     </PopoverHeader>
                     <PopoverBody>
-                      <Logout />
                       
                       <Admin onClick={onOpen}>Admin</Admin>
                       <AdminExpandModal isOpen={isOpen} onClose={onClose} title="Admin Panel" userEmail={currentUser.email} />
+                      
+                      <Logout />
+                      
 
                       
                     </PopoverBody>
