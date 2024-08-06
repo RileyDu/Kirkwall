@@ -114,6 +114,23 @@ export const WeatherDataProvider = ({ children }) => {
     incubatorTwo: "deveui = '0080E1150618B45F'",
   };
 
+  const deveuiPerMetric = {
+    imFreezerOneTemp: "deveui = '0080E1150618C9DE'",
+    imFreezerOneHum: "deveui = '0080E1150618C9DE'",
+    imFreezerTwoTemp: "deveui = '0080E115054FC6DF'",
+    imFreezerTwoHum: "deveui = '0080E115054FC6DF'",
+    imFreezerThreeTemp: "deveui = '0080E1150618B549'",
+    imFreezerThreeHum: "deveui = '0080E1150618B549'",
+    imFridgeOneTemp: "deveui = '0080E1150619155F'",
+    imFridgeOneHum: "deveui = '0080E1150619155F'",
+    imFridgeTwoTemp: "deveui = '0080E115061924EA'",
+    imFridgeTwoHum: "deveui = '0080E115061924EA'",
+    imIncubatorOneTemp: "deveui = '0080E115054FF1DC'",
+    imIncubatorOneHum: "deveui = '0080E115054FF1DC'",
+    imIncubatorTwoTemp: "deveui = '0080E1150618B45F'",
+    imIncubatorTwoHum: "deveui = '0080E1150618B45F'",
+  };
+
   const fetchDeviceData = async (deviceKey, setTempData, setHumData, limit) => {
     try {
       const response = await getImpriMedData(devices[deviceKey], limit); // Adjust the limit as needed
@@ -183,13 +200,13 @@ export const WeatherDataProvider = ({ children }) => {
   useEffect(() => {
     if (currentUser && currentUser.email === 'jerrycromarty@imprimedicine.com') {
       const fetchAllDeviceData = () => {
-        // fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData, 7);
-        fetchDeviceData('freezerTwo', setImpriFreezerTwoTempData, setImpriFreezerTwoHumData, 7);
-        fetchDeviceData('freezerThree', setImpriFreezerThreeTempData, setImpriFreezerThreeHumData, 7);
-        fetchDeviceData('fridgeOne', setImpriFridgeOneTempData, setImpriFridgeOneHumData, 7);
-        fetchDeviceData('fridgeTwo', setImpriFridgeTwoTempData, setImpriFridgeTwoHumData, 7);
-        // fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData, 7);
-        fetchDeviceData('incubatorTwo', setImpriIncubatorTwoTempData, setImpriIncubatorTwoHumData, 7);
+        // fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData, 19);
+        fetchDeviceData('freezerTwo', setImpriFreezerTwoTempData, setImpriFreezerTwoHumData, 19);
+        fetchDeviceData('freezerThree', setImpriFreezerThreeTempData, setImpriFreezerThreeHumData, 19);
+        fetchDeviceData('fridgeOne', setImpriFridgeOneTempData, setImpriFridgeOneHumData, 19);
+        fetchDeviceData('fridgeTwo', setImpriFridgeTwoTempData, setImpriFridgeTwoHumData, 19);
+        // fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData, 19);
+        fetchDeviceData('incubatorTwo', setImpriIncubatorTwoTempData, setImpriIncubatorTwoHumData, 19);
       };
 
       fetchAllDeviceData();
@@ -371,7 +388,49 @@ export const WeatherDataProvider = ({ children }) => {
         }
         if (dataLoaded.rivercityHum) {
           fetchSpecificData('humidity', selectedTimePeriodRCHum);
+        } if (dataLoaded.imFreezerOneTemp) {
+          fetchSpecificData('imFreezerOneTemp', selectedTimePeriodIMFreezerOneTemp);
         }
+        if (dataLoaded.imFreezerOneHum) {
+          fetchSpecificData('imFreezerOneHum', selectedTimePeriodIMFreezerOneHum);
+        }
+        if (dataLoaded.imFreezerTwoTemp) {
+          fetchSpecificData('imFreezerTwoTemp', selectedTimePeriodIMFreezerTwoTemp);
+        }
+        if (dataLoaded.imFreezerTwoHum) {
+          fetchSpecificData('imFreezerTwoHum', selectedTimePeriodIMFreezerTwoHum);
+        }
+        if (dataLoaded.imFreezerThreeTemp) {
+          fetchSpecificData('imFreezerThreeTemp', selectedTimePeriodIMFreezerThreeTemp);
+        }
+        if (dataLoaded.imFreezerThreeHum) {
+          fetchSpecificData('imFreezerThreeHum', selectedTimePeriodIMFreezerThreeHum);
+        }
+        if (dataLoaded.imFridgeOneTemp) {
+          fetchSpecificData('imFridgeOneTemp', selectedTimePeriodIMFridgeOneTemp);
+        }
+        if (dataLoaded.imFridgeOneHum) {
+          fetchSpecificData('imFridgeOneHum', selectedTimePeriodIMFridgeOneHum);
+        }
+        if (dataLoaded.imFridgeTwoTemp) {
+          fetchSpecificData('imFridgeTwoTemp', selectedTimePeriodIMFridgeTwoTemp);
+        }
+        if (dataLoaded.imFridgeTwoHum) {
+          fetchSpecificData('imFridgeTwoHum', selectedTimePeriodIMFridgeTwoHum);
+        }
+        if (dataLoaded.imIncubatorOneTemp) {
+          fetchSpecificData('imIncubatorOneTemp', selectedTimePeriodIMIncubatorOneTemp);
+        }
+        if (dataLoaded.imIncubatorOneHum) {
+          fetchSpecificData('imIncubatorOneHum', selectedTimePeriodIMIncubatorOneHum);
+        }
+        if (dataLoaded.imIncubatorTwoTemp) {
+          fetchSpecificData('imIncubatorTwoTemp', selectedTimePeriodIMIncubatorTwoTemp);
+        }
+        if (dataLoaded.imIncubatorTwoHum) {
+          fetchSpecificData('imIncubatorTwoHum', selectedTimePeriodIMIncubatorTwoHum);
+        }
+
       }, 30000);
       return () => clearInterval(intervalId);
     }
@@ -445,6 +504,62 @@ export const WeatherDataProvider = ({ children }) => {
         setSelectedTimePeriodRCTemp(timePeriod);
         setDataLoaded(prevState => ({ ...prevState, rivercityTemp: true }));
         break;
+      case 'imFreezerOneTemp':
+        setSelectedTimePeriodIMFreezerOneTemp(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, imFreezerOneTemp: true }));
+        break;
+      case 'imFreezerOneHum':
+        setSelectedTimePeriodIMFreezerOneHum(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, imFreezerOneHum: true }));
+        break;
+      case 'imFreezerTwoTemp':
+        setSelectedTimePeriodIMFreezerTwoTemp(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, imFreezerTwoTemp: true }));
+        break;
+      case 'imFreezerTwoHum':
+        setSelectedTimePeriodIMFreezerTwoHum(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, imFreezerTwoHum: true }));
+        break;
+      case 'imFreezerThreeTemp':
+        setSelectedTimePeriodIMFreezerThreeTemp(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, imFreezerThreeTemp: true }));
+        break;
+      case 'imFreezerThreeHum':
+        setSelectedTimePeriodIMFreezerThreeHum(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, imFreezerThreeHum: true }));
+        break;
+      case 'imFridgeOneTemp':
+        setSelectedTimePeriodIMFridgeOneTemp(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, imFridgeOneTemp: true }));
+        break;
+      case 'imFridgeOneHum':
+        setSelectedTimePeriodIMFridgeOneHum(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, imFridgeOneHum: true }));
+        break;
+      case 'imFridgeTwoTemp':
+        setSelectedTimePeriodIMFridgeTwoTemp(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, imFridgeTwoTemp: true }));
+        break;
+      case 'imFridgeTwoHum':
+        setSelectedTimePeriodIMFridgeTwoHum(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, imFridgeTwoHum: true }));
+        break;
+      case 'imIncubatorOneTemp':
+        setSelectedTimePeriodIMIncubatorOneTemp(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, imIncubatorOneTemp: true }));
+        break;
+      case 'imIncubatorOneHum':
+        setSelectedTimePeriodIMIncubatorOneHum(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, imIncubatorOneHum: true }));
+        break;
+      case 'imIncubatorTwoTemp':
+        setSelectedTimePeriodIMIncubatorTwoTemp(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, imIncubatorTwoTemp: true }));
+        break;
+      case 'imIncubatorTwoHum':
+        setSelectedTimePeriodIMIncubatorTwoHum(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, imIncubatorTwoHum: true }));
+        break;
       default:
         break;
     }
@@ -461,6 +576,7 @@ export const WeatherDataProvider = ({ children }) => {
   ];
   const watchdogMetrics = ['temp', 'hum'];
   const rivercityMetrics = ['rctemp', 'humidity'];
+  const impriMedMetrics = ['imFreezerOneTemp', 'imFreezerOneHum', 'imFreezerTwoTemp', 'imFreezerTwoHum', 'imFreezerThreeTemp', 'imFreezerThreeHum', 'imFridgeOneTemp', 'imFridgeOneHum', 'imFridgeTwoTemp', 'imFridgeTwoHum', 'imIncubatorOneTemp', 'imIncubatorOneHum', 'imIncubatorTwoTemp', 'imIncubatorTwoHum'];
 
   const determineLimitBasedOnTimePeriod = timePeriod => {
     console.log('Determining limit for time period (weatherData):', timePeriod);
@@ -595,6 +711,58 @@ export const WeatherDataProvider = ({ children }) => {
           case 'leaf_wetness':
             setLeafWetnessData(response.data.weather_data);
             // console.log('Leaf wetness data:', response.data.weather_data);
+            break;
+          default:
+            break;
+        }
+      } else if (impriMedMetrics.includes(metric)) {
+        const deveui = deveuiPerMetric[metric];
+        const response = await getImpriMedData(
+          deveui,
+          rivercityDetermineLimitBasedOnTimePeriod(timePeriod)
+        );
+        switch (metric) {
+          case 'imFreezerOneTemp':
+            setImpriFreezerOneTempData(response.data.rivercity_data);
+            break;
+          case 'imFreezerOneHum':
+            setImpriFreezerOneHumData(response.data.rivercity_data);
+            break;
+          case 'imFreezerTwoTemp':
+            setImpriFreezerTwoTempData(response.data.rivercity_data);
+            break;
+          case 'imFreezerTwoHum':
+            setImpriFreezerTwoHumData(response.data.rivercity_data);
+            break;
+          case 'imFreezerThreeTemp':
+            setImpriFreezerThreeTempData(response.data.rivercity_data);
+            break;
+          case 'imFreezerThreeHum':
+            setImpriFreezerThreeHumData(response.data.rivercity_data);
+            break;
+          case 'imFridgeOneTemp':
+            setImpriFridgeOneTempData(response.data.rivercity_data);
+            break;
+          case 'imFridgeOneHum':
+            setImpriFridgeOneHumData(response.data.rivercity_data);
+            break;
+          case 'imFridgeTwoTemp':
+            setImpriFridgeTwoTempData(response.data.rivercity_data);
+            break;
+          case 'imFridgeTwoHum':
+            setImpriFridgeTwoHumData(response.data.rivercity_data);
+            break;
+          case 'imIncubatorOneTemp':
+            setImpriIncubatorOneTempData(response.data.rivercity_data);
+            break;
+          case 'imIncubatorOneHum':
+            setImpriIncubatorOneHumData(response.data.rivercity_data);
+            break;
+          case 'imIncubatorTwoTemp':
+            setImpriIncubatorTwoTempData(response.data.rivercity_data);
+            break;
+          case 'imIncubatorTwoHum':
+            setImpriIncubatorTwoHumData(response.data.rivercity_data);
             break;
           default:
             break;
