@@ -8,7 +8,8 @@ import {
   getLatestThreshold,
   getChartData,
 } from '../Backend/Graphql_helper.js';
-import { useAuth } from '../AuthComponents/AuthContext.js';
+import { useAuth } from './AuthComponents/AuthContext.js';
+
 const WeatherDataContext = createContext();
 
 export const useWeatherData = () => {
@@ -19,20 +20,14 @@ export const WeatherDataProvider = ({ children }) => {
   const [weatherData, setWeatherData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTimePeriodTemp, setSelectedTimePeriodTemp] = useState('3H');
-  const [selectedTimePeriodHumidity, setSelectedTimePeriodHumidity] =
-    useState('3H');
+  const [selectedTimePeriodHumidity, setSelectedTimePeriodHumidity] = useState('3H');
   const [selectedTimePeriodWind, setSelectedTimePeriodWind] = useState('3H');
-  const [selectedTimePeriodRainfall, setSelectedTimePeriodRainfall] =
-    useState('3H');
-  const [selectedTimePeriodSoilMoisture, setSelectedTimePeriodSoilMoisture] =
-    useState('3H');
-  const [selectedTimePeriodLeafWetness, setSelectedTimePeriodLeafWetness] =
-    useState('3H');
-  const [selectedTimePeriodWDTemp, setSelectedTimePeriodWDTemp] =
-    useState('3H');
+  const [selectedTimePeriodRainfall, setSelectedTimePeriodRainfall] = useState('3H');
+  const [selectedTimePeriodSoilMoisture, setSelectedTimePeriodSoilMoisture] = useState('3H');
+  const [selectedTimePeriodLeafWetness, setSelectedTimePeriodLeafWetness] = useState('3H');
+  const [selectedTimePeriodWDTemp, setSelectedTimePeriodWDTemp] = useState('3H');
   const [selectedTimePeriodWDHum, setSelectedTimePeriodWDHum] = useState('3H');
-  const [selectedTimePeriodRCTemp, setSelectedTimePeriodRCTemp] =
-    useState('3H');
+  const [selectedTimePeriodRCTemp, setSelectedTimePeriodRCTemp] = useState('3H');
   const [selectedTimePeriodRCHum, setSelectedTimePeriodRCHum] = useState('3H');
   const [tempData, setTempData] = useState(null);
   const [humidityData, setHumidityData] = useState(null);
@@ -79,101 +74,101 @@ export const WeatherDataProvider = ({ children }) => {
 
   const { currentUser } = useAuth();
 
-// IMPRIMED DATA FEED LOGIC
-const devices = {
-  freezerOne: "deveui = '0080E1150618C9DE'",
-  freezerTwo: "deveui = '0080E115054FC6DF'",
-  freezerThree: "deveui = '0080E1150618B549'",
-  fridgeOne: "deveui = '0080E1150619155F'",
-  fridgeTwo: "deveui = '0080E115061924EA'",
-  incubatorOne: "deveui = '0080E115054FF1DC'",
-  incubatorTwo: "deveui = '0080E1150618B45F'",
-};
-
-const fetchDeviceData = async (deviceKey, setTempData, setHumData, limit) => {
-  try {
-    const response = await getImpriMedData(devices[deviceKey], limit); // Adjust the limit as needed
-    if (Array.isArray(response.data.rivercity_data) && response.data.rivercity_data.length > 0) {
-      const latestData = response.data.rivercity_data;
-
-      // Determine the new keys based on the deviceKey
-      let tempKey = 'rctemp';
-      let humKey = 'humidity';
-
-      switch (deviceKey) {
-        case 'freezerOne':
-          tempKey = 'imFreezerOneTemp';
-          humKey = 'imFreezerOneHum';
-          break;
-        case 'freezerTwo':
-          tempKey = 'imFreezerTwoTemp';
-          humKey = 'imFreezerTwoHum';
-          break;
-        case 'freezerThree':
-          tempKey = 'imFreezerThreeTemp';
-          humKey = 'imFreezerThreeHum';
-          break;
-        case 'fridgeOne':
-          tempKey = 'imFridgeOneTemp';
-          humKey = 'imFridgeOneHum';
-          break;
-        case 'fridgeTwo':
-          tempKey = 'imFridgeTwoTemp';
-          humKey = 'imFridgeTwoHum';
-          break;
-        case 'incubatorOne':
-          tempKey = 'imIncubatorOneTemp';
-          humKey = 'imIncubatorOneHum';
-          break;
-        case 'incubatorTwo':
-          tempKey = 'imIncubatorTwoTemp';
-          humKey = 'imIncubatorTwoHum';
-          break;
-        default:
-          break;
-      }
-
-      // Map the data to new keys
-      const tempDataArray = latestData.map(data => ({
-        [tempKey]: data.rctemp,
-        publishedat: data.publishedat
-      }));
-
-      const humDataArray = latestData.map(data => ({
-        [humKey]: data.humidity,
-        publishedat: data.publishedat
-      }));
-
-      // Set the entire array of temperature and humidity data
-      setTempData(tempDataArray);
-      setHumData(humDataArray);
-
-      // console.log(`Latest temperature data for ${deviceKey}:`, tempDataArray);
-      // console.log(`Latest humidity data for ${deviceKey}:`, humDataArray);
-    }
-  } catch (error) {
-    console.error(`Error fetching data for ${deviceKey}:`, error);
-  }
-};
-
-if (currentUser && currentUser.email === 'jerrycromarty@imprimedicine.com') {
-useEffect(() => {
-  const fetchAllDeviceData = () => {
-    // fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData, 7);
-    fetchDeviceData('freezerTwo', setImpriFreezerTwoTempData, setImpriFreezerTwoHumData, 7);
-    fetchDeviceData('freezerThree', setImpriFreezerThreeTempData, setImpriFreezerThreeHumData, 7);
-    fetchDeviceData('fridgeOne', setImpriFridgeOneTempData, setImpriFridgeOneHumData, 7);
-    fetchDeviceData('fridgeTwo', setImpriFridgeTwoTempData, setImpriFridgeTwoHumData, 7);
-    // fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData, 7);
-    fetchDeviceData('incubatorTwo', setImpriIncubatorTwoTempData, setImpriIncubatorTwoHumData, 7);
+  // IMPRIMED DATA FEED LOGIC
+  const devices = {
+    freezerOne: "deveui = '0080E1150618C9DE'",
+    freezerTwo: "deveui = '0080E115054FC6DF'",
+    freezerThree: "deveui = '0080E1150618B549'",
+    fridgeOne: "deveui = '0080E1150619155F'",
+    fridgeTwo: "deveui = '0080E115061924EA'",
+    incubatorOne: "deveui = '0080E115054FF1DC'",
+    incubatorTwo: "deveui = '0080E1150618B45F'",
   };
 
-  fetchAllDeviceData();
-  const intervalId = setInterval(fetchAllDeviceData, 60000); // Fetch data every 60 seconds
+  const fetchDeviceData = async (deviceKey, setTempData, setHumData, limit) => {
+    try {
+      const response = await getImpriMedData(devices[deviceKey], limit); // Adjust the limit as needed
+      if (Array.isArray(response.data.rivercity_data) && response.data.rivercity_data.length > 0) {
+        const latestData = response.data.rivercity_data;
 
-  return () => clearInterval(intervalId); // Cleanup on component unmount
-}, []);
-}
+        // Determine the new keys based on the deviceKey
+        let tempKey = 'rctemp';
+        let humKey = 'humidity';
+
+        switch (deviceKey) {
+          case 'freezerOne':
+            tempKey = 'imFreezerOneTemp';
+            humKey = 'imFreezerOneHum';
+            break;
+          case 'freezerTwo':
+            tempKey = 'imFreezerTwoTemp';
+            humKey = 'imFreezerTwoHum';
+            break;
+          case 'freezerThree':
+            tempKey = 'imFreezerThreeTemp';
+            humKey = 'imFreezerThreeHum';
+            break;
+          case 'fridgeOne':
+            tempKey = 'imFridgeOneTemp';
+            humKey = 'imFridgeOneHum';
+            break;
+          case 'fridgeTwo':
+            tempKey = 'imFridgeTwoTemp';
+            humKey = 'imFridgeTwoHum';
+            break;
+          case 'incubatorOne':
+            tempKey = 'imIncubatorOneTemp';
+            humKey = 'imIncubatorOneHum';
+            break;
+          case 'incubatorTwo':
+            tempKey = 'imIncubatorTwoTemp';
+            humKey = 'imIncubatorTwoHum';
+            break;
+          default:
+            break;
+        }
+
+        // Map the data to new keys
+        const tempDataArray = latestData.map(data => ({
+          [tempKey]: data.rctemp,
+          publishedat: data.publishedat
+        }));
+
+        const humDataArray = latestData.map(data => ({
+          [humKey]: data.humidity,
+          publishedat: data.publishedat
+        }));
+
+        // Set the entire array of temperature and humidity data
+        setTempData(tempDataArray);
+        setHumData(humDataArray);
+        setLoading(false);
+        // console.log(`Latest temperature data for ${deviceKey}:`, tempDataArray);
+        // console.log(`Latest humidity data for ${deviceKey}:`, humDataArray);
+      }
+    } catch (error) {
+      console.error(`Error fetching data for ${deviceKey}:`, error);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser && currentUser.email === 'jerrycromarty@imprimedicine.com') {
+      const fetchAllDeviceData = () => {
+        // fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData, 7);
+        fetchDeviceData('freezerTwo', setImpriFreezerTwoTempData, setImpriFreezerTwoHumData, 7);
+        fetchDeviceData('freezerThree', setImpriFreezerThreeTempData, setImpriFreezerThreeHumData, 7);
+        fetchDeviceData('fridgeOne', setImpriFridgeOneTempData, setImpriFridgeOneHumData, 7);
+        fetchDeviceData('fridgeTwo', setImpriFridgeTwoTempData, setImpriFridgeTwoHumData, 7);
+        // fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData, 7);
+        fetchDeviceData('incubatorTwo', setImpriIncubatorTwoTempData, setImpriIncubatorTwoHumData, 7);
+      };
+
+      fetchAllDeviceData();
+      const intervalId = setInterval(fetchAllDeviceData, 60000); // Fetch data every 60 seconds
+
+      return () => clearInterval(intervalId); // Cleanup on component unmount
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     const fetchThresholds = async () => {
@@ -206,80 +201,79 @@ useEffect(() => {
     fetchChartData();
   }, []);
 
-  if (currentUser.email === 'test@kirkwall.io' || currentUser.email === 'pmo@grandfarm.com') {
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getWeatherData('all', '37'); // default time period
-        if (Array.isArray(response.data.weather_data)) {
-          setWeatherData(response.data.weather_data);
-        } else {
+    if (currentUser && (currentUser.email === 'test@kirkwall.io' || currentUser.email === 'pmo@grandfarm.com')) {
+      const fetchData = async () => {
+        try {
+          const response = await getWeatherData('all', '37'); // default time period
+          if (Array.isArray(response.data.weather_data)) {
+            setWeatherData(response.data.weather_data);
+          } else {
+            setWeatherData([]);
+          }
+          setLoading(false);
+        } catch (error) {
+          console.error('Error fetching weather data:', error);
           setWeatherData([]);
+          setLoading(false);
         }
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching weather data:', error);
-        setWeatherData([]);
-        setLoading(false);
-      }
-    };
+      };
 
-    fetchData();
+      fetchData();
 
-    const intervalId = setInterval(fetchData, 30000);
+      const intervalId = setInterval(fetchData, 30000);
 
-    return () => clearInterval(intervalId);
-  }, []);
-  }
+      return () => clearInterval(intervalId);
+    }
+  }, [currentUser]);
 
-  if (currentUser.email === 'test@kirkwall.io' || currentUser.email === 'trey@watchdogprotect.com') {
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getWatchdogData('all', '19');
-        if (Array.isArray(response.data.watchdog_data)) {
-          setWatchdogData(response.data.watchdog_data);
-        } else {
+    if (currentUser && (currentUser.email === 'test@kirkwall.io' || currentUser.email === 'trey@watchdogprotect.com')) {
+      const fetchData = async () => {
+        try {
+          const response = await getWatchdogData('all', '19');
+          if (Array.isArray(response.data.watchdog_data)) {
+            setWatchdogData(response.data.watchdog_data);
+          } else {
+            setWatchdogData([]);
+          }
+        } catch (error) {
+          console.error('Error fetching watchdog data:', error);
           setWatchdogData([]);
         }
-      } catch (error) {
-        console.error('Error fetching watchdog data:', error);
-        setWatchdogData([]);
-      }
-    };
+      };
 
-    fetchData();
+      fetchData();
 
-    const intervalId = setInterval(fetchData, 30000);
+      const intervalId = setInterval(fetchData, 30000);
 
-    return () => clearInterval(intervalId);
-  }, []);
-  }
+      return () => clearInterval(intervalId);
+    }
+  }, [currentUser]);
 
-  if (currentUser.email === 'test@kirkwal.io') {
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getRivercityData('all', '19');
-        if (Array.isArray(response.data.rivercity_data)) {
-          setRivercityData(response.data.rivercity_data);
-        } else {
+    if (currentUser && currentUser.email === 'test@kirkwall.io') {
+      const fetchData = async () => {
+        try {
+          const response = await getRivercityData('all', '19');
+          if (Array.isArray(response.data.rivercity_data)) {
+            setRivercityData(response.data.rivercity_data);
+          } else {
+            setRivercityData([]);
+          }
+        } catch (error) {
+          console.error('Error fetching watchdog data:', error);
           setRivercityData([]);
         }
-      } catch (error) {
-        console.error('Error fetching watchdog data:', error);
-        setRivercityData([]);
-      }
-    };
+      };
 
-    fetchData();
+      fetchData();
 
-    const intervalId = setInterval(fetchData, 30000);
+      const intervalId = setInterval(fetchData, 30000);
 
-    return () => clearInterval(intervalId);
-  }, []);
-  }
-
+      return () => clearInterval(intervalId);
+    }
+  }, [currentUser]);
 
   const fetchAlertsThreshold = async () => {
     try {
