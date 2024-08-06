@@ -84,6 +84,21 @@ export const WeatherDataProvider = ({ children }) => {
     watchdogHum: false,
     rivercityTemp: false,
     rivercityHum: false,
+    imFreezerOneTemp: false,
+    imFreezerOneHum: false,
+    imFreezerTwoTemp: false,
+    imFreezerTwoHum: false,
+    imFreezerThreeTemp: false,
+    imFreezerThreeHum: false,
+    imFridgeOneTemp: false,
+    imFridgeOneHum: false,
+    imFridgeTwoTemp: false,
+    imFridgeTwoHum: false,
+    imIncubatorOneTemp: false,
+    imIncubatorOneHum: false,
+    imIncubatorTwoTemp: false,
+    imIncubatorTwoHum: false,
+
   });
 
   const { currentUser } = useAuth();
@@ -372,6 +387,20 @@ export const WeatherDataProvider = ({ children }) => {
     selectedTimePeriodLeafWetness,
     selectedTimePeriodRCHum,
     selectedTimePeriodRCTemp,
+    selectedTimePeriodIMFreezerOneHum,
+    selectedTimePeriodIMFreezerOneTemp,
+    selectedTimePeriodIMFreezerTwoHum,
+    selectedTimePeriodIMFreezerTwoTemp,
+    selectedTimePeriodIMFreezerThreeHum,
+    selectedTimePeriodIMFreezerThreeTemp,
+    selectedTimePeriodIMFridgeOneHum,
+    selectedTimePeriodIMFridgeOneTemp,
+    selectedTimePeriodIMFridgeTwoHum,
+    selectedTimePeriodIMFridgeTwoTemp,
+    selectedTimePeriodIMIncubatorOneHum,
+    selectedTimePeriodIMIncubatorOneTemp,
+    selectedTimePeriodIMIncubatorTwoHum,
+    selectedTimePeriodIMIncubatorTwoTemp,
   ]);
 
   const handleTimePeriodChange = async (metric, timePeriod) => {
