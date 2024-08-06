@@ -156,6 +156,7 @@ const fetchDeviceData = async (deviceKey, setTempData, setHumData, limit) => {
   }
 };
 
+if (currentUser && currentUser.email === 'jerrycromarty@imprimedicine.com') {
 useEffect(() => {
   const fetchAllDeviceData = () => {
     // fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData, 7);
@@ -172,6 +173,7 @@ useEffect(() => {
 
   return () => clearInterval(intervalId); // Cleanup on component unmount
 }, []);
+}
 
   useEffect(() => {
     const fetchThresholds = async () => {
@@ -204,6 +206,7 @@ useEffect(() => {
     fetchChartData();
   }, []);
 
+  if (currentUser.email === 'test@kirkwall.io' || currentUser.email === 'pmo@grandfarm.com') {
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -227,7 +230,9 @@ useEffect(() => {
 
     return () => clearInterval(intervalId);
   }, []);
+  }
 
+  if (currentUser.email === 'test@kirkwall.io' || currentUser.email === 'trey@watchdogprotect.com') {
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -249,7 +254,9 @@ useEffect(() => {
 
     return () => clearInterval(intervalId);
   }, []);
+  }
 
+  if (currentUser.email === 'test@kirkwal.io') {
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -271,6 +278,7 @@ useEffect(() => {
 
     return () => clearInterval(intervalId);
   }, []);
+  }
 
 
   const fetchAlertsThreshold = async () => {
