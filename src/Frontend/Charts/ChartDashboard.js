@@ -49,7 +49,15 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod, setCurrentValue 
     if (setCurrentValue) setCurrentValue(mostRecentValue);
 
   const calculateTimePeriod = (dataLength) => {
-    const totalMinutes = metric === 'temp' || metric === 'hum' ? dataLength * 10 : dataLength * 5;
+    const totalMinutes =
+      metric === 'temperature' ||
+      metric === 'percent_humidity' ||
+      metric === 'wind_speed' ||
+      metric === 'rain_15_min_inches' ||
+      metric === 'soil_moisture' ||
+      metric === 'leaf_wetness'
+        ? dataLength * 5
+        : dataLength * 10;
     const totalHours = Math.floor(totalMinutes / 60);
 
     if (totalHours < 24) {
