@@ -143,26 +143,34 @@ const checkThresholds = async () => {
         case 'humidity':
           responseData = await getRivercityData('all', 1);
           break;
+
         case 'imFreezerOneTemp':
           latestData = await getImpriMedData("deveui = '0080E1150618C9DE'", 1);
           responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerOneTemp);
           break;
+
         case 'imFreezerOneHum':
           latestData = await getImpriMedData("deveui = '0080E1150618C9DE'", 1);
-          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerOneHum);
+          formattedData = latestData.response.rivercity_data
+          responseData = renameKeyToMetric(formattedData, imFreezerOneHum);
           break;
+
         case 'imFreezerTwoTemp':
           latestData = await getImpriMedData("deveui = '0080E115054FC6DF'",1)
-          responseData = renameKeyToMetric(latestData.data.rivercity_data, 'imFreezerTwoTemp');
+          formattedData = latestData.response.rivercity_data
+          responseData = renameKeyToMetric(formattedData, 'imFreezerTwoTemp');
           console.log("response data", responseData);
           console.log('latestData', latestData);
           break;
+
         case 'imFreezerTwoHum':
           latestData = await getImpriMedData("deveui = '0080E115054FC6DF'",1)
-          responseData = renameKeyToMetric(latestData.data.rivercity_data, 'imFreezerTwoHum');
+          formattedData = latestData.response.rivercity_data
+          responseData = renameKeyToMetric(formattedData, 'imFreezerTwoHum');
           console.log("response data", responseData);
           console.log('latestData', latestData);
           break;
+          
         case 'imFreezerThreeTemp':
           latestData = await getImpriMedData("deveui = '0080E1150618B549'",1)
           responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerThreeTemp);
