@@ -153,11 +153,11 @@ const checkThresholds = async () => {
           break;
         case 'imFreezerTwoTemp':
           latestData = await getImpriMedData("deveui = '0080E115054FC6DF'",1)
-          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerTwoTemp);
+          responseData = renameKeyToMetric(latestData.data.rivercity_data, 'imFreezerTwoTemp');
           break;
         case 'imFreezerTwoHum':
           latestData = await getImpriMedData("deveui = '0080E115054FC6DF'",1)
-          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerTwoHum);
+          responseData = renameKeyToMetric(latestData.data.rivercity_data, 'imFreezerTwoHum');
           break;
         case 'imFreezerThreeTemp':
           latestData = await getImpriMedData("deveui = '0080E1150618B549'",1)
