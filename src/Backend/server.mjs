@@ -146,9 +146,57 @@ const checkThresholds = async () => {
           latestData = await getImpriMedData("deveui = '0080E1150618C9DE'", 1);
           responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerOneTemp);
           break;
-        case 'imFreezeOneHum':
+        case 'imFreezerOneHum':
           latestData = await getImpriMedData("deveui = '0080E1150618C9DE'", 1);
           responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerOneHum);
+        case 'imFreezerTwoTemp':
+          latestData = await getImpriMedData("deveui = '0080E115054FC6DF'",1)
+          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerTwoTemp);
+          break;
+        case 'imFreezerTwoHum':
+          latestData = await getImpriMedData("deveui = '0080E115054FC6DF'",1)
+          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerTwoHum);
+          break;
+        case 'imFreezerThreeTemp':
+          latestData = await getImpriMedData("deveui = '0080E1150618B549'",1)
+          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerThreeTemp);
+          break;
+        case 'imFreezerThreeHum':
+          latestData = await getImpriMedData("deveui = '0080E1150618B549'",1)
+          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerThreeHum);
+          break;
+        case 'imFridgeOneTemp':
+          latestData = await getImpriMedData("deveui = '0080E1150619155F'",1)
+          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFridgeOneTemp);
+          break;
+        case 'imFridgeOneHum':
+          latestData = await getImpriMedData("deveui = '0080E1150619155F'",1)
+          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerOneHum);
+          break;
+        case 'imFridgeTwoTemp':
+          latestData = await getImpriMedData("deveui = '0080E115061924EA'",1)
+          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFridgeTwoTemp);
+          break;
+        case 'imFridgeTwoHum':
+          latestData = await getImpriMedData("deveui = '0080E115061924EA'",1)
+          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFridgeTwoHum);
+          break;
+        case 'imIncubatorOneTemp':
+          latestData = await getImpriMedData("deveui = '0080E115054FF1DC'",1)
+          responseData = renameKeyToMetric(latestData.data.rivercity_data, imIncubatorOneTemp);
+          break;
+        case 'imIncubatorOneHum':
+          latestData = await getImpriMedData("deveui = '0080E115054FF1DC'",1)
+          responseData = renameKeyToMetric(latestData.data.rivercity_data, imIncubatorOneHum);
+          break;
+        case 'imIncubatorTwoTemp':
+          latestData = await getImpriMedData("deveui = '0080E1150618B45F'",1)
+          responseData = renameKeyToMetric(latestData.data.rivercity_data, imIncubatorTwoTemp);
+          break;
+        case 'imIncubatorTwoHum':
+          latestData = await getImpriMedData("deveui = '0080E1150618B45F'",1)
+          responseData = renameKeyToMetric(latestData.data.rivercity_data, imIncubatorTwoHum);
+          break;
         default:
           console.error('Invalid metric:', metric);
           continue;
