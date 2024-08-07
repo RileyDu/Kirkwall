@@ -124,6 +124,7 @@ const checkThresholds = async () => {
     for (const threshold of latestThresholds) {
       const { id, metric, high, low, phone, email } = threshold;
       let responseData;
+      let latestData;
 
       switch (metric) {
         case 'temperature':
@@ -149,6 +150,7 @@ const checkThresholds = async () => {
         case 'imFreezerOneHum':
           latestData = await getImpriMedData("deveui = '0080E1150618C9DE'", 1);
           responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerOneHum);
+          break;
         case 'imFreezerTwoTemp':
           latestData = await getImpriMedData("deveui = '0080E115054FC6DF'",1)
           responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerTwoTemp);
