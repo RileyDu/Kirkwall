@@ -126,6 +126,7 @@ const checkThresholds = async () => {
       let responseData;
       let latestData;
       let response;
+      let formattedData;
       switch (metric) {
         case 'temperature':
         case 'percent_humidity':
