@@ -71,15 +71,29 @@ const getLocationforAlert = async (metric) => {
 }
 
 const extractCurrentValue = (response, metric) => {
-  if (Array.isArray(response.data.weather_data)) {
-    return response.data.weather_data[0]?.[metric];
-  } else if (Array.isArray(response.data.watchdog_data)) {
-    return response.data.watchdog_data[0]?.[metric];
-  } else if (Array.isArray(response.data.rivercity_data)) {
-    return response.data.rivercity_data[0]?.[metric];
+  console.log('Response:', response);
+
+  // Check if the response is an array
+  if (Array.isArray(response)) {
+    // Access the first element and get the metric value
+    return response[0]?.[metric];
   }
+
+  // Handle the original response structure with nested `data` property
+  if (response && response.data) {
+    if (Array.isArray(response.data.weather_data)) {
+      return response.data.weather_data[0]?.[metric];
+    } else if (Array.isArray(response.data.watchdog_data)) {
+      return response.data.watchdog_data[0]?.[metric];
+    } else if (Array.isArray(response.data.rivercity_data)) {
+      return response.data.rivercity_data[0]?.[metric];
+    }
+  }
+
+  console.error('Invalid response structure:', response);
   return null;
 };
+
 
 const getLatestThresholds = (thresholds) => {
   const latestThresholds = {};
