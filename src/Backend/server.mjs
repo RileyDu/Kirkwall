@@ -160,68 +160,89 @@ const checkThresholds = async () => {
           break;
 
         case 'imFreezerOneTemp':
-          latestData = await getImpriMedData("deveui = '0080E1150618C9DE'", 1);
-          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerOneTemp);
+          response = await getImpriMedData("deveui = '0080E1150618C9DE'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFreezerOneTemp');
           break;
 
         case 'imFreezerOneHum':
-          latestData = await getImpriMedData("deveui = '0080E1150618C9DE'", 1);
-          formattedData = latestData.response.rivercity_data
-          responseData = renameKeyToMetric(formattedData, imFreezerOneHum);
+          response = await getImpriMedData("deveui = '0080E1150618C9DE'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFreezerOneHum');
           break;
 
         case 'imFreezerTwoTemp':
-          response = await getImpriMedData("deveui = '0080E115054FC6DF'",1)
-          formattedData = response.data.rivercity_data
+          response = await getImpriMedData("deveui = '0080E115054FC6DF'", 1);
+          formattedData = response.data.rivercity_data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerTwoTemp');
           break;
 
         case 'imFreezerTwoHum':
-          response = await getImpriMedData("deveui = '0080E115054FC6DF'",1)
-          formattedData = response.data.rivercity_data
+          response = await getImpriMedData("deveui = '0080E115054FC6DF'", 1);
+          formattedData = response.data.rivercity_data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerTwoHum');
           break;
 
         case 'imFreezerThreeTemp':
-          latestData = await getImpriMedData("deveui = '0080E1150618B549'",1)
-          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerThreeTemp);
+          response = await getImpriMedData("deveui = '0080E1150618B549'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFreezerThreeTemp');
           break;
+
         case 'imFreezerThreeHum':
-          latestData = await getImpriMedData("deveui = '0080E1150618B549'",1)
-          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerThreeHum);
+          response = await getImpriMedData("deveui = '0080E1150618B549'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFreezerThreeHum');
           break;
+
         case 'imFridgeOneTemp':
-          latestData = await getImpriMedData("deveui = '0080E1150619155F'",1)
-          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFridgeOneTemp);
+          response = await getImpriMedData("deveui = '0080E1150619155F'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFridgeOneTemp');
           break;
+
         case 'imFridgeOneHum':
-          latestData = await getImpriMedData("deveui = '0080E1150619155F'",1)
-          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerOneHum);
+          response = await getImpriMedData("deveui = '0080E1150619155F'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFridgeOneHum');
           break;
+
         case 'imFridgeTwoTemp':
-          latestData = await getImpriMedData("deveui = '0080E115061924EA'",1)
-          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFridgeTwoTemp);
+          response = await getImpriMedData("deveui = '0080E115061924EA'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFridgeTwoTemp');
           break;
+
         case 'imFridgeTwoHum':
-          latestData = await getImpriMedData("deveui = '0080E115061924EA'",1)
-          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFridgeTwoHum);
+          response = await getImpriMedData("deveui = '0080E115061924EA'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFridgeTwoHum');
           break;
+
         case 'imIncubatorOneTemp':
-          latestData = await getImpriMedData("deveui = '0080E115054FF1DC'",1)
-          responseData = renameKeyToMetric(latestData.data.rivercity_data, imIncubatorOneTemp);
+          response = await getImpriMedData("deveui = '0080E115054FF1DC'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imIncubatorOneTemp');
           break;
+
         case 'imIncubatorOneHum':
-          latestData = await getImpriMedData("deveui = '0080E115054FF1DC'",1)
-          responseData = renameKeyToMetric(latestData.data.rivercity_data, imIncubatorOneHum);
+          response = await getImpriMedData("deveui = '0080E115054FF1DC'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imIncubatorOneHum');
           break;
+
         case 'imIncubatorTwoTemp':
-          latestData = await getImpriMedData("deveui = '0080E1150618B45F'",1)
-          responseData = renameKeyToMetric(latestData.data.rivercity_data, imIncubatorTwoTemp);
+          response = await getImpriMedData("deveui = '0080E1150618B45F'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imIncubatorTwoTemp');
           break;
+
         case 'imIncubatorTwoHum':
-          latestData = await getImpriMedData("deveui = '0080E1150618B45F'",1)
-          responseData = renameKeyToMetric(latestData.data.rivercity_data, imIncubatorTwoHum);
+          response = await getImpriMedData("deveui = '0080E1150618B45F'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imIncubatorTwoHum');
           break;
+
         default:
           console.error('Invalid metric:', metric);
           continue;
@@ -299,6 +320,7 @@ const checkThresholds = async () => {
     process.exit(1);  // Ensure the script exits with an error code if there's an issue
   }
 };
+
 
 
 if (import.meta.url === `file://${process.argv[1]}`) {
