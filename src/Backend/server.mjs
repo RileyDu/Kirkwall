@@ -71,7 +71,7 @@ const getLocationforAlert = async (metric) => {
 }
 
 const extractCurrentValue = (response, metric) => {
-  console.log('Response:', response);
+  // console.log('Response:', response);
 
   // Check if the response is an array
   if (Array.isArray(response)) {
@@ -138,7 +138,6 @@ const checkThresholds = async () => {
     for (const threshold of latestThresholds) {
       const { id, metric, high, low, phone, email } = threshold;
       let responseData;
-      let latestData;
       let response;
       let formattedData;
       switch (metric) {
