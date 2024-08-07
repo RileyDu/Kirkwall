@@ -12,9 +12,7 @@ import {
   MenuItem,
   Button,
   Tabs,
-  TabList,
   TabPanels,
-  Tab,
   TabPanel,
   useColorModeValue,
   IconButton,
@@ -22,9 +20,7 @@ import {
   useMediaQuery,
   useDisclosure,
 } from '@chakra-ui/react';
-// import VoiceControl from '../../services/VoiceControl';
 import { LineChart, BarChart } from '../../Charts/Charts.js';
-import { auth } from '../../../Backend/Firebase.js';
 import ChartWrapper from '../../Charts/ChartWrapper.js';
 import {
   FaChessRook,
@@ -52,38 +48,108 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
     weatherData,
     loading,
     handleTimePeriodChange,
-    rivercityTempData,
-    rivercityHumData,
-    rivercityData,
+    impriFreezerOneTempData,
+    impriFreezerOneHumData,
+    impriFreezerTwoTempData,
+    impriFreezerTwoHumData,
+    impriFreezerThreeTempData,
+    impriFreezerThreeHumData,
+    impriFridgeOneTempData,
+    impriFridgeOneHumData,
+    impriFridgeTwoTempData,
+    impriFridgeTwoHumData,
+    impriIncuOneTempData,
+    impriIncuOneHumData,
+    impriIncuTwoTempData,
+    impriIncuTwoHumData,
+    chartData,
   } = useWeatherData();
 
-  const [rivercityTempChartType, setRivercityTempChartType] = useState('bar');
-  const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
+  const [imFreezerOneTempChartType, setImFreezerOneTempChartType] = useState('');
+  const [imFreezerOneHumChartType, setImFreezerOneHumChartType] = useState('');
+  const [imFreezerTwoTempChartType, setImFreezerTwoTempChartType] = useState('');
+  const [imFreezerTwoHumChartType, setImFreezerTwoHumChartType] = useState('');
+  const [imFreezerThreeTempChartType, setImFreezerThreeTempChartType] = useState('');
+  const [imFreezerThreeHumChartType, setImFreezerThreeHumChartType] = useState('');
+  const [imFridgeOneTempChartType, setImFridgeOneTempChartType] = useState('');
+  const [imFridgeOneHumChartType, setImFridgeOneHumChartType] = useState('');
+  const [imFridgeTwoTempChartType, setImFridgeTwoTempChartType] = useState('');
+  const [imFridgeTwoHumChartType, setImFridgeTwoHumChartType] = useState('');
+  const [imIncubatorOneTempChartType, setImIncubatorOneTempChartType] = useState('');
+  const [imIncubatorOneHumChartType, setImIncubatorOneHumChartType] = useState('');
+  const [imIncubatorTwoTempChartType, setImIncubatorTwoTempChartType] = useState('');
+  const [imIncubatorTwoHumChartType, setImIncubatorTwoHumChartType] = useState('');
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isReady, setIsReady] = useState(false);
 
   const [visibleCharts, setVisibleCharts] = useState({
-    grandFarm: [
-      'temperature',
-      'humidity',
-      'wind',
-      'soil',
-      'leaf',
-      'rainfall',
-    ],
+    grandFarm: ['temperature', 'humidity', 'wind', 'soil', 'leaf', 'rainfall'],
     garage: ['temperature', 'humidity'],
     rivercity: ['temperature', 'humidity'],
   });
 
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalChart, setModalChart] = useState('');
-  const [currentTimePeriod, setCurrentTimePeriod] = useState('1H');
-
   const { colorMode } = useColorMode();
-  const iconColor = useColorModeValue('black', 'white');
 
+  const updateChartTypes = (chartData) => {
+    chartData.forEach(chart => {
+      switch (chart.metric) {
+        case 'imFreezerOneTemp':
+          setImFreezerOneTempChartType(chart.type);
+          break;
+        case 'imFreezerOneHum':
+          setImFreezerOneHumChartType(chart.type);
+          break;
+        case 'imFreezerTwoTemp':
+          setImFreezerTwoTempChartType(chart.type);
+          break;
+        case 'imFreezerTwoHum':
+          setImFreezerTwoHumChartType(chart.type);
+          break;
+        case 'imFreezerThreeTemp':
+          setImFreezerThreeTempChartType(chart.type);
+          break;
+        case 'imFreezerThreeHum':
+          setImFreezerThreeHumChartType(chart.type);
+          break;
+        case 'imFridgeOneTemp':
+          setImFridgeOneTempChartType(chart.type);
+          break;
+        case 'imFridgeOneHum':
+          setImFridgeOneHumChartType(chart.type);
+          break;
+        case 'imFridgeTwoTemp':
+          setImFridgeTwoTempChartType(chart.type);
+          break;
+        case 'imFridgeTwoHum':
+          setImFridgeTwoHumChartType(chart.type);
+          break;
+        case 'imIncubatorOneTemp':
+          setImIncubatorOneTempChartType(chart.type);
+          break;
+        case 'imIncubatorOneHum':
+          setImIncubatorOneHumChartType(chart.type);
+          break;
+        case 'imIncubatorTwoTemp':
+          setImIncubatorTwoTempChartType(chart.type);
+          break;
+        case 'imIncubatorTwoHum':
+          setImIncubatorTwoHumChartType(chart.type);
+          break;
+        default:
+          break;
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (chartData.length > 0) {
+      updateChartTypes(chartData);
+      // console.log('chartData:', chartData);
+    }
+  }, [chartData]);
 
   const showChart = (section, chart) => {
     setVisibleCharts(prevState => ({
@@ -99,51 +165,6 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
     }));
   };
 
-  const handleVoiceCommand = command => {
- if (command.includes('log out')) {
-      logOut();
-    } else if (command.includes('show temperature')) {
-      showChart('rivercity', 'temperature');
-    } else if (command.includes('hide temperature')) {
-      hideChart('rivercity', 'temperature');
-    } else if (command.includes('show humidity')) {
-      showChart('rivercity', 'humidity');
-    } else if (command.includes('hide humidity')) {
-      hideChart('rivercity', 'humidity');
-    } else if (command.includes('change temperature chart type to line')) {
-      setRivercityTempChartType('line');
-    } else if (command.includes('change temperature chart type to bar')) {
-      setRivercityTempChartType('bar');
-    } else if (command.includes('change humidity chart type to line')) {
-      setRivercityHumChartType('line');
-    } else if (command.includes('change humidity chart type to bar')) {
-      setRivercityHumChartType('bar');
-    } else {
-      console.log('Command not recognized');
-    }
-  };
-
-  const openModal = chart => {
-    setModalChart(chart);
-    setIsModalOpen(true);
-  };
-
-  const logOut = () => {
-    auth
-      .signOut()
-      .then(() => {
-        console.log('User logged out');
-        // Additional logout logic if needed
-      })
-      .catch(error => {
-        console.error('Logout error:', error);
-      });
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setModalChart('');
-  };
 
   useEffect(() => {
     setIsReady(false);
@@ -151,7 +172,6 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
       setIsReady(true);
     }
   }, [weatherData]);
-
 
   const toggleChartVisibility = (section, chart) => {
     setVisibleCharts(prevState => {
@@ -280,29 +300,83 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
               }}
               gap="6"
             >
+              <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                <ChartWrapper
+                  title="Temperature (°C)"
+                  onChartChange={handleChartChange(setImFreezerOneTempChartType)}
+                  weatherData={impriFreezerOneTempData}
+                  metric="imFreezerOneTemp"
+                  flex="1"
+                  timePeriod={timePeriod}
+                  display="flex"
+                  flexDirection="column"
+                  handleTimePeriodChange={handleTimePeriodChange}
+                >
+                  {imFreezerOneTempChartType === 'line' ? (
+                    <LineChart
+                      data={impriFreezerOneTempData}
+                      metric="imFreezerOneTemp"
+                      style={{ flex: 1 }}
+                    />
+                  ) : (
+                    <BarChart
+                      data={impriFreezerOneTempData}
+                      metric="imFreezerOneTemp"
+                      style={{ flex: 1 }}
+                    />
+                  )}
+                </ChartWrapper>
+              </GridItem>
+              <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                <ChartWrapper
+                  title="Humidity (%)"
+                  onChartChange={handleChartChange(setImFreezerOneHumChartType)}
+                  weatherData={impriFreezerOneHumData}
+                  metric="imFreezerOneHum"
+                  flex="1"
+                  timePeriod={timePeriod}
+                  display="flex"
+                  flexDirection="column"
+                  handleTimePeriodChange={handleTimePeriodChange}
+                >
+                  {imFreezerOneHumChartType === 'line' ? (
+                    <LineChart
+                      data={impriFreezerOneHumData}
+                      metric="imFreezerOneHum"
+                      style={{ flex: 1 }}
+                    />
+                  ) : (
+                    <BarChart
+                      data={impriFreezerOneHumData}
+                      metric="imFreezerOneHum"
+                      style={{ flex: 1 }}
+                    />
+                  )}
+                </ChartWrapper>
+              </GridItem>
               {visibleCharts.rivercity.includes('temperature') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
-                    title="Temperature (°F)"
-                    onChartChange={handleChartChange(setRivercityTempChartType)}
-                    weatherData={rivercityTempData || rivercityData}
-                    metric="rctemp"
+                    title="Temperature (°C)"
+                    onChartChange={handleChartChange(setImFreezerTwoTempChartType)}
+                    weatherData={impriFreezerTwoTempData}
+                    metric="imFreezerTwoTemp"
                     flex="1"
                     timePeriod={timePeriod}
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
                   >
-                    {rivercityTempChartType === 'line' ? (
+                    {imFreezerTwoTempChartType === 'line' ? (
                       <LineChart
-                        data={rivercityTempData || rivercityData}
-                        metric="rctemp"
+                        data={impriFreezerTwoTempData}
+                        metric="imFreezerTwoTemp"
                         style={{ flex: 1 }}
                       />
                     ) : (
                       <BarChart
-                        data={rivercityTempData || rivercityData}
-                        metric="rctemp"
+                        data={impriFreezerTwoTempData}
+                        metric="imFreezerTwoTemp"
                         style={{ flex: 1 }}
                       />
                     )}
@@ -313,52 +387,306 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Humidity (%)"
-                    onChartChange={handleChartChange(setRivercityHumChartType)}
-                    weatherData={rivercityHumData || rivercityData}
-                    metric="humidity"
+                    onChartChange={handleChartChange(setImFreezerTwoHumChartType)}
+                    weatherData={impriFreezerTwoHumData}
+                    metric="imFreezerTwoHum"
                     flex="1"
                     timePeriod={timePeriod}
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
                   >
-                    {rivercityHumChartType === 'line' ? (
+                    {imFreezerTwoHumChartType === 'line' ? (
                       <LineChart
-                        data={rivercityHumData || rivercityData}
-                        metric="humidity"
+                        data={impriFreezerTwoHumData}
+                        metric="imFreezerTwoHum"
                         style={{ flex: 1 }}
                       />
                     ) : (
                       <BarChart
-                        data={rivercityHumData || rivercityData}
-                        metric="humidity"
+                        data={impriFreezerTwoHumData}
+                        metric="imFreezerTwoHum"
                         style={{ flex: 1 }}
                       />
                     )}
                   </ChartWrapper>
                 </GridItem>
               )}
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Temperature (°C)"
+                    onChartChange={handleChartChange(setImFreezerThreeTempChartType)}
+                    weatherData={impriFreezerThreeTempData}
+                    metric="imFreezerThreeTemp"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                  >
+                    {imFreezerThreeTempChartType === 'line' ? (
+                      <LineChart
+                        data={impriFreezerThreeTempData}
+                        metric="imFreezerThreeTemp"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={impriFreezerThreeTempData}
+                        metric="imFreezerThreeTemp"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Humidity (%)"
+                    onChartChange={handleChartChange(setImFreezerThreeHumChartType)}
+                    weatherData={impriFreezerThreeHumData}
+                    metric="imFreezerThreeHum"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                  >
+                    {imFreezerThreeHumChartType === 'line' ? (
+                      <LineChart
+                        data={impriFreezerThreeHumData}
+                        metric="imFreezerThreeHum"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={impriFreezerThreeHumData}
+                        metric="imFreezerThreeHum"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Temperature (°C)"
+                    onChartChange={handleChartChange(setImFridgeOneTempChartType)}
+                    weatherData={impriFridgeOneTempData}
+                    metric="imFridgeOneTemp"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                  >
+                    {imFridgeOneTempChartType === 'line' ? (
+                      <LineChart
+                        data={impriFridgeOneTempData}
+                        metric="imFridgeOneTemp"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={impriFridgeOneTempData}
+                        metric="imFridgeOneTemp"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Humidity (%)"
+                    onChartChange={handleChartChange(setImFridgeOneHumChartType)}
+                    weatherData={impriFridgeOneHumData}
+                    metric="imFridgeOneHum"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                  >
+                    {imFridgeOneHumChartType === 'line' ? (
+                      <LineChart
+                        data={impriFridgeOneHumData}
+                        metric="imFridgeOneHum"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={impriFridgeOneHumData}
+                        metric="imFridgeOneHum"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Temperature (°C)"
+                    onChartChange={handleChartChange(setImFridgeTwoTempChartType)}
+                    weatherData={impriFridgeTwoTempData}
+                    metric="imFridgeTwoTemp"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                  >
+                    {imFridgeTwoTempChartType === 'line' ? (
+                      <LineChart
+                        data={impriFridgeTwoTempData}
+                        metric="imFridgeTwoTemp"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={impriFridgeTwoTempData}
+                        metric="imFridgeTwoTemp"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Humidity (%)"
+                    onChartChange={handleChartChange(setImFridgeTwoHumChartType)}
+                    weatherData={impriFridgeTwoHumData}
+                    metric="imFridgeTwoHum"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                  >
+                    {imFridgeTwoHumChartType === 'line' ? (
+                      <LineChart
+                        data={impriFridgeTwoHumData}
+                        metric="imFridgeTwoHum"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={impriFridgeTwoHumData}
+                        metric="imFridgeTwoHum"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Temperature (°C)"
+                    onChartChange={handleChartChange(setImIncubatorOneTempChartType)}
+                    weatherData={impriIncuOneTempData}
+                    metric="imIncubatorOneTemp"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                  >
+                    {imIncubatorOneTempChartType === 'line' ? (
+                      <LineChart
+                        data={impriIncuOneTempData}
+                        metric="imIncubatorOneTemp"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={impriIncuOneTempData}
+                        metric="imIncubatorOneTemp"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Humidity (%)"
+                    onChartChange={handleChartChange(setImIncubatorOneHumChartType)}
+                    weatherData={impriIncuOneHumData}
+                    metric="imIncubatorOneHum"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                  >
+                    {imIncubatorOneHumChartType === 'line' ? (
+                      <LineChart
+                        data={impriIncuOneHumData}
+                        metric="imIncubatorOneHum"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={impriIncuOneHumData}
+                        metric="imIncubatorOneHum"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Temperature (°C)"
+                    onChartChange={handleChartChange(setImIncubatorTwoTempChartType)}
+                    weatherData={impriIncuTwoTempData}
+                    metric="imIncubatorTwoTemp"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                  >
+                    {imIncubatorTwoTempChartType === 'line' ? (
+                      <LineChart
+                        data={impriIncuTwoTempData}
+                        metric="imIncubatorTwoTemp"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={impriIncuTwoTempData}
+                        metric="imIncubatorTwoTemp"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
+                <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
+                  <ChartWrapper
+                    title="Humidity (%)"
+                    onChartChange={handleChartChange(setImIncubatorTwoHumChartType)}
+                    weatherData={impriIncuTwoHumData}
+                    metric="imIncubatorTwoHum"
+                    flex="1"
+                    timePeriod={timePeriod}
+                    display="flex"
+                    flexDirection="column"
+                    handleTimePeriodChange={handleTimePeriodChange}
+                  >
+                    {imIncubatorTwoHumChartType === 'line' ? (
+                      <LineChart
+                        data={impriIncuTwoHumData}
+                        metric="imIncubatorTwoHum"
+                        style={{ flex: 1 }}
+                      />
+                    ) : (
+                      <BarChart
+                        data={impriIncuTwoHumData}
+                        metric="imIncubatorTwoHum"
+                        style={{ flex: 1 }}
+                      />
+                    )}
+                  </ChartWrapper>
+                </GridItem>
             </Grid>
             {/* </MotionBox> */}
           </MotionTabPanel>
         </TabPanels>
       </Tabs>
-      {/* <VoiceControl onCommand={handleVoiceCommand} />
-      {isModalOpen && (
-        <ChartExpandModal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          title={`${
-            modalChart.charAt(0).toUpperCase() + modalChart.slice(1)
-          } Chart`}
-          weatherData={weatherData}
-          metric={modalChart}
-          handleTimePeriodChange={handleTimePeriodChange}
-          currentTimePeriod={currentTimePeriod}
-          setCurrentTimePeriod={setCurrentTimePeriod}
-          sensorMap="grandfarm"
-        />
-      )} */}
     </Box>
   );
 };

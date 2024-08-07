@@ -245,6 +245,23 @@ async function getRivercityData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
+async function getImpriMedData(deveui, limit) {
+  const query = `query impriMedData($limit: Int, $deveui: String!) {
+  rivercity_data(ordering: "publishedat desc", limit: $limit, filter: $deveui) {
+    rctemp
+    humidity
+    publishedat
+    deveui
+  }
+}
+      `;
+      const variables = {
+        limit: limit,
+        deveui: deveui,
+      };
+  return executeGraphqlQuery(query, variables);
+}
+
 // Function to get the latest threshold data from the database
 // This is used to compare against the current weather data in the cron job
 async function getLatestThreshold() {
@@ -387,8 +404,6 @@ async function updateChart(id, metric, timeperiod, type, location, hidden) {
   return executeGraphqlQuery(mutation, variables);
 }
 
-
-
 // Function to get API ID of user
 // async function getAPIIds() {
 //   const query = `
@@ -452,6 +467,7 @@ export {
   getWeatherData,
   getWatchdogData,
   getRivercityData,
+  getImpriMedData,
   getLatestThreshold,
   createThreshold,
   getAlerts,

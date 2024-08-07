@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -38,7 +38,6 @@ import { useAuth } from '../AuthComponents/AuthContext.js';
 import ImpriMiniMap from '../Maps/ImpriMiniMap.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { updateChart } from '../../Backend/Graphql_helper.js';
-import e from 'cors';
 
 
 const ChartWrapper = ({
@@ -62,7 +61,8 @@ const ChartWrapper = ({
   const [userTitle, setUserTitle] = useState('Location');
   
   const { chartData } = useWeatherData();
-  
+  const isMounted = useRef(false);
+
   const chartDataForMetric = chartData.find(chart => chart.metric === metric);
   const [newTitle, setNewTitle] = useState(chartDataForMetric?.location);
   const [chartType, setChartType] = useState(chartDataForMetric?.type);
@@ -75,7 +75,11 @@ const ChartWrapper = ({
   
   // Call handleChartEdit after chartType is updated
   useEffect(() => {
-    handleChartEdit();
+    if (isMounted.current) {
+      handleChartEdit();
+    } else {
+      isMounted.current = true;
+    }
   }, [chartType]);
 
   const { currentUser } = useAuth();
@@ -128,6 +132,21 @@ const ChartWrapper = ({
       case 'rctemp':
         setSensorMap('freezer');
         break;
+      case 'imFreezerOneTemp':
+      case 'imFreezerOneHum':
+      case 'imFreezerTwoTemp':
+      case 'imFreezerTwoHum':
+      case 'imFreezerThreeTemp':
+      case 'imFreezerThreeHum':
+      case 'imFridgeOneTemp':
+      case 'imFridgeOneHum':
+      case 'imFridgeTwoTemp':
+      case 'imFridgeTwoHum':
+      case 'imIncubatorOneTemp':
+      case 'imIncubatorOneHum':
+      case 'imIncubatorTwoTemp':
+      case 'imIncubatorTwoHum':
+        setSensorMap('imprimed');
       default:
         console.error(`Unknown metric: ${metric}`);
     }
@@ -172,6 +191,20 @@ const ChartWrapper = ({
         hum: 'WatchdogLogoBlack.png',
         humidity: 'rci-logo-blue.png',
         rctemp: 'rci-logo-blue.png',
+        imFreezerOneTemp: 'rci-logo-blue.png',
+        imFreezerOneHum: 'rci-logo-blue.png',
+        imFreezerTwoTemp: 'rci-logo-blue.png',
+        imFreezerTwoHum: 'rci-logo-blue.png',
+        imFreezerThreeTemp: 'rci-logo-blue.png',
+        imFreezerThreeHum: 'rci-logo-blue.png',
+        imFridgeOneTemp: 'rci-logo-blue.png',
+        imFridgeOneHum: 'rci-logo-blue.png',
+        imFridgeTwoTemp: 'rci-logo-blue.png',
+        imFridgeTwoHum: 'rci-logo-blue.png',
+        imIncubatorOneTemp: 'rci-logo-blue.png',
+        imIncubatorOneHum: 'rci-logo-blue.png',
+        imIncubatorTwoTemp: 'rci-logo-blue.png',
+        imIncubatorTwoHum: 'rci-logo-blue.png',
       },
       dark: {
         temperature: 'DavisLogoWhite.png',
@@ -184,6 +217,19 @@ const ChartWrapper = ({
         hum: 'WatchdogLogoWhite.png',
         humidity: 'rci-logo-white.png',
         rctemp: 'rci-logo-white.png',
+        impriTemp: 'rci-logo-white.png',
+        imFreezerOneTemp: 'rci-logo-white.png',
+        imFreezerOneHum: 'rci-logo-white.png',
+        imFreezerTwoTemp: 'rci-logo-white.png',
+        imFreezerTwoHum: 'rci-logo-white.png',
+        imFreezerThreeTemp: 'rci-logo-white.png',
+        imFreezerThreeHum: 'rci-logo-white.png',
+        imFridgeOneTemp: 'rci-logo-white.png',
+        imFridgeOneHum: 'rci-logo-white.png',
+        imFridgeTwoTemp: 'rci-logo-white.png',
+        imFridgeTwoHum: 'rci-logo-white.png',
+        imIncubatorOneTemp: 'rci-logo-white.png',
+        imIncubatorOneHum: 'rci-logo-white.png',
       },
     };
 
@@ -214,12 +260,14 @@ const ChartWrapper = ({
 
   const calculateTimePeriod = dataLength => {
     const totalMinutes =
-      metric === 'temp' ||
-      metric === 'hum' ||
-      metric === 'humidity' ||
-      metric === 'rctemp'
-        ? dataLength * 10
-        : dataLength * 5;
+      metric === 'temperature' ||
+      metric === 'percent_humidity' ||
+      metric === 'wind_speed' ||
+      metric === 'rain_15_min_inches' ||
+      metric === 'soil_moisture' ||
+      metric === 'leaf_wetness'
+        ? dataLength * 5
+        : dataLength * 10;
     const totalHours = Math.floor(totalMinutes / 60);
 
     if (totalHours < 24) {
@@ -290,7 +338,7 @@ const ChartWrapper = ({
   const editChart = async (id, metric, timeperiod, type, location, hidden) => {
     try {
       const result = await updateChart(id, metric, timeperiod, type, location, hidden);
-      console.log('result:', result);
+      // console.log('result:', result);
     }
     catch (error) {
       console.error('Error updating chart:', error);
@@ -304,6 +352,7 @@ const ChartWrapper = ({
     const type = chartType;
     const location = newTitle || chartDataForMetric?.location;
     const hidden = chartDataForMetric?.hidden;
+    console.log('id:', id, 'metric:', metric, 'timeperiod:', timeperiod, 'type:', type, 'location:', location, 'hidden:', hidden);
     editChart(id, metric, timeperiod, type, location, hidden);
   }
 
@@ -620,6 +669,7 @@ const ChartWrapper = ({
         currentTimePeriod={currentTimePeriod}
         setCurrentTimePeriod={setCurrentTimePeriod}
         sensorMap={sensorMap}
+        MapComponent={MapComponent}
       />
     </>
   );

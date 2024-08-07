@@ -86,8 +86,8 @@ const createCustomChartOptions = (metric, data, colorMode) => {
         },
       },
       y: {
-        min: min > 1 ? min - 1 : 0,
-        max: max > 1 ? Math.round(max + 1) : 1,
+        min: min > 1 ? min - 1 : min - .1,
+        max: max > 1 ? Math.round(max + 1) : max + .5,
         ticks: {
           color: labelColor,  // Set label color based on color mode
         },
@@ -111,21 +111,38 @@ const createCustomChartOptions = (metric, data, colorMode) => {
         callbacks: {
           label: function (context) {
             const labelMap = {
-              'temperature': '°F',
-              'rctemp': '°F',
-              'percent_humidity': '% Humidity',
-              'humidity': '% Humidity',
-              'rain_15_min_inches': 'inches',
-              'wind_speed': 'MPH',
-              'temp' : '°F',
-              'hum' : '% Humidity',
-              'soil_moisture': 'centibars',
-              'leaf_wetness': 'out of 15',
+              temperature: '°F',
+              temp: '°F',
+              rctemp: '°F',
+              impriTemp: '°C',
+              imFreezerOneTemp: '°C',
+              imFreezerTwoTemp: '°C',
+              imFreezerThreeTemp: '°C',
+              imFridgeOneTemp: '°C',
+              imFridgeTwoTemp: '°C',
+              imIncubatorOneTemp: '°C',
+              imIncubatorTwoTemp: '°C',
+              imFreezerOneHum: '% Humidity',
+              imFreezerTwoHum: '% Humidity',
+              imFreezerThreeHum: '% Humidity',
+              imFridgeOneHum: '% Humidity',
+              imFridgeTwoHum: '% Humidity',
+              imIncubatorOneHum: '% Humidity',
+              imIncubatorTwoHum: '% Humidity',
+              hum: '% Humidity',
+              percent_humidity: '% Humidity',
+              humidity: '% Humidity',
+              rain_15_min_inches: 'inches',
+              wind_speed: 'MPH',
+              soil_moisture: 'centibars',
+              leaf_wetness: 'out of 15',
             };
-            const label = labelMap[metric] || '';
+            
+            const label = labelMap[context.dataset.label] || '';
             const value = context.raw;
             return `${value} ${label}`;
           }
+          
         },
       },
       legend: {
@@ -142,7 +159,7 @@ export const LineChart = ({ data, metric }) => {
   const { colorMode } = useColorMode();
   const chartData = processWeatherData(data, metric, colorMode);
   if (!chartData) return <Spinner size="xl" />;
-
+  // console.log('chartData:', chartData);
   const dataKey = chartData.datasets[0].data;
   const options = createCustomChartOptions(metric, dataKey, colorMode);
 
@@ -157,6 +174,7 @@ export const BarChart = ({ data, metric }) => {
   const { colorMode } = useColorMode();
   const chartData = processWeatherData(data, metric, colorMode);
   if (!chartData) return <Spinner size="xl" />;
+  // console.log('chartData:', chartData);
 
   const dataKey = chartData.datasets[0].data;
   const options = createCustomChartOptions(metric, dataKey, colorMode);

@@ -22,11 +22,8 @@ import {
   Input,
   ModalFooter,
   HStack,
-  IconButton,
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard.js';
-import MiniMap from '../Maps/GrandFarmMiniMap.js';
-import WatchdogMap from '../Maps/WatchdogMiniMap.js';
 import {
   FaChartLine,
   FaChartBar,
@@ -35,14 +32,12 @@ import {
 } from 'react-icons/fa/index.esm.js';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts.js';
-import axios from 'axios';
 import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 
 const ChartExpandModal = ({
   isOpen,
   onClose,
-  children,
   title,
   metric,
   onChartChange,
@@ -50,7 +45,7 @@ const ChartExpandModal = ({
   weatherData,
   currentTimePeriod,
   setCurrentTimePeriod,
-  sensorMap,
+  MapComponent,
 }) => {
   const { colorMode } = useColorMode();
   const [loading, setLoading] = useState(false);
@@ -60,7 +55,6 @@ const ChartExpandModal = ({
   const [userEmail, setUserEmail] = useState('');
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
-  const [timer, setTimer] = useState(30);
   const [currentValue, setCurrentValue] = useState(null);
   const { thresholds, alertsThreshold, fetchAlertsThreshold } =
     useWeatherData();
@@ -84,15 +78,6 @@ const ChartExpandModal = ({
     setUserEmail(latestThreshold.email);
   }, [metric, thresholds]);
 
-  // Group alerts by metric
-  // const alertsThresholdGrouped = alertsThreshold.reduce((acc, alert) => {
-  //   const { metric } = alert;
-  //   if (!acc[metric]) {
-  //     acc[metric] = [];
-  //   }
-  //   acc[metric].push(alert);
-  //   return acc;
-  // }, {});
 
   const apiUrl =
     process.env.NODE_ENV === 'production'
@@ -425,7 +410,7 @@ const ChartExpandModal = ({
                 height="430px"
               >
                 <Box height="100%">
-                  {sensorMap === 'grandfarm' ? <MiniMap /> : <WatchdogMap />}
+                  <MapComponent />
                 </Box>
               </Box>
             </SimpleGrid>
