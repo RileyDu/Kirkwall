@@ -1,7 +1,7 @@
 // checkThresholds.js
 import dotenv from 'dotenv';
 dotenv.config();
-import { getWeatherData, getWatchdogData, getRivercityData, getLatestThreshold, createAlert, getChartData } from './Graphql_helper.js';
+import { getWeatherData, getWatchdogData, getRivercityData, getLatestThreshold, createAlert, getChartData, getImpriMedData } from './Graphql_helper.js';
 import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
 import moment from 'moment-timezone';
@@ -111,6 +111,15 @@ const checkThresholds = async () => {
   try {
     const thresholds = await getLatestThreshold();
     const latestThresholds = getLatestThresholds(thresholds.data.thresholds);
+    const renameKeyToMetric = (data, metric) => {
+      return data.map(d => {
+        const value = metric.endsWith('Temp') ? d.rctemp : d.humidity;
+        return {
+          [metric]: value,
+          publishedat: d.publishedat,
+        };
+      });
+    };
 
     for (const threshold of latestThresholds) {
       const { id, metric, high, low, phone, email } = threshold;
@@ -133,6 +142,13 @@ const checkThresholds = async () => {
         case 'humidity':
           responseData = await getRivercityData('all', 1);
           break;
+        case 'imFreezerOneTemp':
+          latestData = await getImpriMedData("deveui = '0080E1150618C9DE'", 1);
+          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerOneTemp);
+          break;
+        case 'imFreezeOneHum':
+          latestData = await getImpriMedData("deveui = '0080E1150618C9DE'", 1);
+          responseData = renameKeyToMetric(latestData.data.rivercity_data, imFreezerOneHum);
         default:
           console.error('Invalid metric:', metric);
           continue;
