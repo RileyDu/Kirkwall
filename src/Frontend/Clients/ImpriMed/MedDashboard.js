@@ -84,9 +84,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
   const [isReady, setIsReady] = useState(false);
 
   const [visibleCharts, setVisibleCharts] = useState({
-    grandFarm: ['temperature', 'humidity', 'wind', 'soil', 'leaf', 'rainfall'],
-    garage: ['temperature', 'humidity'],
-    rivercity: ['temperature', 'humidity'],
+    impriMed: ['FreezerOneTemp', 'FreezerOneHum', 'FreezerTwoTemp', 'FreezerTwoHum', 'FreezerThreeTemp', 'FreezerThreeHum', 'FridgeOneTemp', 'FridgeOneHum', 'FridgeTwoTemp', 'FridgeTwoHum', 'IncubatorOneTemp', 'IncubatorOneHum', 'IncubatorTwoTemp', 'IncubatorTwoHum'],
   });
 
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
@@ -300,6 +298,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
               }}
               gap="6"
             >
+              {visibleCharts.impriMed.includes('FreezerOneTemp') && (
               <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                 <ChartWrapper
                   title="Temperature (°C)"
@@ -327,6 +326,8 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                   )}
                 </ChartWrapper>
               </GridItem>
+              )}
+              {visibleCharts.impriMed.includes('FreezerOneHum') && (
               <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                 <ChartWrapper
                   title="Humidity (%)"
@@ -354,7 +355,8 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                   )}
                 </ChartWrapper>
               </GridItem>
-              {visibleCharts.rivercity.includes('temperature') && (
+              )}
+              {visibleCharts.impriMed.includes('FreezerTwoTemp') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Temperature (°C)"
@@ -383,7 +385,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                   </ChartWrapper>
                 </GridItem>
               )}
-              {visibleCharts.rivercity.includes('humidity') && (
+              {visibleCharts.impriMed.includes('FreezerTwoHum') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Humidity (%)"
@@ -412,6 +414,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                   </ChartWrapper>
                 </GridItem>
               )}
+              {visibleCharts.impriMed.includes('FreezerThreeTemp') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Temperature (°C)"
@@ -439,6 +442,8 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     )}
                   </ChartWrapper>
                 </GridItem>
+              )}
+              {visibleCharts.impriMed.includes('FreezerThreeHum') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Humidity (%)"
@@ -466,6 +471,8 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     )}
                   </ChartWrapper>
                 </GridItem>
+              )}
+              {visibleCharts.impriMed.includes('FridgeOneTemp') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Temperature (°C)"
@@ -493,6 +500,8 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     )}
                   </ChartWrapper>
                 </GridItem>
+              )}
+              {visibleCharts.impriMed.includes('FridgeOneHum') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Humidity (%)"
@@ -520,6 +529,8 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     )}
                   </ChartWrapper>
                 </GridItem>
+              )}
+              {visibleCharts.impriMed.includes('FridgeTwoTemp') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Temperature (°C)"
@@ -547,6 +558,8 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     )}
                   </ChartWrapper>
                 </GridItem>
+              )}
+              {visibleCharts.impriMed.includes('FridgeTwoHum') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Humidity (%)"
@@ -574,6 +587,8 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     )}
                   </ChartWrapper>
                 </GridItem>
+              )}
+              {visibleCharts.impriMed.includes('IncubatorOneTemp') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Temperature (°C)"
@@ -601,6 +616,8 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     )}
                   </ChartWrapper>
                 </GridItem>
+              )}
+              {visibleCharts.impriMed.includes('IncubatorOneHum') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Humidity (%)"
@@ -628,6 +645,8 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     )}
                   </ChartWrapper>
                 </GridItem>
+              )}
+              {visibleCharts.impriMed.includes('IncubatorTwoTemp') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Temperature (°C)"
@@ -655,6 +674,8 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     )}
                   </ChartWrapper>
                 </GridItem>
+              )}
+              {visibleCharts.impriMed.includes('IncubatorTwoHum') && (
                 <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                   <ChartWrapper
                     title="Humidity (%)"
@@ -682,8 +703,8 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     )}
                   </ChartWrapper>
                 </GridItem>
+              )}
             </Grid>
-            {/* </MotionBox> */}
           </MotionTabPanel>
         </TabPanels>
       </Tabs>
