@@ -288,6 +288,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     color="black"
                     _hover={{ bg: '#d7a247' }}
                     onClick={isOpen ? onClose : onOpen}
+                    border={'2px solid #fd9801'}
                     size={isLargerThan768 ? 'md' : 'sm'}
                     ml={isLargerThan768 ? '0' : '4'}
                     mt={isLargerThan768 ? '0' : '1'}
