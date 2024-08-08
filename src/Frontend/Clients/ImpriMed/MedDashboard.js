@@ -38,8 +38,6 @@ import { keyframes } from '@emotion/react';
 import { useWeatherData } from '../../WeatherDataContext.js';
 import { handleChartChange } from '../../Charts/ChartUtils.js';
 import { motion } from 'framer-motion';
-// import { useAuth } from '../AuthComponents/AuthContext.js';
-// import ChartExpandModal from '../../Charts/ChartExpandModal';
 const MotionBox = motion(Box);
 const MotionTabPanel = motion(TabPanel);
 
@@ -165,21 +163,6 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
     }
   }, [chartData]);
 
-  const showChart = (section, chart) => {
-    setVisibleCharts(prevState => ({
-      ...prevState,
-      [section]: [...prevState[section], chart],
-    }));
-  };
-
-  const hideChart = (section, chart) => {
-    setVisibleCharts(prevState => ({
-      ...prevState,
-      [section]: prevState[section].filter(item => item !== chart),
-    }));
-  };
-
-
   useEffect(() => {
     setIsReady(false);
     if (weatherData.length > 0) {
@@ -216,28 +199,15 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
     );
   }
 
-  const ChartToggleButton = ({ isVisible, onClick, chart, icon }) => (
-    <Tooltip label={isVisible ? `Hide ${chart}` : `Show ${chart}`}>
-      <IconButton
-        icon={isVisible ? <FaMinus /> : <FaPlus />}
-        onClick={onClick}
-        mx="1"
-        bg={isVisible ? 'red.400' : 'green.400'}
-        color="white"
-        _hover={{ bg: isVisible ? 'red.500' : 'green.500' }}
-        size="sm"
-        aria-label={`${isVisible ? 'Hide' : 'Show'} ${chart}`}
-      />
-    </Tooltip>
-  );
-
   const charts = {
-    temperature: <FaTemperatureHigh />,
-    humidity: <FaTint />,
-    wind: <FaWind />,
-    soilMoisture: <FaWater />,
-    leafWetness: <FaLeaf />,
-    rainfall: <FaCloudRain />,
+    Temp: <FaTemperatureHigh />,
+    Hum: <FaTint />,
+  };
+  
+  // Function to extract the last word and return the correct icon
+  const getChartIcon = (chartName) => {
+    const lastWord = chartName.split(' ').pop(); // Extract the last word
+    return charts[lastWord] || null; // Return the corresponding icon
   };
 
   return (
@@ -289,14 +259,14 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                   {visibleCharts.impriMed.map(chart => (
                     <MenuItem
                       key={chart}
-                      onClick={() => toggleChartVisibility('rivercity', chart)}
+                      onClick={() => toggleChartVisibility('impriMed', chart)}
                     >
                       <Flex
                         alignItems="center"
                         justifyContent={'center'}
                         w={'100%'}
                       >
-                        {charts[chart]}
+                        {getChartIcon(chart)}
                         <Box ml="2">
                           {chart.charAt(0).toUpperCase() + chart.slice(1)}
                         </Box>
@@ -326,6 +296,9 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                   display="flex"
                   flexDirection="column"
                   handleTimePeriodChange={handleTimePeriodChange}
+                  toggleChartVisibility={toggleChartVisibility}
+                  section={'impriMed'}
+                  chart={'Freezer #1 Temp'}
                 >
                   {imFreezerOneTempChartType === 'line' ? (
                     <LineChart
@@ -355,6 +328,9 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                   display="flex"
                   flexDirection="column"
                   handleTimePeriodChange={handleTimePeriodChange}
+                  toggleChartVisibility={toggleChartVisibility}
+                  section={'impriMed'}
+                  chart={'Freezer #1 Hum'}
                 >
                   {imFreezerOneHumChartType === 'line' ? (
                     <LineChart
@@ -384,6 +360,9 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'impriMed'}
+                    chart={'Freezer #2 Temp'}
                   >
                     {imFreezerTwoTempChartType === 'line' ? (
                       <LineChart
@@ -413,6 +392,9 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'impriMed'}
+                    chart={'Freezer #2 Hum'}
                   >
                     {imFreezerTwoHumChartType === 'line' ? (
                       <LineChart
@@ -442,6 +424,9 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'impriMed'}
+                    chart={'Freezer #3 Temp'}
                   >
                     {imFreezerThreeTempChartType === 'line' ? (
                       <LineChart
@@ -471,6 +456,9 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'impriMed'}
+                    chart={'Freezer #3 Hum'}
                   >
                     {imFreezerThreeHumChartType === 'line' ? (
                       <LineChart
@@ -500,6 +488,9 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'impriMed'}
+                    chart={'Fridge #1 Temp'}
                   >
                     {imFridgeOneTempChartType === 'line' ? (
                       <LineChart
@@ -529,6 +520,9 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'impriMed'}
+                    chart={'Fridge #1 Hum'}
                   >
                     {imFridgeOneHumChartType === 'line' ? (
                       <LineChart
@@ -558,6 +552,9 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'impriMed'}
+                    chart={'Fridge #2 Temp'}
                   >
                     {imFridgeTwoTempChartType === 'line' ? (
                       <LineChart
@@ -587,6 +584,9 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'impriMed'}
+                    chart={'Fridge #2 Hum'}
                   >
                     {imFridgeTwoHumChartType === 'line' ? (
                       <LineChart
@@ -616,6 +616,9 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'impriMed'}
+                    chart={'Incubator #1 Temp'}
                   >
                     {imIncubatorOneTempChartType === 'line' ? (
                       <LineChart
@@ -645,6 +648,9 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'impriMed'}
+                    chart={'Incubator #1 Hum'}
                   >
                     {imIncubatorOneHumChartType === 'line' ? (
                       <LineChart
@@ -674,6 +680,9 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'impriMed'}
+                    chart={'Incubator #2 Temp'}
                   >
                     {imIncubatorTwoTempChartType === 'line' ? (
                       <LineChart
@@ -703,6 +712,9 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     display="flex"
                     flexDirection="column"
                     handleTimePeriodChange={handleTimePeriodChange}
+                    toggleChartVisibility={toggleChartVisibility}
+                    section={'impriMed'}
+                    chart={'Incubator #2 Hum'}
                   >
                     {imIncubatorTwoHumChartType === 'line' ? (
                       <LineChart
