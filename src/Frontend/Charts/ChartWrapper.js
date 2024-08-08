@@ -51,6 +51,7 @@ const ChartWrapper = ({
   section,
   chart,
   chartLayout,
+  typeOfChart,
 }) => {
   const [showIcons, setShowIcons] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -670,6 +671,7 @@ const ChartWrapper = ({
         setCurrentTimePeriod={setCurrentTimePeriod}
         sensorMap={sensorMap}
         MapComponent={MapComponent}
+        typeOfChart={typeOfChart}
       />
     </>
   );

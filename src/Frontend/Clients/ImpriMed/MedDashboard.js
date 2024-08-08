@@ -380,6 +380,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     section={'impriMed'}
                     chart={'Freezer #1 Temp'}
                     chartLayout={chartLayout}
+                    typeOfChart={imFreezerOneTempChartType}
                   >
                     {imFreezerOneTempChartType === 'line' ? (
                       <LineChart

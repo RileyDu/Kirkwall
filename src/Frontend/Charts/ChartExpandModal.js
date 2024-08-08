@@ -46,6 +46,7 @@ const ChartExpandModal = ({
   currentTimePeriod,
   setCurrentTimePeriod,
   MapComponent,
+  typeOfChart,
 }) => {
   const { colorMode } = useColorMode();
   const [loading, setLoading] = useState(false);
@@ -121,7 +122,7 @@ const ChartExpandModal = ({
 
   // Render the chart based on the selected chart type
   const renderChart = () => {
-    switch (chartType) {
+    switch (typeOfChart) {
       case 'line':
         return <LineChart data={weatherData} metric={metric} />;
       case 'bar':
