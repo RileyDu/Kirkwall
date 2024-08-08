@@ -386,7 +386,7 @@ const ChartWrapper = ({
             {title}
           </Box>
           <Flex alignItems="center">
-            {isLargerThan768 && (
+            {/* {isLargerThan768 && ( */}
               <>
                 <motion.div
                   initial={{ opacity: 0, scale: 0 }}
@@ -452,7 +452,7 @@ const ChartWrapper = ({
                     </Popover>
                   </Box>
                 </motion.div>
-              {chartLayout !== 3 && (
+              {chartLayout !== 3 && isLargerThan768 && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -477,7 +477,7 @@ const ChartWrapper = ({
                 </motion.div>
               )}
               </>
-            )}
+            {/* // )} */}
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -556,7 +556,7 @@ const ChartWrapper = ({
                 </Popover>
               </Box>
             </motion.div>
-            {chartLayout !== 3 && (
+            {chartLayout !== 3 && isLargerThan768 && (
               <>
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
