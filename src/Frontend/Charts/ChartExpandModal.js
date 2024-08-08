@@ -122,6 +122,7 @@ const ChartExpandModal = ({
 
   // Render the chart based on the selected chart type
   const renderChart = () => {
+    // console.log('typeOfChart:', typeOfChart);
     switch (typeOfChart) {
       case 'line':
         return <LineChart data={weatherData} metric={metric} />;

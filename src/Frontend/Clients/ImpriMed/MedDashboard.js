@@ -381,6 +381,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     chart={'Freezer #1 Temp'}
                     chartLayout={chartLayout}
                     typeOfChart={imFreezerOneTempChartType}
+                    
                   >
                     {imFreezerOneTempChartType === 'line' ? (
                       <LineChart
@@ -416,6 +417,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     section={'impriMed'}
                     chart={'Freezer #1 Hum'}
                     chartLayout={chartLayout}
+                    typeOfChart={imFreezerOneHumChartType}
                   >
                     {imFreezerOneHumChartType === 'line' ? (
                       <LineChart
@@ -451,6 +453,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     section={'impriMed'}
                     chart={'Freezer #2 Temp'}
                     chartLayout={chartLayout}
+                    typeOfChart={imFreezerTwoTempChartType}
                   >
                     {imFreezerTwoTempChartType === 'line' ? (
                       <LineChart
@@ -486,6 +489,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     section={'impriMed'}
                     chart={'Freezer #2 Hum'}
                     chartLayout={chartLayout}
+                    typeOfChart={imFreezerTwoHumChartType}
                   >
                     {imFreezerTwoHumChartType === 'line' ? (
                       <LineChart
@@ -521,6 +525,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     section={'impriMed'}
                     chart={'Freezer #3 Temp'}
                     chartLayout={chartLayout}
+                    typeOfChart={imFreezerThreeTempChartType}
                   >
                     {imFreezerThreeTempChartType === 'line' ? (
                       <LineChart
@@ -556,6 +561,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     section={'impriMed'}
                     chart={'Freezer #3 Hum'}
                     chartLayout={chartLayout}
+                    typeOfChart={imFreezerThreeHumChartType}
                   >
                     {imFreezerThreeHumChartType === 'line' ? (
                       <LineChart
@@ -591,6 +597,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     section={'impriMed'}
                     chart={'Fridge #1 Temp'}
                     chartLayout={chartLayout}
+                    typeOfChart={imFridgeOneTempChartType}
                   >
                     {imFridgeOneTempChartType === 'line' ? (
                       <LineChart
@@ -626,6 +633,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     section={'impriMed'}
                     chart={'Fridge #1 Hum'}
                     chartLayout={chartLayout}
+                    typeOfChart={imFridgeOneHumChartType}
                   >
                     {imFridgeOneHumChartType === 'line' ? (
                       <LineChart
@@ -661,6 +669,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     section={'impriMed'}
                     chart={'Fridge #2 Temp'}
                     chartLayout={chartLayout}
+                    typeOfChart={imFridgeTwoTempChartType}
                   >
                     {imFridgeTwoTempChartType === 'line' ? (
                       <LineChart
@@ -696,6 +705,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     section={'impriMed'}
                     chart={'Fridge #2 Hum'}
                     chartLayout={chartLayout}
+                    typeOfChart={imFridgeTwoHumChartType}
                   >
                     {imFridgeTwoHumChartType === 'line' ? (
                       <LineChart
@@ -731,6 +741,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     section={'impriMed'}
                     chart={'Incubator #1 Temp'}
                     chartLayout={chartLayout}
+                    typeOfChart={imIncubatorOneTempChartType}
                   >
                     {imIncubatorOneTempChartType === 'line' ? (
                       <LineChart
@@ -766,6 +777,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     section={'impriMed'}
                     chart={'Incubator #1 Hum'}
                     chartLayout={chartLayout}
+                    typeOfChart={imIncubatorOneHumChartType}
                   >
                     {imIncubatorOneHumChartType === 'line' ? (
                       <LineChart
@@ -801,6 +813,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     section={'impriMed'}
                     chart={'Incubator #2 Temp'}
                     chartLayout={chartLayout}
+                    typeOfChart={imIncubatorTwoTempChartType}
                   >
                     {imIncubatorTwoTempChartType === 'line' ? (
                       <LineChart
@@ -836,6 +849,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     section={'impriMed'}
                     chart={'Incubator #2 Hum'}
                     chartLayout={chartLayout}
+                    typeOfChart={imIncubatorTwoHumChartType}
                   >
                     {imIncubatorTwoHumChartType === 'line' ? (
                       <LineChart
