@@ -14,7 +14,7 @@ import {
   Tabs,
   TabPanels,
   TabPanel,
-  useColorModeValue,
+  useBreakpointValue,
   IconButton,
   Tooltip,
   useMediaQuery,
@@ -25,21 +25,17 @@ import ChartWrapper from '../../Charts/ChartWrapper.js';
 import {
   FaChessRook,
   FaChevronDown,
-  FaPlus,
-  FaMinus,
   FaTemperatureHigh,
   FaTint,
-  FaWind,
-  FaWater,
-  FaLeaf,
-  FaCloudRain,
 } from 'react-icons/fa/index.esm.js';
+import { RiLayoutGridFill } from 'react-icons/ri/index.esm.js';
 import { keyframes } from '@emotion/react';
 import { useWeatherData } from '../../WeatherDataContext.js';
 import { handleChartChange } from '../../Charts/ChartUtils.js';
 import { motion } from 'framer-motion';
 const MotionBox = motion(Box);
 const MotionTabPanel = motion(TabPanel);
+const MotionIconButton = motion(IconButton);
 
 const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
   const {
@@ -85,14 +81,15 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
     useState('');
   const [imIncubatorTwoHumChartType, setImIncubatorTwoHumChartType] =
     useState('');
-
+  const [chartLayout, setChartLayout] = useState(2);
+  const [layoutStable, setLayoutStable] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isReady, setIsReady] = useState(false);
 
   const [visibleCharts, setVisibleCharts] = useState({
     impriMed: [
-      // 'Freezer #1 Temp',
-      // 'Freezer #1 Hum',
+      // 'Freezer #1 Temp', // UNCOMMENT TO SHOW ON PAGE LOAD AFTER SENSOR HAS BEEN FIXED
+      // 'Freezer #1 Hum', // UNCOMMENT TO SHOW ON PAGE LOAD AFTER SENSOR HAS BEEN FIXED
       'Freezer #2 Temp',
       'Freezer #2 Hum',
       'Freezer #3 Temp',
@@ -101,15 +98,15 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
       'Fridge #1 Hum',
       'Fridge #2 Temp',
       'Fridge #2 Hum',
-      // 'Incubator #1 Temp',
-      // 'Incubator #1 Hum',
+      // 'Incubator #1 Temp', // UNCOMMENT TO SHOW ON PAGE LOAD AFTER SENSOR HAS BEEN FIXED
+      // 'Incubator #1 Hum', // UNCOMMENT TO SHOW ON PAGE LOAD AFTER SENSOR HAS BEEN FIXED
       'Incubator #2 Temp',
       'Incubator #2 Hum',
     ],
   });
 
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
-
+  const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
   const { colorMode } = useColorMode();
 
   const updateChartTypes = chartData => {
@@ -186,6 +183,21 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
     });
   };
 
+  const toggleLayout = () => {
+    if (chartLayout === 1) {
+      setChartLayout(2);
+    } else if (chartLayout === 2) {
+      setChartLayout(3);
+    } else {
+      setChartLayout(1);
+    }
+
+    setLayoutStable(false);
+    setTimeout(() => {
+      setLayoutStable(true);
+    }, 1);
+  };
+
   const getLogoColor = () => (colorMode === 'light' ? 'black' : 'white');
 
   const spin = keyframes`
@@ -249,6 +261,26 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                 ImpriMed Dashboard
               </Heading>
               <Menu isOpen={isOpen}>
+              <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 1, delay: 0.35 }}
+                >
+                {isLargerThan768 && (
+                  <Tooltip label="Toggle Layout">
+                    <MotionIconButton
+                      icon={<RiLayoutGridFill />}
+                      variant="outline"
+                      color="#212121"
+                      size={iconSize}
+                      bg={'brand.400'}
+                      _hover={{ bg: 'brand.800' }}
+                      onClick={toggleLayout}
+                      border={'2px solid #fd9801'}
+                      mr={2}
+                    />
+                  </Tooltip>
+                )}
                 <Tooltip label="Toggle Charts">
                   <MenuButton
                     as={Button}
@@ -258,6 +290,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     onClick={isOpen ? onClose : onOpen}
                     size={isLargerThan768 ? 'md' : 'sm'}
                     ml={isLargerThan768 ? '0' : '4'}
+                    mt={isLargerThan768 ? '0' : '1'}
                   >
                     <FaChevronDown />
                   </MenuButton>
@@ -293,7 +326,6 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                           : 'white'
                       }
                       border={'1px solid #212121'}
-
                     >
                       <Flex
                         alignItems="center"
@@ -308,13 +340,24 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     </MenuItem>
                   ))}
                 </MenuList>
+                </motion.div>
               </Menu>
             </Flex>
+            {layoutStable ? (
+              <MotionBox
+                initial={{ opacity: 0, height: 0 }}
+                animate={{
+                  opacity: 1,
+                  height: 'auto',
+                }}
+                transition={{ duration: 0.5 }}
+                mb={'8'}
+              >
             <Grid
               templateColumns={{
                 base: '1fr',
-                md: 'repeat(2, 1fr)',
-                lg: 'repeat(2, 1fr)',
+                md: `repeat(${chartLayout}, 1fr)`,
+                lg: `repeat(${chartLayout}, 1fr)`,
               }}
               gap="6"
             >
@@ -335,6 +378,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section={'impriMed'}
                     chart={'Freezer #1 Temp'}
+                    chartLayout={chartLayout}
                   >
                     {imFreezerOneTempChartType === 'line' ? (
                       <LineChart
@@ -369,6 +413,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section={'impriMed'}
                     chart={'Freezer #1 Hum'}
+                    chartLayout={chartLayout}
                   >
                     {imFreezerOneHumChartType === 'line' ? (
                       <LineChart
@@ -403,6 +448,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section={'impriMed'}
                     chart={'Freezer #2 Temp'}
+                    chartLayout={chartLayout}
                   >
                     {imFreezerTwoTempChartType === 'line' ? (
                       <LineChart
@@ -437,6 +483,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section={'impriMed'}
                     chart={'Freezer #2 Hum'}
+                    chartLayout={chartLayout}
                   >
                     {imFreezerTwoHumChartType === 'line' ? (
                       <LineChart
@@ -471,6 +518,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section={'impriMed'}
                     chart={'Freezer #3 Temp'}
+                    chartLayout={chartLayout}
                   >
                     {imFreezerThreeTempChartType === 'line' ? (
                       <LineChart
@@ -505,6 +553,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section={'impriMed'}
                     chart={'Freezer #3 Hum'}
+                    chartLayout={chartLayout}
                   >
                     {imFreezerThreeHumChartType === 'line' ? (
                       <LineChart
@@ -539,6 +588,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section={'impriMed'}
                     chart={'Fridge #1 Temp'}
+                    chartLayout={chartLayout}
                   >
                     {imFridgeOneTempChartType === 'line' ? (
                       <LineChart
@@ -573,6 +623,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section={'impriMed'}
                     chart={'Fridge #1 Hum'}
+                    chartLayout={chartLayout}
                   >
                     {imFridgeOneHumChartType === 'line' ? (
                       <LineChart
@@ -607,6 +658,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section={'impriMed'}
                     chart={'Fridge #2 Temp'}
+                    chartLayout={chartLayout}
                   >
                     {imFridgeTwoTempChartType === 'line' ? (
                       <LineChart
@@ -641,6 +693,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section={'impriMed'}
                     chart={'Fridge #2 Hum'}
+                    chartLayout={chartLayout}
                   >
                     {imFridgeTwoHumChartType === 'line' ? (
                       <LineChart
@@ -675,6 +728,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section={'impriMed'}
                     chart={'Incubator #1 Temp'}
+                    chartLayout={chartLayout}
                   >
                     {imIncubatorOneTempChartType === 'line' ? (
                       <LineChart
@@ -709,6 +763,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section={'impriMed'}
                     chart={'Incubator #1 Hum'}
+                    chartLayout={chartLayout}
                   >
                     {imIncubatorOneHumChartType === 'line' ? (
                       <LineChart
@@ -743,6 +798,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section={'impriMed'}
                     chart={'Incubator #2 Temp'}
+                    chartLayout={chartLayout}
                   >
                     {imIncubatorTwoTempChartType === 'line' ? (
                       <LineChart
@@ -777,6 +833,7 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section={'impriMed'}
                     chart={'Incubator #2 Hum'}
+                    chartLayout={chartLayout}
                   >
                     {imIncubatorTwoHumChartType === 'line' ? (
                       <LineChart
@@ -795,6 +852,11 @@ const MedDashboard = ({ timePeriod, statusOfAlerts }) => {
                 </GridItem>
               )}
             </Grid>
+          </MotionBox>
+        ) : (
+          <Flex justify="center" align="center" height="100%">
+          </Flex>
+        )}
           </MotionTabPanel>
         </TabPanels>
       </Tabs>
