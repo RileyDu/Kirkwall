@@ -99,7 +99,7 @@ const ChartWrapper = ({
   const { colorMode } = useColorMode();
 
   const renderCloseButton = () => {
-    const routesWithCloseButton = ['/', '/grandfarm', '/watchdogprotect'];
+    const routesWithCloseButton = ['/', '/grandfarm', '/watchdogprotect', '/imprimed'];
     return isLargerThan768 && routesWithCloseButton.includes(location.pathname);
   };
 
