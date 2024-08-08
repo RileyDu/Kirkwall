@@ -72,6 +72,8 @@ const getMinMax = (data) => {
 const createCustomChartOptions = (metric, data, colorMode) => {
   const { min, max } = getMinMax(data);
   const labelColor = colorMode === 'light' ? '#000000' : '#FFFFFF';
+  const gridLineColor = colorMode === 'light' ? '#e0e0e0' : '#333333'; // Set grid line color based on color mode
+
   return {
     responsive: true,
     maintainAspectRatio: false,
@@ -84,12 +86,18 @@ const createCustomChartOptions = (metric, data, colorMode) => {
           maxTicksLimit: 10,
           color: labelColor,  // Set label color based on color mode
         },
+        grid: {
+          color: gridLineColor, // Set grid line color
+        },
       },
       y: {
         min: min > 1 ? min - 1 : min - .1,
         max: max > 1 ? Math.round(max + 1) : max + .5,
         ticks: {
           color: labelColor,  // Set label color based on color mode
+        },
+        grid: {
+          color: gridLineColor, // Set grid line color
         },
         title: {
           display: false,
