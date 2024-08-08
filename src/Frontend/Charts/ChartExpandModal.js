@@ -34,6 +34,7 @@ import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts.js';
 import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
 import { useWeatherData } from '../WeatherDataContext.js';
+import { type } from '@testing-library/user-event/dist/cjs/utility/type.js';
 
 const ChartExpandModal = ({
   isOpen,
@@ -300,8 +301,8 @@ const ChartExpandModal = ({
                 mx={1}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                bg={chartType === 'line' ? 'orange.400' : 'gray.100'}
-                color={chartType === 'line' ? 'white' : 'black'}
+                bg={typeOfChart === 'line' ? 'orange.400' : 'gray.100'}
+                color={typeOfChart === 'line' ? 'white' : 'black'}
               >
                 LINE
               </MotionButton>
@@ -316,8 +317,8 @@ const ChartExpandModal = ({
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 size={['sm', 'md']}
-                bg={chartType === 'bar' ? 'orange.400' : 'gray.100'}
-                color={chartType === 'bar' ? 'white' : 'black'}
+                bg={typeOfChart === 'bar' ? 'orange.400' : 'gray.100'}
+                color={typeOfChart === 'bar' ? 'white' : 'black'}
               >
                 BAR
               </MotionButton>
