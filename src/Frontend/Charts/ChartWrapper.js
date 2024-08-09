@@ -51,6 +51,7 @@ const ChartWrapper = ({
   section,
   chart,
   chartLayout,
+  typeOfChart,
 }) => {
   const [showIcons, setShowIcons] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -99,7 +100,7 @@ const ChartWrapper = ({
   const { colorMode } = useColorMode();
 
   const renderCloseButton = () => {
-    const routesWithCloseButton = ['/', '/grandfarm', '/watchdogprotect'];
+    const routesWithCloseButton = ['/', '/grandfarm', '/watchdogprotect', '/imprimed'];
     return isLargerThan768 && routesWithCloseButton.includes(location.pathname);
   };
 
@@ -386,7 +387,7 @@ const ChartWrapper = ({
             {title}
           </Box>
           <Flex alignItems="center">
-            {isLargerThan768 && (
+            {/* {isLargerThan768 && ( */}
               <>
                 <motion.div
                   initial={{ opacity: 0, scale: 0 }}
@@ -452,7 +453,7 @@ const ChartWrapper = ({
                     </Popover>
                   </Box>
                 </motion.div>
-              {chartLayout !== 3 && (
+              {chartLayout !== 3 && isLargerThan768 && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -477,7 +478,7 @@ const ChartWrapper = ({
                 </motion.div>
               )}
               </>
-            )}
+            {/* // )} */}
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -556,7 +557,7 @@ const ChartWrapper = ({
                 </Popover>
               </Box>
             </motion.div>
-            {chartLayout !== 3 && (
+            {chartLayout !== 3 && isLargerThan768 && (
               <>
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
@@ -670,6 +671,7 @@ const ChartWrapper = ({
         setCurrentTimePeriod={setCurrentTimePeriod}
         sensorMap={sensorMap}
         MapComponent={MapComponent}
+        typeOfChart={typeOfChart}
       />
     </>
   );

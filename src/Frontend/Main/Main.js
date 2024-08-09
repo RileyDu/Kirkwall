@@ -425,6 +425,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         section="grandFarm"
                         chart="temperature"
                         chartLayout={chartLayout}
+                        typeOfChart={tempChartType}
                       >
                         {tempChartType === 'line' ? (
                           <LineChart
@@ -458,6 +459,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         section="grandFarm"
                         chart="humidity"
                         chartLayout={chartLayout}
+                        typeOfChart={humidityChartType}
                       >
                         {humidityChartType === 'line' ? (
                           <LineChart
@@ -491,6 +493,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         section="grandFarm"
                         chart="wind"
                         chartLayout={chartLayout}
+                        typeOfChart={windChartType}
                       >
                         {windChartType === 'line' ? (
                           <LineChart
@@ -526,6 +529,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         section="grandFarm"
                         chart="soil"
                         chartLayout={chartLayout}
+                        typeOfChart={soilMoistureChartType}
                       >
                         {soilMoistureChartType === 'line' ? (
                           <LineChart
@@ -561,6 +565,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         section="grandFarm"
                         chart="leaf"
                         chartLayout={chartLayout}
+                        typeOfChart={leafWetnessChartType}
                       >
                         {leafWetnessChartType === 'line' ? (
                           <LineChart
@@ -594,6 +599,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         section="grandFarm"
                         chart="rainfall"
                         chartLayout={chartLayout}
+                        typeOfChart={rainfallChartType}
                       >
                         {rainfallChartType === 'line' ? (
                           <LineChart
@@ -629,6 +635,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         section="garage"
                         chart="temperature"
                         chartLayout={chartLayout}
+                        typeOfChart={watchdogTempChartType}
                       >
                         {watchdogTempChartType === 'line' ? (
                           <LineChart
@@ -664,6 +671,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         section="garage"
                         chart="humidity"
                         chartLayout={chartLayout}
+                        typeOfChart={watchdogHumidityChartType}
                       >
                         {watchdogHumidityChartType === 'line' ? (
                           <LineChart
@@ -699,6 +707,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         section="rivercity"
                         chart="temperature"
                         chartLayout={chartLayout}
+                        typeOfChart={rivercityTempChartType}
                       >
                         {rivercityTempChartType === 'line' ? (
                           <LineChart
@@ -734,6 +743,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         section="rivercity"
                         chart="humidity"
                         chartLayout={chartLayout}
+                        typeOfChart={rivercityHumChartType}
                       >
                         {rivercityHumChartType === 'line' ? (
                           <LineChart
@@ -842,6 +852,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section="grandFarm"
                     chart="temperature"
+                    typeOfChart={tempChartType}
                   >
                     {tempChartType === 'line' ? (
                       <LineChart
@@ -874,6 +885,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section="grandFarm"
                     chart="humidity"
+                    typeOfChart={humidityChartType}
                   >
                     {humidityChartType === 'line' ? (
                       <LineChart
@@ -906,6 +918,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section="grandFarm"
                     chart="wind"
+                    typeOfChart={windChartType}
                   >
                     {windChartType === 'line' ? (
                       <LineChart
@@ -938,6 +951,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section="grandFarm"
                     chart="soil"
+                    typeOfChart={soilMoistureChartType}
                   >
                     {soilMoistureChartType === 'line' ? (
                       <LineChart
@@ -970,6 +984,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section="grandFarm"
                     chart="leaf"
+                    typeOfChart={leafWetnessChartType}
                   >
                     {leafWetnessChartType === 'line' ? (
                       <LineChart
@@ -1002,6 +1017,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section="grandFarm"
                     chart="rainfall"
+                    typeOfChart={rainfallChartType}
                   >
                     {rainfallChartType === 'line' ? (
                       <LineChart
@@ -1099,6 +1115,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section="garage"
                     chart="temperature"
+                    typeOfChart={watchdogTempChartType}
                   >
                     {watchdogTempChartType === 'line' ? (
                       <LineChart
@@ -1133,6 +1150,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section="garage"
                     chart="humidity"
+                    typeOfChart={watchdogHumidityChartType}
                   >
                     {watchdogHumidityChartType === 'line' ? (
                       <LineChart
@@ -1230,6 +1248,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section="rivercity"
                     chart="temperature"
+                    typeOfChart={rivercityTempChartType}
                   >
                     {rivercityTempChartType === 'line' ? (
                       <LineChart
@@ -1262,6 +1281,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                     toggleChartVisibility={toggleChartVisibility}
                     section="rivercity"
                     chart="humidity"
+                    typeOfChart={rivercityHumChartType}
                   >
                     {rivercityHumChartType === 'line' ? (
                       <LineChart
