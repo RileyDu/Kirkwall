@@ -56,5 +56,3 @@ const SummaryModal = (props) => {
 }
 
 export default SummaryModal
-
-

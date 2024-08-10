@@ -11,6 +11,7 @@ import {
   ModalHeader,
   ModalOverlay,
   ModalFooter,
+  useColorMode,
 } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import { updateAdmin } from '../../Backend/Graphql_helper.js';
@@ -36,6 +37,8 @@ const AddInformationFormModal = ({
   const [localEmail, setLocalEmail] = useState('');
   const [localCompany, setLocalCompany] = useState('');
   const [localThreshKill, setLocalThreshKill] = useState(false);
+  const { colorMode } = useColorMode();
+
 
 
   useEffect(() => {
@@ -92,7 +95,7 @@ const AddInformationFormModal = ({
         <ModalCloseButton color={'white'} size={'lg'} mt={1} />
         <ModalBody>
           <FormControl>
-            <FormLabel>First Name</FormLabel>
+            <FormLabel color={colorMode === "light" ? '#212121' : "black"}>First Name</FormLabel>
             <Input
               type="text"
               value={localFirstName}
@@ -100,10 +103,11 @@ const AddInformationFormModal = ({
               bg={'white'}
               border={'2px solid #fd9801'}
               color={'#212121'}
+              
             />
           </FormControl>
           <FormControl mt={4}>
-            <FormLabel>Last Name</FormLabel>
+            <FormLabel color={colorMode === "light" ? '#212121' : "black"}>Last Name</FormLabel>
             <Input
               type="text"
               value={localLastName}
@@ -114,7 +118,7 @@ const AddInformationFormModal = ({
             />
           </FormControl>
           <FormControl mt={4}>
-            <FormLabel>Phone</FormLabel>
+            <FormLabel color={colorMode === "light" ? '#212121' : "black"}>Phone</FormLabel>
             <Input
               type="text"
               value={localPhone}
@@ -125,7 +129,7 @@ const AddInformationFormModal = ({
             />
           </FormControl>
           <FormControl mt={4}>
-            <FormLabel>Email</FormLabel>
+            <FormLabel color={colorMode === "light" ? '#212121' : "black"}>Email</FormLabel>
             <Input
               type="email"
               disabled
@@ -137,7 +141,7 @@ const AddInformationFormModal = ({
             />
           </FormControl>
           <FormControl mt={4}>
-            <FormLabel>Company</FormLabel>
+            <FormLabel color={colorMode === "light" ? '#212121' : "black"}>Company</FormLabel>
             <Input
               type="text"
               value={localCompany}

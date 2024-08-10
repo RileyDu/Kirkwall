@@ -449,6 +449,25 @@ const updateProfileUrl = async (id, firstname, lastname, email, phone, company, 
 };
 
 
+// Function to get all metrics which have alerts in the past hour
+const oneHourAgo = new Date(new Date().getTime() - (60 * 60 * 1000)).toISOString().replace('Z', '.000000+00:00').replace('.000000', '');
+const formattedTimestamp = oneHourAgo.split('.')[0] + '.000000+00:00';
+
+// 2024-08-09T20:32:27.000000+00:00
+
+
+async function getThresholdsInTheLastHour() {
+  const query =`
+    query {                          
+      alerts(filter: "timestamp > \\"${formattedTimestamp}\\"", ordering: "timestamp desc") {
+        metric
+        timestamp
+      }
+    }
+  `;
+
+  return executeGraphqlQuery(query);
+}
 
 
 
@@ -523,5 +542,6 @@ export {
   getAdminByEmail,
   updateAdmin,
   updateProfileUrl,
-  getIdByEmail
+  getIdByEmail,
+  getThresholdsInTheLastHour
 };
