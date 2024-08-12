@@ -609,7 +609,7 @@ export {
   updateAdmin,
   updateProfileUrl,
   getIdByEmail,
-  getThresholdsInTheLastHour
+  getThresholdsInTheLastHour,
   getChartData,
   updateChart,
 };
