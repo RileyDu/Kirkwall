@@ -441,6 +441,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                           return acc;
                         }, {})
                       ).map(([metric, count], index) => (
+                        <>
                         <Box
                           key={index}
                           bg="orange.400"
@@ -448,12 +449,13 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                           borderRadius="md"
                           boxShadow="md"
                         >
-                          <Text fontSize="sm" color="#212121">
-                            Metric: {metricToName[metric]} - {count} alert
+                          <Text fontSize="md" color="#212121">
+                            {metricToName[metric]} - {count} alert
                             {count > 1 ? 's' : ''}
                           </Text>
-                          <Divider mt={2} />
                         </Box>
+                          <Divider mt={2} />
+                          </>
                       ))}
                     </Stack>
                   ) : (
