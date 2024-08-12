@@ -1,0 +1,586 @@
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Image } from 'cloudinary-react';
+import {
+  Box,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  Grid,
+  GridItem,
+  Text,
+  Heading,
+  Flex,
+  Divider,
+  useColorMode,
+  Input,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+  Stack,
+  useToast,
+  IconButton,
+  useBreakpointValue,
+  FormControl,
+  FormLabel,
+  ModalFooter,
+  Spinner,
+} from '@chakra-ui/react';
+import { FaBell, FaExpandAlt, FaQuestion } from 'react-icons/fa/index.esm.js';
+import { motion } from 'framer-motion';
+import { useWeatherData } from '../WeatherDataContext.js';
+import AddInformationFormModal from './AddInformationFormModal.js';
+import { getAdminByEmail, updateProfileUrl, createThreshold, getThresholdsInTheLastHour } from '../../Backend/Graphql_helper.js';
+import FaqsModal from './FaqsModal.js';
+import SetThresholdsModal from './SetThresholdsModal.js';
+
+const MotionTabPanel = motion(TabPanel);
+
+const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
+  const [adminId, setAdminId] = useState();
+  const { colorMode } = useColorMode();
+  const { thresholds, alertsThreshold } = useWeatherData();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const toast = useToast();
+
+
+
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [company, setCompany] = useState('');
+  const [threshKill, setThreshKill] = useState(false);
+
+  const [uploadedImageUrl, setUploadedImageUrl] = useState('');
+
+  const [isFaqsModalOpen, setFaqsModalOpen] = useState(false);
+  const [isThresholdModalOpen, setIsThresholdModalOpen] = useState(false);
+
+
+  const [title, setTitle] = useState('Temperature (°F)');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [userEmailForThreshold, setUserEmailForThreshold] = useState('');
+  const [highThreshold, setHighThreshold] = useState('');
+  const [lowThreshold, setLowThreshold] = useState('');
+  const [metric, setMetric] = useState('temperature');
+
+  const handleOpenThresholdModal = () => setIsThresholdModalOpen(true);
+  const handleCloseThresholdModal = () => setIsThresholdModalOpen(false);
+
+  const getModalBackgroundColor = () =>
+    colorMode === 'light' ? 'whitesmoke' : 'gray.700';
+
+
+  const [alertsLastHour, setAlertsLastHour] = useState([]);
+  const [loadingAlerts, setLoadingAlerts] = useState(true);
+
+  useEffect(() => {
+    const fetchAlertsLastHour = async () => {
+      setLoadingAlerts(true);
+      try {
+        const result = await getThresholdsInTheLastHour();
+        console.log(result)
+        if (result && result.data && result.data.alerts) {
+          setAlertsLastHour(result.data.alerts);
+        } else {
+          setAlertsLastHour([]); // Set to empty array if no data is returned
+        }
+      } catch (error) {
+        console.error('Error fetching alerts:', error);
+        setAlertsLastHour([]); // Set to empty array on error
+      } finally {
+        setLoadingAlerts(false);
+      }
+    };
+
+    fetchAlertsLastHour();
+  }, []);
+
+
+
+
+  const handleFormSubmit = async () => {
+    const timestamp = new Date().toISOString();
+    try {
+      await createThreshold(
+        metric,
+        parseFloat(highThreshold),
+        parseFloat(lowThreshold),
+        phoneNumber,
+        userEmailForThreshold,
+        timestamp
+      );
+      console.log('Alerts Set')
+    } catch (error) {
+      console.error('Error creating threshold:', error);
+    } finally {
+      setIsThresholdModalOpen(false);
+    }
+  };
+
+  const handleFormClear = async () => {
+    const timestamp = new Date().toISOString();
+    setHighThreshold('');
+    setLowThreshold('');
+    setPhoneNumber('');
+    setUserEmailForThreshold('');
+    try {
+      await createThreshold(
+        metric,
+        highThreshold,
+        lowThreshold,
+        phoneNumber,
+        userEmailForThreshold,
+        timestamp
+      );
+    } catch (error) {
+      console.error('Error clearing threshold:', error);
+    } finally {
+      setIsThresholdModalOpen(false);
+    }
+  };
+
+  const uploadImage = (event) => {
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "v0b3yxc7");
+
+    axios.post("https://api.cloudinary.com/v1_1/dklraztco/image/upload", formData)
+      .then((response) => {
+        console.log(response);
+        const uploadedImageUrl = response.data.secure_url;
+        setUploadedImageUrl(uploadedImageUrl);
+
+        const userId = adminId;
+        updateProfileUrl(userId, firstName, lastName, email, phone, company, threshKill, uploadedImageUrl)
+          .then((graphqlResponse) => {
+            console.log("Profile URL updated:", graphqlResponse);
+            if (graphqlResponse.data) {
+              console.log("Updated Admin Data:", graphqlResponse.data.update_admin);
+            }
+            if (graphqlResponse.errors) {
+              console.error("Errors:", graphqlResponse.errors);
+            }
+          })
+          .catch((graphqlError) => {
+            console.log("Error updating profile URL:", graphqlError);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    const fetchAdmin = async () => {
+      try {
+        const data = await getAdminByEmail(userEmail);
+        setAdminId(data["data"]["admin"][0]["id"]);
+        setFirstName(data["data"]["admin"][0]["firstname"]);
+        setLastName(data["data"]["admin"][0]["lastname"]);
+        setPhone(data["data"]["admin"][0]["phone"]);
+        setEmail(data["data"]["admin"][0]["email"]);
+        setCompany(data["data"]["admin"][0]["company"]);
+        setThreshKill(data["data"]["admin"][0]["thresh_kill"]);
+        setUploadedImageUrl(data["data"]["admin"][0]["profile_url"]);
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchAdmin();
+  }, []);
+  
+
+  const findLatestThreshold = metric => {
+    const threshold = thresholds.find(threshold => threshold.metric === metric);
+    const highThreshold = threshold?.high ?? '';
+    const lowThreshold = threshold?.low ?? '';
+    const phone = threshold?.phone ?? '';
+    const email = threshold?.email ?? '';
+    return { highThreshold, lowThreshold, phone, email };
+  };
+
+  // Update the threshold values when the metric or thresholds change, fetched from the database
+  useEffect(() => {
+    const latestThreshold = findLatestThreshold(metric);
+    setHighThreshold(latestThreshold.highThreshold);
+    setLowThreshold(latestThreshold.lowThreshold);
+    setPhoneNumber(latestThreshold.phone);
+    setUserEmailForThreshold(latestThreshold.email);
+  }, [metric, thresholds]);
+
+  const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
+  const handleOpenModal = () => setModalOpen(true);
+  const handleCloseModal = () => setModalOpen(false);
+
+  const oneHourAgo = new Date(new Date().getTime() - (60 * 60 * 1000)).toISOString().replace('Z', '.000000+00:00');
+
+  const handleOpenFaqsModal = () => setFaqsModalOpen(true);
+  const handleCloseFaqsModal = () => setFaqsModalOpen(false);
+
+
+
+  const userConfig = {
+    'pmo@grandfarm.com': ['Temperature', 'Humidity', 'Wind Speed', 'Soil Moisture', 'Leaf Wetness', 'Rainfall'],
+    'jerrycromarty@imprimedicine.com': ['Rivercity Temperature', 'Rivercity Humidity'],
+    'russell@rjenergysolutions.com': ['Rivercity Temperature', 'Rivercity Humidity'],
+    'trey@watchdogprotect.com': ['Watchdog Temperature', 'Watchdog Humidity'],
+    'test@kirkwall.io': ['Temperature', 'Humidity', 'Wind Speed', 'Soil Moisture', 'Leaf Wetness', 'Rainfall', 'Watchdog Temperature', 'Watchdog Humidity', 'Rivercity Temperature', 'Rivercity Humidity']
+  };
+
+  const metricToName = {"temperature":"Temperature (°F)", "percent_humidity":"Humidity (%)", "wind_speed":"Wind (mph)", "soil_moisture":"Soil Moisture (centibar)", "leaf_wetness": "Leaf Wetness (0-15)", "rain_15_min_inches": "Rainfall (in)", "temp":"Temperature (°F)", "hum":"Humidity (%)", "rctemp":"Temperature (°F)", "humidity":"Humidity (%)"}
+  const nameToMetric = Object.fromEntries(Object.entries(metricToName).map(([key, value]) => [value.toLowerCase(), key]));
+
+
+  const MotionIconButton = motion(IconButton);
+
+  const tabsToRender = userConfig[userEmail] || [];
+
+  const handleTabChange = (index) => {
+    setMetric(tabsToRender[index]);
+  };
+
+  const MotionButton = motion(Button);
+
+  return (
+    <Box>
+      <Modal onClose={onClose} isOpen={isOpen}>
+        <ModalOverlay />
+        <ModalContent
+          width="90%"
+          maxWidth="100%"
+          height="80vh"
+          maxHeight="90vh"
+        >
+          <ModalHeader textAlign="center" bg="gray.700" mb="10px">
+            <Heading color="white">Admin Panel</Heading>
+          </ModalHeader>
+          <ModalCloseButton color="white" />
+          <ModalBody overflowY="auto">
+            <Box height="100%">
+              <Grid templateRows="auto 1fr" templateColumns="repeat(2, 1fr)" gap={6} height="100%">
+                <GridItem colSpan={1} border="5px solid #fd9801" p={3}>
+                  <Heading mb={3} fontSize="2xl">Profile</Heading>
+                  <Flex alignItems="center">
+                    <Box alignContent="center" textAlign="center" boxSize="150px" border="5px solid #fd9801" borderRadius="150px">
+                      <Image cloudName="dklraztco" publicId={uploadedImageUrl} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                    </Box>
+                    <Box ml={3}>
+                      <Text fontSize="md" fontWeight="bold">User Name: {firstName + " " + lastName}</Text>
+                      <Text fontSize="md" fontWeight="bold">Phone Number: {phone}</Text>
+                      <Text fontSize="md" fontWeight="bold">Email Address: {email}</Text>
+                      <Text fontSize="md" fontWeight="bold">Company: {company}</Text>
+                    </Box>
+                  </Flex>
+                  <Box mt="7" ml={2} alignContent="center">
+                    <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
+                      <Button as="label" cursor="pointer">
+                        Change Profile Picture
+                        <Input type="file" display="none" onChange={uploadImage} />
+                      </Button>
+                      <Button onClick={handleOpenModal}>Edit Details</Button>
+                    </Stack>
+                    <AddInformationFormModal
+                      isOpen={isModalOpen}
+                      onClose={handleCloseModal}
+                      id={adminId}
+                      firstName={firstName}
+                      lastName={lastName}
+                      phone={phone}
+                      email={email}
+                      company={company}
+                      setFirstName={setFirstName}
+                      setLastName={setLastName}
+                      setPhone={setPhone}
+                      setEmail={setEmail}
+                      setCompany={setCompany}
+                    />
+                  </Box>
+                </GridItem>
+                
+                <GridItem colSpan={1} border="5px solid #fd9801" p={3}>
+                  <Heading mb={3} fontSize="2xl">
+                    Alerts in the Last Hour
+                  </Heading>
+
+                  {loadingAlerts ? (
+                    <Spinner size="lg" />
+                  ) : alertsLastHour.length > 0 ? (
+                    <Stack spacing={2}>
+                      {Object.entries(
+                        alertsLastHour.reduce((acc, alert) => {
+                          acc[alert.metric] = (acc[alert.metric] || 0) + 1;
+                          return acc;
+                        }, {})
+                      ).map(([metric, count], index) => (
+                        <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
+                          <Text fontSize="sm" color="#212121">
+                            Metric: {metricToName[metric]} - {count} alert{count > 1 ? 's' : ''}
+                          </Text>
+                          <Divider mt={2} />
+                        </Box>
+                      ))}
+                    </Stack>
+                  ) : (
+                    <Text fontSize="lg">No alerts found in the last hour.</Text>
+                  )}
+                </GridItem>
+
+                
+                <GridItem colSpan={2} border="5px solid #fd9801" p={3}>
+                  <Flex justifyContent="space-between" alignItems="center" mb={5}>
+                    <Heading fontSize="2xl">Threshold Logs</Heading>
+                    <MotionButton
+                      variant={'solid'}
+                      onClick={handleOpenThresholdModal}
+                      leftIcon={<FaBell />}
+                      mx={1}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      size={['sm', 'md']}
+                      bg={'gray.100'}
+                      color={'black'}
+                    >
+                      SET THRESHOLDS
+                    </MotionButton>
+                  </Flex>
+                  <Tabs variant="soft-rounded" colorScheme="orange" isFitted 
+                      onChange={(index) => {
+                        switch(index) {
+                          case 0:
+                            setTitle("Temperature (°F)");
+                            setMetric("temperature");
+                            break;
+                          case 1:
+                            setTitle("Humidity (%)");
+                            setMetric("percent_humidity");
+                            break;
+                          case 2:
+                            setTitle("Wind (mph)");
+                            setMetric("wind_speed");
+                            break;
+                          case 3:
+                            setTitle("Soil Moisture (centibar)");
+                            setMetric("soil_moisture");
+                            break;
+                          case 4:
+                            setTitle("Leaf Wetness (0-15)");
+                            setMetric("leaf_wetness");
+                            break;
+                          case 5:
+                            setTitle("Rainfall (in)");
+                            setMetric("rain_15_min_inches");
+                            break;
+                          case 6:
+                            setTitle("Temperature (F)");
+                            setMetric("temp");
+                            break;
+                          case 7:
+                            setTitle("Humidity (%)");
+                            setMetric("hum");
+                            break;
+                          case 8:
+                            setTitle("Temperature (°F)");
+                            setMetric("rctemp");
+                            break;
+                          case 9:
+                            setTitle("Humidity (%)");
+                            setMetric("humidity");
+                            break;
+                          default:
+                            break;
+                        }
+                      }}
+                  
+                  >
+
+                  <TabList mb="4" overflowX="auto">
+                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
+                      Temperature
+                    </Tab>
+                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
+                      Humidity
+                    </Tab>
+                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
+                      Wind Speed
+                    </Tab>
+                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
+                      Soil Moisture
+                    </Tab>
+                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
+                      Leaf Wetness
+                    </Tab>
+                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
+                      Rainfall
+                    </Tab>
+                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
+                      Watchdog Temperature
+                    </Tab>
+                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
+                      Watchdog Humidity
+                    </Tab>
+                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
+                      Rivercity Temperature
+                    </Tab>
+                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
+                      Rivercity Humidity
+                    </Tab>
+                  </TabList>
+                    <Divider mt={'1'} w={'100%'} />
+                    <TabPanels>
+                      {tabsToRender.map((tabName, index) => (
+                        <MotionTabPanel
+                          key={index}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          transition={{ duration: 0.5 }}
+                        >
+                          <Box maxH="360px" overflowY="auto">
+                            {alertsThreshold[Object.keys(metricToName)[index]]?.length ? (
+                              <Stack spacing={2}>
+                                {alertsThreshold[Object.keys(metricToName)[index]].map((alert, index) => (
+                                  <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
+                                    <Flex justify="space-between" align="center">
+                                      <Text color="#212121" fontSize="sm">{alert.message}</Text>
+                                    </Flex>
+                                  </Box>
+                                ))}
+                              </Stack>
+                            ) : (
+                              <Text fontSize="xl">No logs to show</Text>
+                            )}
+                          </Box>
+                        </MotionTabPanel>
+                      ))}
+                    </TabPanels>
+                  </Tabs>
+                </GridItem>
+              </Grid>
+            </Box>
+          </ModalBody>
+          <Flex justifyContent="flex-end" p={3}>
+            <MotionIconButton
+              icon={<FaQuestion />}
+              variant="outline"
+              color="#212121"
+              height={10}
+              width={10}
+              bg={'brand.400'}
+              _hover={{ bg: 'brand.800' }}
+              border={'2px solid #fd9801'}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              ml={2}
+              onClick={handleOpenFaqsModal}
+            />
+          </Flex>
+        </ModalContent>
+      </Modal>
+      <FaqsModal isOpen={isFaqsModalOpen} onClose={handleCloseFaqsModal} />
+      
+      <Modal isOpen={isThresholdModalOpen} onClose={handleCloseThresholdModal}>
+        <ModalOverlay />
+        <ModalContent
+          sx={{ border: '2px solid black', bg: getModalBackgroundColor() }}
+        >
+          <ModalHeader bg={'gray.800'} color={'white'}>
+            Add Thresholds for {title}
+          </ModalHeader>
+          <ModalCloseButton color={'white'} size={'lg'} mt={1} />
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Phone Number</FormLabel>
+              <Input
+                type="text"
+                value={phoneNumber}
+                onChange={e => setPhoneNumber(e.target.value)}
+                bg={'white'}
+                border={'2px solid #fd9801'}
+                color={'#212121'}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Email</FormLabel>
+              <Input
+                type="text"
+                value={userEmailForThreshold}
+                onChange={e => setUserEmailForThreshold(e.target.value)}
+                bg={'white'}
+                border={'2px solid #fd9801'}
+                color={'#212121'}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>High Threshold</FormLabel>
+              <Input
+                type="number"
+                value={highThreshold}
+                onChange={e => setHighThreshold(e.target.value)}
+                bg={'white'}
+                border={'2px solid #fd9801'}
+                color={'#212121'}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Low Threshold</FormLabel>
+              <Input
+                type="number"
+                value={lowThreshold}
+                onChange={e => setLowThreshold(e.target.value)}
+                bg={'white'}
+                border={'2px solid #fd9801'}
+                color={'#212121'}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+          <Button
+              variant="solid"
+              bg="red.400"
+              color="white"
+              _hover={{ bg: 'red.500' }}
+              mr={3}
+              onClick={handleFormClear}
+            >
+              Clear Form
+            </Button>
+            <Button
+              variant="solid"
+              bg="orange.400"
+              color="white"
+              _hover={{ bg: 'orange.500' }}
+              mr={3}
+              onClick={handleFormSubmit}
+            >
+              Save
+            </Button>
+            <Button
+              variant="solid"
+              bg="gray.400"
+              color="white"
+              _hover={{ bg: 'gray.500' }}
+              onClick={handleCloseThresholdModal}
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+    </Box>
+  );
+}
+
+export default AdminExpandModal;

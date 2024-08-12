@@ -18,6 +18,8 @@ import {
   PopoverHeader,
   PopoverBody,
   Input,
+  Fade, 
+  ScaleFade, Slide, SlideFade, Collapse
 } from '@chakra-ui/react';
 import {
   FaExpandAlt,

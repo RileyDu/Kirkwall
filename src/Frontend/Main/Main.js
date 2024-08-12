@@ -1341,7 +1341,14 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
           sensorMap="grandfarm"
         />
       )} */}
+  
+  
+
+
     </Box>
+
+    
+
   );
 };
 

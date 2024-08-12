@@ -203,6 +203,7 @@ async function getWatchdogData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
+
 // Generalized function to get rivercity data based on requested metric and time period
 // All is triggerd on page load with a default of 3H
 async function getRivercityData(type, limit) {
@@ -277,6 +278,7 @@ async function getLatestThreshold() {
         id
       }
     }
+      
   `;
   return executeGraphqlQuery(query);
 }
@@ -362,6 +364,135 @@ async function deleteAlert(id) {
   return executeGraphqlQuery(mutation, variables);
 }
 
+
+// This is a query to get the details of the admin that is logged in based on their email
+const getAdminByEmail = async (userEmail) => {
+  const query = `
+    query {
+      admin(filter: "email = '${userEmail}'") {
+        id
+        firstname
+        lastname
+        email
+        phone
+        company
+        thresh_kill
+        profile_url
+      }
+    }
+  `;
+
+  // const variables = {
+  //   email: email,
+  // };
+
+  return executeGraphqlQuery(query);
+};
+
+
+
+// Get Id by Email
+
+const getIdByEmail = async (email) => {
+  const query = `
+    query {
+      admin(filter: "email = '${email}'") {
+        id
+      }
+    } 
+`;
+  return executeGraphqlQuery(query);
+}
+
+// Update admin query
+
+const updateAdmin = async (id, firstname, lastname, email, phone, company, threshKill) => {
+  const mutation = `
+    mutation UpdateAdmin($id: ID!, $input: adminInput!) {
+      update_admin(id: $id, input: $input) {
+        id
+        firstname
+        lastname
+        email
+        phone
+        company
+        thresh_kill
+      }
+    }
+  `;
+
+  const variables = {
+    id: id,
+    input: {
+      firstname: firstname,
+      lastname: lastname,
+      email: email,
+      phone: phone,
+      company: company,
+      thresh_kill: threshKill,
+    },
+  };
+
+  return executeGraphqlQuery(mutation, variables);
+};
+
+
+const updateProfileUrl = async (id, firstname, lastname, email, phone, company, threshKill, profile_url) => {
+  const mutation = `
+    mutation UpdateAdmin($id: ID!, $input: adminInput!) {
+      update_admin(id: $id, input: $input) {
+        id
+        firstname
+        lastname
+        email
+        phone
+        company
+        thresh_kill
+        profile_url
+      }
+    }
+  `;
+
+  const variables = {
+    id: id,
+    input: {
+      firstname: firstname,
+      lastname: lastname,
+      email: email,
+      phone: phone,
+      company: company,
+      thresh_kill: threshKill,
+      profile_url: profile_url
+    },
+  };
+
+  return executeGraphqlQuery(mutation, variables);
+};
+
+
+// Function to get all metrics which have alerts in the past hour
+const oneHourAgo = new Date(new Date().getTime() - (60 * 60 * 1000)).toISOString().replace('Z', '.000000+00:00').replace('.000000', '');
+const formattedTimestamp = oneHourAgo.split('.')[0] + '.000000+00:00';
+
+// 2024-08-09T20:32:27.000000+00:00
+
+
+async function getThresholdsInTheLastHour() {
+  const query =`
+    query {                          
+      alerts(filter: "timestamp > \\"${formattedTimestamp}\\"", ordering: "timestamp desc") {
+        metric
+        timestamp
+      }
+    }
+  `;
+
+  return executeGraphqlQuery(query);
+}
+
+
+
+
 // Function to get the chart data for a specific metric
 async function getChartData() {
   const query = `query {
@@ -403,6 +534,7 @@ async function updateChart(id, metric, timeperiod, type, location, hidden) {
   };
   return executeGraphqlQuery(mutation, variables);
 }
+
 
 // Function to get API ID of user
 // async function getAPIIds() {
@@ -473,6 +605,11 @@ export {
   getAlerts,
   createAlert,
   deleteAlert,
+  getAdminByEmail,
+  updateAdmin,
+  updateProfileUrl,
+  getIdByEmail,
+  getThresholdsInTheLastHour
   getChartData,
   updateChart,
 };
