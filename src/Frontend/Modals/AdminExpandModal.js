@@ -102,22 +102,28 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
       setLoadingAlerts(true);
       try {
         const result = await getThresholdsInTheLastHour();
-        console.log(result);
         if (result && result.data && result.data.alerts) {
-          setAlertsLastHour(result.data.alerts);
+          // Filter alerts based on userConfig
+          const userMetrics = userConfig[userEmail]?.map(
+            config => config.metric
+          ) || [];
+          const filteredAlerts = result.data.alerts.filter(alert =>
+            userMetrics.includes(alert.metric)
+          );
+          setAlertsLastHour(filteredAlerts);
         } else {
-          setAlertsLastHour([]); // Set to empty array if no data is returned
+          setAlertsLastHour([]);
         }
       } catch (error) {
         console.error('Error fetching alerts:', error);
-        setAlertsLastHour([]); // Set to empty array on error
+        setAlertsLastHour([]);
       } finally {
         setLoadingAlerts(false);
       }
     };
 
     fetchAlertsLastHour();
-  }, []);
+  }, [userEmail]);
 
   const handleFormSubmit = async () => {
     const timestamp = new Date().toISOString();
@@ -295,24 +301,24 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
       { label: 'Soil Moisture', metric: 'soil_moisture' },
       { label: 'Leaf Wetness', metric: 'leaf_wetness' },
       { label: 'Rainfall', metric: 'rain_15_min_inches' },
-      { label: 'Watchdog Temperature', metric: 'temp' },
-      { label: 'Watchdog Humidity', metric: 'hum' },
-      { label: 'Rivercity Temperature', metric: 'rctemp' },
-      { label: 'Rivercity Humidity', metric: 'humidity' },
+      { label: 'Temperature (Watchdog)', metric: 'temp' },
+      { label: 'Humidity (Watchdog)', metric: 'hum' },
+      { label: 'Temperature (Rivercity)', metric: 'rctemp' },
+      { label: 'Humidity (Rivercity)', metric: 'humidity' },
     ],
   };
 
   const metricToName = {
-    temperature: 'Temperature (°F)',
-    percent_humidity: 'Humidity (%)',
-    wind_speed: 'Wind (mph)',
-    soil_moisture: 'Soil Moisture (centibar)',
-    leaf_wetness: 'Leaf Wetness (0-15)',
-    rain_15_min_inches: 'Rainfall (in)',
-    temp: 'Temperature (°F)',
-    hum: 'Humidity (%)',
-    rctemp: 'Temperature (°F)',
-    humidity: 'Humidity (%)',
+    temperature: 'Temperature',
+    percent_humidity: 'Humidity',
+    wind_speed: 'Wind',
+    soil_moisture: 'Soil Moisture',
+    leaf_wetness: 'Leaf Wetness',
+    rain_15_min_inches: 'Rainfall',
+    temp: 'Temperature (Watchdog)',
+    hum: 'Humidity (Watchdog)',
+    rctemp: 'Temperature (Rivercity)',
+    humidity: 'Humidity (Rivercity)',
     imFreezerOneTemp: 'Freezer #1 Temp (°C)',
     imFreezerOneHum: 'Freezer #1 Humidity (%)',
     imFreezerTwoTemp: 'Freezer #2 Temp (°C)',
