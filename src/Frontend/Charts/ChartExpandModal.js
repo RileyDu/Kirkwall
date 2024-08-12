@@ -350,16 +350,9 @@ const ChartExpandModal = ({
                 p={4}
                 height="430px"
               >
-                <MiniDashboard
-                  weatherData={weatherData}
-                  metric={metric}
-                  setCurrentValue={setCurrentValue}
-                  mt={2}
-                />
-                <Divider my={4} borderColor={'white'} />
                 {highThreshold || lowThreshold ? (
                   <>
-                    <Text fontSize="lg" fontWeight="bold" textDecor={'underline'} pb='2' >Thresholds</Text>
+                    <Text fontSize="xl" fontWeight="bold" textDecor={'underline'} pb='2' textAlign={'center'} >Thresholds</Text>
                   <Flex width={'100%'} >
                     <HStack width={'100%'} gap={6} justify={'flex-start'}>
                       {highThreshold ? <Text color="white" fontSize={['xs','md']}><strong>High:</strong> {highThreshold}</Text> : null}
@@ -402,6 +395,13 @@ const ChartExpandModal = ({
                     Set thresholds to see alerts
                   </Text>
                 )}
+                  <Divider my={4} borderColor={'white'} />
+                <MiniDashboard
+                  weatherData={weatherData}
+                  metric={metric}
+                  setCurrentValue={setCurrentValue}
+                  mt={2}
+                />
               </Box>
               <Box
                 bg="gray.700"
