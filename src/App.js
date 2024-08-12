@@ -81,7 +81,7 @@ const Layout = ({
               : '190px'
             : '0'
         }
-        mt={!isLargerThan768 && shouldShowSidebar ? '70px' : '0'}
+        mt={!isLargerThan768 && shouldShowSidebar && '0'}
       >
         
         {children}

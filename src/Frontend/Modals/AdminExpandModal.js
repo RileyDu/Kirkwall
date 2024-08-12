@@ -291,8 +291,9 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
         <ModalContent
           width="90%"
           maxWidth="100%"
-          height="80vh"
+          height="85vh"
           maxHeight="90vh"
+          
         >
           <ModalHeader textAlign="center" bg="gray.700" mb="10px">
             <Heading color="white">Admin Panel</Heading>
@@ -414,7 +415,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                           exit={{ opacity: 0, y: 10 }}
                           transition={{ duration: 0.5 }}
                         >
-                          <Box maxH="360px" overflowY="auto">
+                          <Box maxH="175px" h={'175px'} overflowY="scroll">
                             {alertsThreshold[tab.metric]?.length ? (
                               <Stack spacing={2}>
                                 {alertsThreshold[tab.metric].map((alert, alertIndex) => (
@@ -463,7 +464,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
           sx={{ border: '2px solid black', bg: getModalBackgroundColor() }}
         >
           <ModalHeader bg={'gray.800'} color={'white'}>
-            Add Thresholds for {title}
+            Set Thresholds for {title}
           </ModalHeader>
           <ModalCloseButton color={'white'} size={'lg'} mt={1} />
           <ModalBody>
