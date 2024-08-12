@@ -33,6 +33,7 @@ import {
   Spinner,
   useMediaQuery,
   Select,
+  Switch,
 } from '@chakra-ui/react';
 import { FaBell, FaExpandAlt, FaQuestion } from 'react-icons/fa/index.esm.js';
 import { motion } from 'framer-motion';
@@ -104,9 +105,8 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
         const result = await getThresholdsInTheLastHour();
         if (result && result.data && result.data.alerts) {
           // Filter alerts based on userConfig
-          const userMetrics = userConfig[userEmail]?.map(
-            config => config.metric
-          ) || [];
+          const userMetrics =
+            userConfig[userEmail]?.map(config => config.metric) || [];
           const filteredAlerts = result.data.alerts.filter(alert =>
             userMetrics.includes(alert.metric)
           );
@@ -500,19 +500,27 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                     mb={5}
                   >
                     <Heading fontSize="2xl">Threshold Logs</Heading>
-                    <MotionButton
-                      variant={'solid'}
-                      onClick={handleOpenThresholdModal}
-                      leftIcon={<FaBell />}
-                      mx={1}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      size={['sm', 'md']}
-                      bg={'gray.100'}
-                      color={'black'}
-                    >
-                      SET THRESHOLDS
-                    </MotionButton>
+                    <Box>
+                      <FormControl display="flex" alignItems="center">
+                        <FormLabel htmlFor="email-alerts" mb="1" ml={1}>
+                          STOP THRESHOLDS
+                        </FormLabel>
+                        <Switch id="email-alerts" mb='1' />
+                      </FormControl>
+                      <MotionButton
+                        variant={'solid'}
+                        onClick={handleOpenThresholdModal}
+                        leftIcon={<FaBell />}
+                        mx={1}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        size={['sm', 'md']}
+                        bg={'gray.100'}
+                        color={'black'}
+                      >
+                        SET THRESHOLDS
+                      </MotionButton>
+                    </Box>
                   </Flex>
                   {isLargerThan768 && (
                     <Tabs
