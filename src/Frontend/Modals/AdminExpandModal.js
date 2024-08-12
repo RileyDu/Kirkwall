@@ -36,7 +36,12 @@ import { FaBell, FaExpandAlt, FaQuestion } from 'react-icons/fa/index.esm.js';
 import { motion } from 'framer-motion';
 import { useWeatherData } from '../WeatherDataContext.js';
 import AddInformationFormModal from './AddInformationFormModal.js';
-import { getAdminByEmail, updateProfileUrl, createThreshold, getThresholdsInTheLastHour } from '../../Backend/Graphql_helper.js';
+import {
+  getAdminByEmail,
+  updateProfileUrl,
+  createThreshold,
+  getThresholdsInTheLastHour,
+} from '../../Backend/Graphql_helper.js';
 import FaqsModal from './FaqsModal.js';
 import SetThresholdsModal from './SetThresholdsModal.js';
 
@@ -141,34 +146,47 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     }
   };
 
-  const uploadImage = (event) => {
+  const uploadImage = event => {
     const file = event.target.files[0];
     const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "v0b3yxc7");
+    formData.append('file', file);
+    formData.append('upload_preset', 'v0b3yxc7');
 
-    axios.post("https://api.cloudinary.com/v1_1/dklraztco/image/upload", formData)
-      .then((response) => {
+    axios
+      .post('https://api.cloudinary.com/v1_1/dklraztco/image/upload', formData)
+      .then(response => {
         console.log(response);
         const uploadedImageUrl = response.data.secure_url;
         setUploadedImageUrl(uploadedImageUrl);
 
         const userId = adminId;
-        updateProfileUrl(userId, firstName, lastName, email, phone, company, threshKill, uploadedImageUrl)
-          .then((graphqlResponse) => {
-            console.log("Profile URL updated:", graphqlResponse);
+        updateProfileUrl(
+          userId,
+          firstName,
+          lastName,
+          email,
+          phone,
+          company,
+          threshKill,
+          uploadedImageUrl
+        )
+          .then(graphqlResponse => {
+            console.log('Profile URL updated:', graphqlResponse);
             if (graphqlResponse.data) {
-              console.log("Updated Admin Data:", graphqlResponse.data.update_admin);
+              console.log(
+                'Updated Admin Data:',
+                graphqlResponse.data.update_admin
+              );
             }
             if (graphqlResponse.errors) {
-              console.error("Errors:", graphqlResponse.errors);
+              console.error('Errors:', graphqlResponse.errors);
             }
           })
-          .catch((graphqlError) => {
-            console.log("Error updating profile URL:", graphqlError);
+          .catch(graphqlError => {
+            console.log('Error updating profile URL:', graphqlError);
           });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   };
@@ -177,14 +195,14 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     const fetchAdmin = async () => {
       try {
         const data = await getAdminByEmail(userEmail);
-        setAdminId(data["data"]["admin"][0]["id"]);
-        setFirstName(data["data"]["admin"][0]["firstname"]);
-        setLastName(data["data"]["admin"][0]["lastname"]);
-        setPhone(data["data"]["admin"][0]["phone"]);
-        setEmail(data["data"]["admin"][0]["email"]);
-        setCompany(data["data"]["admin"][0]["company"]);
-        setThreshKill(data["data"]["admin"][0]["thresh_kill"]);
-        setUploadedImageUrl(data["data"]["admin"][0]["profile_url"]);
+        setAdminId(data['data']['admin'][0]['id']);
+        setFirstName(data['data']['admin'][0]['firstname']);
+        setLastName(data['data']['admin'][0]['lastname']);
+        setPhone(data['data']['admin'][0]['phone']);
+        setEmail(data['data']['admin'][0]['email']);
+        setCompany(data['data']['admin'][0]['company']);
+        setThreshKill(data['data']['admin'][0]['thresh_kill']);
+        setUploadedImageUrl(data['data']['admin'][0]['profile_url']);
         console.log(data);
       } catch (error) {
         console.log(error);
@@ -216,7 +234,9 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
   const handleOpenModal = () => setModalOpen(true);
   const handleCloseModal = () => setModalOpen(false);
 
-  const oneHourAgo = new Date(new Date().getTime() - (60 * 60 * 1000)).toISOString().replace('Z', '.000000+00:00');
+  const oneHourAgo = new Date(new Date().getTime() - 60 * 60 * 1000)
+    .toISOString()
+    .replace('Z', '.000000+00:00');
 
   const handleOpenFaqsModal = () => setFaqsModalOpen(true);
   const handleCloseFaqsModal = () => setFaqsModalOpen(false);
@@ -267,10 +287,39 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
       { label: 'Rivercity Humidity', metric: 'humidity' },
     ],
   };
-  
 
-  const metricToName = {"temperature":"Temperature (°F)", "percent_humidity":"Humidity (%)", "wind_speed":"Wind (mph)", "soil_moisture":"Soil Moisture (centibar)", "leaf_wetness": "Leaf Wetness (0-15)", "rain_15_min_inches": "Rainfall (in)", "temp":"Temperature (°F)", "hum":"Humidity (%)", "rctemp":"Temperature (°F)", "humidity":"Humidity (%)"};
-  const nameToMetric = Object.fromEntries(Object.entries(metricToName).map(([key, value]) => [value.toLowerCase(), key]));
+  const metricToName = {
+    temperature: 'Temperature (°F)',
+    percent_humidity: 'Humidity (%)',
+    wind_speed: 'Wind (mph)',
+    soil_moisture: 'Soil Moisture (centibar)',
+    leaf_wetness: 'Leaf Wetness (0-15)',
+    rain_15_min_inches: 'Rainfall (in)',
+    temp: 'Temperature (°F)',
+    hum: 'Humidity (%)',
+    rctemp: 'Temperature (°F)',
+    humidity: 'Humidity (%)',
+    imFreezerOneTemp: 'Freezer #1 Temp (°C)',
+    imFreezerOneHum: 'Freezer #1 Humidity (%)',
+    imFreezerTwoTemp: 'Freezer #2 Temp (°C)',
+    imFreezerTwoHum: 'Freezer #2 Humidity (%)',
+    imFreezerThreeTemp: 'Freezer #3 Temp (°C)',
+    imFreezerThreeHum: 'Freezer #3 Humidity (%)',
+    imFridgeOneTemp: 'Fridge #1 Temp (°C)',
+    imFridgeOneHum: 'Fridge #1 Humidity (%)',
+    imFridgeTwoTemp: 'Fridge #2 Temp (°C)',
+    imFridgeTwoHum: 'Fridge #2 Humidity (%)',
+    imIncubatorOneTemp: 'Incubator #1 Temp (°C)',
+    imIncubatorOneHum: 'Incubator #1 Humidity (%)',
+    imIncubatorTwoTemp: 'Incubator #2 Temp (°C)',
+    imIncubatorTwoHum: 'Incubator #2 Humidity (%)',
+  };
+  const nameToMetric = Object.fromEntries(
+    Object.entries(metricToName).map(([key, value]) => [
+      value.toLowerCase(),
+      key,
+    ])
+  );
 
   const MotionIconButton = motion(IconButton);
   const MotionButton = motion(Button);
@@ -278,12 +327,12 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
   // Map tabs to render based on user configuration
   const tabsToRender = userConfig[userEmail] || [];
 
-  const handleTabChange = (index) => {
+  const handleTabChange = index => {
     const { metric, label } = tabsToRender[index];
     setMetric(metric);
     setTitle(label);
   };
-  
+
   return (
     <Box>
       <Modal onClose={onClose} isOpen={isOpen}>
@@ -293,7 +342,6 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
           maxWidth="100%"
           height="85vh"
           maxHeight="90vh"
-          
         >
           <ModalHeader textAlign="center" bg="gray.700" mb="10px">
             <Heading color="white">Admin Panel</Heading>
@@ -301,25 +349,62 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
           <ModalCloseButton color="white" />
           <ModalBody overflowY="auto">
             <Box height="100%">
-              <Grid templateRows="auto 1fr" templateColumns="repeat(2, 1fr)" gap={6} height="100%">
+              <Grid
+                templateRows="auto 1fr"
+                templateColumns="repeat(2, 1fr)"
+                gap={6}
+                height="100%"
+              >
                 <GridItem colSpan={1} border="5px solid #fd9801" p={3}>
-                  <Heading mb={3} fontSize="2xl">Profile</Heading>
+                  <Heading mb={3} fontSize="2xl">
+                    Profile
+                  </Heading>
                   <Flex alignItems="center">
-                    <Box alignContent="center" textAlign="center" boxSize="150px" border="5px solid #fd9801" borderRadius="150px">
-                      <Image cloudName="dklraztco" publicId={uploadedImageUrl} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                    <Box
+                      alignContent="center"
+                      textAlign="center"
+                      boxSize="150px"
+                      border="5px solid #fd9801"
+                      borderRadius="150px"
+                    >
+                      <Image
+                        cloudName="dklraztco"
+                        publicId={uploadedImageUrl}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          borderRadius: '50%',
+                        }}
+                      />
                     </Box>
                     <Box ml={3}>
-                      <Text fontSize="md" fontWeight="bold">User Name: {firstName + " " + lastName}</Text>
-                      <Text fontSize="md" fontWeight="bold">Phone Number: {phone}</Text>
-                      <Text fontSize="md" fontWeight="bold">Email Address: {email}</Text>
-                      <Text fontSize="md" fontWeight="bold">Company: {company}</Text>
+                      <Text fontSize="md" fontWeight="bold">
+                        User Name: {firstName + ' ' + lastName}
+                      </Text>
+                      <Text fontSize="md" fontWeight="bold">
+                        Phone Number: {phone}
+                      </Text>
+                      <Text fontSize="md" fontWeight="bold">
+                        Email Address: {email}
+                      </Text>
+                      <Text fontSize="md" fontWeight="bold">
+                        Company: {company}
+                      </Text>
                     </Box>
                   </Flex>
                   <Box mt="7" ml={2} alignContent="center">
-                    <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
+                    <Stack
+                      direction={{ base: 'column', md: 'row' }}
+                      spacing={4}
+                    >
                       <Button as="label" cursor="pointer">
                         Change Profile Picture
-                        <Input type="file" display="none" onChange={uploadImage} />
+                        <Input
+                          type="file"
+                          display="none"
+                          onChange={uploadImage}
+                        />
                       </Button>
                       <Button onClick={handleOpenModal}>Edit Details</Button>
                     </Stack>
@@ -340,12 +425,12 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                     />
                   </Box>
                 </GridItem>
-  
+
                 <GridItem colSpan={1} border="5px solid #fd9801" p={3}>
                   <Heading mb={3} fontSize="2xl">
                     Alerts in the Last Hour
                   </Heading>
-  
+
                   {loadingAlerts ? (
                     <Spinner size="lg" />
                   ) : alertsLastHour.length > 0 ? (
@@ -356,9 +441,16 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                           return acc;
                         }, {})
                       ).map(([metric, count], index) => (
-                        <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
+                        <Box
+                          key={index}
+                          bg="orange.400"
+                          p={2}
+                          borderRadius="md"
+                          boxShadow="md"
+                        >
                           <Text fontSize="sm" color="#212121">
-                            Metric: {metricToName[metric]} - {count} alert{count > 1 ? 's' : ''}
+                            Metric: {metricToName[metric]} - {count} alert
+                            {count > 1 ? 's' : ''}
                           </Text>
                           <Divider mt={2} />
                         </Box>
@@ -368,9 +460,13 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                     <Text fontSize="lg">No alerts found in the last hour.</Text>
                   )}
                 </GridItem>
-  
+
                 <GridItem colSpan={2} border="5px solid #fd9801" p={3}>
-                  <Flex justifyContent="space-between" alignItems="center" mb={5}>
+                  <Flex
+                    justifyContent="space-between"
+                    alignItems="center"
+                    mb={5}
+                  >
                     <Heading fontSize="2xl">Threshold Logs</Heading>
                     <MotionButton
                       variant={'solid'}
@@ -418,13 +514,26 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                           <Box maxH="175px" h={'175px'} overflowY="scroll">
                             {alertsThreshold[tab.metric]?.length ? (
                               <Stack spacing={2}>
-                                {alertsThreshold[tab.metric].map((alert, alertIndex) => (
-                                  <Box key={alertIndex} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
-                                    <Flex justify="space-between" align="center">
-                                      <Text color="#212121" fontSize="sm">{alert.message}</Text>
-                                    </Flex>
-                                  </Box>
-                                ))}
+                                {alertsThreshold[tab.metric].map(
+                                  (alert, alertIndex) => (
+                                    <Box
+                                      key={alertIndex}
+                                      bg="orange.400"
+                                      p={2}
+                                      borderRadius="md"
+                                      boxShadow="md"
+                                    >
+                                      <Flex
+                                        justify="space-between"
+                                        align="center"
+                                      >
+                                        <Text color="#212121" fontSize="sm">
+                                          {alert.message}
+                                        </Text>
+                                      </Flex>
+                                    </Box>
+                                  )
+                                )}
                               </Stack>
                             ) : (
                               <Text fontSize="xl">No logs to show</Text>
@@ -457,7 +566,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
         </ModalContent>
       </Modal>
       <FaqsModal isOpen={isFaqsModalOpen} onClose={handleCloseFaqsModal} />
-  
+
       <Modal isOpen={isThresholdModalOpen} onClose={handleCloseThresholdModal}>
         <ModalOverlay />
         <ModalContent
@@ -546,10 +655,8 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-  
     </Box>
   );
-  
-}
+};
 
 export default AdminExpandModal;
