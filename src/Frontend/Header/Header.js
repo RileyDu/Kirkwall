@@ -41,6 +41,8 @@ import {
   WiRain,
   WiHumidity,
 } from 'react-icons/wi/index.esm.js';
+import { RiAdminLine } from "react-icons/ri/index.esm.js";
+
 import Logout from '../../Frontend/AuthComponents/Logout.js';
 import { useNavigate } from 'react-router-dom';
 import { useWeatherData } from '../WeatherDataContext.js';
@@ -504,12 +506,22 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
             <Stack spacing={6} direction="column" alignItems="flex-start">
               {renderButtons()}
               {user && (
+                <>
+                <motion.div {...motionProps}>
+                <Button
+                  leftIcon={<RiAdminLine size="30" />}
+                  {...buttonStyleProps}
+                  onClick={onOpen}
+                >
+                  Admin
+                </Button>
+              </motion.div>
                 <motion.div {...motionProps}>
                   <Button
                     leftIcon={
                       <Avatar
                         size="sm"
-                        name="Grand Farm Logo"
+                        name="Kirkwall Logo"
                         src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
                       />
                     }
@@ -519,6 +531,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                     Logout
                   </Button>
                 </motion.div>
+              <AdminExpandModal isOpen={isOpen} onClose={onClose} title="Admin Panel" userEmail={currentUser.email} />
+              </>
               )}
             </Stack>
           </DrawerBody>
