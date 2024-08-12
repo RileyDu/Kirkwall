@@ -545,7 +545,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                             exit={{ opacity: 0, y: 10 }}
                             transition={{ duration: 0.5 }}
                           >
-                            <Box maxH="175px" h={'175px'} overflowY="scroll">
+                            <Box maxH="225px" h={'225px'} overflowY="scroll">
                               {alertsThreshold[tab.metric]?.length ? (
                                 <Stack spacing={2}>
                                   {alertsThreshold[tab.metric].map(
@@ -623,7 +623,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
               </Grid>
             </Box>
           </ModalBody>
-          <Flex justifyContent="flex-end" p={3}>
+          {/* <Flex justifyContent="flex-end" p={3}>
             <MotionIconButton
               icon={<FaQuestion />}
               variant="outline"
@@ -638,7 +638,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
               ml={2}
               onClick={handleOpenFaqsModal}
             />
-          </Flex>
+          </Flex> */}
         </ModalContent>
       </Modal>
       <FaqsModal isOpen={isFaqsModalOpen} onClose={handleCloseFaqsModal} />
