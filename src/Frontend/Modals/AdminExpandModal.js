@@ -404,39 +404,19 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                       }}
                   
                   >
-
-                  <TabList mb="4" overflowX="auto">
-                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
-                      Temperature
-                    </Tab>
-                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
-                      Humidity
-                    </Tab>
-                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
-                      Wind Speed
-                    </Tab>
-                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
-                      Soil Moisture
-                    </Tab>
-                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
-                      Leaf Wetness
-                    </Tab>
-                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
-                      Rainfall
-                    </Tab>
-                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
-                      Watchdog Temperature
-                    </Tab>
-                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
-                      Watchdog Humidity
-                    </Tab>
-                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
-                      Rivercity Temperature
-                    </Tab>
-                    <Tab fontSize={{ base: 'xs', md: 'sm' }} p={{ base: '2', md: '3' }} color={colorMode === 'light' ? 'black' : 'white'} _selected={{ color: 'white', bg: 'orange.400' }}>
-                      Rivercity Humidity
-                    </Tab>
-                  </TabList>
+    <TabList mb="4" overflowX="auto">
+      {tabsToRender.map((tab, index) => (
+        <Tab
+          key={index}
+          fontSize={{ base: 'xs', md: 'sm' }}
+          p={{ base: '2', md: '3' }}
+          color={colorMode === 'light' ? 'black' : 'white'}
+          _selected={{ color: 'white', bg: 'orange.400' }}
+        >
+          {tab}
+        </Tab>
+      ))}
+    </TabList>
                     <Divider mt={'1'} w={'100%'} />
                     <TabPanels>
                       {tabsToRender.map((tabName, index) => (
