@@ -31,6 +31,8 @@ import {
   FormLabel,
   ModalFooter,
   Spinner,
+  useMediaQuery,
+  Select,
 } from '@chakra-ui/react';
 import { FaBell, FaExpandAlt, FaQuestion } from 'react-icons/fa/index.esm.js';
 import { motion } from 'framer-motion';
@@ -76,12 +78,24 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
 
   const handleOpenThresholdModal = () => setIsThresholdModalOpen(true);
   const handleCloseThresholdModal = () => setIsThresholdModalOpen(false);
+  const [selectedTab, setSelectedTab] = useState(0); // State to manage active tab
 
   const getModalBackgroundColor = () =>
     colorMode === 'light' ? 'whitesmoke' : 'gray.700';
 
   const [alertsLastHour, setAlertsLastHour] = useState([]);
   const [loadingAlerts, setLoadingAlerts] = useState(true);
+
+  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
+
+  const gridTemplateColumns = useBreakpointValue({
+    base: '1fr', // Single column on small screens
+    md: 'repeat(2, 1fr)', // Two columns on medium and larger screens
+  });
+
+  // Responsive modal size
+  const modalWidth = useBreakpointValue({ base: '95%', md: '90%' });
+  const modalHeight = useBreakpointValue({ base: '95vh', md: '85vh' });
 
   useEffect(() => {
     const fetchAlertsLastHour = async () => {
@@ -331,6 +345,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     const { metric, label } = tabsToRender[index];
     setMetric(metric);
     setTitle(label);
+    setSelectedTab(index);  // Update the selected tab index state
   };
 
   return (
@@ -338,10 +353,10 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
       <Modal onClose={onClose} isOpen={isOpen}>
         <ModalOverlay />
         <ModalContent
-          width="90%"
+          width={modalWidth}
+          height={modalHeight}
           maxWidth="100%"
-          height="85vh"
-          maxHeight="90vh"
+          maxHeight="100vh"
         >
           <ModalHeader textAlign="center" bg="gray.700" mb="10px">
             <Heading color="white">Admin Panel</Heading>
@@ -351,11 +366,11 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
             <Box height="100%">
               <Grid
                 templateRows="auto 1fr"
-                templateColumns="repeat(2, 1fr)"
+                templateColumns={gridTemplateColumns}
                 gap={6}
                 height="100%"
               >
-                <GridItem colSpan={1} border="5px solid #fd9801" p={3}>
+                <GridItem border="5px solid #fd9801" p={3}>
                   <Heading mb={3} fontSize="2xl">
                     Profile
                   </Heading>
@@ -379,17 +394,17 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                       />
                     </Box>
                     <Box ml={3}>
-                      <Text fontSize="md" fontWeight="bold">
-                        User Name: {firstName + ' ' + lastName}
+                      <Text fontSize="md" >
+                        <strong>User Name:</strong> {firstName + ' ' + lastName}
                       </Text>
-                      <Text fontSize="md" fontWeight="bold">
-                        Phone Number: {phone}
+                      <Text fontSize="md">
+                        <strong>Phone:</strong> {phone}
                       </Text>
-                      <Text fontSize="md" fontWeight="bold">
-                        Email Address: {email}
+                      <Text fontSize="sm">
+                        <strong>Email:</strong> {email}
                       </Text>
-                      <Text fontSize="md" fontWeight="bold">
-                        Company: {company}
+                      <Text fontSize="md">
+                        <strong>Company:</strong> {company}
                       </Text>
                     </Box>
                   </Flex>
@@ -426,7 +441,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                   </Box>
                 </GridItem>
 
-                <GridItem colSpan={1} border="5px solid #fd9801" p={3}>
+                <GridItem border="5px solid #fd9801" p={3}>
                   <Heading mb={3} fontSize="2xl">
                     Alerts in the Last Hour
                   </Heading>
@@ -442,20 +457,20 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                         }, {})
                       ).map(([metric, count], index) => (
                         <>
-                        <Box
-                          key={index}
-                          bg="orange.400"
-                          p={2}
-                          borderRadius="md"
-                          boxShadow="md"
-                        >
-                          <Text fontSize="md" color="#212121">
-                            {metricToName[metric]} - {count} alert
-                            {count > 1 ? 's' : ''}
-                          </Text>
-                        </Box>
+                          <Box
+                            key={index}
+                            bg="orange.400"
+                            p={2}
+                            borderRadius="md"
+                            boxShadow="md"
+                          >
+                            <Text fontSize="md" color="#212121">
+                              {metricToName[metric]} - {count} alert
+                              {count > 1 ? 's' : ''}
+                            </Text>
+                          </Box>
                           <Divider mt={2} />
-                          </>
+                        </>
                       ))}
                     </Stack>
                   ) : (
@@ -463,7 +478,11 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                   )}
                 </GridItem>
 
-                <GridItem colSpan={2} border="5px solid #fd9801" p={3}>
+                <GridItem
+                  colSpan={isLargerThan768 ? 2 : 1}
+                  border="5px solid #fd9801"
+                  p={3}
+                >
                   <Flex
                     justifyContent="space-between"
                     alignItems="center"
@@ -484,67 +503,113 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                       SET THRESHOLDS
                     </MotionButton>
                   </Flex>
-                  <Tabs
-                    variant="soft-rounded"
-                    colorScheme="orange"
-                    isFitted
-                    onChange={handleTabChange}
-                  >
-                    <TabList mb="4" overflowX="auto">
-                      {tabsToRender.map((tab, index) => (
-                        <Tab
-                          key={index}
-                          fontSize={{ base: 'xs', md: 'sm' }}
-                          p={{ base: '2', md: '3' }}
-                          color={colorMode === 'light' ? 'black' : 'white'}
-                          _selected={{ color: 'white', bg: 'orange.400' }}
-                        >
-                          {tab.label}
-                        </Tab>
-                      ))}
-                    </TabList>
-                    <Divider mt={'1'} w={'100%'} />
-                    <TabPanels>
-                      {tabsToRender.map((tab, index) => (
-                        <MotionTabPanel
-                          key={index}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          transition={{ duration: 0.5 }}
-                        >
-                          <Box maxH="175px" h={'175px'} overflowY="scroll">
-                            {alertsThreshold[tab.metric]?.length ? (
-                              <Stack spacing={2}>
-                                {alertsThreshold[tab.metric].map(
-                                  (alert, alertIndex) => (
-                                    <Box
-                                      key={alertIndex}
-                                      bg="orange.400"
-                                      p={2}
-                                      borderRadius="md"
-                                      boxShadow="md"
-                                    >
-                                      <Flex
-                                        justify="space-between"
-                                        align="center"
+                  {isLargerThan768 && (
+                    <Tabs
+                      variant="soft-rounded"
+                      colorScheme="orange"
+                      isFitted
+                      onChange={handleTabChange}
+                    >
+                      <TabList mb="4" overflowX="auto">
+                        {tabsToRender.map((tab, index) => (
+                          <Tab
+                            key={index}
+                            fontSize={{ base: 'xs', md: 'sm' }}
+                            p={{ base: '2', md: '3' }}
+                            color={colorMode === 'light' ? 'black' : 'white'}
+                            _selected={{ color: 'white', bg: 'orange.400' }}
+                          >
+                            {tab.label}
+                          </Tab>
+                        ))}
+                      </TabList>
+
+                      <Divider mt={'1'} w={'100%'} />
+                      <TabPanels>
+                        {tabsToRender.map((tab, index) => (
+                          <MotionTabPanel
+                            key={index}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            transition={{ duration: 0.5 }}
+                          >
+                            <Box maxH="175px" h={'175px'} overflowY="scroll">
+                              {alertsThreshold[tab.metric]?.length ? (
+                                <Stack spacing={2}>
+                                  {alertsThreshold[tab.metric].map(
+                                    (alert, alertIndex) => (
+                                      <Box
+                                        key={alertIndex}
+                                        bg="orange.400"
+                                        p={2}
+                                        borderRadius="md"
+                                        boxShadow="md"
                                       >
-                                        <Text color="#212121" fontSize="sm">
-                                          {alert.message}
-                                        </Text>
-                                      </Flex>
-                                    </Box>
-                                  )
-                                )}
-                              </Stack>
-                            ) : (
-                              <Text fontSize="xl">No logs to show</Text>
+                                        <Flex
+                                          justify="space-between"
+                                          align="center"
+                                        >
+                                          <Text color="#212121" fontSize="sm">
+                                            {alert.message}
+                                          </Text>
+                                        </Flex>
+                                      </Box>
+                                    )
+                                  )}
+                                </Stack>
+                              ) : (
+                                <Text fontSize="xl">No logs to show</Text>
+                              )}
+                            </Box>
+                          </MotionTabPanel>
+                        ))}
+                      </TabPanels>
+                    </Tabs>
+                  )}
+                  {!isLargerThan768 && (
+                    <Box>
+                      <Select
+                        value={selectedTab}
+                        onChange={(e) => handleTabChange(Number(e.target.value))}
+                        mb="4"
+                      >
+                        {tabsToRender.map((tab, index) => (
+                          <option key={index} value={index}>
+                            {tab.label}
+                          </option>
+                        ))}
+                      </Select>
+                      <Box maxH="175px" h={'175px'} overflowY="scroll">
+                        {alertsThreshold[tabsToRender[selectedTab]?.metric]?.length ? (
+                          <Stack spacing={2}>
+                            {alertsThreshold[tabsToRender[selectedTab]?.metric].map(
+                              (alert, alertIndex) => (
+                                <Box
+                                  key={alertIndex}
+                                  bg="orange.400"
+                                  p={2}
+                                  borderRadius="md"
+                                  boxShadow="md"
+                                >
+                                  <Flex
+                                    justify="space-between"
+                                    align="center"
+                                  >
+                                    <Text color="#212121" fontSize="sm">
+                                      {alert.message}
+                                    </Text>
+                                  </Flex>
+                                </Box>
+                              )
                             )}
-                          </Box>
-                        </MotionTabPanel>
-                      ))}
-                    </TabPanels>
-                  </Tabs>
+                          </Stack>
+                        ) : (
+                          <Text fontSize="xl">No logs to show</Text>
+                        )}
+                      </Box>
+                    </Box>
+                  )}
                 </GridItem>
               </Grid>
             </Box>
