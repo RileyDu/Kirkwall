@@ -24,8 +24,8 @@ async function executeGraphqlQuery(query, variables = {}) {
   }
 }
 
-// Generalized function to get weather data based on requested metric
-// All is triggerd on page load
+// Generalized function to get weather data based on requested metric & time period
+// All is triggerd on page load with a default of 3H
 async function getWeatherData(type, limit) {
   const queryMap = {
     all: `
@@ -161,8 +161,8 @@ async function getWeatherData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
-// Generalized function to get watchdog data based on requested metric
-// All is triggerd on page load
+// Generalized function to get watchdog data based on requested metric and time period
+// All is triggerd on page load with a default of 3H
 async function getWatchdogData(type, limit) {
   const queryMap = {
     all: `
@@ -204,9 +204,8 @@ async function getWatchdogData(type, limit) {
 }
 
 
-
-// Generalized function to get rivercity data based on requested metric
-// All is triggerd on page load
+// Generalized function to get rivercity data based on requested metric and time period
+// All is triggerd on page load with a default of 3H
 async function getRivercityData(type, limit) {
   const queryMap = {
     all: `
@@ -247,7 +246,25 @@ async function getRivercityData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
+async function getImpriMedData(deveui, limit) {
+  const query = `query impriMedData($limit: Int, $deveui: String!) {
+  rivercity_data(ordering: "publishedat desc", limit: $limit, filter: $deveui) {
+    rctemp
+    humidity
+    publishedat
+    deveui
+  }
+}
+      `;
+      const variables = {
+        limit: limit,
+        deveui: deveui,
+      };
+  return executeGraphqlQuery(query, variables);
+}
+
 // Function to get the latest threshold data from the database
+// This is used to compare against the current weather data in the cron job
 async function getLatestThreshold() {
   const query = `
     query getLatestThreshold {
@@ -267,6 +284,7 @@ async function getLatestThreshold() {
 }
 
 // Function to create a new threshold for a metric in the database
+// This is used when a user sets a new threshold in the UI Expanded Modal
 async function createThreshold(metric, high, low, phone, email, timestamp) {
   const mutation = `
     mutation($i: thresholdsInput! ) {
@@ -294,6 +312,7 @@ async function createThreshold(metric, high, low, phone, email, timestamp) {
 }
 
 // Function to get all alerts from the database
+// This is used to display the alerts in the UI of Expanded Modal
 async function getAlerts() {
   const query = `
   query {
@@ -309,6 +328,7 @@ async function getAlerts() {
 }
 
 // Function to add a new alert to the database
+// This is used when a threshold is exceeded in the cron job and an alert is sent
 async function createAlert(metric, message, timestamp) {
   const mutation = `
     mutation($i: alertsInput! ) {
@@ -329,6 +349,7 @@ async function createAlert(metric, message, timestamp) {
   return executeGraphqlQuery(mutation, variables);
 }
 
+// Function to delete an alert from the database via user action
 async function deleteAlert(id) {
   const mutation = `
       mutation($id: ID!) {
@@ -471,6 +492,50 @@ async function getThresholdsInTheLastHour() {
 
 
 
+
+// Function to get the chart data for a specific metric
+async function getChartData() {
+  const query = `query {
+  charts {
+    id
+    metric
+    timeperiod
+    type
+    location
+    hidden
+  }
+}
+  `;
+  return executeGraphqlQuery(query);
+}
+
+// Function to update a chart in the database
+async function updateChart(id, metric, timeperiod, type, location, hidden) {
+  const mutation = `mutation($i: chartsInput!, $j: ID!) {
+  update_charts(input: $i, id: $j) {
+    id
+    metric
+    timeperiod
+    type
+    location
+    hidden
+  }
+}
+  `;
+  const variables = {
+    j: id,
+    i: {
+      metric: metric,
+      timeperiod: timeperiod,
+      type: type,
+      location: location,
+      hidden: hidden,
+    },
+  };
+  return executeGraphqlQuery(mutation, variables);
+}
+
+
 // Function to get API ID of user
 // async function getAPIIds() {
 //   const query = `
@@ -534,6 +599,7 @@ export {
   getWeatherData,
   getWatchdogData,
   getRivercityData,
+  getImpriMedData,
   getLatestThreshold,
   createThreshold,
   getAlerts,
@@ -544,4 +610,6 @@ export {
   updateProfileUrl,
   getIdByEmail,
   getThresholdsInTheLastHour
+  getChartData,
+  updateChart,
 };

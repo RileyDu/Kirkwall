@@ -22,11 +22,8 @@ import {
   Input,
   ModalFooter,
   HStack,
-  IconButton,
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard.js';
-import MiniMap from '../Maps/GrandFarmMiniMap.js';
-import WatchdogMap from '../Maps/WatchdogMiniMap.js';
 import {
   FaChartLine,
   FaChartBar,
@@ -35,14 +32,13 @@ import {
 } from 'react-icons/fa/index.esm.js';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts.js';
-import axios from 'axios';
 import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
 import { useWeatherData } from '../WeatherDataContext.js';
+import { type } from '@testing-library/user-event/dist/cjs/utility/type.js';
 
 const ChartExpandModal = ({
   isOpen,
   onClose,
-  children,
   title,
   metric,
   onChartChange,
@@ -50,7 +46,8 @@ const ChartExpandModal = ({
   weatherData,
   currentTimePeriod,
   setCurrentTimePeriod,
-  sensorMap,
+  MapComponent,
+  typeOfChart,
 }) => {
   const { colorMode } = useColorMode();
   const [loading, setLoading] = useState(false);
@@ -60,10 +57,7 @@ const ChartExpandModal = ({
   const [userEmail, setUserEmail] = useState('');
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
-  // const [alerts, setAlerts] = useState(JSON.parse(localStorage.getItem('alerts')) || []);
-  const [timer, setTimer] = useState(30);
   const [currentValue, setCurrentValue] = useState(null);
-  // const [lastAlertTime, setLastAlertTime] = useState(null);
   const { thresholds, alertsThreshold, fetchAlertsThreshold } =
     useWeatherData();
 
@@ -86,15 +80,6 @@ const ChartExpandModal = ({
     setUserEmail(latestThreshold.email);
   }, [metric, thresholds]);
 
-  // Group alerts by metric
-  // const alertsThresholdGrouped = alertsThreshold.reduce((acc, alert) => {
-  //   const { metric } = alert;
-  //   if (!acc[metric]) {
-  //     acc[metric] = [];
-  //   }
-  //   acc[metric].push(alert);
-  //   return acc;
-  // }, {});
 
   const apiUrl =
     process.env.NODE_ENV === 'production'
@@ -138,7 +123,8 @@ const ChartExpandModal = ({
 
   // Render the chart based on the selected chart type
   const renderChart = () => {
-    switch (chartType) {
+    // console.log('typeOfChart:', typeOfChart);
+    switch (typeOfChart) {
       case 'line':
         return <LineChart data={weatherData} metric={metric} />;
       case 'bar':
@@ -315,8 +301,8 @@ const ChartExpandModal = ({
                 mx={1}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                bg={chartType === 'line' ? 'orange.400' : 'gray.100'}
-                color={chartType === 'line' ? 'white' : 'black'}
+                bg={typeOfChart === 'line' ? 'orange.400' : 'gray.100'}
+                color={typeOfChart === 'line' ? 'white' : 'black'}
               >
                 LINE
               </MotionButton>
@@ -331,8 +317,8 @@ const ChartExpandModal = ({
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 size={['sm', 'md']}
-                bg={chartType === 'bar' ? 'orange.400' : 'gray.100'}
-                color={chartType === 'bar' ? 'white' : 'black'}
+                bg={typeOfChart === 'bar' ? 'orange.400' : 'gray.100'}
+                color={typeOfChart === 'bar' ? 'white' : 'black'}
               >
                 BAR
               </MotionButton>
@@ -427,7 +413,7 @@ const ChartExpandModal = ({
                 height="430px"
               >
                 <Box height="100%">
-                  {sensorMap === 'grandfarm' ? <MiniMap /> : <WatchdogMap />}
+                  <MapComponent />
                 </Box>
               </Box>
             </SimpleGrid>

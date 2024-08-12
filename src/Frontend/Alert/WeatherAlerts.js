@@ -24,11 +24,8 @@ import {
   FormLabel,
 } from '@chakra-ui/react';
 import axios from 'axios';
-// import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../../Backend/Firebase.js';
 import { FaChevronDown } from 'react-icons/fa/index.esm.js';
 import { SettingsIcon } from '@chakra-ui/icons';
-import Marquee from 'react-marquee-slider';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 
 import { useWeatherData } from '../WeatherDataContext.js';
@@ -134,75 +131,53 @@ function WeatherAlerts({ isVisible, onClose, isMinimized }) {
           </Alert>
         )}
         <Flex justifyContent="center" alignItems="center" mb={0}>
-          {!error && alerts.length > 0 && (
-            <Alert
-              status="warning"
-              mb={0}
-              borderRadius="0"
-              bgColor="red.500"
-              color="white"
-              width="100%"
-            >
-              <AlertIcon color="white" ml={2}/>
-              <Tooltip label="Change State">
-                <Icon as={SettingsIcon} cursor="pointer" onClick={() => setIsChangeStateCodeModalOpen(true)} mr={4} ml={2}/>
-              </Tooltip>
-              <AlertTitle w={'150px'}>{stateCode} Weather Alerts:</AlertTitle>
-              {alerts.length > 15 ? (
-                <Marquee velocity={7} pauseOnHover={true} loop={true} direction='ltr'>
-                  {alerts.map((alert) => (
-                    <Button
-                      border="2px"
-                      borderColor="black"
-                      borderRadius="xl"
-                      p="1"
-                      bg="gray.50"
-                      mx={1}
-                      cursor="pointer"
-                      key={alert.id}
-                      onClick={() => handleAlertClick(alert)}
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      textAlign={'center'}
-                      fontWeight={'regular'}
-                    >
-                      <Tooltip label={`Location: ${alert.properties.areaDesc}`} aria-label="Area Description">
-                        <AlertDescription px={1} fontSize='xs' color="red.500">
-                          {alert.properties.event}
-                        </AlertDescription>
-                      </Tooltip>
-                    </Button>
-                  ))}
-                </Marquee>
-              ) : (
-                alerts.map((alert) => (
-                  <Box
-                    border="2px"
-                    borderColor="black"
-                    borderRadius="xl"
-                    p="1"
-                    bg="gray.50"
-                    mx={1}
-                    cursor="pointer"
-                    key={alert.id}
-                    onClick={() => handleAlertClick(alert)}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    textAlign={'center'}
-                  >
-                    <Tooltip label={`Location: ${alert.properties.areaDesc}`} aria-label="Area Description">
-                      <AlertDescription px={1} fontSize='md' color="red.500">
-                        {alert.properties.event}
-                      </AlertDescription>
-                    </Tooltip>
-                  </Box>
-                ))
-              )}
-            </Alert>
-          )}
-        </Flex>
+  {!error && alerts.length > 0 && (
+    <Alert
+      status="warning"
+      mb={0}
+      borderRadius="0"
+      bgColor="red.500"
+      color="white"
+      width="100%"
+    >
+      <AlertIcon color="white"/>
+      <Tooltip label="Change State">
+        <Icon as={SettingsIcon} cursor="pointer" onClick={() => setIsChangeStateCodeModalOpen(true)} mr={2}/>
+      </Tooltip>
+      <AlertTitle w={'125px'}>{stateCode} Alerts:</AlertTitle>
+      <Flex wrap="wrap" alignItems="center" justify="center"> {/* Adjust this Flex container */}
+        {alerts.map((alert) => (
+          <Box
+            d="flex"
+            alignItems="center"
+            justifyContent="center" 
+            textAlign="center"
+            border="2px"
+            borderColor="black"
+            borderRadius="xl"
+            p="1"
+            bg="gray.50"
+            mx={1}
+            my={1}
+            cursor="pointer"
+            key={alert.id}
+            onClick={() => handleAlertClick(alert)}
+            // width={'auto'}
+            flex="1 1 auto"
+            h={'auto'}
+          >
+            <Tooltip label={`Location: ${alert.properties.areaDesc}`} aria-label="Area Description">
+              <AlertDescription px={1} fontSize='md' color="red.500">
+                {alert.properties.event}
+              </AlertDescription>
+            </Tooltip>
+          </Box>
+        ))}
+      </Flex>
+    </Alert>
+  )}
+</Flex>
+
       </Box>
       {selectedAlert && (
         <Modal isOpen={!!selectedAlert} onClose={handleModalClose}>

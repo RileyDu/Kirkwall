@@ -90,7 +90,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   
     ],
     'jerrycromarty@imprimedicine.com': [
-      { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+      // { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' }
     ],
     'russell@rjenergysolutions.com': [

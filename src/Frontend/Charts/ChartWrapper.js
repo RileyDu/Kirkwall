@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -38,6 +38,10 @@ import WatchdogMap from '../Maps/WatchdogMiniMap.js';
 import RivercityMap from '../Maps/RivercityMiniMap.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import ImpriMiniMap from '../Maps/ImpriMiniMap.js';
+import { useWeatherData } from '../WeatherDataContext.js';
+import { updateChart } from '../../Backend/Graphql_helper.js';
+
+
 const ChartWrapper = ({
   title,
   children,
@@ -47,9 +51,10 @@ const ChartWrapper = ({
   handleTimePeriodChange,
   toggleChartVisibility,
   section,
-  chart
+  chart,
+  chartLayout,
+  typeOfChart,
 }) => {
-  const [chartType, setChartType] = useState('bar');
   const [showIcons, setShowIcons] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
@@ -57,7 +62,28 @@ const ChartWrapper = ({
   const [showMap, setShowMap] = useState(false);
   const [sensorMap, setSensorMap] = useState('grandfarm'); // State to toggle between map and chart
   const [userTitle, setUserTitle] = useState('Location');
-  const [newTitle, setNewTitle] = useState('Enter New Location Label');
+  
+  const { chartData } = useWeatherData();
+  const isMounted = useRef(false);
+
+  const chartDataForMetric = chartData.find(chart => chart.metric === metric);
+  const [newTitle, setNewTitle] = useState(chartDataForMetric?.location);
+  const [chartType, setChartType] = useState(chartDataForMetric?.type);
+  
+  const handleChartTypeChange = () => {
+    const newChartType = chartType === 'line' ? 'bar' : 'line';
+    setChartType(newChartType);
+    onChartChange(newChartType);
+  };
+  
+  // Call handleChartEdit after chartType is updated
+  useEffect(() => {
+    if (isMounted.current) {
+      handleChartEdit();
+    } else {
+      isMounted.current = true;
+    }
+  }, [chartType]);
 
   const { currentUser } = useAuth();
 
@@ -76,7 +102,7 @@ const ChartWrapper = ({
   const { colorMode } = useColorMode();
 
   const renderCloseButton = () => {
-    const routesWithCloseButton = ['/', '/grandfarm', '/watchdogprotect'];
+    const routesWithCloseButton = ['/', '/grandfarm', '/watchdogprotect', '/imprimed'];
     return isLargerThan768 && routesWithCloseButton.includes(location.pathname);
   };
 
@@ -109,6 +135,21 @@ const ChartWrapper = ({
       case 'rctemp':
         setSensorMap('freezer');
         break;
+      case 'imFreezerOneTemp':
+      case 'imFreezerOneHum':
+      case 'imFreezerTwoTemp':
+      case 'imFreezerTwoHum':
+      case 'imFreezerThreeTemp':
+      case 'imFreezerThreeHum':
+      case 'imFridgeOneTemp':
+      case 'imFridgeOneHum':
+      case 'imFridgeTwoTemp':
+      case 'imFridgeTwoHum':
+      case 'imIncubatorOneTemp':
+      case 'imIncubatorOneHum':
+      case 'imIncubatorTwoTemp':
+      case 'imIncubatorTwoHum':
+        setSensorMap('imprimed');
       default:
         console.error(`Unknown metric: ${metric}`);
     }
@@ -125,19 +166,19 @@ const ChartWrapper = ({
   const getBackgroundColor = colorMode =>
     colorMode === 'light' ? '#f9f9f9' : 'gray.800';
 
-  useEffect(() => {
-    const savedTitle = localStorage.getItem(`chartTitle_${metric}`);
-    if (savedTitle) {
-      setUserTitle(savedTitle);
-      setNewTitle(savedTitle);
-    }
-  }, [metric]);
+  // useEffect(() => {
+  //   const savedTitle = localStorage.getItem(`chartTitle_${metric}`);
+  //   if (savedTitle) {
+  //     setUserTitle(savedTitle);
+  //     setNewTitle(savedTitle);
+  //   }
+  // }, [metric]);
 
   const handleTitleChange = e => setNewTitle(e.target.value);
   const handleTitleSubmit = () => {
     setUserTitle(newTitle);
-    localStorage.setItem(`chartTitle_${metric}`, newTitle);
-  };
+    handleChartEdit();
+ };
 
 
   const getLogoToDisplay = (metric, colorMode) => {
@@ -153,6 +194,20 @@ const ChartWrapper = ({
         hum: 'WatchdogLogoBlack.png',
         humidity: 'rci-logo-blue.png',
         rctemp: 'rci-logo-blue.png',
+        imFreezerOneTemp: 'rci-logo-blue.png',
+        imFreezerOneHum: 'rci-logo-blue.png',
+        imFreezerTwoTemp: 'rci-logo-blue.png',
+        imFreezerTwoHum: 'rci-logo-blue.png',
+        imFreezerThreeTemp: 'rci-logo-blue.png',
+        imFreezerThreeHum: 'rci-logo-blue.png',
+        imFridgeOneTemp: 'rci-logo-blue.png',
+        imFridgeOneHum: 'rci-logo-blue.png',
+        imFridgeTwoTemp: 'rci-logo-blue.png',
+        imFridgeTwoHum: 'rci-logo-blue.png',
+        imIncubatorOneTemp: 'rci-logo-blue.png',
+        imIncubatorOneHum: 'rci-logo-blue.png',
+        imIncubatorTwoTemp: 'rci-logo-blue.png',
+        imIncubatorTwoHum: 'rci-logo-blue.png',
       },
       dark: {
         temperature: 'DavisLogoWhite.png',
@@ -165,6 +220,19 @@ const ChartWrapper = ({
         hum: 'WatchdogLogoWhite.png',
         humidity: 'rci-logo-white.png',
         rctemp: 'rci-logo-white.png',
+        impriTemp: 'rci-logo-white.png',
+        imFreezerOneTemp: 'rci-logo-white.png',
+        imFreezerOneHum: 'rci-logo-white.png',
+        imFreezerTwoTemp: 'rci-logo-white.png',
+        imFreezerTwoHum: 'rci-logo-white.png',
+        imFreezerThreeTemp: 'rci-logo-white.png',
+        imFreezerThreeHum: 'rci-logo-white.png',
+        imFridgeOneTemp: 'rci-logo-white.png',
+        imFridgeOneHum: 'rci-logo-white.png',
+        imFridgeTwoTemp: 'rci-logo-white.png',
+        imFridgeTwoHum: 'rci-logo-white.png',
+        imIncubatorOneTemp: 'rci-logo-white.png',
+        imIncubatorOneHum: 'rci-logo-white.png',
       },
     };
 
@@ -193,17 +261,16 @@ const ChartWrapper = ({
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
   const closeSize = useBreakpointValue({ base: 'sm', md: 'lg' });
 
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
-
   const calculateTimePeriod = dataLength => {
     const totalMinutes =
-      metric === 'temp' ||
-      metric === 'hum' ||
-      metric === 'humidity' ||
-      metric === 'rctemp'
-        ? dataLength * 10
-        : dataLength * 5;
+      metric === 'temperature' ||
+      metric === 'percent_humidity' ||
+      metric === 'wind_speed' ||
+      metric === 'rain_15_min_inches' ||
+      metric === 'soil_moisture' ||
+      metric === 'leaf_wetness'
+        ? dataLength * 5
+        : dataLength * 10;
     const totalHours = Math.floor(totalMinutes / 60);
 
     if (totalHours < 24) {
@@ -219,11 +286,6 @@ const ChartWrapper = ({
     }
   };
 
-  const handleChartTypeChange = () => {
-    const newChartType = chartType === 'bar' ? 'line' : 'bar';
-    setChartType(newChartType);
-    onChartChange(newChartType);
-  };
 
   const getChartIcon = () => {
     switch (chartType) {
@@ -276,6 +338,30 @@ const ChartWrapper = ({
 
   const MotionIconButton = motion(IconButton);
 
+  const editChart = async (id, metric, timeperiod, type, location, hidden) => {
+    try {
+      const result = await updateChart(id, metric, timeperiod, type, location, hidden);
+      // console.log('result:', result);
+    }
+    catch (error) {
+      console.error('Error updating chart:', error);
+    }
+  }
+
+  const handleChartEdit = () => {
+    const id = chartDataForMetric?.id;
+    const metric = chartDataForMetric?.metric;
+    const timeperiod = chartDataForMetric?.timeperiod;
+    const type = chartType;
+    const location = newTitle || chartDataForMetric?.location;
+    const hidden = chartDataForMetric?.hidden;
+    console.log('id:', id, 'metric:', metric, 'timeperiod:', timeperiod, 'type:', type, 'location:', location, 'hidden:', hidden);
+    editChart(id, metric, timeperiod, type, location, hidden);
+  }
+
+
+
+
   return (
     <>
       <Box
@@ -303,7 +389,7 @@ const ChartWrapper = ({
             {title}
           </Box>
           <Flex alignItems="center">
-            {isLargerThan768 && (
+            {/* {isLargerThan768 && ( */}
               <>
                 <motion.div
                   initial={{ opacity: 0, scale: 0 }}
@@ -323,7 +409,7 @@ const ChartWrapper = ({
                     <Popover trigger="hover" placement="bottom">
                       <PopoverTrigger>
                         <Text fontSize={fontSize} cursor="pointer">
-                          {userTitle}
+                          {newTitle || chartDataForMetric?.location}
                         </Text>
                       </PopoverTrigger>
                       <PopoverContent
@@ -334,7 +420,7 @@ const ChartWrapper = ({
                         p={0} // Remove padding to ensure the content uses full space
                         w="auto" // Ensure width adapts to content
                       >
-                        <PopoverArrow />
+                        <PopoverArrow bg="#212121" border={'2px solid #212121'}/>
                         <PopoverCloseButton
                           size={closeSize}
                           color="white"
@@ -369,7 +455,7 @@ const ChartWrapper = ({
                     </Popover>
                   </Box>
                 </motion.div>
-
+              {chartLayout !== 3 && isLargerThan768 && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -392,8 +478,9 @@ const ChartWrapper = ({
                     </Tooltip>
                   </Box>
                 </motion.div>
+              )}
               </>
-            )}
+            {/* // )} */}
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -472,6 +559,8 @@ const ChartWrapper = ({
                 </Popover>
               </Box>
             </motion.div>
+            {chartLayout !== 3 && isLargerThan768 && (
+              <>
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -514,6 +603,8 @@ const ChartWrapper = ({
                 />
               </Tooltip>
             </motion.div>
+            </>
+            )}
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -581,6 +672,8 @@ const ChartWrapper = ({
         currentTimePeriod={currentTimePeriod}
         setCurrentTimePeriod={setCurrentTimePeriod}
         sensorMap={sensorMap}
+        MapComponent={MapComponent}
+        typeOfChart={typeOfChart}
       />
     </>
   );
