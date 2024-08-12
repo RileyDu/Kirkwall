@@ -356,18 +356,16 @@ const ChartExpandModal = ({
                   setCurrentValue={setCurrentValue}
                   mt={2}
                 />
-                <Divider my={8} borderColor={'white'} />
+                <Divider my={4} borderColor={'white'} />
                 {highThreshold || lowThreshold ? (
                   <>
+                    <Text fontSize="lg" fontWeight="bold" textDecor={'underline'} pb='2' >Thresholds</Text>
                   <Flex width={'100%'} >
                     <HStack width={'100%'} gap={6} justify={'flex-start'}>
-                      <Text color="white" fontSize="lg" fontWeight="bold" textDecor={'underline'}>
-                        Alerts
-                      </Text>
-                      {highThreshold ? <Text color="white"><strong>High Threshold:</strong> {highThreshold}</Text> : null}
-                      {lowThreshold ? <Text color="white"><strong>Low Threshold:</strong> {lowThreshold}</Text> : null}
-                      {phoneNumber ? <Text color="white"><strong>Phone:</strong> {phoneNumber}</Text> : null}
-                      {userEmail ? <Text color="white"><strong>Email:</strong> {userEmail}</Text> : null}
+                      {highThreshold ? <Text color="white" fontSize={['xs','md']}><strong>High:</strong> {highThreshold}</Text> : null}
+                      {lowThreshold ? <Text color="white" fontSize={['xs','md']}><strong>Low:</strong> {lowThreshold}</Text> : null}
+                      {phoneNumber ? <Text color="white" fontSize={['xs','md']}><strong>Phone:</strong> {phoneNumber}</Text> : null}
+                      {userEmail ? <Text color="white" fontSize={['xs','md']}><strong>Email:</strong> {userEmail}</Text> : null}
                     </HStack>
                     </Flex>
                     <Box
