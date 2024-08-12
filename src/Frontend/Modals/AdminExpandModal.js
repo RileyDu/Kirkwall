@@ -394,16 +394,16 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                       />
                     </Box>
                     <Box ml={3}>
-                      <Text fontSize="md" >
+                      <Text fontSize={["sm","md"]}>
                         <strong>User Name:</strong> {firstName + ' ' + lastName}
                       </Text>
-                      <Text fontSize="md">
+                      <Text fontSize={["sm","md"]}>
                         <strong>Phone:</strong> {phone}
                       </Text>
-                      <Text fontSize="sm">
+                      <Text fontSize={["sm","md"]}>
                         <strong>Email:</strong> {email}
                       </Text>
-                      <Text fontSize="md">
+                      <Text fontSize={["sm","md"]}>
                         <strong>Company:</strong> {company}
                       </Text>
                     </Box>
