@@ -345,7 +345,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     const { metric, label } = tabsToRender[index];
     setMetric(metric);
     setTitle(label);
-    setSelectedTab(index);  // Update the selected tab index state
+    setSelectedTab(index); // Update the selected tab index state
   };
 
   return (
@@ -394,19 +394,23 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                       />
                     </Box>
                     <Box ml={3}>
-                      <Text fontSize={["sm","md"]}>
+                      <Text fontSize={['sm', 'md']}>
                         <strong>User:</strong> {firstName + ' ' + lastName}
                       </Text>
-                      <Text fontSize={["sm","md"]}>
+                      <Text fontSize={['sm', 'md']}>
                         <strong>Company:</strong> {company}
                       </Text>
-                      <Text fontSize={["sm","md"]}>
+                      <Text fontSize={['sm', 'md']}>
                         <strong>Phone:</strong> {phone}
                       </Text>
-                      <Text fontSize={["sm","md"]}>
-                        <strong>Email:</strong>
-                      </Text>
-                      <Text fontSize={["xs","md"]}>{email}</Text>
+                      <Flex alignItems="baseline">
+                        <Text fontSize={['sm', 'md']} fontWeight="bold">
+                          Email:
+                        </Text>
+                        <Text fontSize={['10px', 'md']} ml={1}>
+                          {email}
+                        </Text>
+                      </Flex>
                     </Box>
                   </Flex>
                   <Box mt="7" ml={2} alignContent="center">
@@ -572,7 +576,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                     <Box>
                       <Select
                         value={selectedTab}
-                        onChange={(e) => handleTabChange(Number(e.target.value))}
+                        onChange={e => handleTabChange(Number(e.target.value))}
                         mb="4"
                       >
                         {tabsToRender.map((tab, index) => (
@@ -582,28 +586,26 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                         ))}
                       </Select>
                       <Box maxH="175px" h={'175px'} overflowY="scroll">
-                        {alertsThreshold[tabsToRender[selectedTab]?.metric]?.length ? (
+                        {alertsThreshold[tabsToRender[selectedTab]?.metric]
+                          ?.length ? (
                           <Stack spacing={2}>
-                            {alertsThreshold[tabsToRender[selectedTab]?.metric].map(
-                              (alert, alertIndex) => (
-                                <Box
-                                  key={alertIndex}
-                                  bg="orange.400"
-                                  p={2}
-                                  borderRadius="md"
-                                  boxShadow="md"
-                                >
-                                  <Flex
-                                    justify="space-between"
-                                    align="center"
-                                  >
-                                    <Text color="#212121" fontSize="sm">
-                                      {alert.message}
-                                    </Text>
-                                  </Flex>
-                                </Box>
-                              )
-                            )}
+                            {alertsThreshold[
+                              tabsToRender[selectedTab]?.metric
+                            ].map((alert, alertIndex) => (
+                              <Box
+                                key={alertIndex}
+                                bg="orange.400"
+                                p={2}
+                                borderRadius="md"
+                                boxShadow="md"
+                              >
+                                <Flex justify="space-between" align="center">
+                                  <Text color="#212121" fontSize="sm">
+                                    {alert.message}
+                                  </Text>
+                                </Flex>
+                              </Box>
+                            ))}
                           </Stack>
                         ) : (
                           <Text fontSize="xl">No logs to show</Text>
