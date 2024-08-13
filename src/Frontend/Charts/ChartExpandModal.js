@@ -408,6 +408,7 @@ const ChartExpandModal = ({
                       textDecor={'underline'}
                       pb="2"
                       textAlign={'center'}
+                      color="white"
                     >
                       Thresholds
                     </Text>
