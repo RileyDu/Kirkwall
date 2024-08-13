@@ -26,35 +26,39 @@ const client = twilio(accountSid, authToken);
 const sendGridApiKey = process.env.SENDGRID_API_KEY;
 sgMail.setApiKey(sendGridApiKey);
 
-const sendSMSAlert = async (to, body) => {
-  try {
-    console.log(`Sending SMS to ${to}: ${body}`);
-    await client.messages.create({
-      body: body,
-      from: twilioPhoneNumber,
-      to: to,
-    });
-  } catch (error) {
-    console.error('Error sending SMS:', error);
+const sendSMSAlert = async (toNumbers, body) => {
+  for (const to of toNumbers) {
+    try {
+      console.log(`Sending SMS to ${to}: ${body}`);
+      await client.messages.create({
+        body: body,
+        from: twilioPhoneNumber,
+        to: to,
+      });
+    } catch (error) {
+      console.error('Error sending SMS:', error);
+    }
   }
 };
 
-const sendEmailAlert = async (to, subject, alertMessage) => {
-  const msg = {
-    to: to,
-    from: 'alerts@kirkwall.io', // Replace with your verified email
-    subject: subject,
-    templateId: 'd-c08fa5ae191549b3aa405cfbc16cd1cd', // Replace with your SendGrid template ID
-    dynamic_template_data: {
-      alertmessage: alertMessage,
-    },
-  };
+const sendEmailAlert = async (toEmails, subject, alertMessage) => {
+  for (const to of toEmails) {
+    const msg = {
+      to: to,
+      from: 'alerts@kirkwall.io', // Replace with your verified email
+      subject: subject,
+      templateId: 'd-c08fa5ae191549b3aa405cfbc16cd1cd', // Replace with your SendGrid template ID
+      dynamic_template_data: {
+        alertmessage: alertMessage,
+      },
+    };
 
-  try {
-    console.log(`Sending Email to ${to}: ${subject}`);
-    await sgMail.send(msg);
-  } catch (error) {
-    console.error('Error sending Email:', error);
+    try {
+      console.log(`Sending Email to ${to}: ${subject}`);
+      await sgMail.send(msg);
+    } catch (error) {
+      console.error('Error sending Email:', error);
+    }
   }
 };
 
@@ -328,9 +332,12 @@ const checkThresholds = async () => {
         const location = await getLocationforAlert(metric);
         const message = `${alertMessage} at ${formattedDateTime} for ${location}.`;
 
-        if (phone) await sendSMSAlert(phone, message);
-        if (email) await sendEmailAlert(email, 'Threshold Alert', message);
-        if (phone || email) await sendAlertToDB(metric, message, now);
+        const phoneNumbers = phone ? phone.split(',').map(num => num.trim()) : [];
+        const emails = email ? email.split(',').map(em => em.trim()) : [];
+
+        if (phoneNumbers.length > 0) await sendSMSAlert(phoneNumbers, message);
+        if (emails.length > 0) await sendEmailAlert(emails, 'Threshold Alert', message);
+        if (phoneNumbers.length > 0 || emails.length > 0) await sendAlertToDB(metric, message, now);
 
         lastAlertTimes[id] = now; // Update last alert time
       };
