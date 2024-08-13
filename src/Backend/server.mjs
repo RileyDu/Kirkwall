@@ -1,7 +1,16 @@
 // checkThresholds.js
 import dotenv from 'dotenv';
 dotenv.config();
-import { getWeatherData, getWatchdogData, getRivercityData, getLatestThreshold, createAlert, getChartData, getImpriMedData } from './Graphql_helper.js';
+import {
+  getWeatherData,
+  getWatchdogData,
+  getRivercityData,
+  getLatestThreshold,
+  createAlert,
+  getChartData,
+  getImpriMedData,
+  getAllAdmins,
+} from './Graphql_helper.js';
 import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
 import moment from 'moment-timezone';
@@ -38,7 +47,7 @@ const sendEmailAlert = async (to, subject, alertMessage) => {
     templateId: 'd-c08fa5ae191549b3aa405cfbc16cd1cd', // Replace with your SendGrid template ID
     dynamic_template_data: {
       alertmessage: alertMessage,
-    }
+    },
   };
 
   try {
@@ -58,7 +67,7 @@ const sendAlertToDB = async (metric, message, timestamp) => {
   }
 };
 
-const getLocationforAlert = async (metric) => {
+const getLocationforAlert = async metric => {
   try {
     console.log('Getting location data for alert message...');
     const response = await getChartData();
@@ -68,7 +77,7 @@ const getLocationforAlert = async (metric) => {
   } catch (error) {
     console.error('Error getting location for alert:', error);
   }
-}
+};
 
 const extractCurrentValue = (response, metric) => {
   // console.log('Response:', response);
@@ -94,14 +103,17 @@ const extractCurrentValue = (response, metric) => {
   return null;
 };
 
-
-const getLatestThresholds = (thresholds) => {
+const getLatestThresholds = thresholds => {
   const latestThresholds = {};
 
   thresholds.forEach(threshold => {
     const { metric, timestamp } = threshold;
 
-    if (!latestThresholds[metric] || new Date(threshold.timestamp) > new Date(latestThresholds[metric].timestamp)) {
+    if (
+      !latestThresholds[metric] ||
+      new Date(threshold.timestamp) >
+        new Date(latestThresholds[metric].timestamp)
+    ) {
       latestThresholds[metric] = threshold;
     }
   });
@@ -109,7 +121,7 @@ const getLatestThresholds = (thresholds) => {
   return Object.values(latestThresholds);
 };
 
-const lastAlertTimes = {};  // In-memory store for last alert times
+const lastAlertTimes = {}; // In-memory store for last alert times
 
 const checkThresholds = async () => {
   console.log('Checking thresholds...');
@@ -120,7 +132,7 @@ const checkThresholds = async () => {
     return localDate.format('MMMM D, YYYY h:mm A');
   }
 
-  const debounceTime = 5 * 60 * 1000;  // 5 minutes in milliseconds
+  const debounceTime = 5 * 60 * 1000; // 5 minutes in milliseconds
 
   try {
     const thresholds = await getLatestThreshold();
@@ -135,8 +147,24 @@ const checkThresholds = async () => {
       });
     };
 
+    const admins = await getAllAdmins();
+
     for (const threshold of latestThresholds) {
       const { id, metric, high, low, phone, email } = threshold;
+
+      // Find the admin associated with this threshold metric
+      const adminForMetric = admins.data.admins.find(
+        admin => admin.email === email
+      );
+
+      // Skip the check if thresh_kill is true
+      if (adminForMetric && adminForMetric.thresh_kill) {
+        console.log(
+          `Skipping threshold check for ${metric} due to thresh_kill.`
+        );
+        continue;
+      }
+
       let responseData;
       let response;
       let formattedData;
@@ -254,7 +282,7 @@ const checkThresholds = async () => {
           temperature: { label: '°F', addSpace: false },
           temp: { label: '°F', addSpace: false },
           rctemp: { label: '°F', addSpace: false },
-      
+
           imFreezerOneTemp: { label: '°C', addSpace: false },
           imFreezerTwoTemp: { label: '°C', addSpace: false },
           imFreezerThreeTemp: { label: '°C', addSpace: false },
@@ -262,7 +290,7 @@ const checkThresholds = async () => {
           imFridgeTwoTemp: { label: '°C', addSpace: false },
           imIncubatorOneTemp: { label: '°C', addSpace: false },
           imIncubatorTwoTemp: { label: '°C', addSpace: false },
-      
+
           imFreezerOneHum: { label: '%', addSpace: false },
           imFreezerTwoHum: { label: '%', addSpace: false },
           imFreezerThreeHum: { label: '%', addSpace: false },
@@ -270,7 +298,7 @@ const checkThresholds = async () => {
           imFridgeTwoHum: { label: '%', addSpace: false },
           imIncubatorOneHum: { label: '%', addSpace: false },
           imIncubatorTwoHum: { label: '%', addSpace: false },
-      
+
           hum: { label: '%', addSpace: false },
           percent_humidity: { label: '%', addSpace: false },
           humidity: { label: '%', addSpace: false },
@@ -279,48 +307,54 @@ const checkThresholds = async () => {
           soil_moisture: { label: 'centibars', addSpace: true },
           leaf_wetness: { label: 'out of 15', addSpace: true },
         };
-      
+
         return metricLabels[metric] || { label: '', addSpace: false };
       };
 
       const { label, addSpace } = getLabelForMetric(metric);
-      const formatValue = (value) => `${value}${addSpace ? ' ' : ''}${label}`;
+      const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
 
       if (currentValue == null) continue;
 
       const now = new Date();
 
       // Check if the alert was recently sent
-      if (lastAlertTimes[id] && (now - lastAlertTimes[id] < debounceTime)) {
+      if (lastAlertTimes[id] && now - lastAlertTimes[id] < debounceTime) {
         console.log(`Skipping alert for ${metric}, recently alerted.`);
         continue;
       }
 
-      const sendAlert = async (alertMessage) => {
+      const sendAlert = async alertMessage => {
         const formattedDateTime = formatDateTime(now);
         const location = await getLocationforAlert(metric);
         const message = `${alertMessage} at ${formattedDateTime} for ${location}.`;
-      
+
         if (phone) await sendSMSAlert(phone, message);
         if (email) await sendEmailAlert(email, 'Threshold Alert', message);
         if (phone || email) await sendAlertToDB(metric, message, now);
-      
-        lastAlertTimes[id] = now;  // Update last alert time
+
+        lastAlertTimes[id] = now; // Update last alert time
       };
-      
+
       if (high !== null && currentValue > high) {
-        await sendAlert(`Alert: The ${metric} value of ${formatValue(currentValue)} exceeds the high threshold of ${formatValue(high)}`);
+        await sendAlert(
+          `Alert: The ${metric} value of ${formatValue(
+            currentValue
+          )} exceeds the high threshold of ${formatValue(high)}`
+        );
       } else if (low !== null && currentValue < low) {
-        await sendAlert(`Alert: The ${metric} value of ${formatValue(currentValue)} is below the low threshold of ${formatValue(low)}`);
-      }      
+        await sendAlert(
+          `Alert: The ${metric} value of ${formatValue(
+            currentValue
+          )} is below the low threshold of ${formatValue(low)}`
+        );
+      }
     }
   } catch (error) {
     console.error('Error checking thresholds:', error);
-    process.exit(1);  // Ensure the script exits with an error code if there's an issue
+    process.exit(1); // Ensure the script exits with an error code if there's an issue
   }
 };
-
-
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   checkThresholds();

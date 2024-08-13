@@ -625,4 +625,5 @@ export {
   getThresholdsInTheLastHour,
   getChartData,
   updateChart,
+  getAllAdmins,
 };
