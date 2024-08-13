@@ -128,12 +128,13 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
 
   const handleFormSubmit = async () => {
     const timestamp = new Date().toISOString();
+    const phoneNumbersString = phoneNumbers.join(', '); // Join phone numbers into a single string
     try {
       await createThreshold(
         metric,
         parseFloat(highThreshold),
         parseFloat(lowThreshold),
-        phoneNumber,
+        phoneNumbersString,
         userEmailForThreshold,
         timestamp
       );
@@ -384,6 +385,23 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
       });
     }
   };
+
+    // Add a new phone number input
+    const handleAddPhoneNumber = () => {
+      setPhoneNumbers([...phoneNumbers, '']);
+    };
+  
+    // Remove a phone number input
+    const handleRemovePhoneNumber = (index) => {
+      setPhoneNumbers(phoneNumbers.filter((_, i) => i !== index));
+    };
+  
+    // Update phone number value
+    const handlePhoneNumberChange = (value, index) => {
+      const updatedPhoneNumbers = [...phoneNumbers];
+      updatedPhoneNumbers[index] = value;
+      setPhoneNumbers(updatedPhoneNumbers);
+    };
 
   return (
     <Box>
