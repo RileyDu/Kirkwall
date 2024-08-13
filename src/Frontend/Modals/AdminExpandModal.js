@@ -48,7 +48,7 @@ import {
 } from '../../Backend/Graphql_helper.js';
 import FaqsModal from './FaqsModal.js';
 import SetThresholdsModal from './SetThresholdsModal.js';
-
+import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 const MotionTabPanel = motion(TabPanel);
 
 const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
@@ -72,8 +72,8 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
   const [isThresholdModalOpen, setIsThresholdModalOpen] = useState(false);
 
   const [title, setTitle] = useState('Temperature (°F)');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [userEmailForThreshold, setUserEmailForThreshold] = useState('');
+  const [phoneNumbers, setPhoneNumbers] = useState(['']);
+  const [emailsForThreshold, setEmailsForThreshold] = useState(['']);
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
   const [metric, setMetric] = useState('temperature');
@@ -129,13 +129,14 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
   const handleFormSubmit = async () => {
     const timestamp = new Date().toISOString();
     const phoneNumbersString = phoneNumbers.join(', '); // Join phone numbers into a single string
+    const emailsString = emailsForThreshold.join(', '); // Join emails into a single string
     try {
       await createThreshold(
         metric,
         parseFloat(highThreshold),
         parseFloat(lowThreshold),
         phoneNumbersString,
-        userEmailForThreshold,
+        emailsString,
         timestamp
       );
       console.log('Alerts Set');
@@ -150,15 +151,15 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     const timestamp = new Date().toISOString();
     setHighThreshold('');
     setLowThreshold('');
-    setPhoneNumber('');
-    setUserEmailForThreshold('');
+    setPhoneNumbers([]);
+    setEmailsForThreshold([]);
     try {
       await createThreshold(
         metric,
         highThreshold,
         lowThreshold,
-        phoneNumber,
-        userEmailForThreshold,
+        phoneNumbers,
+        emailsForThreshold,
         timestamp
       );
     } catch (error) {
@@ -248,9 +249,22 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     const latestThreshold = findLatestThreshold(metric);
     setHighThreshold(latestThreshold.highThreshold);
     setLowThreshold(latestThreshold.lowThreshold);
-    setPhoneNumber(latestThreshold.phone);
-    setUserEmailForThreshold(latestThreshold.email);
+  
+    // Ensure phone numbers are set as an array
+    const phoneNumbersArray = latestThreshold.phone
+      ? latestThreshold.phone.split(',').map(phone => phone.trim()) // Split and trim each phone number
+      : ['']; // Default to an array with an empty string if no phone numbers
+  
+    setPhoneNumbers(phoneNumbersArray);
+
+    // Ensure emails are set as an array
+    const emailsArray = latestThreshold.email
+      ? latestThreshold.email.split(',').map(email => email.trim()) // Split and trim each email
+      : ['']; // Default to an array with an empty string if no emails
+
+    setEmailsForThreshold(emailsArray);
   }, [metric, thresholds]);
+  
 
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
   const handleOpenModal = () => setModalOpen(true);
@@ -386,22 +400,39 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     }
   };
 
-    // Add a new phone number input
-    const handleAddPhoneNumber = () => {
-      setPhoneNumbers([...phoneNumbers, '']);
-    };
-  
-    // Remove a phone number input
-    const handleRemovePhoneNumber = (index) => {
-      setPhoneNumbers(phoneNumbers.filter((_, i) => i !== index));
-    };
-  
-    // Update phone number value
-    const handlePhoneNumberChange = (value, index) => {
-      const updatedPhoneNumbers = [...phoneNumbers];
-      updatedPhoneNumbers[index] = value;
-      setPhoneNumbers(updatedPhoneNumbers);
-    };
+  // Add a new phone number input
+  const handleAddPhoneNumber = () => {
+    setPhoneNumbers([...phoneNumbers, '']);
+  };
+
+  // Remove a phone number input
+  const handleRemovePhoneNumber = (index) => {
+    setPhoneNumbers(phoneNumbers.filter((_, i) => i !== index));
+  };
+
+  // Update phone number value
+  const handlePhoneNumberChange = (value, index) => {
+    const updatedPhoneNumbers = [...phoneNumbers];
+    updatedPhoneNumbers[index] = value;
+    setPhoneNumbers(updatedPhoneNumbers);
+  };
+
+  // Add a new email input
+  const handleAddEmail = () => {
+    setEmailsForThreshold([...emailsForThreshold, '']);
+  };
+
+  // Remove an email input
+  const handleRemoveEmail = (index) => {
+    setEmailsForThreshold(emailsForThreshold.filter((_, i) => i !== index));
+  };
+
+  // Update email value
+  const handleEmailChange = (value, index) => {
+    const updatedEmails = [...emailsForThreshold];
+    updatedEmails[index] = value;
+    setEmailsForThreshold(updatedEmails);
+  };
 
   return (
     <Box>
@@ -721,27 +752,71 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
           <ModalCloseButton color={'white'} size={'lg'} mt={1} />
           <ModalBody>
             <FormControl>
-              <FormLabel>Phone Number</FormLabel>
-              <Input
-                type="text"
-                value={phoneNumber}
-                onChange={e => setPhoneNumber(e.target.value)}
-                bg={'white'}
-                border={'2px solid #fd9801'}
-                color={'#212121'}
-              />
+              <FormLabel>Phone Numbers</FormLabel>
+              {phoneNumbers?.map((phoneNumber, index) => (
+                <Box key={index} display="flex" alignItems="center" mb={2}>
+                  <Input
+                    type="text"
+                    value={phoneNumber}
+                    onChange={(e) =>
+                      handlePhoneNumberChange(e.target.value, index)
+                    }
+                    bg={'white'}
+                    border={'2px solid #fd9801'}
+                    color={'#212121'}
+                    mr={2}
+                  />
+                  <IconButton
+                    icon={<CloseIcon />}
+                    size="sm"
+                    colorScheme="red"
+                    onClick={() => handleRemovePhoneNumber(index)}
+                  />
+                </Box>
+              ))}
+              <Button
+                leftIcon={<AddIcon />}
+                onClick={handleAddPhoneNumber}
+                size="sm"
+                mt={2}
+                colorScheme="blue"
+              >
+                Add Phone Number
+              </Button>
             </FormControl>
+
             <FormControl mt={4}>
-              <FormLabel>Email</FormLabel>
-              <Input
-                type="text"
-                value={userEmailForThreshold}
-                onChange={e => setUserEmailForThreshold(e.target.value)}
-                bg={'white'}
-                border={'2px solid #fd9801'}
-                color={'#212121'}
-              />
+              <FormLabel>Emails</FormLabel>
+              {emailsForThreshold?.map((email, index) => (
+                <Box key={index} display="flex" alignItems="center" mb={2}>
+                  <Input
+                    type="text"
+                    value={email}
+                    onChange={(e) => handleEmailChange(e.target.value, index)}
+                    bg={'white'}
+                    border={'2px solid #fd9801'}
+                    color={'#212121'}
+                    mr={2}
+                  />
+                  <IconButton
+                    icon={<CloseIcon />}
+                    size="sm"
+                    colorScheme="red"
+                    onClick={() => handleRemoveEmail(index)}
+                  />
+                </Box>
+              ))}
+              <Button
+                leftIcon={<AddIcon />}
+                onClick={handleAddEmail}
+                size="sm"
+                mt={2}
+                colorScheme="blue"
+              >
+                Add Email
+              </Button>
             </FormControl>
+
             <FormControl mt={4}>
               <FormLabel>High Threshold</FormLabel>
               <Input
