@@ -44,6 +44,7 @@ import {
   updateProfileUrl,
   createThreshold,
   getThresholdsInTheLastHour,
+  updateAdmin,
 } from '../../Backend/Graphql_helper.js';
 import FaqsModal from './FaqsModal.js';
 import SetThresholdsModal from './SetThresholdsModal.js';
@@ -354,6 +355,36 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     setSelectedTab(index); // Update the selected tab index state
   };
 
+  // Function to toggle threshold kill for DB and local state
+  const handleThreshKillToggle = async () => {
+    const newThreshKill = !threshKill; // Toggle the current value
+    setThreshKill(newThreshKill); // Update local state
+
+    try {
+      const id = adminId;
+      // Send the updated value to the database
+      await updateAdmin(id, firstName, lastName, email, phone, company, newThreshKill);
+      toast({
+        title: 'Threshold alerts updated.',
+        description: `Threshold alerts have been ${
+          newThreshKill ? 'disabled' : 'enabled'
+        }.`,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error('Error updating threshold kill:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update threshold alerts.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
   return (
     <Box>
       <Modal onClose={onClose} isOpen={isOpen}>
@@ -417,6 +448,10 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                           {email}
                         </Text>
                       </Flex>
+                      <Text fontSize={['sm', 'md']}>
+                        <strong>Thresholds Enabled:</strong>{' '}
+                        {threshKill ? 'No' : 'Yes'}
+                      </Text>
                     </Box>
                   </Flex>
                   <Box mt="7" ml={2} alignContent="center">
@@ -502,10 +537,16 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                     <Heading fontSize="2xl">Threshold Logs</Heading>
                     <Box>
                       <FormControl display="flex" alignItems="center">
-                        <FormLabel htmlFor="email-alerts" mb="1" ml={1}>
+                        <FormLabel htmlFor="threshold-alerts" mb="1" ml={1}>
                           STOP THRESHOLDS
                         </FormLabel>
-                        <Switch id="email-alerts" mb='1' />
+                        <Switch
+                          id="threshold-alerts"
+                          mb="1"
+                          isChecked={threshKill}
+                          onChange={handleThreshKillToggle}
+                          colorScheme={'orange'}
+                        />
                       </FormControl>
                       <MotionButton
                         variant={'solid'}
@@ -553,7 +594,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                             exit={{ opacity: 0, y: 10 }}
                             transition={{ duration: 0.5 }}
                           >
-                            <Box maxH="225px" h={'225px'} overflowY="scroll">
+                            <Box maxH="300px" h={'300px'} overflowY="scroll">
                               {alertsThreshold[tab.metric]?.length ? (
                                 <Stack spacing={2}>
                                   {alertsThreshold[tab.metric].map(
