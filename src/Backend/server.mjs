@@ -149,8 +149,6 @@ const checkThresholds = async () => {
 
     const admins = await getAllAdmins();
 
-    console.log('admins', admins);
-    
     for (const threshold of latestThresholds) {
       const { id, metric, high, low, phone, email } = threshold;
 
@@ -158,10 +156,6 @@ const checkThresholds = async () => {
       const adminForMetric = admins.data.admin.find(
         admin => admin.email === email
       );
-
-      console.log(adminForMetric,'adminForMetric');
-      
-
       // Skip the check if thresh_kill is true
       if (adminForMetric && adminForMetric.thresh_kill) {
         console.log(
