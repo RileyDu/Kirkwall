@@ -33,6 +33,7 @@ import {
   Spinner,
   useMediaQuery,
   Select,
+  Switch,
 } from '@chakra-ui/react';
 import { FaBell, FaExpandAlt, FaQuestion } from 'react-icons/fa/index.esm.js';
 import { motion } from 'framer-motion';
@@ -43,10 +44,11 @@ import {
   updateProfileUrl,
   createThreshold,
   getThresholdsInTheLastHour,
+  updateAdmin,
 } from '../../Backend/Graphql_helper.js';
 import FaqsModal from './FaqsModal.js';
 import SetThresholdsModal from './SetThresholdsModal.js';
-
+import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 const MotionTabPanel = motion(TabPanel);
 
 const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
@@ -70,8 +72,8 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
   const [isThresholdModalOpen, setIsThresholdModalOpen] = useState(false);
 
   const [title, setTitle] = useState('Temperature (°F)');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [userEmailForThreshold, setUserEmailForThreshold] = useState('');
+  const [phoneNumbers, setPhoneNumbers] = useState(['']);
+  const [emailsForThreshold, setEmailsForThreshold] = useState(['']);
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
   const [metric, setMetric] = useState('temperature');
@@ -104,9 +106,8 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
         const result = await getThresholdsInTheLastHour();
         if (result && result.data && result.data.alerts) {
           // Filter alerts based on userConfig
-          const userMetrics = userConfig[userEmail]?.map(
-            config => config.metric
-          ) || [];
+          const userMetrics =
+            userConfig[userEmail]?.map(config => config.metric) || [];
           const filteredAlerts = result.data.alerts.filter(alert =>
             userMetrics.includes(alert.metric)
           );
@@ -127,13 +128,15 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
 
   const handleFormSubmit = async () => {
     const timestamp = new Date().toISOString();
+    const phoneNumbersString = phoneNumbers.join(', '); // Join phone numbers into a single string
+    const emailsString = emailsForThreshold.join(', '); // Join emails into a single string
     try {
       await createThreshold(
         metric,
         parseFloat(highThreshold),
         parseFloat(lowThreshold),
-        phoneNumber,
-        userEmailForThreshold,
+        phoneNumbersString,
+        emailsString,
         timestamp
       );
       console.log('Alerts Set');
@@ -148,15 +151,15 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     const timestamp = new Date().toISOString();
     setHighThreshold('');
     setLowThreshold('');
-    setPhoneNumber('');
-    setUserEmailForThreshold('');
+    setPhoneNumbers([]);
+    setEmailsForThreshold([]);
     try {
       await createThreshold(
         metric,
         highThreshold,
         lowThreshold,
-        phoneNumber,
-        userEmailForThreshold,
+        phoneNumbers,
+        emailsForThreshold,
         timestamp
       );
     } catch (error) {
@@ -246,9 +249,22 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     const latestThreshold = findLatestThreshold(metric);
     setHighThreshold(latestThreshold.highThreshold);
     setLowThreshold(latestThreshold.lowThreshold);
-    setPhoneNumber(latestThreshold.phone);
-    setUserEmailForThreshold(latestThreshold.email);
+  
+    // Ensure phone numbers are set as an array
+    const phoneNumbersArray = latestThreshold.phone
+      ? latestThreshold.phone.split(',').map(phone => phone.trim()) // Split and trim each phone number
+      : ['']; // Default to an array with an empty string if no phone numbers
+  
+    setPhoneNumbers(phoneNumbersArray);
+
+    // Ensure emails are set as an array
+    const emailsArray = latestThreshold.email
+      ? latestThreshold.email.split(',').map(email => email.trim()) // Split and trim each email
+      : ['']; // Default to an array with an empty string if no emails
+
+    setEmailsForThreshold(emailsArray);
   }, [metric, thresholds]);
+  
 
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
   const handleOpenModal = () => setModalOpen(true);
@@ -354,6 +370,70 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     setSelectedTab(index); // Update the selected tab index state
   };
 
+  // Function to toggle threshold kill for DB and local state
+  const handleThreshKillToggle = async () => {
+    const newThreshKill = !threshKill; // Toggle the current value
+    setThreshKill(newThreshKill); // Update local state
+
+    try {
+      const id = adminId;
+      // Send the updated value to the database
+      await updateAdmin(id, firstName, lastName, email, phone, company, newThreshKill);
+      toast({
+        title: 'Threshold alerts updated.',
+        description: `Threshold alerts have been ${
+          newThreshKill ? 'disabled' : 'enabled'
+        }.`,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error('Error updating threshold kill:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update threshold alerts.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  // Add a new phone number input
+  const handleAddPhoneNumber = () => {
+    setPhoneNumbers([...phoneNumbers, '']);
+  };
+
+  // Remove a phone number input
+  const handleRemovePhoneNumber = (index) => {
+    setPhoneNumbers(phoneNumbers.filter((_, i) => i !== index));
+  };
+
+  // Update phone number value
+  const handlePhoneNumberChange = (value, index) => {
+    const updatedPhoneNumbers = [...phoneNumbers];
+    updatedPhoneNumbers[index] = value;
+    setPhoneNumbers(updatedPhoneNumbers);
+  };
+
+  // Add a new email input
+  const handleAddEmail = () => {
+    setEmailsForThreshold([...emailsForThreshold, '']);
+  };
+
+  // Remove an email input
+  const handleRemoveEmail = (index) => {
+    setEmailsForThreshold(emailsForThreshold.filter((_, i) => i !== index));
+  };
+
+  // Update email value
+  const handleEmailChange = (value, index) => {
+    const updatedEmails = [...emailsForThreshold];
+    updatedEmails[index] = value;
+    setEmailsForThreshold(updatedEmails);
+  };
+
   return (
     <Box>
       <Modal onClose={onClose} isOpen={isOpen}>
@@ -417,6 +497,10 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                           {email}
                         </Text>
                       </Flex>
+                      <Text fontSize={['sm', 'md']}>
+                        <strong>Thresholds Enabled:</strong>{' '}
+                        {threshKill ? 'No' : 'Yes'}
+                      </Text>
                     </Box>
                   </Flex>
                   <Box mt="7" ml={2} alignContent="center">
@@ -500,19 +584,33 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                     mb={5}
                   >
                     <Heading fontSize="2xl">Threshold Logs</Heading>
-                    <MotionButton
-                      variant={'solid'}
-                      onClick={handleOpenThresholdModal}
-                      leftIcon={<FaBell />}
-                      mx={1}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      size={['sm', 'md']}
-                      bg={'gray.100'}
-                      color={'black'}
-                    >
-                      SET THRESHOLDS
-                    </MotionButton>
+                    <Box>
+                      <FormControl display="flex" alignItems="center">
+                        <FormLabel htmlFor="threshold-alerts" mb="1" ml={1}>
+                          PAUSE THRESHOLDS
+                        </FormLabel>
+                        <Switch
+                          id="threshold-alerts"
+                          mb="1"
+                          isChecked={threshKill}
+                          onChange={handleThreshKillToggle}
+                          colorScheme={'orange'}
+                        />
+                      </FormControl>
+                      <MotionButton
+                        variant={'solid'}
+                        onClick={handleOpenThresholdModal}
+                        leftIcon={<FaBell />}
+                        mx={1}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        size={['sm', 'md']}
+                        bg={'gray.100'}
+                        color={'black'}
+                      >
+                        SET THRESHOLDS
+                      </MotionButton>
+                    </Box>
                   </Flex>
                   {isLargerThan768 && (
                     <Tabs
@@ -545,7 +643,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                             exit={{ opacity: 0, y: 10 }}
                             transition={{ duration: 0.5 }}
                           >
-                            <Box maxH="225px" h={'225px'} overflowY="scroll">
+                            <Box maxH="300px" h={'300px'} overflowY="scroll">
                               {alertsThreshold[tab.metric]?.length ? (
                                 <Stack spacing={2}>
                                   {alertsThreshold[tab.metric].map(
@@ -654,27 +752,71 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
           <ModalCloseButton color={'white'} size={'lg'} mt={1} />
           <ModalBody>
             <FormControl>
-              <FormLabel>Phone Number</FormLabel>
-              <Input
-                type="text"
-                value={phoneNumber}
-                onChange={e => setPhoneNumber(e.target.value)}
-                bg={'white'}
-                border={'2px solid #fd9801'}
-                color={'#212121'}
-              />
+              <FormLabel>Phone Numbers</FormLabel>
+              {phoneNumbers?.map((phoneNumber, index) => (
+                <Box key={index} display="flex" alignItems="center" mb={2}>
+                  <Input
+                    type="text"
+                    value={phoneNumber}
+                    onChange={(e) =>
+                      handlePhoneNumberChange(e.target.value, index)
+                    }
+                    bg={'white'}
+                    border={'2px solid #fd9801'}
+                    color={'#212121'}
+                    mr={2}
+                  />
+                  <IconButton
+                    icon={<CloseIcon />}
+                    size="sm"
+                    colorScheme="red"
+                    onClick={() => handleRemovePhoneNumber(index)}
+                  />
+                </Box>
+              ))}
+              <Button
+                leftIcon={<AddIcon />}
+                onClick={handleAddPhoneNumber}
+                size="sm"
+                mt={2}
+                colorScheme="blue"
+              >
+                Add Phone Number
+              </Button>
             </FormControl>
+
             <FormControl mt={4}>
-              <FormLabel>Email</FormLabel>
-              <Input
-                type="text"
-                value={userEmailForThreshold}
-                onChange={e => setUserEmailForThreshold(e.target.value)}
-                bg={'white'}
-                border={'2px solid #fd9801'}
-                color={'#212121'}
-              />
+              <FormLabel>Emails</FormLabel>
+              {emailsForThreshold?.map((email, index) => (
+                <Box key={index} display="flex" alignItems="center" mb={2}>
+                  <Input
+                    type="text"
+                    value={email}
+                    onChange={(e) => handleEmailChange(e.target.value, index)}
+                    bg={'white'}
+                    border={'2px solid #fd9801'}
+                    color={'#212121'}
+                    mr={2}
+                  />
+                  <IconButton
+                    icon={<CloseIcon />}
+                    size="sm"
+                    colorScheme="red"
+                    onClick={() => handleRemoveEmail(index)}
+                  />
+                </Box>
+              ))}
+              <Button
+                leftIcon={<AddIcon />}
+                onClick={handleAddEmail}
+                size="sm"
+                mt={2}
+                colorScheme="blue"
+              >
+                Add Email
+              </Button>
             </FormControl>
+
             <FormControl mt={4}>
               <FormLabel>High Threshold</FormLabel>
               <Input

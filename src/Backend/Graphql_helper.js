@@ -364,6 +364,24 @@ async function deleteAlert(id) {
   return executeGraphqlQuery(mutation, variables);
 }
 
+// Getting all admins to check their thresh kill in the backend
+const getAllAdmins = async () => {
+  const query = `
+    query {
+      admin {
+        id
+        firstname
+        lastname
+        email
+        phone
+        company
+        thresh_kill
+        profile_url
+      }
+    }
+  `;
+  return executeGraphqlQuery(query);
+};
 
 // This is a query to get the details of the admin that is logged in based on their email
 const getAdminByEmail = async (userEmail) => {
@@ -381,11 +399,6 @@ const getAdminByEmail = async (userEmail) => {
       }
     }
   `;
-
-  // const variables = {
-  //   email: email,
-  // };
-
   return executeGraphqlQuery(query);
 };
 
@@ -612,4 +625,5 @@ export {
   getThresholdsInTheLastHour,
   getChartData,
   updateChart,
+  getAllAdmins,
 };
