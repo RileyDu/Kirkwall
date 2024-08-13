@@ -157,11 +157,16 @@ const checkThresholds = async () => {
       const { id, metric, high, low, phone, email } = threshold;
 
       // Find the admin associated with this threshold metric
-      const adminForMetric = admins.data.admin.find(
-        admin => admin.email === email
-      );
-      // Skip the check if thresh_kill is true
-      if (adminForMetric && adminForMetric.thresh_kill) {
+      // Split the email string into an array of emails
+      const emails = email ? email.split(',').map(em => em.trim()) : [];
+
+      // Check if any admin associated with these emails has thresh_kill set to true
+      const shouldSkip = emails.some(email => {
+        const admin = admins.data.admin.find(admin => admin.email === email);
+        return admin && admin.thresh_kill;
+      });
+
+      if (shouldSkip) {
         console.log(
           `Skipping threshold check for ${metric} due to thresh_kill.`
         );
@@ -332,12 +337,16 @@ const checkThresholds = async () => {
         const location = await getLocationforAlert(metric);
         const message = `${alertMessage} at ${formattedDateTime} for ${location}.`;
 
-        const phoneNumbers = phone ? phone.split(',').map(num => num.trim()) : [];
+        const phoneNumbers = phone
+          ? phone.split(',').map(num => num.trim())
+          : [];
         const emails = email ? email.split(',').map(em => em.trim()) : [];
 
         if (phoneNumbers.length > 0) await sendSMSAlert(phoneNumbers, message);
-        if (emails.length > 0) await sendEmailAlert(emails, 'Threshold Alert', message);
-        if (phoneNumbers.length > 0 || emails.length > 0) await sendAlertToDB(metric, message, now);
+        if (emails.length > 0)
+          await sendEmailAlert(emails, 'Threshold Alert', message);
+        if (phoneNumbers.length > 0 || emails.length > 0)
+          await sendAlertToDB(metric, message, now);
 
         lastAlertTimes[id] = now; // Update last alert time
       };
