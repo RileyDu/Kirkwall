@@ -53,17 +53,13 @@ const ChartWrapper = ({
   chartLayout,
   typeOfChart,
 }) => {
-  const [showIcons, setShowIcons] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
   const [loading, setLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [sensorMap, setSensorMap] = useState('grandfarm'); // State to toggle between map and chart
   const [userTitle, setUserTitle] = useState('Location');
-  
   const { chartData } = useWeatherData();
   const isMounted = useRef(false);
-
   const chartDataForMetric = chartData.find(chart => chart.metric === metric);
   const [newTitle, setNewTitle] = useState(chartDataForMetric?.location);
   const [chartType, setChartType] = useState(chartDataForMetric?.type);
@@ -153,8 +149,6 @@ const ChartWrapper = ({
     }
   };
 
-  // setMapToDisplay(metric);
-
   useEffect(() => {
     setMapToDisplay(metric, currentUser);
   }, [metric, currentUser]);
@@ -164,20 +158,11 @@ const ChartWrapper = ({
   const getBackgroundColor = colorMode =>
     colorMode === 'light' ? '#f9f9f9' : 'gray.800';
 
-  // useEffect(() => {
-  //   const savedTitle = localStorage.getItem(`chartTitle_${metric}`);
-  //   if (savedTitle) {
-  //     setUserTitle(savedTitle);
-  //     setNewTitle(savedTitle);
-  //   }
-  // }, [metric]);
-
   const handleTitleChange = e => setNewTitle(e.target.value);
   const handleTitleSubmit = () => {
     setUserTitle(newTitle);
     handleChartEdit();
  };
-
 
   const getLogoToDisplay = (metric, colorMode) => {
     const logoMap = {
