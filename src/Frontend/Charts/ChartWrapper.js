@@ -231,6 +231,8 @@ const ChartWrapper = ({
         imFridgeTwoHum: 'rci-logo-white.png',
         imIncubatorOneTemp: 'rci-logo-white.png',
         imIncubatorOneHum: 'rci-logo-white.png',
+        imIncubatorTwoTemp: 'rci-logo-white.png',
+        imIncubatorTwoHum: 'rci-logo-white.png',
       },
     };
 
@@ -250,13 +252,14 @@ const ChartWrapper = ({
 
   const fontSize = useBreakpointValue({
     base: 'xs',
-    md: 'md',
-    lg: 'md',
-    xl: 'lg',
+    md: 'sm',
+    lg: 'sm',
+    xl: 'md',
     xxl: 'lg',
   });
+  const titleSize = useBreakpointValue({ base: 'sm', md: 'lg' });
   const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
-  const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
+  const iconSize = useBreakpointValue({ base: 'xs', md: 'sm' });
   const closeSize = useBreakpointValue({ base: 'sm', md: 'lg' });
 
   const calculateTimePeriod = dataLength => {
@@ -357,9 +360,6 @@ const ChartWrapper = ({
     editChart(id, metric, timeperiod, type, location, hidden);
   }
 
-
-
-
   return (
     <>
       <Box
@@ -367,14 +367,14 @@ const ChartWrapper = ({
         borderColor="#fd9801"
         borderRadius="md"
         boxShadow="md"
-        p="6"
+        p="4"
         pb={paddingBottom}
         bg={getBackgroundColor(colorMode)}
         h="500px"
         w="100%"
       >
         <Flex justify="space-between" mb="4" align="center">
-          <Box fontSize={fontSize} fontWeight="bold">
+          <Box fontSize={titleSize} fontWeight="bold">
             {logo && (
               <img
                 src={logo}
@@ -399,7 +399,7 @@ const ChartWrapper = ({
                     borderColor="#fd9801"
                     borderRadius="lg"
                     px={2}
-                    py={1}
+                    py={.5}
                     mr={2}
                     bg={'brand.400'}
                     color={'#212121'}
@@ -464,7 +464,7 @@ const ChartWrapper = ({
                     borderColor="#fd9801"
                     borderRadius="lg"
                     px={2}
-                    py={1}
+                    py={.5}
                     mr={2}
                     bg={'brand.400'}
                     color={'#212121'}
@@ -489,7 +489,7 @@ const ChartWrapper = ({
                 borderColor="#fd9801"
                 borderRadius="lg"
                 px={2}
-                py={1}
+                py={.5}
                 mr={2}
                 bg={'brand.400'}
                 color={'#212121'}
@@ -641,6 +641,7 @@ const ChartWrapper = ({
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   ml={2}
+                  mr={2}
                 />
               </Tooltip>
             </motion.div>}
