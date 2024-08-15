@@ -673,6 +673,7 @@ const ChartWrapper = ({
         sensorMap={sensorMap}
         MapComponent={MapComponent}
         typeOfChart={typeOfChart}
+        chartLocation={newTitle || chartDataForMetric?.location}
       />
     </>
   );

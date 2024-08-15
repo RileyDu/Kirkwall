@@ -37,6 +37,9 @@ import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 
+// This is the modal that appears when a chart is expanded
+// It is a child of the ChartWrapper component
+// It contains the chart, a mini dashboard, and a map, as well as the threshold settings & logs
 const ChartExpandModal = ({
   isOpen,
   onClose,
@@ -49,6 +52,7 @@ const ChartExpandModal = ({
   setCurrentTimePeriod,
   MapComponent,
   typeOfChart,
+  chartLocation,
 }) => {
   const { colorMode } = useColorMode();
   const [loading, setLoading] = useState(false);
@@ -101,19 +105,17 @@ const ChartExpandModal = ({
   const MotionButton = motion(Button);
   const toast = useToast();
 
+  //Styling based on color mode
   const getBackgroundColor = () => 'gray.700';
   const getContentBackgroundColor = () =>
     colorMode === 'light' ? 'brand.50' : 'gray.800';
-  const getTextColor = () => (colorMode === 'light' ? 'black' : 'white');
   const getModalBackgroundColor = () =>
     colorMode === 'light' ? 'whitesmoke' : 'gray.700';
 
   // Handle time period button click
   const handleTimeButtonClick = async timePeriod => {
     if (timePeriod === currentTimePeriod) return;
-
     setLoading(true);
-
     try {
       await handleTimePeriodChange(metric, timePeriod);
       setCurrentTimePeriod(timePeriod);
@@ -172,6 +174,7 @@ const ChartExpandModal = ({
     }
   };
 
+  // Clear the threshold data and send it to the backend
   const handleFormClear = async () => {
     const timestamp = new Date().toISOString();
     setHighThreshold('');
@@ -195,6 +198,9 @@ const ChartExpandModal = ({
     }
   };
 
+  // Clear alerts for the selected metric
+  // This function is called when the trash icon is clicked on an alert
+  // Toast notifications are used to show the status of the alert deletion
   const clearAlerts = async id => {
     const toastId = 'delete-alert-toast';
 
@@ -282,6 +288,7 @@ const ChartExpandModal = ({
           flexDirection="column"
           bg={getBackgroundColor()}
         >
+          {/* The title */}
           <ModalHeader
             bg="#2121"
             color="white"
@@ -291,7 +298,7 @@ const ChartExpandModal = ({
             justifyContent="space-between"
             alignItems="center"
           >
-            {title}
+            {title} for {chartLocation}
           </ModalHeader>
           <ModalCloseButton size="lg" color="white" mt={1} />
           <ModalBody
@@ -431,7 +438,8 @@ const ChartExpandModal = ({
                         ) : null}
                         {emailsForThreshold?.length > 0 ? (
                           <Text color="white" fontSize={['xs', 'md']}>
-                            <strong>Email:</strong> {emailsForThreshold.join(', ')}
+                            <strong>Email:</strong>{' '}
+                            {emailsForThreshold.join(', ')}
                           </Text>
                         ) : null}
                       </HStack>
@@ -516,7 +524,9 @@ const ChartExpandModal = ({
                   <Input
                     type="text"
                     value={phoneNumber}
-                    onChange={e => handlePhoneNumberChange(e.target.value, index)}
+                    onChange={e =>
+                      handlePhoneNumberChange(e.target.value, index)
+                    }
                     bg={'white'}
                     border={'2px solid #fd9801'}
                     color={'#212121'}
