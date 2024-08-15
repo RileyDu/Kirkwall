@@ -203,7 +203,6 @@ async function getWatchdogData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
-
 // Generalized function to get rivercity data based on requested metric and time period
 // All is triggerd on page load with a default of 3H
 async function getRivercityData(type, limit) {
@@ -246,6 +245,8 @@ async function getRivercityData(type, limit) {
   return executeGraphqlQuery(query, { limit });
 }
 
+// Function to get the latest impriMed data from the database
+// The filter targets a specific device based on the deveui
 async function getImpriMedData(deveui, limit) {
   const query = `query impriMedData($limit: Int, $deveui: String!) {
   rivercity_data(ordering: "publishedat desc", limit: $limit, filter: $deveui) {
@@ -256,10 +257,10 @@ async function getImpriMedData(deveui, limit) {
   }
 }
       `;
-      const variables = {
-        limit: limit,
-        deveui: deveui,
-      };
+  const variables = {
+    limit: limit,
+    deveui: deveui,
+  };
   return executeGraphqlQuery(query, variables);
 }
 
@@ -384,7 +385,7 @@ const getAllAdmins = async () => {
 };
 
 // This is a query to get the details of the admin that is logged in based on their email
-const getAdminByEmail = async (userEmail) => {
+const getAdminByEmail = async userEmail => {
   const query = `
     query {
       admin(filter: "email = '${userEmail}'") {
@@ -402,11 +403,8 @@ const getAdminByEmail = async (userEmail) => {
   return executeGraphqlQuery(query);
 };
 
-
-
 // Get Id by Email
-
-const getIdByEmail = async (email) => {
+const getIdByEmail = async email => {
   const query = `
     query {
       admin(filter: "email = '${email}'") {
@@ -415,11 +413,18 @@ const getIdByEmail = async (email) => {
     } 
 `;
   return executeGraphqlQuery(query);
-}
+};
 
 // Update admin query
-
-const updateAdmin = async (id, firstname, lastname, email, phone, company, threshKill) => {
+const updateAdmin = async (
+  id,
+  firstname,
+  lastname,
+  email,
+  phone,
+  company,
+  threshKill
+) => {
   const mutation = `
     mutation UpdateAdmin($id: ID!, $input: adminInput!) {
       update_admin(id: $id, input: $input) {
@@ -449,8 +454,17 @@ const updateAdmin = async (id, firstname, lastname, email, phone, company, thres
   return executeGraphqlQuery(mutation, variables);
 };
 
-
-const updateProfileUrl = async (id, firstname, lastname, email, phone, company, threshKill, profile_url) => {
+// Update admin profile url
+const updateProfileUrl = async (
+  id,
+  firstname,
+  lastname,
+  email,
+  phone,
+  company,
+  threshKill,
+  profile_url
+) => {
   const mutation = `
     mutation UpdateAdmin($id: ID!, $input: adminInput!) {
       update_admin(id: $id, input: $input) {
@@ -475,23 +489,22 @@ const updateProfileUrl = async (id, firstname, lastname, email, phone, company, 
       phone: phone,
       company: company,
       thresh_kill: threshKill,
-      profile_url: profile_url
+      profile_url: profile_url,
     },
   };
 
   return executeGraphqlQuery(mutation, variables);
 };
 
-
 // Function to get all metrics which have alerts in the past hour
-const oneHourAgo = new Date(new Date().getTime() - (60 * 60 * 1000)).toISOString().replace('Z', '.000000+00:00').replace('.000000', '');
+const oneHourAgo = new Date(new Date().getTime() - 60 * 60 * 1000)
+  .toISOString()
+  .replace('Z', '.000000+00:00')
+  .replace('.000000', '');
 const formattedTimestamp = oneHourAgo.split('.')[0] + '.000000+00:00';
 
-// 2024-08-09T20:32:27.000000+00:00
-
-
 async function getThresholdsInTheLastHour() {
-  const query =`
+  const query = `
     query {                          
       alerts(filter: "timestamp > \\"${formattedTimestamp}\\"", ordering: "timestamp desc") {
         metric
@@ -502,8 +515,6 @@ async function getThresholdsInTheLastHour() {
 
   return executeGraphqlQuery(query);
 }
-
-
 
 
 // Function to get the chart data for a specific metric
@@ -547,7 +558,6 @@ async function updateChart(id, metric, timeperiod, type, location, hidden) {
   };
   return executeGraphqlQuery(mutation, variables);
 }
-
 
 // Function to get API ID of user
 // async function getAPIIds() {
