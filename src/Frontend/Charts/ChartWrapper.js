@@ -18,8 +18,6 @@ import {
   PopoverHeader,
   PopoverBody,
   Input,
-  Fade, 
-  ScaleFade, Slide, SlideFade, Collapse
 } from '@chakra-ui/react';
 import {
   FaExpandAlt,
@@ -31,7 +29,7 @@ import {
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import ChartExpandModal from './ChartExpandModal.js';
-import ChartDetails, { getLabelForMetric } from './ChartDetails.js';
+import { getLabelForMetric } from './ChartDashboard.js';
 import { useColorMode } from '@chakra-ui/react';
 import MiniMap from '../Maps/GrandFarmMiniMap.js';
 import WatchdogMap from '../Maps/WatchdogMiniMap.js';
