@@ -26,6 +26,7 @@ const client = twilio(accountSid, authToken);
 const sendGridApiKey = process.env.SENDGRID_API_KEY;
 sgMail.setApiKey(sendGridApiKey);
 
+// Send an SMS alert to the specified phone numbers for the metric whose threshold was exceeded
 const sendSMSAlert = async (toNumbers, body) => {
   for (const to of toNumbers) {
     try {
@@ -41,13 +42,14 @@ const sendSMSAlert = async (toNumbers, body) => {
   }
 };
 
+// Send an Email alert to the specified email addresses for the metric whose threshold was exceeded
 const sendEmailAlert = async (toEmails, subject, alertMessage) => {
   for (const to of toEmails) {
     const msg = {
       to: to,
-      from: 'alerts@kirkwall.io', // Replace with your verified email
+      from: 'alerts@kirkwall.io',
       subject: subject,
-      templateId: 'd-c08fa5ae191549b3aa405cfbc16cd1cd', // Replace with your SendGrid template ID
+      templateId: 'd-c08fa5ae191549b3aa405cfbc16cd1cd',
       dynamic_template_data: {
         alertmessage: alertMessage,
       },
@@ -62,6 +64,9 @@ const sendEmailAlert = async (toEmails, subject, alertMessage) => {
   }
 };
 
+// Send an alert to the database for the metric whose threshold was exceeded
+// This only triggers when a phone/email alert is sent successfully
+// The alert message is stored in the database for future reference & used in the frontend
 const sendAlertToDB = async (metric, message, timestamp) => {
   try {
     console.log(`Sending alert to database: ${message}`);
@@ -71,6 +76,7 @@ const sendAlertToDB = async (metric, message, timestamp) => {
   }
 };
 
+// Sensor locations for alert messages, more descriptive than the metric name in the email/SMS
 const getLocationforAlert = async metric => {
   try {
     console.log('Getting location data for alert message...');
@@ -83,9 +89,9 @@ const getLocationforAlert = async metric => {
   }
 };
 
+// Extract the current value of the metric from the response data
+// This is used to compare against the threshold values that a user has set
 const extractCurrentValue = (response, metric) => {
-  // console.log('Response:', response);
-
   // Check if the response is an array
   if (Array.isArray(response)) {
     // Access the first element and get the metric value
@@ -107,11 +113,12 @@ const extractCurrentValue = (response, metric) => {
   return null;
 };
 
+// Get the latest thresholds for each metric
 const getLatestThresholds = thresholds => {
   const latestThresholds = {};
 
   thresholds.forEach(threshold => {
-    const { metric, timestamp } = threshold;
+    const { metric } = threshold;
 
     if (
       !latestThresholds[metric] ||
@@ -125,13 +132,18 @@ const getLatestThresholds = thresholds => {
   return Object.values(latestThresholds);
 };
 
+// In-memory store for last alert times to prevent spamming alerts
+// DB not needed as this is only used to prevent multiple alerts in a short time
 const lastAlertTimes = {}; // In-memory store for last alert times
 
+// THE Main function to check the thresholds for each metric
+// This function is called every 15 minutes to check the latest values against the thresholds
+// This is done by a github action cron job on the 15th minute of every hour
 const checkThresholds = async () => {
   console.log('Checking thresholds...');
 
   function formatDateTime(date) {
-    const timezone = 'America/Chicago'; // Set your desired timezone here
+    const timezone = 'America/Chicago';
     const localDate = moment(date).tz(timezone);
     return localDate.format('MMMM D, YYYY h:mm A');
   }
@@ -139,8 +151,11 @@ const checkThresholds = async () => {
   const debounceTime = 5 * 60 * 1000; // 5 minutes in milliseconds
 
   try {
+    // Get the latest values for each metric
     const thresholds = await getLatestThreshold();
     const latestThresholds = getLatestThresholds(thresholds.data.thresholds);
+    // Renaming the key to metric for the data from ImpriMed
+    // This is because it is all coming from one table column
     const renameKeyToMetric = (data, metric) => {
       return data.map(d => {
         const value = metric.endsWith('Temp') ? d.rctemp : d.humidity;
@@ -151,8 +166,10 @@ const checkThresholds = async () => {
       });
     };
 
+    // Get all admins to check if any have thresh_kill set to true
     const admins = await getAllAdmins();
 
+    // Loop through each threshold and check if the current value exceeds the threshold
     for (const threshold of latestThresholds) {
       const { id, metric, high, low, phone, email } = threshold;
 
@@ -166,6 +183,7 @@ const checkThresholds = async () => {
         return admin && admin.thresh_kill;
       });
 
+      // Skip the threshold check if thresh_kill is set to true for the admin and their metrics
       if (shouldSkip) {
         console.log(
           `Skipping threshold check for ${metric} due to thresh_kill.`
@@ -173,6 +191,8 @@ const checkThresholds = async () => {
         continue;
       }
 
+      // Get the latest data for the metric
+      // Switch case to get the data from the correct table
       let responseData;
       let response;
       let formattedData;
@@ -285,6 +305,7 @@ const checkThresholds = async () => {
 
       const currentValue = extractCurrentValue(responseData, metric);
 
+      // Function to get the label for the metric for UX purposes in alert messages
       const getLabelForMetric = metric => {
         const metricLabels = {
           temperature: { label: '°F', addSpace: false },
@@ -332,6 +353,8 @@ const checkThresholds = async () => {
         continue;
       }
 
+      // Function to send the alert message to the specified phone numbers and emails
+      //Only triggers if below or above the threshold
       const sendAlert = async alertMessage => {
         const formattedDateTime = formatDateTime(now);
         const location = await getLocationforAlert(metric);
@@ -351,6 +374,7 @@ const checkThresholds = async () => {
         lastAlertTimes[id] = now; // Update last alert time
       };
 
+      // Check if the current value exceeds the high or low threshold
       if (high !== null && currentValue > high) {
         await sendAlert(
           `Alert: The ${metric} value of ${formatValue(

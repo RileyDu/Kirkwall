@@ -18,8 +18,6 @@ import {
   PopoverHeader,
   PopoverBody,
   Input,
-  Fade, 
-  ScaleFade, Slide, SlideFade, Collapse
 } from '@chakra-ui/react';
 import {
   FaExpandAlt,
@@ -31,7 +29,7 @@ import {
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import ChartExpandModal from './ChartExpandModal.js';
-import ChartDetails, { getLabelForMetric } from './ChartDetails.js';
+import { getLabelForMetric } from './ChartDashboard.js';
 import { useColorMode } from '@chakra-ui/react';
 import MiniMap from '../Maps/GrandFarmMiniMap.js';
 import WatchdogMap from '../Maps/WatchdogMiniMap.js';
@@ -55,21 +53,19 @@ const ChartWrapper = ({
   chartLayout,
   typeOfChart,
 }) => {
-  const [showIcons, setShowIcons] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
   const [loading, setLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [sensorMap, setSensorMap] = useState('grandfarm'); // State to toggle between map and chart
   const [userTitle, setUserTitle] = useState('Location');
-  
   const { chartData } = useWeatherData();
   const isMounted = useRef(false);
-
   const chartDataForMetric = chartData.find(chart => chart.metric === metric);
   const [newTitle, setNewTitle] = useState(chartDataForMetric?.location);
   const [chartType, setChartType] = useState(chartDataForMetric?.type);
   
+  // Function to handle chart type change and switch between bar and line chart
+  // User can switch between bar and line chart by button click
   const handleChartTypeChange = () => {
     const newChartType = chartType === 'line' ? 'bar' : 'line';
     setChartType(newChartType);
@@ -101,14 +97,18 @@ const ChartWrapper = ({
   const toast = useToast();
   const { colorMode } = useColorMode();
 
+  // Function to render close button on the chart
+  // Close button is rendered only on the home page and grandfarm, watchdogprotect, imprimed pages for now 
   const renderCloseButton = () => {
     const routesWithCloseButton = ['/', '/grandfarm', '/watchdogprotect', '/imprimed'];
     return isLargerThan768 && routesWithCloseButton.includes(location.pathname);
   };
 
+  // Function to toggle between map and chart
   const toggleMap = () => {
     setShowMap(!showMap);
   };
+  // Function to set the map to display based on the metric
   const setMapToDisplay = (metric, currentUser) => {
     // Check for special case
     if (
@@ -155,8 +155,7 @@ const ChartWrapper = ({
     }
   };
 
-  // setMapToDisplay(metric);
-
+  // Set the map to display based on the metric on page load
   useEffect(() => {
     setMapToDisplay(metric, currentUser);
   }, [metric, currentUser]);
@@ -166,20 +165,11 @@ const ChartWrapper = ({
   const getBackgroundColor = colorMode =>
     colorMode === 'light' ? '#f9f9f9' : 'gray.800';
 
-  // useEffect(() => {
-  //   const savedTitle = localStorage.getItem(`chartTitle_${metric}`);
-  //   if (savedTitle) {
-  //     setUserTitle(savedTitle);
-  //     setNewTitle(savedTitle);
-  //   }
-  // }, [metric]);
-
   const handleTitleChange = e => setNewTitle(e.target.value);
   const handleTitleSubmit = () => {
     setUserTitle(newTitle);
     handleChartEdit();
  };
-
 
   const getLogoToDisplay = (metric, colorMode) => {
     const logoMap = {
@@ -233,6 +223,8 @@ const ChartWrapper = ({
         imFridgeTwoHum: 'rci-logo-white.png',
         imIncubatorOneTemp: 'rci-logo-white.png',
         imIncubatorOneHum: 'rci-logo-white.png',
+        imIncubatorTwoTemp: 'rci-logo-white.png',
+        imIncubatorTwoHum: 'rci-logo-white.png',
       },
     };
 
@@ -252,13 +244,14 @@ const ChartWrapper = ({
 
   const fontSize = useBreakpointValue({
     base: 'xs',
-    md: 'md',
-    lg: 'md',
-    xl: 'lg',
+    md: 'sm',
+    lg: 'sm',
+    xl: 'md',
     xxl: 'lg',
   });
+  const titleSize = useBreakpointValue({ base: 'sm', md: 'lg' });
   const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
-  const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
+  const iconSize = useBreakpointValue({ base: 'xs', md: 'sm' });
   const closeSize = useBreakpointValue({ base: 'sm', md: 'lg' });
 
   const calculateTimePeriod = dataLength => {
@@ -341,7 +334,6 @@ const ChartWrapper = ({
   const editChart = async (id, metric, timeperiod, type, location, hidden) => {
     try {
       const result = await updateChart(id, metric, timeperiod, type, location, hidden);
-      // console.log('result:', result);
     }
     catch (error) {
       console.error('Error updating chart:', error);
@@ -355,12 +347,8 @@ const ChartWrapper = ({
     const type = chartType;
     const location = newTitle || chartDataForMetric?.location;
     const hidden = chartDataForMetric?.hidden;
-    console.log('id:', id, 'metric:', metric, 'timeperiod:', timeperiod, 'type:', type, 'location:', location, 'hidden:', hidden);
     editChart(id, metric, timeperiod, type, location, hidden);
   }
-
-
-
 
   return (
     <>
@@ -369,14 +357,14 @@ const ChartWrapper = ({
         borderColor="#fd9801"
         borderRadius="md"
         boxShadow="md"
-        p="6"
+        p="4"
         pb={paddingBottom}
         bg={getBackgroundColor(colorMode)}
         h="500px"
         w="100%"
       >
         <Flex justify="space-between" mb="4" align="center">
-          <Box fontSize={fontSize} fontWeight="bold">
+          <Box fontSize={titleSize} fontWeight="bold">
             {logo && (
               <img
                 src={logo}
@@ -401,7 +389,7 @@ const ChartWrapper = ({
                     borderColor="#fd9801"
                     borderRadius="lg"
                     px={2}
-                    py={1}
+                    py={.5}
                     mr={2}
                     bg={'brand.400'}
                     color={'#212121'}
@@ -466,7 +454,7 @@ const ChartWrapper = ({
                     borderColor="#fd9801"
                     borderRadius="lg"
                     px={2}
-                    py={1}
+                    py={.5}
                     mr={2}
                     bg={'brand.400'}
                     color={'#212121'}
@@ -491,7 +479,7 @@ const ChartWrapper = ({
                 borderColor="#fd9801"
                 borderRadius="lg"
                 px={2}
-                py={1}
+                py={.5}
                 mr={2}
                 bg={'brand.400'}
                 color={'#212121'}
@@ -643,6 +631,7 @@ const ChartWrapper = ({
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   ml={2}
+                  mr={2}
                 />
               </Tooltip>
             </motion.div>}
@@ -674,6 +663,7 @@ const ChartWrapper = ({
         sensorMap={sensorMap}
         MapComponent={MapComponent}
         typeOfChart={typeOfChart}
+        chartLocation={newTitle || chartDataForMetric?.location}
       />
     </>
   );

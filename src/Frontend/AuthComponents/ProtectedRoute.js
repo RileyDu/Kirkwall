@@ -2,9 +2,15 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from './AuthContext.js';
 
-const ProtectedRoute = ({ children, allowedUsers = [], redirectPaths = {} }) => {
+// ProtectedRoute component
+const ProtectedRoute = ({
+  children,
+  allowedUsers = [],
+  redirectPaths = {},
+}) => {
   const { currentUser } = useAuth();
 
+  // If the current user is not logged in, redirect to the landing page
   if (!currentUser) {
     return <Navigate to="/landing" />;
   }
