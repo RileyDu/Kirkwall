@@ -288,7 +288,7 @@ const ChartExpandModal = ({
           flexDirection="column"
           bg={getBackgroundColor()}
         >
-          {/* The title */}
+          {/* The title and chart location of the selected chart */}
           <ModalHeader
             bg="#2121"
             color="white"
@@ -310,6 +310,8 @@ const ChartExpandModal = ({
             borderBottomRadius={'md'}
             boxShadow="md"
           >
+            {/* Enables the user to select the time period for the chart
+             Talks to the backend to fetch a different limit of data based on the time period selected */}
             <Box display="flex" justifyContent="space-between" mb={2} mt={-2}>
               {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map(timePeriod => (
                 <MotionButton
@@ -340,6 +342,7 @@ const ChartExpandModal = ({
               mb={4}
               h={'40vh'}
             >
+              {/* // If the data is still loading, show a loading spinner */}
               {loading ? (
                 <CircularProgress isIndeterminate color="brand.800" />
               ) : (
@@ -347,6 +350,8 @@ const ChartExpandModal = ({
               )}
             </Flex>
             <Box display="flex" justifyContent="center" mb={4}>
+              {/* // Buttons to change the chart type
+              // syncs with the parent component to change the chart type in the chart wrapper */}
               <MotionButton
                 variant={'solid'}
                 onClick={() => {
@@ -379,6 +384,7 @@ const ChartExpandModal = ({
               >
                 BAR
               </MotionButton>
+              {/* // Button to open the threshold modal */}
               <MotionButton
                 variant={'solid'}
                 onClick={handleOpenThresholdModal}
@@ -400,6 +406,7 @@ const ChartExpandModal = ({
               mt={4}
               flexGrow={1}
             >
+              {/* Display the threshold credentials for the specific metric */}
               <Box
                 bg="gray.700"
                 borderRadius="md"
@@ -455,6 +462,7 @@ const ChartExpandModal = ({
                       maxHeight="200px"
                       height={'100%'}
                     >
+                      {/* Map out all alerts for the metric from the db */}
                       <Stack spacing={2}>
                         {alertsThreshold[metric]?.map((alert, index) => (
                           <Box
@@ -507,6 +515,7 @@ const ChartExpandModal = ({
           </ModalBody>
         </ModalContent>
       </Modal>
+      {/* // Threshold modal to set high/low thresholds & contact details for alerts */}
       <Modal isOpen={isThresholdModalOpen} onClose={handleCloseThresholdModal}>
         <ModalOverlay />
         <ModalContent
