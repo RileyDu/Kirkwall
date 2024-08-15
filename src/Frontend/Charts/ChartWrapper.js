@@ -64,6 +64,8 @@ const ChartWrapper = ({
   const [newTitle, setNewTitle] = useState(chartDataForMetric?.location);
   const [chartType, setChartType] = useState(chartDataForMetric?.type);
   
+  // Function to handle chart type change and switch between bar and line chart
+  // User can switch between bar and line chart by button click
   const handleChartTypeChange = () => {
     const newChartType = chartType === 'line' ? 'bar' : 'line';
     setChartType(newChartType);
@@ -95,14 +97,18 @@ const ChartWrapper = ({
   const toast = useToast();
   const { colorMode } = useColorMode();
 
+  // Function to render close button on the chart
+  // Close button is rendered only on the home page and grandfarm, watchdogprotect, imprimed pages for now 
   const renderCloseButton = () => {
     const routesWithCloseButton = ['/', '/grandfarm', '/watchdogprotect', '/imprimed'];
     return isLargerThan768 && routesWithCloseButton.includes(location.pathname);
   };
 
+  // Function to toggle between map and chart
   const toggleMap = () => {
     setShowMap(!showMap);
   };
+  // Function to set the map to display based on the metric
   const setMapToDisplay = (metric, currentUser) => {
     // Check for special case
     if (
@@ -149,6 +155,7 @@ const ChartWrapper = ({
     }
   };
 
+  // Set the map to display based on the metric on page load
   useEffect(() => {
     setMapToDisplay(metric, currentUser);
   }, [metric, currentUser]);
@@ -327,7 +334,6 @@ const ChartWrapper = ({
   const editChart = async (id, metric, timeperiod, type, location, hidden) => {
     try {
       const result = await updateChart(id, metric, timeperiod, type, location, hidden);
-      // console.log('result:', result);
     }
     catch (error) {
       console.error('Error updating chart:', error);
@@ -341,7 +347,6 @@ const ChartWrapper = ({
     const type = chartType;
     const location = newTitle || chartDataForMetric?.location;
     const hidden = chartDataForMetric?.hidden;
-    console.log('id:', id, 'metric:', metric, 'timeperiod:', timeperiod, 'type:', type, 'location:', location, 'hidden:', hidden);
     editChart(id, metric, timeperiod, type, location, hidden);
   }
 
