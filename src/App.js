@@ -5,7 +5,8 @@ import {
   Spinner,
   useMediaQuery,
   Flex,
-  useColorMode
+  useColorMode,
+  IconButton
 } from '@chakra-ui/react';
 import {
   BrowserRouter as Router,
@@ -29,7 +30,7 @@ import WindSensors from './Frontend/Sensors/WindSensors/WindSensor.js';
 import MobileMenu from './Frontend/MobileMenu/MobileMenu.js';
 import customTheme from './Frontend/Styles/theme.js';
 import { WeatherDataProvider } from './Frontend/WeatherDataContext.js';
-import { FaChessRook } from 'react-icons/fa/index.esm.js';
+import { FaChessRook, FaQuestion } from 'react-icons/fa/index.esm.js';
 import { keyframes } from '@emotion/react';
 import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors.js';
 import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySensors.js';
@@ -43,6 +44,8 @@ import RJDashboard from './Frontend/Clients/RjEnergy/RjDashboard.js';
 import RJMap from './Frontend/Maps/RJMap.js';
 import WatchDogProtectDashboard from './Frontend/Clients/WatchDogProtect/WatchDogProtectDashboard.js';
 import WatchdogProtectMap from './Frontend/Maps/WatchdogMap.js';
+import { motion } from 'framer-motion';
+import HelpModal from './Frontend/Modals/HelpModal.js';
 
 const Layout = ({
   children,
@@ -60,6 +63,13 @@ const Layout = ({
 
   const { colorMode } = useColorMode();
 
+  const MotionIconButton = motion(IconButton);
+
+  const [isHelpModalOpen, setHelpModalOpen] = useState(false);
+
+  const handleOpenHelpModal = () => setHelpModalOpen(true);
+  const handleCloseHelpModal = () => setHelpModalOpen(false);
+
   return (
     <Flex minH="100vh" bg={colorMode === 'light' ? 'brand.50' : 'gray.700'} overflowX={'hidden'}>
       {isLargerThan768 && shouldShowSidebar && (
@@ -71,6 +81,7 @@ const Layout = ({
           statusOfAlerts={statusOfAlerts}
         />
       )}
+
       <Box
         flex="1"
         overflowY="auto"
@@ -83,25 +94,40 @@ const Layout = ({
         }
         mt={!isLargerThan768 && shouldShowSidebar && '0'}
       >
-        
         {children}
       </Box>
+
+      <MotionIconButton
+        icon={<FaQuestion />}
+        variant="outline"
+        color="#212121"
+        height={10}
+        width={10}
+        bg={'brand.400'}
+        _hover={{ bg: 'brand.800' }}
+        border={'2px solid #fd9801'}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        ml={2}
+        onClick={handleOpenHelpModal}
+        position="fixed"
+        bottom="20px"
+        left="20px"
+        zIndex="1000"
+      />
+
+      <HelpModal isOpen={isHelpModalOpen} onClose={handleCloseHelpModal} />
     </Flex>
   );
 };
 
 const MainApp = () => {
-  // const [weatherData, setWeatherData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isMinimized, setIsMinimized] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [timePeriod, setTimePeriod] = useState(37); // Default time period
   const location = useLocation();
   const [showAlerts, setShowAlerts] = useState(false);
-  
-
-
-
 
   const toggleAlerts = () => {
     setShowAlerts(!showAlerts);
@@ -113,19 +139,19 @@ const MainApp = () => {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 `;
-if (loading) {
 
-return (
-  <Flex justify="center" align="center" height="100vh" width="100vw">
-  <Box
-    as={FaChessRook}
-    animation={`${spin} infinite 2s linear`}
-    fontSize="6xl"
-    color="black"
-  />
-</Flex>
-);
-}
+  if (loading) {
+    return (
+      <Flex justify="center" align="center" height="100vh" width="100vw">
+        <Box
+          as={FaChessRook}
+          animation={`${spin} infinite 2s linear`}
+          fontSize="6xl"
+          color="black"
+        />
+      </Flex>
+    );
+  }
 
   return (
     <Box>
@@ -223,7 +249,7 @@ return (
               </ProtectedRoute>
             }
           />
-                    <Route
+          <Route
             path="/RivercitySensors"
             element={
               <ProtectedRoute>

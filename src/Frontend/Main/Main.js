@@ -35,11 +35,15 @@ import {
   FaWater,
   FaLeaf,
   FaCloudRain,
+  FaQuestion
 } from 'react-icons/fa/index.esm.js';
 import { keyframes } from '@emotion/react';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { handleChartChange } from '../Charts/ChartUtils.js';
 import { motion } from 'framer-motion';
+import HelpModal from '../Modals/HelpModal.js';
+import { Checkbox } from '@chakra-ui/react';
+
 
 const MotionBox = motion(Box);
 const MotionTabPanel = motion(TabPanel);
@@ -90,6 +94,10 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const MotionIconButton = motion(IconButton);
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
+  const [isHelpModalOpen, setHelpModalOpen] = useState(false);
+
+  const handleOpenHelpModal = () => setHelpModalOpen(true);
+  const handleCloseHelpModal = () => setHelpModalOpen(false);
 
   const updateChartTypes = (chartData) => {
     chartData.forEach(chart => {
@@ -263,133 +271,119 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                 Main Dashboard
               </Heading>
               <Menu isOpen={isOpen}>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 1, delay: 0.35 }}
-                >
-                  {isLargerThan768 && (
-                  <Tooltip label="Toggle Layout">
-                    <MotionIconButton
-                      icon={<RiLayoutGridFill />}
-                      variant="outline"
-                      color="#212121"
-                      size={iconSize}
-                      bg={'brand.400'}
-                      _hover={{ bg: 'brand.800' }}
-                      onClick={toggleLayout}
-                      border={'2px solid #fd9801'}
-                      mr={2}
-                    />
-                  </Tooltip>
-                  )}
-                  <Tooltip label="Toggle Charts">
-                    <MenuButton
-                      as={Button}
-                      bg="brand.400"
-                      color="black"
-                      _hover={{ bg: '#d7a247' }}
-                      border={'2px solid #fd9801'}
-                      onClick={isOpen ? onClose : onOpen}
-                      size={isLargerThan768 ? 'md' : 'sm'}
-                      ml={isLargerThan768 ? '2' : '4'}
-                    >
-                      <FaChevronDown />
-                    </MenuButton>
-                  </Tooltip>
-                  <MenuList
-                    placement="top"
-                    bg={colorMode === 'light' ? '#212121' : 'black'}
-                    border={'2px'}
-                    borderColor={colorMode === 'light' ? '#212121' : 'black'}
-                  >
-                    {Object.keys(charts).map(chart => (
-                      <MenuItem
-                        key={chart}
-                        onClick={() => handleMenuItemClick('grandFarm', chart)}
-                        bg={
-                          visibleCharts.grandFarm.includes(chart)
-                            ? 'green.100'
-                            : '#212121'
-                        }
-                        color={
-                          visibleCharts.grandFarm.includes(chart)
-                            ? '#212121'
-                            : 'white'
-                        }
-                        border={'1px solid #212121'}
-                      >
-                        <Flex
-                          alignItems="center"
-                          justifyContent={'center'}
-                          w={'100%'}
-                        >
-                          {charts[chart]}
-                          <Box ml="2">
-                            {chart.charAt(0).toUpperCase() + chart.slice(1)}
-                          </Box>
-                        </Flex>
-                      </MenuItem>
-                    ))}
-                    {['temperature', 'humidity'].map(chart => (
-                      <MenuItem
-                        key={chart}
-                        onClick={() => handleMenuItemClick('garage', chart)}
-                        bg={
-                          visibleCharts.garage.includes(chart)
-                            ? 'brand.200'
-                            : '#212121'
-                        }
-                        color={
-                          visibleCharts.garage.includes(chart)
-                            ? '#212121'
-                            : 'white'
-                        }
-                        border={'1px solid #212121'}
-                      >
-                        <Flex
-                          alignItems="center"
-                          justifyContent={'center'}
-                          w={'100%'}
-                        >
-                          {charts[chart]}
-                          <Box ml="2">
-                            {chart.charAt(0).toUpperCase() + chart.slice(1)}
-                          </Box>
-                        </Flex>
-                      </MenuItem>
-                    ))}
-                    {['temperature', 'humidity'].map(chart => (
-                      <MenuItem
-                        key={chart}
-                        onClick={() => handleMenuItemClick('rivercity', chart)}
-                        bg={
-                          visibleCharts.rivercity.includes(chart)
-                            ? 'blue.100'
-                            : '#212121'
-                        }
-                        color={
-                          visibleCharts.rivercity.includes(chart)
-                            ? '#212121'
-                            : 'white'
-                        }
-                        border={'1px solid #212121'}
-                      >
-                        <Flex
-                          alignItems="center"
-                          justifyContent={'center'}
-                          w={'100%'}
-                        >
-                          {charts[chart]}
-                          <Box ml="2">
-                            {chart.charAt(0).toUpperCase() + chart.slice(1)}
-                          </Box>
-                        </Flex>
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                </motion.div>
-              </Menu>
+  <motion.div
+    initial={{ opacity: 0, scale: 0 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 1, delay: 0.35 }}
+  >
+    {isLargerThan768 && (
+      <Tooltip label="Toggle Layout">
+        <MotionIconButton
+          icon={<RiLayoutGridFill />}
+          variant="outline"
+          color="#212121"
+          size={iconSize}
+          bg={'brand.400'}
+          _hover={{ bg: 'brand.800' }}
+          onClick={toggleLayout}
+          border={'2px solid #fd9801'}
+          mr={2}
+        />
+      </Tooltip>
+    )}
+    <Tooltip label="Toggle Charts">
+      <MenuButton
+        as={Button}
+        bg="brand.400"
+        color="black"
+        _hover={{ bg: '#d7a247' }}
+        border={'2px solid #fd9801'}
+        onClick={isOpen ? onClose : onOpen}
+        size={isLargerThan768 ? 'md' : 'sm'}
+        ml={isLargerThan768 ? '2' : '4'}
+      >
+        <FaChevronDown />
+      </MenuButton>
+    </Tooltip>
+    <MenuList
+      placement="top"
+      bg={colorMode === 'light' ? '#212121' : 'black'}
+      border={'2px'}
+      borderColor={colorMode === 'light' ? '#212121' : 'black'}
+    >
+      {Object.keys(charts).map((chart) => (
+        <MenuItem
+          key={chart}
+          onClick={() => handleMenuItemClick('grandFarm', chart)}
+          bg="#212121"
+          color="white"
+          border={'1px solid #212121'}
+        >
+          <Flex alignItems="center" justifyContent="space-between" w="100%">
+            <Box display="flex" alignItems="center">
+              {charts[chart]}
+              <Box ml="2">
+                {chart.charAt(0).toUpperCase() + chart.slice(1)}
+              </Box>
+            </Box>
+            <Checkbox
+              isChecked={visibleCharts.grandFarm.includes(chart)}
+              onChange={() => handleMenuItemClick('grandFarm', chart)}
+              colorScheme="green"
+            />
+          </Flex>
+        </MenuItem>
+      ))}
+      {['temperature', 'humidity'].map((chart) => (
+        <MenuItem
+          key={chart}
+          onClick={() => handleMenuItemClick('garage', chart)}
+          bg="#212121"
+          color="white"
+          border={'1px solid #212121'}
+        >
+          <Flex alignItems="center" justifyContent="space-between" w="100%">
+            <Box display="flex" alignItems="center">
+              {charts[chart]}
+              <Box ml="2">
+                {chart.charAt(0).toUpperCase() + chart.slice(1)}
+              </Box>
+            </Box>
+            <Checkbox
+              isChecked={visibleCharts.garage.includes(chart)}
+              onChange={() => handleMenuItemClick('garage', chart)}
+              colorScheme="blue"
+            />
+          </Flex>
+        </MenuItem>
+      ))}
+      {['temperature', 'humidity'].map((chart) => (
+        <MenuItem
+          key={chart}
+          onClick={() => handleMenuItemClick('rivercity', chart)}
+          bg="#212121"
+          color="white"
+          border={'1px solid #212121'}
+        >
+          <Flex alignItems="center" justifyContent="space-between" w="100%">
+            <Box display="flex" alignItems="center">
+              {charts[chart]}
+              <Box ml="2">
+                {chart.charAt(0).toUpperCase() + chart.slice(1)}
+              </Box>
+            </Box>
+            <Checkbox
+              isChecked={visibleCharts.rivercity.includes(chart)}
+              onChange={() => handleMenuItemClick('rivercity', chart)}
+              colorScheme="blue"
+            />
+          </Flex>
+        </MenuItem>
+      ))}
+    </MenuList>
+  </motion.div>
+</Menu>
+
             </Flex>
             {layoutStable ? (
               <MotionBox
@@ -1303,6 +1297,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
           </MotionTabPanel>
         </TabPanels>
       </Tabs>
+
+
       {/* <VoiceControl onCommand={handleVoiceCommand} />
       {isModalOpen && (
         <ChartExpandModal
@@ -1342,12 +1338,24 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
         />
       )} */}
   
-  
+        {/* <MotionIconButton
+          icon={<FaQuestion />}
+          variant="outline"
+          color="#212121"
+          height={10}
+          width={10}
+          bg={'brand.400'}
+          _hover={{ bg: 'brand.800' }}
+          border={'2px solid #fd9801'}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          ml={2}
+          onClick={setHelpModalOpen}
+        />
 
+        <HelpModal isOpen={isHelpModalOpen} onClose={handleCloseHelpModal} /> */}
 
-    </Box>
-
-    
+</Box>
 
   );
 };

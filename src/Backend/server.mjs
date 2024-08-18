@@ -62,6 +62,30 @@ const sendEmailAlert = async (toEmails, subject, alertMessage) => {
   }
 };
 
+const sendEnquiryAlert = async (fromEmail, subject, description, attachments) => {
+  const msg = {
+    to: 'aditya@kirkwall.io',
+    from: fromEmail,
+    subject: subject,
+    text: description,
+    attachments: attachments.map(file => ({
+      content: file.content,
+      filename: file.name,
+      type: file.type,
+      disposition: 'attachment',
+    })),
+  };
+
+  try {
+    console.log(`Sending Email from ${fromEmail} to aditya@kirkwall.io: ${subject}`);
+    await sgMail.send(msg);
+    console.log('Email sent successfully');
+  } catch (error) {
+    console.error('Error sending Email:', error);
+  }
+};
+
+
 const sendAlertToDB = async (metric, message, timestamp) => {
   try {
     console.log(`Sending alert to database: ${message}`);

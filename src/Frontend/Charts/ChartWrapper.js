@@ -27,6 +27,7 @@ import {
   FaChartBar,
   FaChartLine,
   FaMap,
+  FaEyeSlash
 } from 'react-icons/fa/index.esm.js';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
@@ -630,9 +631,9 @@ const ChartWrapper = ({
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.5 }}
             >
-              <Tooltip label="Close Chart">
+              <Tooltip label="Hide Chart">
                 <MotionIconButton
-                  icon={<FaTimes />}
+                  icon={<FaEyeSlash />}
                   variant="outline"
                   color="#212121"
                   size={iconSize}
