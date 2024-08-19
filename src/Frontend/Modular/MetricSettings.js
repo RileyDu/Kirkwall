@@ -99,6 +99,147 @@ export const MetricSettings = [
         soloData:"rivercityHumData",
         sourceData: "rivercityData"
     },
+    {
+        id:11,
+        metric:"imFreezerOneTemp",
+        name:"Temperature (°C)",
+        unit:"°C",
+        color:"red",
+        company:"ImpriMed",
+        soloData:"imFreezerOneTempData",
+        sourceData: "imFreezerOneTempData"
+    },
+    {
+        id:12,
+        metric:"imFreezerOneHum",
+        name:"Humidity (%)",
+        unit:"%",
+        color:"red",
+        company:"ImpriMed",
+        soloData:"imFreezerOneHumData",
+        sourceData: "imFreezerOneHumData"
+    },
+    {
+        id:13,
+        metric:"imFreezerTwoTemp",
+        name:"Temperature (°C)",
+        unit:"°C",
+        color:"red",
+        company:"ImpriMed",
+        soloData:"imFreezerTwoTempData",
+        sourceData: "imFreezerTwoTempData"
+    },
+    {
+        id:14,
+        metric:"imFreezerTwoHum",
+        name:"Humidity (%)",
+        unit:"%",
+        color:"red",
+        company:"ImpriMed",
+        soloData:"imFreezerTwoHumData",
+        sourceData: "imFreezerTwoHumData"
+    },
+    {
+        id:15,
+        metric:"imFreezerThreeTemp",
+        name:"Temperature (°C)",
+        unit:"°C",
+        color:"red",
+        company:"ImpriMed",
+        soloData:"imFreezerThreeTempData",
+        sourceData: "imFreezerThreeTempData"
+    },
+    {
+        id:16,
+        metric:"imFreezerThreeHum",
+        name:"Humidity (%)",
+        unit:"%",
+        color:"red",
+        company:"ImpriMed",
+        soloData:"imFreezerThreeHumData",
+        sourceData: "imFreezerThreeHumData"
+    },
+    {
+        id:17,
+        metric:"imFridgeOneTemp",
+        name:"Temperature (°C)",
+        unit:"°C",
+        color:"red",
+        company:"ImpriMed",
+        soloData:"imFridgeOneTempData",
+        sourceData: "imFridgeOneTempData"
+    },
+    {
+        id:18,
+        metric:"imFridgeOneHum",
+        name:"Humidity (%)",
+        unit:"%",
+        color:"red",
+        company:"ImpriMed",
+        soloData:"imFridgeOneHumData",
+        sourceData: "imFridgeOneHumData"
+    },
+    {
+        id:19,
+        metric:"imFridgeTwoTemp",
+        name:"Temperature (°C)",
+        unit:"°C",
+        color:"red",
+        company:"ImpriMed",
+        soloData:"imFridgeTwoTempData",
+        sourceData: "imFridgeTwoTempData"
+    },
+    {
+        id:20,
+        metric:"imFridgeTwoHum",
+        name:"Humidity (%)",
+        unit:"%",
+        color:"red",
+        company:"ImpriMed",
+        soloData:"imFridgeTwoHumData",
+        sourceData: "imFridgeTwoHumData"
+
+    },
+    {
+        id:21,
+        metric:"imIncubatorOneTemp",
+        name:"Temperature (°C)",
+        unit:"°C",
+        color:"red",
+        company:"ImpriMed",
+        soloData:"imIncubatorOneTempData",
+        sourceData: "imIncubatorOneTempData"
+    },
+    {
+        id:22,
+        metric:"imIncubatorOneHum",
+        name:"Humidity (%)",
+        unit:"%",
+        color:"red",
+        company:"ImpriMed",
+        soloData:"imIncubatorOneHumData",
+        sourceData: "imIncubatorOneHumData"
+    },
+    {
+        id:23,
+        metric:"imIncubatorTwoTemp",
+        name:"Temperature (°C)",
+        unit:"°C",
+        color:"red",
+        company:"ImpriMed",
+        soloData:"imIncubatorTwoTempData",
+        sourceData: "imIncubatorTwoTempData"
+    },
+    {
+        id:24,
+        metric:"imIncubatorTwoHum",
+        name:"Humidity (%)",
+        unit:"%",
+        color:"red",
+        company:"ImpriMed",
+        soloData:"imIncubatorTwoHumData",
+        sourceData: "imIncubatorTwoHumData"
+    }
 ];
 
 
