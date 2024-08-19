@@ -7,14 +7,16 @@ const AuthContext = React.createContext();
 export const useAuth = () => {
   return useContext(AuthContext);
 };
-
+// Firebase AuthContext
+// This is a custom hook that allows components to access the current user
+// Auth Provider Wrapper enables that
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, user => {
       setCurrentUser(user);
       setLoading(false);
     });

@@ -1,39 +1,51 @@
 import { Box, Text, Flex, useColorMode } from '@chakra-ui/react';
-import { MinusIcon, AddIcon } from '@chakra-ui/icons';
 
-const getLabelForMetric = (metric) => {
-  switch (metric) {
-    case 'temperature':
-      return { label: '°F', addSpace: false };
-    case 'temp':
-      return { label: '°F', addSpace: false };
-      case 'rctemp':
-        return { label: '°F', addSpace: false };
-    case 'hum':
-      return { label: '%', addSpace: false };
-    case 'percent_humidity':
-      return { label: '%', addSpace: false };
-    case 'humidity':
-      return { label: '%', addSpace: false };
-    case 'rain_15_min_inches':
-      return { label: 'inches', addSpace: true };
-    case 'wind_speed':
-      return { label: 'MPH', addSpace: true };
-    case 'soil_moisture':
-      return { label: 'centibars', addSpace: true };
-    case 'leaf_wetness':
-      return { label: 'out of 15', addSpace: true };
-    default:
-      return { label: '', addSpace: false };
-  }
+// Adds labels to the value based on the metric
+export const getLabelForMetric = metric => {
+  const metricLabels = {
+    temperature: { label: '°F', addSpace: false },
+    temp: { label: '°F', addSpace: false },
+    rctemp: { label: '°F', addSpace: false },
+
+    imFreezerOneTemp: { label: '°C', addSpace: false },
+    imFreezerTwoTemp: { label: '°C', addSpace: false },
+    imFreezerThreeTemp: { label: '°C', addSpace: false },
+    imFridgeOneTemp: { label: '°C', addSpace: false },
+    imFridgeTwoTemp: { label: '°C', addSpace: false },
+    imIncubatorOneTemp: { label: '°C', addSpace: false },
+    imIncubatorTwoTemp: { label: '°C', addSpace: false },
+
+    imFreezerOneHum: { label: '%', addSpace: false },
+    imFreezerTwoHum: { label: '%', addSpace: false },
+    imFreezerThreeHum: { label: '%', addSpace: false },
+    imFridgeOneHum: { label: '%', addSpace: false },
+    imFridgeTwoHum: { label: '%', addSpace: false },
+    imIncubatorOneHum: { label: '%', addSpace: false },
+    imIncubatorTwoHum: { label: '%', addSpace: false },
+
+    hum: { label: '%', addSpace: false },
+    percent_humidity: { label: '%', addSpace: false },
+    humidity: { label: '%', addSpace: false },
+    rain_15_min_inches: { label: 'inches', addSpace: true },
+    wind_speed: { label: 'MPH', addSpace: true },
+    soil_moisture: { label: 'centibars', addSpace: true },
+    leaf_wetness: { label: 'out of 15', addSpace: true },
+  };
+
+  return metricLabels[metric] || { label: '', addSpace: false };
 };
 
-const MiniDashboard = ({ weatherData, metric, adjustTimePeriod, setCurrentValue }) => {
+// MiniDashboard component
+// Displays the time period, current value, min, and max values for a metric
+// Used in multiple places in the app
+const MiniDashboard = ({ weatherData, metric, setCurrentValue }) => {
+  // Reverse the data so that the most recent data is at the end
   const reversedData = [...weatherData]?.reverse();
+  // Get the current data for the metric
   const currentData = reversedData.map((data) => data[metric]);
 
   const { colorMode } = useColorMode();
-
+  // Get the min, max, and most recent value for the metric
   const min = currentData.length > 0 ? Math.min(...currentData) : 'N/A';
   const max = currentData.length > 0 ? Math.max(...currentData) : 'N/A';
   const mostRecentValue =
@@ -41,8 +53,19 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod, setCurrentValue 
 
     if (setCurrentValue) setCurrentValue(mostRecentValue);
 
+  // Calculate the time period based on the length of the data
+  // Also based on the metric, grand farm comes in 5 minute intervals
+  // While everything else is in 10 minute intervals
   const calculateTimePeriod = (dataLength) => {
-    const totalMinutes = metric === 'temp' || metric === 'hum' ? dataLength * 10 : dataLength * 5;
+    const totalMinutes =
+      metric === 'temperature' ||
+      metric === 'percent_humidity' ||
+      metric === 'wind_speed' ||
+      metric === 'rain_15_min_inches' ||
+      metric === 'soil_moisture' ||
+      metric === 'leaf_wetness'
+        ? dataLength * 5
+        : dataLength * 10;
     const totalHours = Math.floor(totalMinutes / 60);
 
     if (totalHours < 24) {

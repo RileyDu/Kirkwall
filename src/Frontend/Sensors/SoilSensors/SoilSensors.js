@@ -3,7 +3,7 @@ import ChartWrapper from '../../Charts/ChartWrapper.js';
 import { BarChart, LineChart } from '../../Charts/Charts.js';
 import MiniDashboard from '../../Charts/ChartDashboard.js';
 import { useWeatherData } from '../../WeatherDataContext.js';
-import { FaChessRook } from 'react-icons/fa/index.esm.js';
+import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { handleChartChange } from '../../Charts/ChartUtils.js';

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -25,24 +25,24 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard.js';
-import MiniMap from '../Maps/GrandFarmMiniMap.js';
-import WatchdogMap from '../Maps/WatchdogMiniMap.js';
 import {
   FaChartLine,
   FaChartBar,
   FaBell,
   FaTrash,
-} from 'react-icons/fa/index.esm.js';
+} from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts.js';
-import axios from 'axios';
 import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
 import { useWeatherData } from '../WeatherDataContext.js';
+import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 
+// This is the modal that appears when a chart is expanded
+// It is a child of the ChartWrapper component
+// It contains the chart, a mini dashboard, and a map, as well as the threshold settings & logs
 const ChartExpandModal = ({
   isOpen,
   onClose,
-  children,
   title,
   metric,
   onChartChange,
@@ -50,17 +50,18 @@ const ChartExpandModal = ({
   weatherData,
   currentTimePeriod,
   setCurrentTimePeriod,
-  sensorMap,
+  MapComponent,
+  typeOfChart,
+  chartLocation,
 }) => {
   const { colorMode } = useColorMode();
   const [loading, setLoading] = useState(false);
   const [chartType, setChartType] = useState('bar');
   const [isThresholdModalOpen, setIsThresholdModalOpen] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [userEmail, setUserEmail] = useState('');
+  const [phoneNumbers, setPhoneNumbers] = useState(['']);
+  const [emailsForThreshold, setEmailsForThreshold] = useState(['']);
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
-  const [timer, setTimer] = useState(30);
   const [currentValue, setCurrentValue] = useState(null);
   const { thresholds, alertsThreshold, fetchAlertsThreshold } =
     useWeatherData();
@@ -80,19 +81,21 @@ const ChartExpandModal = ({
     const latestThreshold = findLatestThreshold(metric);
     setHighThreshold(latestThreshold.highThreshold);
     setLowThreshold(latestThreshold.lowThreshold);
-    setPhoneNumber(latestThreshold.phone);
-    setUserEmail(latestThreshold.email);
-  }, [metric, thresholds]);
 
-  // Group alerts by metric
-  // const alertsThresholdGrouped = alertsThreshold.reduce((acc, alert) => {
-  //   const { metric } = alert;
-  //   if (!acc[metric]) {
-  //     acc[metric] = [];
-  //   }
-  //   acc[metric].push(alert);
-  //   return acc;
-  // }, {});
+    // Ensure phone numbers are set as an array
+    const phoneNumbersArray = latestThreshold.phone
+      ? latestThreshold.phone.split(',').map(phone => phone.trim()) // Split and trim each phone number
+      : ['']; // Default to an array with an empty string if no phone numbers
+
+    setPhoneNumbers(phoneNumbersArray);
+
+    // Ensure emails are set as an array
+    const emailsArray = latestThreshold.email
+      ? latestThreshold.email.split(',').map(email => email.trim()) // Split and trim each email
+      : ['']; // Default to an array with an empty string if no emails
+
+    setEmailsForThreshold(emailsArray);
+  }, [metric, thresholds]);
 
   const apiUrl =
     process.env.NODE_ENV === 'production'
@@ -102,24 +105,22 @@ const ChartExpandModal = ({
   const MotionButton = motion(Button);
   const toast = useToast();
 
+  //Styling based on color mode
   const getBackgroundColor = () => 'gray.700';
   const getContentBackgroundColor = () =>
     colorMode === 'light' ? 'brand.50' : 'gray.800';
-  const getTextColor = () => (colorMode === 'light' ? 'black' : 'white');
   const getModalBackgroundColor = () =>
     colorMode === 'light' ? 'whitesmoke' : 'gray.700';
 
   // Handle time period button click
   const handleTimeButtonClick = async timePeriod => {
     if (timePeriod === currentTimePeriod) return;
-
     setLoading(true);
-
     try {
-      const result = await handleTimePeriodChange(metric, timePeriod);
+      await handleTimePeriodChange(metric, timePeriod);
       setCurrentTimePeriod(timePeriod);
     } catch (error) {
-      // Handle error
+      console.error('Error changing time period:', error);
     } finally {
       setLoading(false);
     }
@@ -136,7 +137,7 @@ const ChartExpandModal = ({
 
   // Render the chart based on the selected chart type
   const renderChart = () => {
-    switch (chartType) {
+    switch (typeOfChart) {
       case 'line':
         return <LineChart data={weatherData} metric={metric} />;
       case 'bar':
@@ -153,15 +154,19 @@ const ChartExpandModal = ({
   // Send threshold data to the backend
   const handleFormSubmit = async () => {
     const timestamp = new Date().toISOString();
+    const phoneNumbersString = phoneNumbers.join(', '); // Join phone numbers into a single string
+    const emailsString = emailsForThreshold.join(', '); // Join emails into a single string
+
     try {
       await createThreshold(
         metric,
         parseFloat(highThreshold),
         parseFloat(lowThreshold),
-        phoneNumber,
-        userEmail,
+        phoneNumbersString,
+        emailsString,
         timestamp
       );
+      console.log('Alerts Set');
     } catch (error) {
       console.error('Error creating threshold:', error);
     } finally {
@@ -169,21 +174,23 @@ const ChartExpandModal = ({
     }
   };
 
+  // Clear the threshold data and send it to the backend
   const handleFormClear = async () => {
     const timestamp = new Date().toISOString();
     setHighThreshold('');
     setLowThreshold('');
-    setPhoneNumber('');
-    setUserEmail('');
+    setPhoneNumbers([]);
+    setEmailsForThreshold([]);
     try {
       await createThreshold(
         metric,
         highThreshold,
         lowThreshold,
-        phoneNumber,
-        userEmail,
+        '',
+        '',
         timestamp
       );
+      console.log('Alerts Cleared');
     } catch (error) {
       console.error('Error clearing threshold:', error);
     } finally {
@@ -191,43 +198,80 @@ const ChartExpandModal = ({
     }
   };
 
-  const clearAlerts = async (id) => {
+  // Clear alerts for the selected metric
+  // This function is called when the trash icon is clicked on an alert
+  // Toast notifications are used to show the status of the alert deletion
+  const clearAlerts = async id => {
     const toastId = 'delete-alert-toast';
-  
+
     // Show loading toast notification
     toast({
       id: toastId,
-      title: "Deleting alert...",
+      title: 'Deleting alert...',
       description: `The alert is being deleted.`,
-      status: "loading",
+      status: 'loading',
       duration: null,
       isClosable: true,
     });
-  
+
     try {
       await deleteAlert(id);
       await fetchAlertsThreshold(); // Fetch alerts after deleting
-  
+
       // Update the toast to success
       toast.update(toastId, {
-        title: "Alert deleted.",
+        title: 'Alert deleted.',
         description: `The alert has been successfully deleted.`,
-        status: "success",
+        status: 'success',
         duration: 5000,
         isClosable: true,
       });
     } catch (error) {
-      console.error("Error deleting alert:", error);
-  
+      console.error('Error deleting alert:', error);
+
       // Update the toast to error
       toast.update(toastId, {
-        title: "Error deleting alert.",
-        description: "There was an error deleting the alert. Please try again.",
-        status: "error",
+        title: 'Error deleting alert.',
+        description: 'There was an error deleting the alert. Please try again.',
+        status: 'error',
         duration: 5000,
         isClosable: true,
       });
     }
+  };
+
+  // Add a new phone number input
+  const handleAddPhoneNumber = () => {
+    setPhoneNumbers([...phoneNumbers, '']);
+  };
+
+  // Remove a phone number input
+  const handleRemovePhoneNumber = index => {
+    setPhoneNumbers(phoneNumbers.filter((_, i) => i !== index));
+  };
+
+  // Update phone number value
+  const handlePhoneNumberChange = (value, index) => {
+    const updatedPhoneNumbers = [...phoneNumbers];
+    updatedPhoneNumbers[index] = value;
+    setPhoneNumbers(updatedPhoneNumbers);
+  };
+
+  // Add a new email input
+  const handleAddEmail = () => {
+    setEmailsForThreshold([...emailsForThreshold, '']);
+  };
+
+  // Remove an email input
+  const handleRemoveEmail = index => {
+    setEmailsForThreshold(emailsForThreshold.filter((_, i) => i !== index));
+  };
+
+  // Update email value
+  const handleEmailChange = (value, index) => {
+    const updatedEmails = [...emailsForThreshold];
+    updatedEmails[index] = value;
+    setEmailsForThreshold(updatedEmails);
   };
 
   return (
@@ -244,6 +288,7 @@ const ChartExpandModal = ({
           flexDirection="column"
           bg={getBackgroundColor()}
         >
+          {/* The title and chart location of the selected chart */}
           <ModalHeader
             bg="#2121"
             color="white"
@@ -253,7 +298,7 @@ const ChartExpandModal = ({
             justifyContent="space-between"
             alignItems="center"
           >
-            {title}
+            {title} for {chartLocation}
           </ModalHeader>
           <ModalCloseButton size="lg" color="white" mt={1} />
           <ModalBody
@@ -265,6 +310,8 @@ const ChartExpandModal = ({
             borderBottomRadius={'md'}
             boxShadow="md"
           >
+            {/* Enables the user to select the time period for the chart
+             Talks to the backend to fetch a different limit of data based on the time period selected */}
             <Box display="flex" justifyContent="space-between" mb={2} mt={-2}>
               {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map(timePeriod => (
                 <MotionButton
@@ -295,6 +342,7 @@ const ChartExpandModal = ({
               mb={4}
               h={'40vh'}
             >
+              {/* // If the data is still loading, show a loading spinner */}
               {loading ? (
                 <CircularProgress isIndeterminate color="brand.800" />
               ) : (
@@ -302,6 +350,8 @@ const ChartExpandModal = ({
               )}
             </Flex>
             <Box display="flex" justifyContent="center" mb={4}>
+              {/* // Buttons to change the chart type
+              // syncs with the parent component to change the chart type in the chart wrapper */}
               <MotionButton
                 variant={'solid'}
                 onClick={() => {
@@ -313,8 +363,8 @@ const ChartExpandModal = ({
                 mx={1}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                bg={chartType === 'line' ? 'orange.400' : 'gray.100'}
-                color={chartType === 'line' ? 'white' : 'black'}
+                bg={typeOfChart === 'line' ? 'orange.400' : 'gray.100'}
+                color={typeOfChart === 'line' ? 'white' : 'black'}
               >
                 LINE
               </MotionButton>
@@ -329,11 +379,12 @@ const ChartExpandModal = ({
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 size={['sm', 'md']}
-                bg={chartType === 'bar' ? 'orange.400' : 'gray.100'}
-                color={chartType === 'bar' ? 'white' : 'black'}
+                bg={typeOfChart === 'bar' ? 'orange.400' : 'gray.100'}
+                color={typeOfChart === 'bar' ? 'white' : 'black'}
               >
                 BAR
               </MotionButton>
+              {/* // Button to open the threshold modal */}
               <MotionButton
                 variant={'solid'}
                 onClick={handleOpenThresholdModal}
@@ -355,6 +406,7 @@ const ChartExpandModal = ({
               mt={4}
               flexGrow={1}
             >
+              {/* Display the threshold credentials for the specific metric */}
               <Box
                 bg="gray.700"
                 borderRadius="md"
@@ -362,25 +414,42 @@ const ChartExpandModal = ({
                 p={4}
                 height="430px"
               >
-                <MiniDashboard
-                  weatherData={weatherData}
-                  metric={metric}
-                  setCurrentValue={setCurrentValue}
-                  mt={2}
-                />
-                <Divider my={8} borderColor={'white'} />
                 {highThreshold || lowThreshold ? (
                   <>
-                  <Flex width={'100%'} >
-                    <HStack width={'100%'} gap={6} justify={'flex-start'}>
-                      <Text color="white" fontSize="lg" fontWeight="bold" textDecor={'underline'}>
-                        Alerts
-                      </Text>
-                      {highThreshold ? <Text color="white"><strong>High Threshold:</strong> {highThreshold}</Text> : null}
-                      {lowThreshold ? <Text color="white"><strong>Low Threshold:</strong> {lowThreshold}</Text> : null}
-                      {phoneNumber ? <Text color="white"><strong>Phone:</strong> {phoneNumber}</Text> : null}
-                      {userEmail ? <Text color="white"><strong>Email:</strong> {userEmail}</Text> : null}
-                    </HStack>
+                    <Text
+                      fontSize="xl"
+                      fontWeight="bold"
+                      textDecor={'underline'}
+                      pb="2"
+                      textAlign={'center'}
+                      color="white"
+                    >
+                      Thresholds
+                    </Text>
+                    <Flex width={'100%'}>
+                      <HStack width={'100%'} gap={6} justify={'flex-start'}>
+                        {highThreshold ? (
+                          <Text color="white" fontSize={['xs', 'md']}>
+                            <strong>High:</strong> {highThreshold}
+                          </Text>
+                        ) : null}
+                        {lowThreshold ? (
+                          <Text color="white" fontSize={['xs', 'md']}>
+                            <strong>Low:</strong> {lowThreshold}
+                          </Text>
+                        ) : null}
+                        {phoneNumbers?.length > 0 ? (
+                          <Text color="white" fontSize={['xs', 'md']}>
+                            <strong>Phone:</strong> {phoneNumbers.join(', ')}
+                          </Text>
+                        ) : null}
+                        {emailsForThreshold?.length > 0 ? (
+                          <Text color="white" fontSize={['xs', 'md']}>
+                            <strong>Email:</strong>{' '}
+                            {emailsForThreshold.join(', ')}
+                          </Text>
+                        ) : null}
+                      </HStack>
                     </Flex>
                     <Box
                       mt={2}
@@ -393,20 +462,27 @@ const ChartExpandModal = ({
                       maxHeight="200px"
                       height={'100%'}
                     >
+                      {/* Map out all alerts for the metric from the db */}
                       <Stack spacing={2}>
                         {alertsThreshold[metric]?.map((alert, index) => (
-                          <Box key={index} bg="orange.400" p={2} borderRadius="md" boxShadow="md">
-                          <Flex justify="space-between" align="center" mr={1}>
-                            <Text color="#212121">{alert.message}</Text>
-                            <FaTrash
-                              color="white"
-                              onClick={() => clearAlerts(alert.id)}
-                              aria-label="Delete alert"
-                              cursor="pointer"
-                              size={20}
-                            />
-                          </Flex>
-                        </Box>
+                          <Box
+                            key={index}
+                            bg="orange.400"
+                            p={2}
+                            borderRadius="md"
+                            boxShadow="md"
+                          >
+                            <Flex justify="space-between" align="center" mr={1}>
+                              <Text color="#212121">{alert.message}</Text>
+                              <FaTrash
+                                color="white"
+                                onClick={() => clearAlerts(alert.id)}
+                                aria-label="Delete alert"
+                                cursor="pointer"
+                                size={20}
+                              />
+                            </Flex>
+                          </Box>
                         ))}
                       </Stack>
                     </Box>
@@ -416,6 +492,13 @@ const ChartExpandModal = ({
                     Set thresholds to see alerts
                   </Text>
                 )}
+                <Divider my={4} borderColor={'white'} />
+                <MiniDashboard
+                  weatherData={weatherData}
+                  metric={metric}
+                  setCurrentValue={setCurrentValue}
+                  mt={2}
+                />
               </Box>
               <Box
                 bg="gray.700"
@@ -425,13 +508,14 @@ const ChartExpandModal = ({
                 height="430px"
               >
                 <Box height="100%">
-                  {sensorMap === 'grandfarm' ? <MiniMap /> : <WatchdogMap />}
+                  <MapComponent />
                 </Box>
               </Box>
             </SimpleGrid>
           </ModalBody>
         </ModalContent>
       </Modal>
+      {/* // Threshold modal to set high/low thresholds & contact details for alerts */}
       <Modal isOpen={isThresholdModalOpen} onClose={handleCloseThresholdModal}>
         <ModalOverlay />
         <ModalContent
@@ -443,26 +527,68 @@ const ChartExpandModal = ({
           <ModalCloseButton color={'white'} size={'lg'} mt={1} />
           <ModalBody>
             <FormControl>
-              <FormLabel>Phone Number</FormLabel>
-              <Input
-                type="text"
-                value={phoneNumber}
-                onChange={e => setPhoneNumber(e.target.value)}
-                bg={'white'}
-                border={'2px solid #fd9801'}
-                color={'#212121'}
-              />
+              <FormLabel>Phone Numbers</FormLabel>
+              {phoneNumbers?.map((phoneNumber, index) => (
+                <Box key={index} display="flex" alignItems="center" mb={2}>
+                  <Input
+                    type="text"
+                    value={phoneNumber}
+                    onChange={e =>
+                      handlePhoneNumberChange(e.target.value, index)
+                    }
+                    bg={'white'}
+                    border={'2px solid #fd9801'}
+                    color={'#212121'}
+                    mr={2}
+                  />
+                  <IconButton
+                    icon={<CloseIcon />}
+                    size="sm"
+                    colorScheme="red"
+                    onClick={() => handleRemovePhoneNumber(index)}
+                  />
+                </Box>
+              ))}
+              <Button
+                leftIcon={<AddIcon />}
+                onClick={handleAddPhoneNumber}
+                size="sm"
+                mt={2}
+                colorScheme="blue"
+              >
+                Add Phone Number
+              </Button>
             </FormControl>
             <FormControl mt={4}>
-              <FormLabel>Email</FormLabel>
-              <Input
-                type="text"
-                value={userEmail}
-                onChange={e => setUserEmail(e.target.value)}
-                bg={'white'}
-                border={'2px solid #fd9801'}
-                color={'#212121'}
-              />
+              <FormLabel>Emails</FormLabel>
+              {emailsForThreshold?.map((email, index) => (
+                <Box key={index} display="flex" alignItems="center" mb={2}>
+                  <Input
+                    type="text"
+                    value={email}
+                    onChange={e => handleEmailChange(e.target.value, index)}
+                    bg={'white'}
+                    border={'2px solid #fd9801'}
+                    color={'#212121'}
+                    mr={2}
+                  />
+                  <IconButton
+                    icon={<CloseIcon />}
+                    size="sm"
+                    colorScheme="red"
+                    onClick={() => handleRemoveEmail(index)}
+                  />
+                </Box>
+              ))}
+              <Button
+                leftIcon={<AddIcon />}
+                onClick={handleAddEmail}
+                size="sm"
+                mt={2}
+                colorScheme="blue"
+              >
+                Add Email
+              </Button>
             </FormControl>
             <FormControl mt={4}>
               <FormLabel>High Threshold</FormLabel>
@@ -488,7 +614,7 @@ const ChartExpandModal = ({
             </FormControl>
           </ModalBody>
           <ModalFooter>
-          <Button
+            <Button
               variant="solid"
               bg="red.400"
               color="white"

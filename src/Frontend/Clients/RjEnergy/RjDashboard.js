@@ -37,7 +37,7 @@ import {
   FaWater,
   FaLeaf,
   FaCloudRain,
-} from 'react-icons/fa/index.esm.js';
+} from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { useWeatherData } from '../../WeatherDataContext.js';
 import { handleChartChange } from '../../Charts/ChartUtils.js';

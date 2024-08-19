@@ -29,7 +29,7 @@ import WindSensors from './Frontend/Sensors/WindSensors/WindSensor.js';
 import MobileMenu from './Frontend/MobileMenu/MobileMenu.js';
 import customTheme from './Frontend/Styles/theme.js';
 import { WeatherDataProvider } from './Frontend/WeatherDataContext.js';
-import { FaChessRook } from 'react-icons/fa/index.esm.js';
+import { FaChessRook } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors.js';
 import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySensors.js';
@@ -82,7 +82,7 @@ const Layout = ({
               : '190px'
             : '0'
         }
-        mt={!isLargerThan768 && shouldShowSidebar ? '70px' : '0'}
+        mt={!isLargerThan768 && shouldShowSidebar && '0'}
       >
         
         {children}
@@ -98,7 +98,7 @@ const MainApp = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [timePeriod, setTimePeriod] = useState(37); // Default time period
   const location = useLocation();
-  const [showAlerts, setShowAlerts] = useState(true);
+  const [showAlerts, setShowAlerts] = useState(false);
   
 
 
