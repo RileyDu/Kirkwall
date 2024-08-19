@@ -27,7 +27,9 @@ import { LineChart, BarChart } from '../Charts/Charts.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { TbColumns1, TbColumns2, TbColumns3 } from 'react-icons/tb';
 import { FaChevronDown } from 'react-icons/fa';
+
 import { motion } from 'framer-motion';
+const MotionBox = motion(Box);
 
 const chartComponents = {
   line: LineChart,
@@ -44,7 +46,6 @@ const ModularDashboard = ({ statusOfAlerts }) => {
   const [chartLayoutIcon, setChartLayoutIcon] = useState(TbColumns2);
   const [chartLayout, setChartLayout] = useState(2);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-
 
   const { colorMode } = useColorMode();
   const { currentUser } = useAuth();
@@ -328,92 +329,102 @@ const ModularDashboard = ({ statusOfAlerts }) => {
         </Menu>
       </Flex>
 
-    {layoutStable && (
-      <Grid
-        templateColumns={{
-          base: '1fr',
-          md: `repeat(${chartLayout}, 1fr)`,
-          lg: `repeat(${chartLayout}, 1fr)`,
-        }}
-        gap="6"
-      >
-        {customerMetrics.map(metric => {
-          const settingsOfMetric = metricSettings.find(
-            m => m.metric === metric
-          );
-          const title = settingsOfMetric
-            ? settingsOfMetric.name
-            : 'Metric Title';
-          const dataForMetric = settingsOfMetric?.soloData;
-          const chartDataForMetric = chartData.find(
-            chart => chart.metric === metric
-          );
-          const chartType = chartDataForMetric?.type || 'bar';
+      {layoutStable && (
+        <Grid
+          templateColumns={{
+            base: '1fr',
+            md: `repeat(${chartLayout}, 1fr)`,
+            lg: `repeat(${chartLayout}, 1fr)`,
+          }}
+          gap="6"
+        >
+          {customerMetrics.map(metric => {
+            const settingsOfMetric = metricSettings.find(
+              m => m.metric === metric
+            );
+            const title = settingsOfMetric
+              ? settingsOfMetric.name
+              : 'Metric Title';
+            const dataForMetric = settingsOfMetric?.soloData;
+            const chartDataForMetric = chartData.find(
+              chart => chart.metric === metric
+            );
+            const chartType = chartDataForMetric?.type || 'bar';
 
-          // Ensure dataForMetric is pointing to the correct dataset, like tempData, humidityData, etc.
-          let dataForChart;
-          switch (dataForMetric) {
-            case 'tempData':
-              dataForChart = tempData || weatherData;
-              break;
-            case 'humidityData':
-              dataForChart = humidityData || weatherData;
-              break;
-            case 'windData':
-              dataForChart = windData || weatherData;
-              break;
-            case 'rainfallData':
-              dataForChart = rainfallData || weatherData;
-              break;
-            case 'soilMoistureData':
-              dataForChart = soilMoistureData || weatherData;
-              break;
-            case 'leafWetnessData':
-              dataForChart = leafWetnessData || weatherData;
-              break;
-            case 'watchdogTempData':
-              dataForChart = watchdogTempData || watchdogData;
-              break;
-            case 'watchdogHumData':
-              dataForChart = watchdogHumData || watchdogData;
-              break;
-            case 'rivercityTempData':
-              dataForChart = rivercityTempData || rivercityData;
-              break;
-            case 'rivercityHumData':
-              dataForChart = rivercityHumData || rivercityData;
-              break;
-            default:
-              dataForChart = weatherData;
-          }
+            // Ensure dataForMetric is pointing to the correct dataset, like tempData, humidityData, etc.
+            let dataForChart;
+            switch (dataForMetric) {
+              case 'tempData':
+                dataForChart = tempData || weatherData;
+                break;
+              case 'humidityData':
+                dataForChart = humidityData || weatherData;
+                break;
+              case 'windData':
+                dataForChart = windData || weatherData;
+                break;
+              case 'rainfallData':
+                dataForChart = rainfallData || weatherData;
+                break;
+              case 'soilMoistureData':
+                dataForChart = soilMoistureData || weatherData;
+                break;
+              case 'leafWetnessData':
+                dataForChart = leafWetnessData || weatherData;
+                break;
+              case 'watchdogTempData':
+                dataForChart = watchdogTempData || watchdogData;
+                break;
+              case 'watchdogHumData':
+                dataForChart = watchdogHumData || watchdogData;
+                break;
+              case 'rivercityTempData':
+                dataForChart = rivercityTempData || rivercityData;
+                break;
+              case 'rivercityHumData':
+                dataForChart = rivercityHumData || rivercityData;
+                break;
+              default:
+                dataForChart = weatherData;
+            }
 
-          // Access the appropriate chart component
-          const ChartComponent = chartComponents[chartType] || LineChart;
+            // Access the appropriate chart component
+            const ChartComponent = chartComponents[chartType] || LineChart;
 
-          return (
-            <GridItem key={metric} colSpan={{ base: 1, lg: 1 }} display="flex">
-              <ChartWrapper
-                title={title}
-                metric={metric}
-                flex="1"
-                display="flex"
-                flexDirection="column"
-                chart="temperature"
-                weatherData={dataForChart}
-                handleTimePeriodChange={handleTimePeriodChange}
-                // onChartChange={}
+            return (
+              <MotionBox
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1 }}
               >
-                <ChartComponent
-                  data={dataForChart}
-                  metric={metric}
-                  style={{ flex: 1 }}
-                />
-              </ChartWrapper>
-            </GridItem>
-          );
-        })}
-      </Grid>
-    )}
+                <GridItem
+                  key={metric}
+                  colSpan={{ base: 1, lg: 1 }}
+                  display="flex"
+                >
+                  <ChartWrapper
+                    title={title}
+                    metric={metric}
+                    flex="1"
+                    display="flex"
+                    flexDirection="column"
+                    chart="temperature"
+                    weatherData={dataForChart}
+                    handleTimePeriodChange={handleTimePeriodChange}
+                    // onChartChange={}
+                  >
+                    <ChartComponent
+                      data={dataForChart}
+                      metric={metric}
+                      style={{ flex: 1 }}
+                    />
+                  </ChartWrapper>
+                </GridItem>
+              </MotionBox>
+            );
+          })}
+        </Grid>
+      )}
     </Box>
   );
 };
