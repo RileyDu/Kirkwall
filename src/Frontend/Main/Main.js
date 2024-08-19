@@ -22,8 +22,18 @@ import {
   useMediaQuery,
   useDisclosure,
   useBreakpointValue,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverBody,
+
 } from '@chakra-ui/react';
-import { RiLayoutGridFill } from 'react-icons/ri/index.esm.js';
+import { RiLayoutGridFill, RiLayoutGridLine } from 'react-icons/ri';
+import { TbColumns1, TbColumns2, TbColumns3  } from "react-icons/tb";
+
 import { LineChart, BarChart } from '../Charts/Charts.js';
 import ChartWrapper from '../Charts/ChartWrapper.js';
 import {
@@ -35,7 +45,7 @@ import {
   FaWater,
   FaLeaf,
   FaCloudRain,
-} from 'react-icons/fa/index.esm.js';
+} from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { handleChartChange } from '../Charts/ChartUtils.js';
@@ -187,19 +197,13 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     rainfall: <FaCloudRain />,
   };
 
-  const toggleLayout = () => {
-    if (chartLayout === 1) {
-      setChartLayout(2);
-    } else if (chartLayout === 2) {
-      setChartLayout(3);
-    } else {
-      setChartLayout(1);
-    }
-
+  const handleLayoutChange = (layout) => {
+    setChartLayout(layout);
     setLayoutStable(false);
     setTimeout(() => {
       setLayoutStable(true);
     }, 1);
+    onClose(); // Close the popover after selecting the layout
   };
 
   return (
@@ -269,19 +273,56 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                   transition={{ duration: 1, delay: 0.35 }}
                 >
                   {isLargerThan768 && (
-                  <Tooltip label="Toggle Layout">
-                    <MotionIconButton
+                  <Popover trigger="hover">
+                  <PopoverTrigger>
+                    <IconButton
                       icon={<RiLayoutGridFill />}
                       variant="outline"
-                      color="#212121"
+                      colorScheme="orange"
                       size={iconSize}
-                      bg={'brand.400'}
-                      _hover={{ bg: 'brand.800' }}
-                      onClick={toggleLayout}
-                      border={'2px solid #fd9801'}
-                      mr={2}
+                      aria-label="Toggle Layout"
                     />
-                  </Tooltip>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverArrow />
+                    <PopoverCloseButton />
+                    <PopoverHeader>Chart Layout</PopoverHeader>
+                    <PopoverBody>
+                      <Flex justify="space-between">
+                        <Tooltip label="1 Column">
+                          <IconButton
+                            icon={<TbColumns1 />}
+                            variant="outline"
+                            colorScheme="orange"
+                            size={iconSize}
+                            aria-label="1x1 Layout"
+                            onClick={() => handleLayoutChange(1)}
+                          />
+                        </Tooltip>
+                        <Tooltip label="2 Column">
+                          <IconButton
+                            icon={<TbColumns2 />}
+                            variant="outline"
+                            colorScheme="orange"
+                            size={iconSize}
+                            aria-label="2x2 Layout"
+                            onClick={() => handleLayoutChange(2)}
+                          />
+                        </Tooltip>
+                        <Tooltip label="3 Column">
+                          <IconButton
+                            icon={<TbColumns3 />}
+                            variant="outline"
+                            colorScheme="orange"
+                            size={iconSize}
+                            aria-label="3x3 Layout"
+                            onClick={() => handleLayoutChange(3)}
+                          />
+                        </Tooltip>
+                      </Flex>
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
                   )}
                   <Tooltip label="Toggle Charts">
                     <MenuButton

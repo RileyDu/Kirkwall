@@ -32,16 +32,16 @@ import {
   FaDog,
   FaGlobe,
   FaSnowflake,
-} from 'react-icons/fa/index.esm.js';
-import { GiGroundSprout } from 'react-icons/gi/index.esm.js';
-import { FiAlertTriangle } from 'react-icons/fi/index.esm.js';
+} from 'react-icons/fa';
+import { GiGroundSprout } from 'react-icons/gi';
+import { FiAlertTriangle } from 'react-icons/fi';
 import {
   WiThermometer,
   WiStrongWind,
   WiRain,
   WiHumidity,
-} from 'react-icons/wi/index.esm.js';
-import { RiAdminLine } from "react-icons/ri/index.esm.js";
+} from 'react-icons/wi';
+import { RiAdminLine } from "react-icons/ri";
 
 import Logout from '../../Frontend/AuthComponents/Logout.js';
 import { useNavigate } from 'react-router-dom';

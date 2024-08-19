@@ -25,7 +25,7 @@ import {
   FaChartBar,
   FaChartLine,
   FaMap,
-} from 'react-icons/fa/index.esm.js';
+} from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import ChartExpandModal from './ChartExpandModal.js';

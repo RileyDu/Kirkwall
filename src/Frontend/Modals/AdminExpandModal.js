@@ -35,7 +35,7 @@ import {
   Select,
   Switch,
 } from '@chakra-ui/react';
-import { FaBell, FaExpandAlt, FaQuestion } from 'react-icons/fa/index.esm.js';
+import { FaBell, FaExpandAlt, FaQuestion } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useWeatherData } from '../WeatherDataContext.js';
 import AddInformationFormModal from './AddInformationFormModal.js';
