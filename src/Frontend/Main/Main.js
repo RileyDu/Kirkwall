@@ -29,10 +29,8 @@ import {
   PopoverCloseButton,
   PopoverHeader,
   PopoverBody,
-
 } from '@chakra-ui/react';
-import { RiLayoutGridFill, RiLayoutGridLine } from 'react-icons/ri';
-import { TbColumns1, TbColumns2, TbColumns3  } from "react-icons/tb";
+import { TbColumns1, TbColumns2, TbColumns3 } from 'react-icons/tb';
 
 import { LineChart, BarChart } from '../Charts/Charts.js';
 import ChartWrapper from '../Charts/ChartWrapper.js';
@@ -88,6 +86,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const [isReady, setIsReady] = useState(false);
   const [chartLayout, setChartLayout] = useState(2);
   const [layoutStable, setLayoutStable] = useState(true);
+  const [chartLayoutIcon, setChartLayoutIcon] = useState(TbColumns2);
   const [visibleCharts, setVisibleCharts] = useState({
     // mainpage: ['temperature', 'humidity', 'wind', 'soilMoisture', 'leafWetness', 'rainfall'],
     grandFarm: ['temperature', 'humidity', 'wind', 'soil', 'leaf', 'rainfall'],
@@ -100,8 +99,9 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const MotionIconButton = motion(IconButton);
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
-  const updateChartTypes = (chartData) => {
+  const updateChartTypes = chartData => {
     chartData.forEach(chart => {
       switch (chart.metric) {
         case 'temperature':
@@ -197,13 +197,21 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
     rainfall: <FaCloudRain />,
   };
 
-  const handleLayoutChange = (layout) => {
+  const handleLayoutChange = layout => {
+    if (layout === chartLayout) return;
+
+    // Close the popover before the layout change
+    setIsPopoverOpen(false);
     setChartLayout(layout);
+    setChartLayoutIcon(
+      layout === 1 ? TbColumns1 : layout === 2 ? TbColumns2 : TbColumns3
+    );
+
     setLayoutStable(false);
+    // Reopen the popover after a short delay
     setTimeout(() => {
       setLayoutStable(true);
-    }, 1);
-    onClose(); // Close the popover after selecting the layout
+    }, 0);
   };
 
   return (
@@ -273,56 +281,98 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                   transition={{ duration: 1, delay: 0.35 }}
                 >
                   {isLargerThan768 && (
-                  <Popover trigger="hover">
-                  <PopoverTrigger>
-                    <IconButton
-                      icon={<RiLayoutGridFill />}
-                      variant="outline"
-                      colorScheme="orange"
-                      size={iconSize}
-                      aria-label="Toggle Layout"
-                    />
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverCloseButton />
-                    <PopoverHeader>Chart Layout</PopoverHeader>
-                    <PopoverBody>
-                      <Flex justify="space-between">
-                        <Tooltip label="1 Column">
-                          <IconButton
-                            icon={<TbColumns1 />}
-                            variant="outline"
-                            colorScheme="orange"
-                            size={iconSize}
-                            aria-label="1x1 Layout"
-                            onClick={() => handleLayoutChange(1)}
-                          />
-                        </Tooltip>
-                        <Tooltip label="2 Column">
-                          <IconButton
-                            icon={<TbColumns2 />}
-                            variant="outline"
-                            colorScheme="orange"
-                            size={iconSize}
-                            aria-label="2x2 Layout"
-                            onClick={() => handleLayoutChange(2)}
-                          />
-                        </Tooltip>
-                        <Tooltip label="3 Column">
-                          <IconButton
-                            icon={<TbColumns3 />}
-                            variant="outline"
-                            colorScheme="orange"
-                            size={iconSize}
-                            aria-label="3x3 Layout"
-                            onClick={() => handleLayoutChange(3)}
-                          />
-                        </Tooltip>
-                      </Flex>
-                    </PopoverBody>
-                  </PopoverContent>
-                </Popover>
+                    <Popover
+                      isOpen={isPopoverOpen}
+                      onClose={() => setIsPopoverOpen(false)}
+                      placement="top"
+                    >
+                      <PopoverTrigger>
+                        <span>
+                          <Tooltip label="Chart Layout">
+                            <IconButton
+                              icon={chartLayoutIcon}
+                              variant="outline"
+                              size={iconSize}
+                              color="#212121"
+                              bg={'brand.400'}
+                              _hover={{ bg: 'brand.800' }}
+                              border={'2px solid #fd9801'}
+                              onClick={() => setIsPopoverOpen(!isPopoverOpen)}
+                            />
+                          </Tooltip>
+                        </span>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        width={'200px'}
+                        color="white"
+                        borderRadius="md"
+                        border="2px solid"
+                        borderColor={
+                          colorMode === 'light' ? '#212121' : '#fd9801'
+                        }
+                      >
+                        <PopoverArrow
+                          // bg="#212121"
+                          borderBottom={'2px solid'}
+                          borderBottomColor={
+                            colorMode === 'light' ? '#212121' : '#fd9801'
+                          }
+                          borderRight={'2px solid'}
+                          borderRightColor={
+                            colorMode === 'light' ? '#212121' : '#fd9801'
+                          }
+                        />
+                        <PopoverBody>
+                          <Flex justify="space-evenly">
+                            <Tooltip label="1 Column">
+                              <IconButton
+                                icon={<TbColumns1 />}
+                                variant="outline"
+                                size={iconSize}
+                                aria-label="1 Column Layout"
+                                onClick={() => handleLayoutChange(1)}
+                                color="#212121"
+                                bg={
+                                  chartLayout === 1 ? 'brand.800' : 'brand.400'
+                                }
+                                _hover={{ bg: 'brand.800' }}
+                                border={'2px solid #fd9801'}
+                              />
+                            </Tooltip>
+                            <Tooltip label="2 Column">
+                              <IconButton
+                                icon={<TbColumns2 />}
+                                variant="outline"
+                                size={iconSize}
+                                aria-label="2 Column Layout"
+                                onClick={() => handleLayoutChange(2)}
+                                color="#212121"
+                                bg={
+                                  chartLayout === 2 ? 'brand.800' : 'brand.400'
+                                }
+                                _hover={{ bg: 'brand.800' }}
+                                border={'2px solid #fd9801'}
+                              />
+                            </Tooltip>
+                            <Tooltip label="3 Column">
+                              <IconButton
+                                icon={<TbColumns3 />}
+                                variant="outline"
+                                size={iconSize}
+                                aria-label="3 Column Layout"
+                                onClick={() => handleLayoutChange(3)}
+                                color="#212121"
+                                bg={
+                                  chartLayout === 3 ? 'brand.800' : 'brand.400'
+                                }
+                                _hover={{ bg: 'brand.800' }}
+                                border={'2px solid #fd9801'}
+                              />
+                            </Tooltip>
+                          </Flex>
+                        </PopoverBody>
+                      </PopoverContent>
+                    </Popover>
                   )}
                   <Tooltip label="Toggle Charts">
                     <MenuButton
@@ -1382,14 +1432,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
           sensorMap="grandfarm"
         />
       )} */}
-  
-  
-
-
     </Box>
-
-    
-
   );
 };
 
