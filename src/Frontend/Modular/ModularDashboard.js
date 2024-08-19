@@ -70,6 +70,20 @@ const ModularDashboard = ({ statusOfAlerts }) => {
     rivercityHumData,
     rivercityData,
     chartData,
+    impriFreezerOneTempData,
+    impriFreezerOneHumData,
+    impriFreezerTwoTempData,
+    impriFreezerTwoHumData,
+    impriFreezerThreeTempData,
+    impriFreezerThreeHumData,
+    impriFridgeOneTempData,
+    impriFridgeOneHumData,
+    impriFridgeTwoTempData,
+    impriFridgeTwoHumData,
+    impriIncuOneTempData,
+    impriIncuOneHumData,
+    impriIncuTwoTempData,
+    impriIncuTwoHumData,
   } = useWeatherData();
 
   useEffect(() => {
@@ -383,6 +397,48 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                 break;
               case 'rivercityHumData':
                 dataForChart = rivercityHumData || rivercityData;
+                break;
+              case 'imFreezerOneTempData':
+                dataForChart = impriFreezerOneTempData;
+                break;
+              case 'imFreezerOneHumData':
+                dataForChart = impriFreezerOneHumData;
+                break;
+              case 'imFreezerTwoTempData':
+                dataForChart = impriFreezerTwoTempData;
+                break;
+              case 'imFreezerTwoHumData':
+                dataForChart = impriFreezerTwoHumData;
+                break;
+              case 'imFreezerThreeTempData':
+                dataForChart = impriFreezerThreeTempData;
+                break;
+              case 'imFreezerThreeHumData':
+                dataForChart = impriFreezerThreeHumData;
+                break;
+              case 'imFridgeOneTempData':
+                dataForChart = impriFridgeOneTempData;
+                break;
+              case 'imFridgeOneHumData':
+                dataForChart = impriFridgeOneHumData;
+                break;
+              case 'imFridgeTwoTempData':
+                dataForChart = impriFridgeTwoTempData;
+                break;
+              case 'imFridgeTwoHumData':
+                dataForChart = impriFridgeTwoHumData;
+                break;
+              case 'imIncuOneTempData':
+                dataForChart = impriIncuOneTempData;
+                break;
+              case 'imIncuOneHumData':
+                dataForChart = impriIncuOneHumData;
+                break;
+              case 'imIncuTwoTempData':
+                dataForChart = impriIncuTwoTempData;
+                break;
+              case 'imIncuTwoHumData':
+                dataForChart = impriIncuTwoHumData;
                 break;
               default:
                 dataForChart = weatherData;
