@@ -5,7 +5,7 @@ export const CustomerSettings = [
         name:"Kirkwall",
         email:"test@kirkwall.io",
         phone:"",
-        metric:["temperature", "percent_humidity", "wind_speed", "rain_15_min_inches", "soil_moisture", "leaf_wetness", "temp", "hum", "rctemp", "humidity"]
+        metric: ["temp", "hum", "rctemp", "humidity"]
     },
     {
       id: 2,
