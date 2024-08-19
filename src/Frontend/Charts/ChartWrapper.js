@@ -52,6 +52,7 @@ const ChartWrapper = ({
   chart,
   chartLayout,
   typeOfChart,
+  chartDataForMetric,
 }) => {
   const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
   const [loading, setLoading] = useState(false);
@@ -60,16 +61,16 @@ const ChartWrapper = ({
   const [userTitle, setUserTitle] = useState('Location');
   const { chartData } = useWeatherData();
   const isMounted = useRef(false);
-  const chartDataForMetric = chartData.find(chart => chart.metric === metric);
   const [newTitle, setNewTitle] = useState(chartDataForMetric?.location);
   const [chartType, setChartType] = useState(chartDataForMetric?.type);
+
+  
   
   // Function to handle chart type change and switch between bar and line chart
   // User can switch between bar and line chart by button click
   const handleChartTypeChange = () => {
     const newChartType = chartType === 'line' ? 'bar' : 'line';
     setChartType(newChartType);
-    // onChartChange(newChartType);
   };
   
   // Call handleChartEdit after chartType is updated
@@ -334,6 +335,7 @@ const ChartWrapper = ({
   const editChart = async (id, metric, timeperiod, type, location, hidden) => {
     try {
       const result = await updateChart(id, metric, timeperiod, type, location, hidden);
+      console.log('Updated chart:', result);
     }
     catch (error) {
       console.error('Error updating chart:', error);

@@ -29,7 +29,7 @@ import { TbColumns1, TbColumns2, TbColumns3 } from 'react-icons/tb';
 import { FaChevronDown } from 'react-icons/fa';
 import { useWeatherData } from '../WeatherDataContext.js';
 
-import { motion } from 'framer-motion';
+import { m, motion } from 'framer-motion';
 const MotionBox = motion(Box);
 
 const chartComponents = {
@@ -51,6 +51,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
   const { colorMode } = useColorMode();
   const { currentUser } = useAuth();
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
+
 
   const { chartData, handleTimePeriodChange } = useWeatherData();
 
@@ -255,6 +256,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                   display="flex"
                 >
                   <ChartWrapper
+                    key={metric}
                     title={title}
                     metric={metric}
                     flex="1"
@@ -263,6 +265,8 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                     chart="temperature"
                     weatherData={dataForChart}
                     handleTimePeriodChange={handleTimePeriodChange}
+                    typeOfChart={chartType}
+                    chartDataForMetric={chartDataForMetric}
                   >
                     <ChartComponent
                       data={dataForChart}
