@@ -278,53 +278,51 @@ export const WeatherDataProvider = ({ children }) => {
   }, [currentUser]);
 
   useEffect(() => {
-    if (currentUser && (currentUser.email === 'test@kirkwall.io' || currentUser.email === 'trey@watchdogprotect.com')) {
+    if (currentUser && (currentUser.email === 'test@kirkwall.io')) {
       const fetchData = async () => {
         try {
-          const response = await getWatchdogData('all', '19');
-          if (Array.isArray(response.data.watchdog_data)) {
-            setWatchdogData(response.data.watchdog_data);
-          } else {
-            setWatchdogData([]);
+          if (currentUser.email === 'test@kirkwall.io') {
+            const [watchdogResponse, rivercityResponse] = await Promise.all([
+              getWatchdogData('all', '19'),
+              getRivercityData('all', '19')
+            ]);
+  
+            if (Array.isArray(watchdogResponse.data.watchdog_data)) {
+              setWatchdogData(watchdogResponse.data.watchdog_data);
+            } else {
+              setWatchdogData([]);
+            }
+  
+            if (Array.isArray(rivercityResponse.data.rivercity_data)) {
+              setRivercityData(rivercityResponse.data.rivercity_data);
+            } else {
+              setRivercityData([]);
+            }
+          } else if (currentUser.email === 'trey@watchdogprotect.com') {
+            const watchdogResponse = await getWatchdogData('all', '19');
+  
+            if (Array.isArray(watchdogResponse.data.watchdog_data)) {
+              setWatchdogData(watchdogResponse.data.watchdog_data);
+            } else {
+              setWatchdogData([]);
+            }
+  
+            setRivercityData([]);  // Clear rivercity data for this user
           }
+  
           setLoading(false);
         } catch (error) {
-          console.error('Error fetching watchdog data:', error);
+          console.error('Error fetching data:', error);
           setWatchdogData([]);
-          setLoading(false);
-        }
-      };
-
-      fetchData();
-
-      const intervalId = setInterval(fetchData, 30000);
-
-      return () => clearInterval(intervalId);
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
-    if (currentUser && currentUser.email === 'test@kirkwall.io') {
-      const fetchData = async () => {
-        try {
-          const response = await getRivercityData('all', '19');
-          if (Array.isArray(response.data.rivercity_data)) {
-            setRivercityData(response.data.rivercity_data);
-          } else {
-            setRivercityData([]);
-          }
-          setLoading(false);
-        } catch (error) {
-          console.error('Error fetching watchdog data:', error);
           setRivercityData([]);
           setLoading(false);
         }
       };
-
+  
       fetchData();
-
+  
       const intervalId = setInterval(fetchData, 30000);
-
+  
       return () => clearInterval(intervalId);
     }
   }, [currentUser]);

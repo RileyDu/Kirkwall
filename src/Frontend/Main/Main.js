@@ -26,8 +26,6 @@ import {
   PopoverTrigger,
   PopoverContent,
   PopoverArrow,
-  PopoverCloseButton,
-  PopoverHeader,
   PopoverBody,
 } from '@chakra-ui/react';
 import { TbColumns1, TbColumns2, TbColumns3 } from 'react-icons/tb';
