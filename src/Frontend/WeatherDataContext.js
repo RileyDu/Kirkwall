@@ -252,7 +252,7 @@ export const WeatherDataProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (currentUser && (currentUser.email === 'test@kirkwall.io' || currentUser.email === 'pmo@grandfarm.com')) {
+    if (currentUser && (currentUser.email === 'pmo@grandfarm.com')) {
       const fetchData = async () => {
         try {
           const response = await getWeatherData('all', '37'); // default time period
@@ -287,9 +287,11 @@ export const WeatherDataProvider = ({ children }) => {
           } else {
             setWatchdogData([]);
           }
+          setLoading(false);
         } catch (error) {
           console.error('Error fetching watchdog data:', error);
           setWatchdogData([]);
+          setLoading(false);
         }
       };
 
@@ -311,9 +313,11 @@ export const WeatherDataProvider = ({ children }) => {
           } else {
             setRivercityData([]);
           }
+          setLoading(false);
         } catch (error) {
           console.error('Error fetching watchdog data:', error);
           setRivercityData([]);
+          setLoading(false);
         }
       };
 
