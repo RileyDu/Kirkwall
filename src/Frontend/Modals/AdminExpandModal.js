@@ -311,12 +311,6 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
       { label: 'Watchdog Humidity', metric: 'hum' },
     ],
     'test@kirkwall.io': [
-      { label: 'Temperature', metric: 'temperature' },
-      { label: 'Humidity', metric: 'percent_humidity' },
-      { label: 'Wind Speed', metric: 'wind_speed' },
-      { label: 'Soil Moisture', metric: 'soil_moisture' },
-      { label: 'Leaf Wetness', metric: 'leaf_wetness' },
-      { label: 'Rainfall', metric: 'rain_15_min_inches' },
       { label: 'Temperature (Watchdog)', metric: 'temp' },
       { label: 'Humidity (Watchdog)', metric: 'hum' },
       { label: 'Temperature (Rivercity)', metric: 'rctemp' },
