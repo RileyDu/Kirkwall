@@ -24,9 +24,10 @@ import {
 } from '@chakra-ui/react';
 import ChartWrapper from '../Charts/ChartWrapper.js';
 import { LineChart, BarChart } from '../Charts/Charts.js';
-import { useWeatherData } from '../WeatherDataContext.js';
+import ChartDataMapper from './ChartDataMapper.js';
 import { TbColumns1, TbColumns2, TbColumns3 } from 'react-icons/tb';
 import { FaChevronDown } from 'react-icons/fa';
+import { useWeatherData } from '../WeatherDataContext.js';
 
 import { motion } from 'framer-motion';
 const MotionBox = motion(Box);
@@ -51,40 +52,9 @@ const ModularDashboard = ({ statusOfAlerts }) => {
   const { currentUser } = useAuth();
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
-  const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
+  const { chartData, handleTimePeriodChange } = useWeatherData();
 
-  const {
-    weatherData,
-    tempData,
-    humidityData,
-    windData,
-    rainfallData,
-    soilMoistureData,
-    leafWetnessData,
-    loading,
-    handleTimePeriodChange,
-    watchdogData,
-    watchdogTempData,
-    watchdogHumData,
-    rivercityTempData,
-    rivercityHumData,
-    rivercityData,
-    chartData,
-    impriFreezerOneTempData,
-    impriFreezerOneHumData,
-    impriFreezerTwoTempData,
-    impriFreezerTwoHumData,
-    impriFreezerThreeTempData,
-    impriFreezerThreeHumData,
-    impriFridgeOneTempData,
-    impriFridgeOneHumData,
-    impriFridgeTwoTempData,
-    impriFridgeTwoHumData,
-    impriIncuOneTempData,
-    impriIncuOneHumData,
-    impriIncuTwoTempData,
-    impriIncuTwoHumData,
-  } = useWeatherData();
+  const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
 
   useEffect(() => {
     if (currentUser) {
@@ -112,7 +82,6 @@ const ModularDashboard = ({ statusOfAlerts }) => {
   const handleLayoutChange = layout => {
     if (layout === chartLayout) return;
 
-    // Close the popover before the layout change
     setIsPopoverOpen(false);
     setChartLayout(layout);
     setChartLayoutIcon(
@@ -120,7 +89,6 @@ const ModularDashboard = ({ statusOfAlerts }) => {
     );
 
     setLayoutStable(false);
-    // Reopen the popover after a short delay
     setTimeout(() => {
       setLayoutStable(true);
     }, 0);
@@ -152,7 +120,6 @@ const ModularDashboard = ({ statusOfAlerts }) => {
               <Popover
                 isOpen={isPopoverOpen}
                 onClose={() => setIsPopoverOpen(false)}
-                // placement="top"
               >
                 <PopoverTrigger>
                   <span>
@@ -178,7 +145,6 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                   borderColor={colorMode === 'light' ? '#212121' : '#fd9801'}
                 >
                   <PopoverArrow
-                    // bg="#212121"
                     borderTop={'2px solid'}
                     borderTopColor={
                       colorMode === 'light' ? '#212121' : '#fd9801'
@@ -241,104 +207,12 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                 color="black"
                 _hover={{ bg: '#d7a247' }}
                 border={'2px solid #fd9801'}
-                // onClick={isOpen ? onClose : onOpen}
                 size={isLargerThan768 ? 'md' : 'sm'}
                 ml={isLargerThan768 ? '2' : '4'}
               >
                 <FaChevronDown />
               </MenuButton>
             </Tooltip>
-            {/* <MenuList
-                    placement="top"
-                    bg={colorMode === 'light' ? '#212121' : 'black'}
-                    border={'2px'}
-                    borderColor={colorMode === 'light' ? '#212121' : 'black'}
-                  > */}
-            {/* {Object.keys(charts).map(chart => (
-                      <MenuItem
-                        key={chart}
-                        onClick={() => handleMenuItemClick('grandFarm', chart)}
-                        bg={
-                          visibleCharts.grandFarm.includes(chart)
-                            ? 'green.100'
-                            : '#212121'
-                        }
-                        color={
-                          visibleCharts.grandFarm.includes(chart)
-                            ? '#212121'
-                            : 'white'
-                        }
-                        border={'1px solid #212121'}
-                      >
-                        <Flex
-                          alignItems="center"
-                          justifyContent={'center'}
-                          w={'100%'}
-                        >
-                          {charts[chart]}
-                          <Box ml="2">
-                            {chart.charAt(0).toUpperCase() + chart.slice(1)}
-                          </Box>
-                        </Flex>
-                      </MenuItem>
-                    ))} */}
-            {/* {['temperature', 'humidity'].map(chart => (
-                      <MenuItem
-                        key={chart}
-                        onClick={() => handleMenuItemClick('garage', chart)}
-                        bg={
-                          visibleCharts.garage.includes(chart)
-                            ? 'brand.200'
-                            : '#212121'
-                        }
-                        color={
-                          visibleCharts.garage.includes(chart)
-                            ? '#212121'
-                            : 'white'
-                        }
-                        border={'1px solid #212121'}
-                      >
-                        <Flex
-                          alignItems="center"
-                          justifyContent={'center'}
-                          w={'100%'}
-                        >
-                          {charts[chart]}
-                          <Box ml="2">
-                            {chart.charAt(0).toUpperCase() + chart.slice(1)}
-                          </Box>
-                        </Flex>
-                      </MenuItem>
-                    ))}
-                    {['temperature', 'humidity'].map(chart => (
-                      <MenuItem
-                        key={chart}
-                        onClick={() => handleMenuItemClick('rivercity', chart)}
-                        bg={
-                          visibleCharts.rivercity.includes(chart)
-                            ? 'blue.100'
-                            : '#212121'
-                        }
-                        color={
-                          visibleCharts.rivercity.includes(chart)
-                            ? '#212121'
-                            : 'white'
-                        }
-                        border={'1px solid #212121'}
-                      >
-                        <Flex
-                          alignItems="center"
-                          justifyContent={'center'}
-                          w={'100%'}
-                        >
-                          {charts[chart]}
-                          <Box ml="2">
-                            {chart.charAt(0).toUpperCase() + chart.slice(1)}
-                          </Box>
-                        </Flex>
-                      </MenuItem>
-                    ))}
-                  </MenuList> */}
           </motion.div>
         </Menu>
       </Flex>
@@ -365,86 +239,8 @@ const ModularDashboard = ({ statusOfAlerts }) => {
             );
             const chartType = chartDataForMetric?.type || 'bar';
 
-            // Ensure dataForMetric is pointing to the correct dataset, like tempData, humidityData, etc.
-            let dataForChart;
-            switch (dataForMetric) {
-              case 'tempData':
-                dataForChart = tempData || weatherData;
-                break;
-              case 'humidityData':
-                dataForChart = humidityData || weatherData;
-                break;
-              case 'windData':
-                dataForChart = windData || weatherData;
-                break;
-              case 'rainfallData':
-                dataForChart = rainfallData || weatherData;
-                break;
-              case 'soilMoistureData':
-                dataForChart = soilMoistureData || weatherData;
-                break;
-              case 'leafWetnessData':
-                dataForChart = leafWetnessData || weatherData;
-                break;
-              case 'watchdogTempData':
-                dataForChart = watchdogTempData || watchdogData;
-                break;
-              case 'watchdogHumData':
-                dataForChart = watchdogHumData || watchdogData;
-                break;
-              case 'rivercityTempData':
-                dataForChart = rivercityTempData || rivercityData;
-                break;
-              case 'rivercityHumData':
-                dataForChart = rivercityHumData || rivercityData;
-                break;
-              case 'imFreezerOneTempData':
-                dataForChart = impriFreezerOneTempData;
-                break;
-              case 'imFreezerOneHumData':
-                dataForChart = impriFreezerOneHumData;
-                break;
-              case 'imFreezerTwoTempData':
-                dataForChart = impriFreezerTwoTempData;
-                break;
-              case 'imFreezerTwoHumData':
-                dataForChart = impriFreezerTwoHumData;
-                break;
-              case 'imFreezerThreeTempData':
-                dataForChart = impriFreezerThreeTempData;
-                break;
-              case 'imFreezerThreeHumData':
-                dataForChart = impriFreezerThreeHumData;
-                break;
-              case 'imFridgeOneTempData':
-                dataForChart = impriFridgeOneTempData;
-                break;
-              case 'imFridgeOneHumData':
-                dataForChart = impriFridgeOneHumData;
-                break;
-              case 'imFridgeTwoTempData':
-                dataForChart = impriFridgeTwoTempData;
-                break;
-              case 'imFridgeTwoHumData':
-                dataForChart = impriFridgeTwoHumData;
-                break;
-              case 'imIncuOneTempData':
-                dataForChart = impriIncuOneTempData;
-                break;
-              case 'imIncuOneHumData':
-                dataForChart = impriIncuOneHumData;
-                break;
-              case 'imIncuTwoTempData':
-                dataForChart = impriIncuTwoTempData;
-                break;
-              case 'imIncuTwoHumData':
-                dataForChart = impriIncuTwoHumData;
-                break;
-              default:
-                dataForChart = weatherData;
-            }
+            const dataForChart = ChartDataMapper({ dataForMetric });
 
-            // Access the appropriate chart component
             const ChartComponent = chartComponents[chartType] || LineChart;
 
             return (
@@ -467,7 +263,6 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                     chart="temperature"
                     weatherData={dataForChart}
                     handleTimePeriodChange={handleTimePeriodChange}
-                    // onChartChange={}
                   >
                     <ChartComponent
                       data={dataForChart}
