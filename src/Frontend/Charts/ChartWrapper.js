@@ -70,16 +70,16 @@ const ChartWrapper = ({
   // Function to handle chart type change and switch between bar and line chart
   // User can switch between bar and line chart by button click
   // Function to handle chart type change
-  // const handleChartTypeChange = (chartId, currentType) => {
-  //   const newChartType = currentType === 'line' ? 'bar' : 'line';
-  //   setChartData(prevData =>
-  //     prevData.map(chart =>
-  //       chart.id === chartId ? { ...chart, type: newChartType } : chart
-  //     )
-  //   );
-  //   // Update the chart in the database
-  //   handleChartEdit();
-  // };
+  const handleChartTypeChange = (chartId, currentType) => {
+    const newChartType = currentType === 'line' ? 'bar' : 'line';
+    setChartData(prevData =>
+      prevData.map(chart =>
+        chart.id === chartId ? { ...chart, type: newChartType } : chart
+      )
+    );
+    // Update the chart in the database
+    handleChartEdit();
+  };
   
   // Call handleChartEdit after chartType is updated
   // useEffect(() => {
@@ -593,7 +593,7 @@ const ChartWrapper = ({
                   size={iconSize}
                   bg={'brand.400'}
                   _hover={{ bg: 'brand.800' }}
-                  // onClick={handleChartTypeChange(chartID, chartType)}
+                  onClick={() => handleChartTypeChange(chartID, chartType)}
                   border={'2px solid #fd9801'}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
