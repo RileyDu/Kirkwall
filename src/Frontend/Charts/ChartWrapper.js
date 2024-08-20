@@ -49,7 +49,6 @@ const ChartWrapper = ({
   handleTimePeriodChange,
   toggleChartVisibility,
   section,
-  chart,
   chartLayout,
   typeOfChart,
   chartDataForMetric,

@@ -36,7 +36,7 @@ import { useWeatherData } from '../WeatherDataContext.js';
 import { keyframes } from '@emotion/react';
 import { updateChart } from '../../Backend/Graphql_helper.js';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 const MotionBox = motion(Box);
 
 const chartComponents = {
@@ -62,7 +62,6 @@ const ModularDashboard = ({ statusOfAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
   const { chartData, handleTimePeriodChange, loading } = useWeatherData();
-  console.log('Chart data:', chartData);
 
   const sortChartDataPerCustomer = chartData => {
     if (metricSettings.length > 0) {
@@ -72,8 +71,6 @@ const ModularDashboard = ({ statusOfAlerts }) => {
       setFilteredChartData(filteredData);
     }
   };
-
-  console.log('Filtered chart data:', filteredChartData);
 
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
   const getLogoColor = () => (colorMode === 'light' ? 'black' : 'white');
@@ -154,10 +151,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
     // Send update to backend
     try {
       await handleChartEdit(chartDataForMetric.id, updatedHiddenState);
-      console.log('Chart visibility updated');
-    } catch (error) {
-      console.error('Error updating chart:', error);
-    }
+    } catch (error) {}
   };
 
   const handleChartEdit = async (id, hidden) => {
@@ -304,6 +298,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                 onClick={isOpen ? onClose : onOpen}
                 size={isLargerThan768 ? 'md' : 'sm'}
                 ml={isLargerThan768 ? '2' : '4'}
+                mr={-3}
               >
                 <FaChevronDown />
               </MenuButton>
@@ -348,80 +343,80 @@ const ModularDashboard = ({ statusOfAlerts }) => {
           </motion.div>
         </Menu>
       </Flex>
+      <AnimatePresence>
+  {layoutStable && (
+    <Grid
+      templateColumns={{
+        base: '1fr',
+        md: `repeat(${chartLayout}, 1fr)`,
+        lg: `repeat(${chartLayout}, 1fr)`,
+      }}
+      gap="4"
+    >
+      {customerMetrics.map(metric => {
+        const settingsOfMetric = metricSettings.find(
+          m => m.metric === metric
+        );
+        const title = settingsOfMetric
+          ? settingsOfMetric.name
+          : 'Metric Title';
+        const dataForMetric = settingsOfMetric?.soloData;
+        const chartDataForMetric = filteredChartData.find(
+          chart => chart.metric === metric
+        );
+        const chartType = chartDataForMetric?.type;
 
-      {layoutStable && (
-        <Grid
-          templateColumns={{
-            base: '1fr',
-            md: `repeat(${chartLayout}, 1fr)`,
-            lg: `repeat(${chartLayout}, 1fr)`,
-          }}
-          gap="4"
-        >
-          {customerMetrics.map(metric => {
-            const settingsOfMetric = metricSettings.find(
-              m => m.metric === metric
-            );
-            const title = settingsOfMetric
-              ? settingsOfMetric.name
-              : 'Metric Title';
-            const dataForMetric = settingsOfMetric?.soloData;
-            const chartDataForMetric = filteredChartData.find(
-              chart => chart.metric === metric
-            );
-            const chartType = chartDataForMetric?.type;
+        const isChartHidden = filteredChartData?.find(
+          chart => chart.metric === metric
+        )?.hidden;
+        const dataForChart = ChartDataMapper({ dataForMetric });
 
-            const isChartHidden = filteredChartData?.find(
-              chart => chart.metric === metric
-            )?.hidden;
-            const dataForChart = ChartDataMapper({ dataForMetric });
+        const ChartComponent = chartComponents[chartType] || LineChart;
 
-            // console.log('chartDataForMetric', chartDataForMetric);
-
-            const ChartComponent = chartComponents[chartType] || LineChart;
-
-            if (isChartHidden) return null;
-
-            return (
+        return (
+          <AnimatePresence key={metric}>
+            {!isChartHidden && (
               <MotionBox
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1 }}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.5 }}
               >
-                {/* {!isChartHidden && ( */}
-                  <GridItem
+                <GridItem
+                  key={metric}
+                  colSpan={{ base: 1, lg: 1 }}
+                  display="flex"
+                >
+                  <ChartWrapper
                     key={metric}
-                    colSpan={{ base: 1, lg: 1 }}
+                    title={title}
+                    metric={metric}
+                    flex="1"
                     display="flex"
+                    flexDirection="column"
+                    weatherData={dataForChart}
+                    handleTimePeriodChange={handleTimePeriodChange}
+                    typeOfChart={chartType}
+                    chartDataForMetric={chartDataForMetric}
+                    handleMenuItemClick={handleMenuItemClick}
+                    setFilteredChartData={setFilteredChartData}
                   >
-                    <ChartWrapper
-                      key={metric}
-                      title={title}
+                    <ChartComponent
+                      data={dataForChart}
                       metric={metric}
-                      flex="1"
-                      display="flex"
-                      flexDirection="column"
-                      chart="temperature"
-                      weatherData={dataForChart}
-                      handleTimePeriodChange={handleTimePeriodChange}
-                      typeOfChart={chartType}
-                      chartDataForMetric={chartDataForMetric}
-                      handleMenuItemClick={handleMenuItemClick}
-                      setFilteredChartData={setFilteredChartData}
-                    >
-                      <ChartComponent
-                        data={dataForChart}
-                        metric={metric}
-                        style={{ flex: 1 }}
-                      />
-                    </ChartWrapper>
-                  </GridItem>
-                {/* )} */}
+                      style={{ flex: 1 }}
+                    />
+                  </ChartWrapper>
+                </GridItem>
               </MotionBox>
-            );
-          })}
-        </Grid>
-      )}
+            )}
+          </AnimatePresence>
+        );
+      })}
+    </Grid>
+  )}
+</AnimatePresence>
+
     </Box>
   );
 };
