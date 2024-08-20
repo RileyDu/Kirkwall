@@ -151,7 +151,7 @@ const MainApp = () => {
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
-          <Route
+          {/* <Route
             path="/imprimed"
             element={
               <ProtectedRoute
@@ -216,9 +216,9 @@ const MainApp = () => {
                 />
               </ProtectedRoute>
             }
-          />
+          /> */}
           <Route
-            path="/test"
+            path="/"
             element={
               <ProtectedRoute>
                 <ModularDashboard statusOfAlerts={showAlerts} />

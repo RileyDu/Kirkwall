@@ -29,7 +29,7 @@ import { TbColumns1, TbColumns2, TbColumns3 } from 'react-icons/tb';
 import { FaChevronDown } from 'react-icons/fa';
 import { useWeatherData } from '../WeatherDataContext.js';
 
-import { m, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 const MotionBox = motion(Box);
 
 const chartComponents = {
