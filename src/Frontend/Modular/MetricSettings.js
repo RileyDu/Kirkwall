@@ -2,7 +2,7 @@ export const MetricSettings = [
     {
         id:1,
         metric:"temperature",
-        name:"Temperature (°F)",
+        name:"Temperature",
         unit:"°F",
         color:"green",
         company:"Grand Farm",
@@ -12,7 +12,7 @@ export const MetricSettings = [
     {
         id:2,
         metric:"percent_humidity",
-        name:"Humidity (%)",
+        name:"Humidity",
         unit:"%",
         color:"green",
         company:"Grand Farm",
@@ -22,7 +22,7 @@ export const MetricSettings = [
     {
         id:3,
         metric:"wind_speed",
-        name:"Wind Spee (mph)",
+        name:"Wind Speed",
         unit:"mph",
         color:"green",
         company:"Grand Farm",
@@ -32,7 +32,7 @@ export const MetricSettings = [
     {
         id:4,
         metric:"rain_15_min_inches",
-        name:"Rain (15 min)",
+        name:"Rain",
         unit:"inches",
         color:"green",
         company:"Grand Farm",
@@ -42,7 +42,7 @@ export const MetricSettings = [
     {
         id:5,
         metric:"soil_moisture",
-        name:"Soil Moisture (centibars)",
+        name:"Soil Moisture",
         unit:"%",
         color:"green",
         company:"Grand Farm",
@@ -52,7 +52,7 @@ export const MetricSettings = [
     {
         id:6,
         metric:"leaf_wetness",
-        name:"Leaf Wetness (0-15)",
+        name:"Leaf Wetness",
         unit:"%",
         color:"green",
         company:"Grand Farm",
@@ -62,7 +62,7 @@ export const MetricSettings = [
     {
         id:7,
         metric:"temp",
-        name:"Temperature (°F)",
+        name:"Temperature",
         unit:"°F",
         color:"orange",
         company:"Watchdog",
@@ -72,7 +72,7 @@ export const MetricSettings = [
     {
         id:8,
         metric:"hum",
-        name:"Humidity (%)",
+        name:"Humidity",
         unit:"%",
         color:"orange",
         company:"Watchdog",
@@ -82,7 +82,7 @@ export const MetricSettings = [
     {
         id:9,
         metric:"rctemp",
-        name:"Temperature (°F)",
+        name:"Temperature",
         unit:"°F",
         color:"blue",
         company:"River City",
@@ -92,7 +92,7 @@ export const MetricSettings = [
     {
         id:10,
         metric:"humidity",
-        name:"Humidity (%)",
+        name:"Humidity",
         unit:"%",
         color:"blue",
         company:"River City",
@@ -102,7 +102,7 @@ export const MetricSettings = [
     {
         id:11,
         metric:"imFreezerOneTemp",
-        name:"Temperature (°C)",
+        name:"Freezer #1 (°C)",
         unit:"°C",
         color:"red",
         company:"ImpriMed",
@@ -112,7 +112,7 @@ export const MetricSettings = [
     {
         id:12,
         metric:"imFreezerOneHum",
-        name:"Humidity (%)",
+        name:"Freezer #1 (Humidity)",
         unit:"%",
         color:"red",
         company:"ImpriMed",
@@ -122,7 +122,7 @@ export const MetricSettings = [
     {
         id:13,
         metric:"imFreezerTwoTemp",
-        name:"Temperature (°C)",
+        name:"Freezer #2 (°C)",
         unit:"°C",
         color:"red",
         company:"ImpriMed",
@@ -132,7 +132,7 @@ export const MetricSettings = [
     {
         id:14,
         metric:"imFreezerTwoHum",
-        name:"Humidity (%)",
+        name:"Freezer #2 (Humidity)",
         unit:"%",
         color:"red",
         company:"ImpriMed",
@@ -142,7 +142,7 @@ export const MetricSettings = [
     {
         id:15,
         metric:"imFreezerThreeTemp",
-        name:"Temperature (°C)",
+        name:"Freezer #3 (°C)",
         unit:"°C",
         color:"red",
         company:"ImpriMed",
@@ -152,7 +152,7 @@ export const MetricSettings = [
     {
         id:16,
         metric:"imFreezerThreeHum",
-        name:"Humidity (%)",
+        name:"Freezer #3 (Humidity)",
         unit:"%",
         color:"red",
         company:"ImpriMed",
@@ -162,7 +162,7 @@ export const MetricSettings = [
     {
         id:17,
         metric:"imFridgeOneTemp",
-        name:"Temperature (°C)",
+        name:"Friidge #1 (°C)",
         unit:"°C",
         color:"red",
         company:"ImpriMed",
@@ -172,7 +172,7 @@ export const MetricSettings = [
     {
         id:18,
         metric:"imFridgeOneHum",
-        name:"Humidity (%)",
+        name:"Fridge #1 (Humidity)",
         unit:"%",
         color:"red",
         company:"ImpriMed",
@@ -182,7 +182,7 @@ export const MetricSettings = [
     {
         id:19,
         metric:"imFridgeTwoTemp",
-        name:"Temperature (°C)",
+        name:"Fridge #2 (°C)",
         unit:"°C",
         color:"red",
         company:"ImpriMed",
@@ -192,7 +192,7 @@ export const MetricSettings = [
     {
         id:20,
         metric:"imFridgeTwoHum",
-        name:"Humidity (%)",
+        name:"Fridge #2 (Humidity)",
         unit:"%",
         color:"red",
         company:"ImpriMed",
@@ -203,7 +203,7 @@ export const MetricSettings = [
     {
         id:21,
         metric:"imIncubatorOneTemp",
-        name:"Temperature (°C)",
+        name:"Incubator #2 (°C)",
         unit:"°C",
         color:"red",
         company:"ImpriMed",
@@ -213,7 +213,7 @@ export const MetricSettings = [
     {
         id:22,
         metric:"imIncubatorOneHum",
-        name:"Humidity (%)",
+        name:"Incubator #1 (Humidity)",
         unit:"%",
         color:"red",
         company:"ImpriMed",
@@ -223,7 +223,7 @@ export const MetricSettings = [
     {
         id:23,
         metric:"imIncubatorTwoTemp",
-        name:"Temperature (°C)",
+        name:"Incubator #2 (°C)",
         unit:"°C",
         color:"red",
         company:"ImpriMed",
@@ -233,7 +233,7 @@ export const MetricSettings = [
     {
         id:24,
         metric:"imIncubatorTwoHum",
-        name:"Humidity (%)",
+        name:"Incubator #2 (Humidity)",
         unit:"%",
         color:"red",
         company:"ImpriMed",

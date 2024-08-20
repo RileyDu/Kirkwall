@@ -50,7 +50,6 @@ const ModularDashboard = ({ statusOfAlerts }) => {
   const [customerName, setCustomerName] = useState('');
   const [metricSettings, setMetricSettings] = useState([]);
   const [filteredChartData, setFilteredChartData] = useState([]);
-  
 
   const [layoutStable, setLayoutStable] = useState(true);
   const [chartLayoutIcon, setChartLayoutIcon] = useState(TbColumns2);
@@ -65,9 +64,9 @@ const ModularDashboard = ({ statusOfAlerts }) => {
   const { chartData, handleTimePeriodChange, loading } = useWeatherData();
   console.log('Chart data:', chartData);
 
-  const sortChartDataPerCustomer = (chartData) => {
+  const sortChartDataPerCustomer = chartData => {
     if (metricSettings.length > 0) {
-      const filteredData = chartData.filter(chart => 
+      const filteredData = chartData.filter(chart =>
         metricSettings.some(metric => metric.metric === chart.metric)
       );
       setFilteredChartData(filteredData);
@@ -75,7 +74,6 @@ const ModularDashboard = ({ statusOfAlerts }) => {
   };
 
   console.log('Filtered chart data:', filteredChartData);
-  
 
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
   const getLogoColor = () => (colorMode === 'light' ? 'black' : 'white');
@@ -108,7 +106,6 @@ const ModularDashboard = ({ statusOfAlerts }) => {
       sortChartDataPerCustomer(chartData);
     }
   }, [chartData, metricSettings]);
-
 
   const handleLayoutChange = layout => {
     if (layout === chartLayout) return;
@@ -143,17 +140,17 @@ const ModularDashboard = ({ statusOfAlerts }) => {
     );
   }
 
-  const handleMenuItemClick = async (metric) => {
+  const handleMenuItemClick = async metric => {
     // Toggle hidden state locally
     setFilteredChartData(prevData =>
-      prevData.map(chart => 
+      prevData.map(chart =>
         chart.metric === metric ? { ...chart, hidden: !chart.hidden } : chart
       )
     );
-  
+
     const chartDataForMetric = chartData.find(chart => chart.metric === metric);
     const updatedHiddenState = !chartDataForMetric.hidden;
-  
+
     // Send update to backend
     try {
       await handleChartEdit(chartDataForMetric.id, updatedHiddenState);
@@ -162,11 +159,11 @@ const ModularDashboard = ({ statusOfAlerts }) => {
       console.error('Error updating chart:', error);
     }
   };
-  
+
   const handleChartEdit = async (id, hidden) => {
     // Assuming you need to pass all the current metric settings to the backend
     const chartDataForMetric = chartData.find(chart => chart.id === id);
-    
+
     const updatedChartDetails = {
       id: chartDataForMetric.id,
       metric: chartDataForMetric.metric,
@@ -175,7 +172,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
       location: chartDataForMetric.location,
       hidden: hidden,
     };
-  
+
     try {
       const result = await updateChart(
         updatedChartDetails.id,
@@ -190,8 +187,6 @@ const ModularDashboard = ({ statusOfAlerts }) => {
       console.error('Error updating chart:', error);
     }
   };
-  
-
 
   return (
     <Box
@@ -300,52 +295,56 @@ const ModularDashboard = ({ statusOfAlerts }) => {
               </Popover>
             )}
             <Tooltip label="Toggle Charts">
-                <MenuButton
-                  as={Button}
-                  bg="brand.400"
-                  color="black"
-                  _hover={{ bg: '#d7a247' }}
-                  border={'2px solid #fd9801'}
-                  onClick={isOpen ? onClose : onOpen}
-                  size={isLargerThan768 ? 'md' : 'sm'}
-                  ml={isLargerThan768 ? '2' : '4'}
-                >
-                  <FaChevronDown />
-                </MenuButton>
-              </Tooltip>
-              <MenuList
-                placement="top"
-                bg={colorMode === 'light' ? '#212121' : 'black'}
-                border={'2px'}
-                borderColor={colorMode === 'light' ? '#212121' : 'black'}
+              <MenuButton
+                as={Button}
+                bg="brand.400"
+                color="black"
+                _hover={{ bg: '#d7a247' }}
+                border={'2px solid #fd9801'}
+                onClick={isOpen ? onClose : onOpen}
+                size={isLargerThan768 ? 'md' : 'sm'}
+                ml={isLargerThan768 ? '2' : '4'}
               >
-                {customerMetrics.map(metric => (
-                  <MenuItem
-                    key={metric}
-                    onClick={() => handleMenuItemClick(metric)}
-                    bg="#212121"
-                    color="white"
-                    border={'1px solid #212121'}
+                <FaChevronDown />
+              </MenuButton>
+            </Tooltip>
+            <MenuList
+              placement="top"
+              bg={colorMode === 'light' ? '#212121' : 'black'}
+              border={'2px'}
+              borderColor={colorMode === 'light' ? '#212121' : 'black'}
+            >
+              {customerMetrics.map((metric, index) => (
+                <MenuItem
+                  key={metric}
+                  onClick={() => handleMenuItemClick(metric)}
+                  bg={index % 2 === 0 ? '#212121' : '#303030'} // Alternate between two colors
+                  color="white"
+                  border={'1px solid #212121'}
+                >
+                  <Flex
+                    alignItems="center"
+                    justifyContent="space-between"
+                    w="100%"
                   >
-                    <Flex
-                      alignItems="center"
-                      justifyContent="space-between"
-                      w="100%"
-                    >
-                      <Box display="flex" alignItems="center">
-                        <Box ml="2">
-                          {metric.charAt(0).toUpperCase() + metric.slice(1)}
-                        </Box>
+                    <Box display="flex" alignItems="center">
+                      <Box ml="2">
+                        {metricSettings.find(m => m.metric === metric)?.name}
                       </Box>
-                      <Checkbox
-                        isChecked={filteredChartData?.find(chart => chart.metric === metric)?.hidden}
-                        onChange={() => handleMenuItemClick(metric)}
-                        colorScheme="green"
-                      />
-                    </Flex>
-                  </MenuItem>
-                ))}
-              </MenuList>
+                    </Box>
+                    <Checkbox
+                      isChecked={
+                        filteredChartData?.find(
+                          chart => chart.metric === metric
+                        )?.hidden
+                      }
+                      onChange={() => handleMenuItemClick(metric)}
+                      colorScheme="green"
+                    />
+                  </Flex>
+                </MenuItem>
+              ))}
+            </MenuList>
           </motion.div>
         </Menu>
       </Flex>
@@ -388,32 +387,32 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                 transition={{ duration: 1 }}
               >
                 {!isChartHidden && (
-                <GridItem
-                  key={metric}
-                  colSpan={{ base: 1, lg: 1 }}
-                  display="flex"
-                >
-                  <ChartWrapper
+                  <GridItem
                     key={metric}
-                    title={title}
-                    metric={metric}
-                    flex="1"
+                    colSpan={{ base: 1, lg: 1 }}
                     display="flex"
-                    flexDirection="column"
-                    chart="temperature"
-                    weatherData={dataForChart}
-                    handleTimePeriodChange={handleTimePeriodChange}
-                    typeOfChart={chartType}
-                    chartDataForMetric={chartDataForMetric}
-                    // onChartChange={}
                   >
-                    <ChartComponent
-                      data={dataForChart}
+                    <ChartWrapper
+                      key={metric}
+                      title={title}
                       metric={metric}
-                      style={{ flex: 1 }}
-                    />
-                  </ChartWrapper>
-                </GridItem>
+                      flex="1"
+                      display="flex"
+                      flexDirection="column"
+                      chart="temperature"
+                      weatherData={dataForChart}
+                      handleTimePeriodChange={handleTimePeriodChange}
+                      typeOfChart={chartType}
+                      chartDataForMetric={chartDataForMetric}
+                      // onChartChange={}
+                    >
+                      <ChartComponent
+                        data={dataForChart}
+                        metric={metric}
+                        style={{ flex: 1 }}
+                      />
+                    </ChartWrapper>
+                  </GridItem>
                 )}
               </MotionBox>
             );
