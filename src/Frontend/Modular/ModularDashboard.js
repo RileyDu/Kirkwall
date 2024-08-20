@@ -143,35 +143,54 @@ const ModularDashboard = ({ statusOfAlerts }) => {
     );
   }
 
-  const handleMenuItemClick = (metric) => {
+  const handleMenuItemClick = async (metric) => {
+    // Toggle hidden state locally
     setFilteredChartData(prevData =>
       prevData.map(chart => 
         chart.metric === metric ? { ...chart, hidden: !chart.hidden } : chart
       )
     );
-    onOpen();
+  
+    const chartDataForMetric = chartData.find(chart => chart.metric === metric);
+    const updatedHiddenState = !chartDataForMetric.hidden;
+  
+    // Send update to backend
+    try {
+      await handleChartEdit(chartDataForMetric.id, updatedHiddenState);
+      console.log('Chart visibility updated');
+    } catch (error) {
+      console.error('Error updating chart:', error);
+    }
   };
   
-
-  // const editChart = async (id, metric, timeperiod, type, location, hidden) => {
-  //   try {
-  //     const result = await updateChart(id, metric, timeperiod, type, location, hidden);
-  //     console.log('Updated chart:', result);
-  //   }
-  //   catch (error) {
-  //     console.error('Error updating chart:', error);
-  //   }
-  // }
-
-  // const handleChartEdit = () => {
-  //   const id = chartDataForMetric?.id;
-  //   const metric = chartDataForMetric?.metric;
-  //   const timeperiod = chartDataForMetric?.timeperiod;
-  //   const type = chartType;
-  //   const location = newTitle || chartDataForMetric?.location;
-  //   const hidden = chartDataForMetric?.hidden;
-  //   editChart(id, metric, timeperiod, type, location, hidden);
-  // }
+  const handleChartEdit = async (id, hidden) => {
+    // Assuming you need to pass all the current metric settings to the backend
+    const chartDataForMetric = chartData.find(chart => chart.id === id);
+    
+    const updatedChartDetails = {
+      id: chartDataForMetric.id,
+      metric: chartDataForMetric.metric,
+      timeperiod: chartDataForMetric.timeperiod,
+      type: chartDataForMetric.type,
+      location: chartDataForMetric.location,
+      hidden: hidden,
+    };
+  
+    try {
+      const result = await updateChart(
+        updatedChartDetails.id,
+        updatedChartDetails.metric,
+        updatedChartDetails.timeperiod,
+        updatedChartDetails.type,
+        updatedChartDetails.location,
+        updatedChartDetails.hidden
+      );
+      console.log('Updated chart:', result);
+    } catch (error) {
+      console.error('Error updating chart:', error);
+    }
+  };
+  
 
 
   return (
