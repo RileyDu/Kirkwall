@@ -72,23 +72,33 @@ const ChartWrapper = ({
   // Function to handle chart type change
   const handleChartTypeChange = (chartId, currentType) => {
     const newChartType = currentType === 'line' ? 'bar' : 'line';
+    
+    // Mark this change as user-initiated
+    isUserAction.current = true;
+  
+    // Set the chart type state
+    setChartType(newChartType);
+  
+    // Update chartData with the new chart type
     setChartData(prevData =>
       prevData.map(chart =>
         chart.id === chartId ? { ...chart, type: newChartType } : chart
       )
     );
-    // Update the chart in the database
-    handleChartEdit();
-  };
   
-  // Call handleChartEdit after chartType is updated
-  // useEffect(() => {
-  //   if (isMounted.current) {
-  //     handleChartEdit();
-  //   } else {
-  //     isMounted.current = true;
-  //   }
-  // }, [chartType]);
+    // Call handleChartEdit after chart data has been updated
+    // handleChartEdit();
+  };
+
+  const isUserAction = useRef(false);
+
+  useEffect(() => {
+    if (isUserAction.current) {
+      handleChartEdit();
+      isUserAction.current = false; // Reset the flag after the update
+    }
+  }, [chartType, chartData]);
+  
 
   const { currentUser } = useAuth();
 

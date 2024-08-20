@@ -57,6 +57,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
 
 
   const { chartData, handleTimePeriodChange, loading } = useWeatherData();
+  console.log('Chart data:', chartData);
 
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
   const getLogoColor = () => (colorMode === 'light' ? 'black' : 'white');
@@ -263,10 +264,12 @@ const ModularDashboard = ({ statusOfAlerts }) => {
             const chartDataForMetric = chartData.find(
               chart => chart.metric === metric
             );
-            const chartType = chartDataForMetric?.type || 'bar';
+            const chartType = chartDataForMetric?.type;
 
             const dataForChart = ChartDataMapper({ dataForMetric });
 
+            // console.log('chartDataForMetric', chartDataForMetric);
+            
             const ChartComponent = chartComponents[chartType] || LineChart;
 
             return (

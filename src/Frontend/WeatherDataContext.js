@@ -242,7 +242,6 @@ export const WeatherDataProvider = ({ children }) => {
         const response = await getChartData();
         if (Array.isArray(response.data.charts)) {
           setChartData(response.data.charts);
-          // console.log('Chart data:', chartData);
         }
       } catch (error) {
         console.error('Error fetching chart data:', error);
