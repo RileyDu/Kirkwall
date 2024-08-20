@@ -25,7 +25,8 @@ import {
   FaChartBar,
   FaChartLine,
   FaMap,
-} from 'react-icons/fa/index.esm.js';
+  FaEyeSlash,
+} from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import ChartExpandModal from './ChartExpandModal.js';
@@ -43,43 +44,59 @@ import { updateChart } from '../../Backend/Graphql_helper.js';
 const ChartWrapper = ({
   title,
   children,
-  onChartChange,
   metric,
   weatherData,
   handleTimePeriodChange,
   toggleChartVisibility,
   section,
-  chart,
   chartLayout,
   typeOfChart,
+  chartDataForMetric,
+  handleMenuItemClick,
+  setFilteredChartData
 }) => {
   const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
   const [loading, setLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [sensorMap, setSensorMap] = useState('grandfarm'); // State to toggle between map and chart
   const [userTitle, setUserTitle] = useState('Location');
-  const { chartData } = useWeatherData();
+  const { chartData, setChartData } = useWeatherData();
   const isMounted = useRef(false);
-  const chartDataForMetric = chartData.find(chart => chart.metric === metric);
   const [newTitle, setNewTitle] = useState(chartDataForMetric?.location);
   const [chartType, setChartType] = useState(chartDataForMetric?.type);
+  const [chartID, setChartID] = useState(chartDataForMetric?.id);
+
+  
   
   // Function to handle chart type change and switch between bar and line chart
   // User can switch between bar and line chart by button click
-  const handleChartTypeChange = () => {
-    const newChartType = chartType === 'line' ? 'bar' : 'line';
-    setChartType(newChartType);
-    onChartChange(newChartType);
-  };
+  // Function to handle chart type change
+  const handleChartTypeChange = (chartId, currentType) => {
+    const newChartType = currentType === 'line' ? 'bar' : 'line';
+    
+    // Mark this change as user-initiated
+    isUserAction.current = true;
   
-  // Call handleChartEdit after chartType is updated
+    // Set the chart type state
+    setChartType(newChartType);
+  
+    // Update chartData with the new chart type
+    setFilteredChartData(prevData =>
+      prevData.map(chart =>
+        chart.id === chartId ? { ...chart, type: newChartType } : chart
+      )
+    );
+  };
+
+  const isUserAction = useRef(false);
+
   useEffect(() => {
-    if (isMounted.current) {
+    if (isUserAction.current) {
       handleChartEdit();
-    } else {
-      isMounted.current = true;
+      isUserAction.current = false; // Reset the flag after the update
     }
-  }, [chartType]);
+  }, [chartType, chartData]);
+  
 
   const { currentUser } = useAuth();
 
@@ -334,6 +351,7 @@ const ChartWrapper = ({
   const editChart = async (id, metric, timeperiod, type, location, hidden) => {
     try {
       const result = await updateChart(id, metric, timeperiod, type, location, hidden);
+      console.log('Updated chart:', result);
     }
     catch (error) {
       console.error('Error updating chart:', error);
@@ -583,7 +601,7 @@ const ChartWrapper = ({
                   size={iconSize}
                   bg={'brand.400'}
                   _hover={{ bg: 'brand.800' }}
-                  onClick={handleChartTypeChange}
+                  onClick={() => handleChartTypeChange(chartID, chartType)}
                   border={'2px solid #fd9801'}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -618,15 +636,15 @@ const ChartWrapper = ({
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.5 }}
             >
-              <Tooltip label="Close Chart">
+              <Tooltip label="Hide Chart">
                 <MotionIconButton
-                  icon={<FaTimes />}
+                  icon={<FaEyeSlash />}
                   variant="outline"
                   color="#212121"
                   size={iconSize}
                   bg={'brand.400'}
                   _hover={{ bg: 'brand.800' }}
-                  onClick={() => toggleChartVisibility(section, chart)}
+                  onClick={() => handleMenuItemClick(metric)}
                   border={'2px solid #fd9801'}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -655,7 +673,9 @@ const ChartWrapper = ({
         children={children}
         weatherData={weatherData}
         metric={metric}
-        onChartChange={onChartChange}
+        onChartChange={handleChartTypeChange}
+        chartID={chartID}
+        // chartType={chartType}
         // adjustTimePeriod={adjustTimePeriod}
         handleTimePeriodChange={handleTimePeriodChange}
         currentTimePeriod={currentTimePeriod}

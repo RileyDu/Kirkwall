@@ -27,8 +27,8 @@ import {
   FaChevronDown,
   FaTemperatureHigh,
   FaTint,
-} from 'react-icons/fa/index.esm.js';
-import { RiLayoutGridFill } from 'react-icons/ri/index.esm.js';
+} from 'react-icons/fa';
+import { RiLayoutGridFill } from 'react-icons/ri';
 import { keyframes } from '@emotion/react';
 import { useWeatherData } from '../../WeatherDataContext.js';
 import { handleChartChange } from '../../Charts/ChartUtils.js';

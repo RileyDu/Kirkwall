@@ -88,17 +88,7 @@ const Login = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.log('User logged in successfully');
-      if (email === 'jerrycromarty@imprimedicine.com') {
-        navigate('/imprimed');
-      } else if (email === 'pmo@grandfarm.com') {
-        navigate('/grandfarm');
-      } else if (email === 'russell@rjenergysolutions.com') {
-        navigate('/rjenergy');
-      } else if (email === 'trey@watchdogprotect.com') {
-        navigate('/watchdogprotect');
-      } else {
         navigate('/');
-      }
     } catch (error) {
       const errorCode = error.code;
       const errorMessage =

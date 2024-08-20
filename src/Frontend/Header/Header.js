@@ -32,16 +32,16 @@ import {
   FaDog,
   FaGlobe,
   FaSnowflake,
-} from 'react-icons/fa/index.esm.js';
-import { GiGroundSprout } from 'react-icons/gi/index.esm.js';
-import { FiAlertTriangle } from 'react-icons/fi/index.esm.js';
+} from 'react-icons/fa';
+import { GiGroundSprout } from 'react-icons/gi';
+import { FiAlertTriangle } from 'react-icons/fi';
 import {
   WiThermometer,
   WiStrongWind,
   WiRain,
   WiHumidity,
-} from 'react-icons/wi/index.esm.js';
-import { RiAdminLine } from "react-icons/ri/index.esm.js";
+} from 'react-icons/wi';
+import { RiAdminLine } from "react-icons/ri";
 
 import Logout from '../../Frontend/AuthComponents/Logout.js';
 import { useNavigate } from 'react-router-dom';
@@ -104,11 +104,11 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/watchdogprotect/map' }
   ],
     'default': [
-      { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
-      { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
-      { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
-      { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
-      { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
+      // { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
+      // { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
+      // { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
+      // { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
+      // { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
       { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
       { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' }
@@ -120,7 +120,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     'jerrycromarty@imprimedicine.com': ['Rivercity Temperature (°F)', 'Rivercity Humidity (%)'],
     'russell@rjenergysolutions.com': ['Rivercity Temperature (°F)', 'Rivercity Humidity (%)'],
     'trey@watchdogprotect.com': ['Garage Average Temp (°F)', 'Garage Humidity (%)'],
-    'test@kirkwall.io': ['Average Temp (°F)', 'Average Humidity (%)', 'Average Wind Speed (mph)', 'Average Soil Moisture (centibars)', 'Total Rainfall (inches)', 'Average Leaf Wetness (0-15)', 'Garage Average Temp (°F)', 'Garage Humidity (%)', 'Rivercity Temperature (°F)', 'Rivercity Humidity (%)']
+    'test@kirkwall.io': ['Garage Average Temp (°F)', 'Garage Humidity (%)', 'Rivercity Temperature (°F)', 'Rivercity Humidity (%)']
   };
 
   const summaryMetrics = [

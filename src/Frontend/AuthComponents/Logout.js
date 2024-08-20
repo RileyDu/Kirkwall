@@ -4,7 +4,7 @@ import { Button } from '@chakra-ui/react';
 // import { useAuthState } from 'react-firebase-hooks/auth';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthComponents/AuthContext.js';
-
+import { useWeatherData } from '../WeatherDataContext.js';
 
 const Logout = ({ onLogout }) => {
   const auth = getAuth();
@@ -12,6 +12,7 @@ const Logout = ({ onLogout }) => {
   const location = useLocation();
   const { currentUser } = useAuth();
   const user = currentUser;
+  const { loading, setLoading } = useWeatherData();
 
   const navigate = useNavigate();
 
@@ -19,6 +20,7 @@ const Logout = ({ onLogout }) => {
     try {
       await signOut(auth);
       console.log('User logged out successfully');
+      setLoading(true);
       navigate('/login');
       if (onLogout) onLogout();
     } catch (error) {

@@ -30,7 +30,7 @@ import {
   FaChartBar,
   FaBell,
   FaTrash,
-} from 'react-icons/fa/index.esm.js';
+} from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts.js';
 import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
@@ -46,6 +46,8 @@ const ChartExpandModal = ({
   title,
   metric,
   onChartChange,
+  chartID,
+  // chartType,
   handleTimePeriodChange,
   weatherData,
   currentTimePeriod,
@@ -355,8 +357,7 @@ const ChartExpandModal = ({
               <MotionButton
                 variant={'solid'}
                 onClick={() => {
-                  setChartType('line');
-                  onChartChange('line');
+                  onChartChange(chartID,typeOfChart);
                 }}
                 leftIcon={<FaChartLine />}
                 size={['sm', 'md']}
@@ -371,8 +372,7 @@ const ChartExpandModal = ({
               <MotionButton
                 variant={'solid'}
                 onClick={() => {
-                  setChartType('bar');
-                  onChartChange('bar');
+                  onChartChange(chartID,typeOfChart);
                 }}
                 leftIcon={<FaChartBar />}
                 mx={1}

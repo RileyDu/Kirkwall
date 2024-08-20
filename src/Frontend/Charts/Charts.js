@@ -86,7 +86,7 @@ const createCustomChartOptions = (metric, data, colorMode) => {
 
   // Helper function to set the y-axis min value
   const getYmin = (min, max) => {
-    if (min > 0) {
+    if (min > 0 && max > 1) {
       return Math.round(min - 1);
     } else if (min < 0) {
       return Math.round(min - 1);
@@ -94,9 +94,7 @@ const createCustomChartOptions = (metric, data, colorMode) => {
       return Math.round(min);
     } else if (min === 0 && max === 0) {
       return Math.round(min);
-    } else if (max > 0) {
-      return Math.round(min - 1);
-    }
+    } 
   };
 
   // Helper function to set the y-axis max value

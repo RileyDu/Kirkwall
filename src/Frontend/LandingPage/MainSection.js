@@ -11,7 +11,7 @@ import {
   Icon,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import { FaArrowUp } from 'react-icons/fa/index.esm.js';
+import { FaArrowUp } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const MotionBox = motion(Box);
