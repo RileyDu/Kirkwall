@@ -203,7 +203,7 @@ export const MetricSettings = [
     {
         id:21,
         metric:"imIncubatorOneTemp",
-        name:"Incubator #2 (°C)",
+        name:"Incubator #1 (°C)",
         unit:"°C",
         color:"red",
         company:"ImpriMed",

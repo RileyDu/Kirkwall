@@ -356,7 +356,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
             md: `repeat(${chartLayout}, 1fr)`,
             lg: `repeat(${chartLayout}, 1fr)`,
           }}
-          gap="6"
+          gap="4"
         >
           {customerMetrics.map(metric => {
             const settingsOfMetric = metricSettings.find(
@@ -380,13 +380,15 @@ const ModularDashboard = ({ statusOfAlerts }) => {
 
             const ChartComponent = chartComponents[chartType] || LineChart;
 
+            if (isChartHidden) return null;
+
             return (
               <MotionBox
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1 }}
               >
-                {!isChartHidden && (
+                {/* {!isChartHidden && ( */}
                   <GridItem
                     key={metric}
                     colSpan={{ base: 1, lg: 1 }}
@@ -413,7 +415,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                       />
                     </ChartWrapper>
                   </GridItem>
-                )}
+                {/* )} */}
               </MotionBox>
             );
           })}
