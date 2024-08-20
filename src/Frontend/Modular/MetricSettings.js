@@ -112,7 +112,7 @@ export const MetricSettings = [
     {
         id:12,
         metric:"imFreezerOneHum",
-        name:"Freezer #1 (Humidity)",
+        name:"Freezer #1 (Hum %)",
         unit:"%",
         color:"red",
         company:"ImpriMed",
@@ -132,7 +132,7 @@ export const MetricSettings = [
     {
         id:14,
         metric:"imFreezerTwoHum",
-        name:"Freezer #2 (Humidity)",
+        name:"Freezer #2 (Hum %)",
         unit:"%",
         color:"red",
         company:"ImpriMed",
@@ -152,7 +152,7 @@ export const MetricSettings = [
     {
         id:16,
         metric:"imFreezerThreeHum",
-        name:"Freezer #3 (Humidity)",
+        name:"Freezer #3 (Hum %)",
         unit:"%",
         color:"red",
         company:"ImpriMed",
@@ -172,7 +172,7 @@ export const MetricSettings = [
     {
         id:18,
         metric:"imFridgeOneHum",
-        name:"Fridge #1 (Humidity)",
+        name:"Fridge #1 (Hum %)",
         unit:"%",
         color:"red",
         company:"ImpriMed",
@@ -192,7 +192,7 @@ export const MetricSettings = [
     {
         id:20,
         metric:"imFridgeTwoHum",
-        name:"Fridge #2 (Humidity)",
+        name:"Fridge #2 (Hum %)",
         unit:"%",
         color:"red",
         company:"ImpriMed",
@@ -213,7 +213,7 @@ export const MetricSettings = [
     {
         id:22,
         metric:"imIncubatorOneHum",
-        name:"Incubator #1 (Humidity)",
+        name:"Incubator #1 (Hum %)",
         unit:"%",
         color:"red",
         company:"ImpriMed",
@@ -233,7 +233,7 @@ export const MetricSettings = [
     {
         id:24,
         metric:"imIncubatorTwoHum",
-        name:"Incubator #2 (Humidity)",
+        name:"Incubator #2 (Hum %)",
         unit:"%",
         color:"red",
         company:"ImpriMed",

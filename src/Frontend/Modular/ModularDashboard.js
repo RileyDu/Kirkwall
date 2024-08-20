@@ -405,6 +405,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                           chartDataForMetric={chartDataForMetric}
                           handleMenuItemClick={handleMenuItemClick}
                           setFilteredChartData={setFilteredChartData}
+                          chartLayout={chartLayout}
                         >
                           <ChartComponent
                             data={dataForChart}
