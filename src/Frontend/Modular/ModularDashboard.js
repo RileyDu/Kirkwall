@@ -38,6 +38,8 @@ import { updateChart } from '../../Backend/Graphql_helper.js';
 
 import { motion, AnimatePresence } from 'framer-motion';
 const MotionBox = motion(Box);
+const MotionGrid = motion(Grid);
+const MotionGridItem = motion(GridItem);
 
 const chartComponents = {
   line: LineChart,
@@ -116,7 +118,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
     setLayoutStable(false);
     setTimeout(() => {
       setLayoutStable(true);
-    }, 0);
+    }, 1);
   };
 
   const spin = keyframes`
@@ -344,79 +346,81 @@ const ModularDashboard = ({ statusOfAlerts }) => {
         </Menu>
       </Flex>
       <AnimatePresence>
-  {layoutStable && (
-    <Grid
-      templateColumns={{
-        base: '1fr',
-        md: `repeat(${chartLayout}, 1fr)`,
-        lg: `repeat(${chartLayout}, 1fr)`,
-      }}
-      gap="4"
-    >
-      {customerMetrics.map(metric => {
-        const settingsOfMetric = metricSettings.find(
-          m => m.metric === metric
-        );
-        const title = settingsOfMetric
-          ? settingsOfMetric.name
-          : 'Metric Title';
-        const dataForMetric = settingsOfMetric?.soloData;
-        const chartDataForMetric = filteredChartData.find(
-          chart => chart.metric === metric
-        );
-        const chartType = chartDataForMetric?.type;
+        {layoutStable && (
+          <MotionGrid
+            layout // Ensure the Grid itself is aware of layout changes
+            templateColumns={{
+              base: '1fr',
+              md: `repeat(${chartLayout}, 1fr)`,
+              lg: `repeat(${chartLayout}, 1fr)`,
+            }}
+            gap="4"
+          >
+            {customerMetrics.map(metric => {
+              const settingsOfMetric = metricSettings.find(
+                m => m.metric === metric
+              );
+              const title = settingsOfMetric
+                ? settingsOfMetric.name
+                : 'Metric Title';
+              const dataForMetric = settingsOfMetric?.soloData;
+              const chartDataForMetric = filteredChartData.find(
+                chart => chart.metric === metric
+              );
+              const chartType = chartDataForMetric?.type;
 
-        const isChartHidden = filteredChartData?.find(
-          chart => chart.metric === metric
-        )?.hidden;
-        const dataForChart = ChartDataMapper({ dataForMetric });
+              const isChartHidden = filteredChartData?.find(
+                chart => chart.metric === metric
+              )?.hidden;
+              const dataForChart = ChartDataMapper({ dataForMetric });
 
-        const ChartComponent = chartComponents[chartType] || LineChart;
+              const ChartComponent = chartComponents[chartType] || LineChart;
 
-        return (
-          <AnimatePresence key={metric}>
-            {!isChartHidden && (
-              <MotionBox
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <GridItem
-                  key={metric}
-                  colSpan={{ base: 1, lg: 1 }}
-                  display="flex"
-                >
-                  <ChartWrapper
-                    key={metric}
-                    title={title}
-                    metric={metric}
-                    flex="1"
-                    display="flex"
-                    flexDirection="column"
-                    weatherData={dataForChart}
-                    handleTimePeriodChange={handleTimePeriodChange}
-                    typeOfChart={chartType}
-                    chartDataForMetric={chartDataForMetric}
-                    handleMenuItemClick={handleMenuItemClick}
-                    setFilteredChartData={setFilteredChartData}
-                  >
-                    <ChartComponent
-                      data={dataForChart}
-                      metric={metric}
-                      style={{ flex: 1 }}
-                    />
-                  </ChartWrapper>
-                </GridItem>
-              </MotionBox>
-            )}
-          </AnimatePresence>
-        );
-      })}
-    </Grid>
-  )}
-</AnimatePresence>
-
+              return (
+                <AnimatePresence key={metric}>
+                  {!isChartHidden && (
+                    <MotionBox
+                      layout // This will ensure smooth position transitions
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto', scale: 1 }}
+                      exit={{ opacity: 0, height: 0, scale: 0.8 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <MotionGridItem
+                        layout
+                        key={metric}
+                        colSpan={{ base: 1, lg: 1 }}
+                        display="flex"
+                      >
+                        <ChartWrapper
+                          key={metric}
+                          title={title}
+                          metric={metric}
+                          flex="1"
+                          display="flex"
+                          flexDirection="column"
+                          weatherData={dataForChart}
+                          handleTimePeriodChange={handleTimePeriodChange}
+                          typeOfChart={chartType}
+                          chartDataForMetric={chartDataForMetric}
+                          handleMenuItemClick={handleMenuItemClick}
+                          setFilteredChartData={setFilteredChartData}
+                        >
+                          <ChartComponent
+                            data={dataForChart}
+                            metric={metric}
+                            style={{ flex: 1 }}
+                          />
+                        </ChartWrapper>
+                      </MotionGridItem>
+                    </MotionBox>
+                  )}
+                </AnimatePresence>
+              );
+            })}
+          </MotionGrid>
+        )}
+      </AnimatePresence>
     </Box>
   );
 };
