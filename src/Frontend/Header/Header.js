@@ -379,9 +379,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           </Box>
         </motion.div>
         <Flex align="center">
-        <Button onClick={() => handleNavigation('/test')} {...buttonStyleProps} mt={4} mr={4}>
-            😶‍🌫️😶‍🌫️😶‍🌫️😶‍🌫️
-            </Button>
         {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && (
           <SummaryButton isSummaryOpen={isSummaryOpen} onSummaryToggle={onSummaryToggle} summaryMetrics={filteredSummaryMetrics} />
         )}
