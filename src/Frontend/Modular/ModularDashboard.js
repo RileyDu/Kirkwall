@@ -50,6 +50,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
   const [customerName, setCustomerName] = useState('');
   const [metricSettings, setMetricSettings] = useState([]);
   const [filteredChartData, setFilteredChartData] = useState([]);
+  
 
   const [layoutStable, setLayoutStable] = useState(true);
   const [chartLayoutIcon, setChartLayoutIcon] = useState(TbColumns2);
@@ -148,7 +149,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
         chart.metric === metric ? { ...chart, hidden: !chart.hidden } : chart
       )
     );
-    console.log('Filtered chart data after hidden action:', filteredChartData);
+    onOpen();
   };
   
 
@@ -189,7 +190,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
         <Heading size="lg" mb="4">
           {customerName} Dashboard
         </Heading>
-        <Menu>
+        <Menu isOpen={isOpen}>
           <motion.div
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -318,7 +319,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                         </Box>
                       </Box>
                       <Checkbox
-                        // isChecked={visibleCharts.grandFarm.includes(chart)} // Change to dynamic, need to update local state & DB
+                        isChecked={filteredChartData?.find(chart => chart.metric === metric)?.hidden}
                         onChange={() => handleMenuItemClick(metric)}
                         colorScheme="green"
                       />
