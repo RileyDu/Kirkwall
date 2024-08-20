@@ -366,7 +366,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
               ? settingsOfMetric.name
               : 'Metric Title';
             const dataForMetric = settingsOfMetric?.soloData;
-            const chartDataForMetric = chartData.find(
+            const chartDataForMetric = filteredChartData.find(
               chart => chart.metric === metric
             );
             const chartType = chartDataForMetric?.type;
@@ -406,7 +406,8 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                       handleTimePeriodChange={handleTimePeriodChange}
                       typeOfChart={chartType}
                       chartDataForMetric={chartDataForMetric}
-                      // onChartChange={}
+                      handleMenuItemClick={handleMenuItemClick}
+                      setFilteredChartData={setFilteredChartData}
                     >
                       <ChartComponent
                         data={dataForChart}

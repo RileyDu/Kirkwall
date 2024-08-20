@@ -53,6 +53,8 @@ const ChartWrapper = ({
   chartLayout,
   typeOfChart,
   chartDataForMetric,
+  handleMenuItemClick,
+  setFilteredChartData
 }) => {
   const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
   const [loading, setLoading] = useState(false);
@@ -80,7 +82,7 @@ const ChartWrapper = ({
     setChartType(newChartType);
   
     // Update chartData with the new chart type
-    setChartData(prevData =>
+    setFilteredChartData(prevData =>
       prevData.map(chart =>
         chart.id === chartId ? { ...chart, type: newChartType } : chart
       )
@@ -643,7 +645,7 @@ const ChartWrapper = ({
                   size={iconSize}
                   bg={'brand.400'}
                   _hover={{ bg: 'brand.800' }}
-                  onClick={() => toggleChartVisibility(section, chart)}
+                  onClick={() => handleMenuItemClick(metric)}
                   border={'2px solid #fd9801'}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
