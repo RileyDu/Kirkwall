@@ -46,6 +46,8 @@ const ChartExpandModal = ({
   title,
   metric,
   onChartChange,
+  chartID,
+  // chartType,
   handleTimePeriodChange,
   weatherData,
   currentTimePeriod,
@@ -355,8 +357,7 @@ const ChartExpandModal = ({
               <MotionButton
                 variant={'solid'}
                 onClick={() => {
-                  setChartType('line');
-                  onChartChange('line');
+                  onChartChange(chartID,typeOfChart);
                 }}
                 leftIcon={<FaChartLine />}
                 size={['sm', 'md']}
@@ -371,8 +372,7 @@ const ChartExpandModal = ({
               <MotionButton
                 variant={'solid'}
                 onClick={() => {
-                  setChartType('bar');
-                  onChartChange('bar');
+                  onChartChange(chartID,typeOfChart);
                 }}
                 leftIcon={<FaChartBar />}
                 mx={1}

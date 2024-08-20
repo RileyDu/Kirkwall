@@ -43,7 +43,6 @@ import { updateChart } from '../../Backend/Graphql_helper.js';
 const ChartWrapper = ({
   title,
   children,
-  onChartChange,
   metric,
   weatherData,
   handleTimePeriodChange,
@@ -672,7 +671,9 @@ const ChartWrapper = ({
         children={children}
         weatherData={weatherData}
         metric={metric}
-        onChartChange={onChartChange}
+        onChartChange={handleChartTypeChange}
+        chartID={chartID}
+        // chartType={chartType}
         // adjustTimePeriod={adjustTimePeriod}
         handleTimePeriodChange={handleTimePeriodChange}
         currentTimePeriod={currentTimePeriod}
