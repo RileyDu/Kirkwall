@@ -85,9 +85,6 @@ const ChartWrapper = ({
         chart.id === chartId ? { ...chart, type: newChartType } : chart
       )
     );
-  
-    // Call handleChartEdit after chart data has been updated
-    // handleChartEdit();
   };
 
   const isUserAction = useRef(false);
