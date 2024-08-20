@@ -817,6 +817,7 @@ export const WeatherDataProvider = ({ children }) => {
         alertsThreshold,
         fetchAlertsThreshold,
         chartData,
+        setChartData,
         impriFreezerOneTempData,
         impriFreezerOneHumData,
         impriFreezerTwoTempData,
