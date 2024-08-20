@@ -30,7 +30,7 @@ import WindSensors from './Frontend/Sensors/WindSensors/WindSensor.js';
 import MobileMenu from './Frontend/MobileMenu/MobileMenu.js';
 import customTheme from './Frontend/Styles/theme.js';
 import { WeatherDataProvider } from './Frontend/WeatherDataContext.js';
-import { FaChessRook, FaQuestion } from 'react-icons/fa/index.esm.js';
+import { FaChessRook, FaQuestion, FaEllipsisV } from 'react-icons/fa/index.esm.js';
 import { keyframes } from '@emotion/react';
 import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors.js';
 import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySensors.js';
@@ -46,6 +46,7 @@ import WatchDogProtectDashboard from './Frontend/Clients/WatchDogProtect/WatchDo
 import WatchdogProtectMap from './Frontend/Maps/WatchdogMap.js';
 import { motion } from 'framer-motion';
 import HelpModal from './Frontend/Modals/HelpModal.js';
+import OptionsModal from './Frontend/Modals/OptionsModal.js';
 
 const Layout = ({
   children,
@@ -98,7 +99,7 @@ const Layout = ({
       </Box>
 
       <MotionIconButton
-        icon={<FaQuestion />}
+        icon={<FaEllipsisV />}
         variant="outline"
         color="#212121"
         height={10}
@@ -116,6 +117,8 @@ const Layout = ({
         zIndex="1000"
       />
 
+        
+      
       <HelpModal isOpen={isHelpModalOpen} onClose={handleCloseHelpModal} />
     </Flex>
   );

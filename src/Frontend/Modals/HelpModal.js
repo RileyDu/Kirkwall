@@ -93,7 +93,7 @@ const HelpModal = ({
   return (
       <Modal isOpen={isOpen} onClose={handleClose}>
           <ModalOverlay />
-          <ModalContent sx={{ border: '2px solid black', bg: 'white' }}>
+          <ModalContent sx={{ border: '2px solid black', bg: colorMode === 'light' ? 'whitesmoke' : 'gray.700' }}>
               <ModalHeader bg={'gray.800'} color={'white'}>
                   Contact Us
               </ModalHeader>
@@ -101,7 +101,7 @@ const HelpModal = ({
               <ModalBody>
 
                   <FormControl>
-                      <FormLabel color={colorMode === "light" ? '#212121' : "black"}>Summary</FormLabel>
+                      <FormLabel >Summary</FormLabel>
                       <Input
                           type="text"
                           value={localTitle}
@@ -113,7 +113,7 @@ const HelpModal = ({
                   </FormControl>
 
                   <FormControl mt={4}>
-                      <FormLabel color={colorMode === "light" ? '#212121' : "black"}>
+                      <FormLabel >
                           What do you need help with? Provide as much detail as possible
                       </FormLabel>
                       <Textarea
@@ -127,7 +127,7 @@ const HelpModal = ({
                   </FormControl>
 
                   <FormControl mt={4}>
-                      <FormLabel color={colorMode === "light" ? '#212121' : "black"}>
+                      <FormLabel >
                           Attach any relevant files
                       </FormLabel>
                       <Box
@@ -166,7 +166,7 @@ const HelpModal = ({
                   </FormControl>
 
                   <FormControl mt={4}>
-                      <FormLabel color={colorMode === "light" ? '#212121' : "black"}>
+                      <FormLabel>
                           Your contact e-mail
                       </FormLabel>
                       <Input
