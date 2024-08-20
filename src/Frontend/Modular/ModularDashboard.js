@@ -26,8 +26,11 @@ import ChartWrapper from '../Charts/ChartWrapper.js';
 import { LineChart, BarChart } from '../Charts/Charts.js';
 import ChartDataMapper from './ChartDataMapper.js';
 import { TbColumns1, TbColumns2, TbColumns3 } from 'react-icons/tb';
+import { FaChessRook } from 'react-icons/fa';
 import { FaChevronDown } from 'react-icons/fa';
 import { useWeatherData } from '../WeatherDataContext.js';
+import { keyframes } from '@emotion/react';
+
 
 import { motion } from 'framer-motion';
 const MotionBox = motion(Box);
@@ -53,9 +56,11 @@ const ModularDashboard = ({ statusOfAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
 
-  const { chartData, handleTimePeriodChange } = useWeatherData();
+  const { chartData, handleTimePeriodChange, loading } = useWeatherData();
 
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
+  const getLogoColor = () => (colorMode === 'light' ? 'black' : 'white');
+
 
   useEffect(() => {
     if (currentUser) {
@@ -94,6 +99,24 @@ const ModularDashboard = ({ statusOfAlerts }) => {
       setLayoutStable(true);
     }, 0);
   };
+
+  const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+  if (loading) {
+    return (
+      <Flex justify="center" align="center" height="100%">
+        <Box
+          as={FaChessRook}
+          animation={`${spin} infinite 2s linear`}
+          fontSize="6xl"
+          color={getLogoColor()}
+        />
+      </Flex>
+    );
+  }
 
   return (
     <Box
