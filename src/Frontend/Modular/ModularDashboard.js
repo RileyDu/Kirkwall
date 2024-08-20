@@ -21,6 +21,10 @@ import {
   MenuButton,
   Tooltip,
   useBreakpointValue,
+  MenuItem,
+  MenuList,
+  Checkbox,
+  useDisclosure,
 } from '@chakra-ui/react';
 import ChartWrapper from '../Charts/ChartWrapper.js';
 import { LineChart, BarChart } from '../Charts/Charts.js';
@@ -30,7 +34,7 @@ import { FaChessRook } from 'react-icons/fa';
 import { FaChevronDown } from 'react-icons/fa';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { keyframes } from '@emotion/react';
-
+import { updateChart } from '../../Backend/Graphql_helper.js';
 
 import { motion } from 'framer-motion';
 const MotionBox = motion(Box);
@@ -45,23 +49,35 @@ const ModularDashboard = ({ statusOfAlerts }) => {
   const [customerMetrics, setCustomerMetrics] = useState([]);
   const [customerName, setCustomerName] = useState('');
   const [metricSettings, setMetricSettings] = useState([]);
+  const [filteredChartData, setFilteredChartData] = useState([]);
 
   const [layoutStable, setLayoutStable] = useState(true);
   const [chartLayoutIcon, setChartLayoutIcon] = useState(TbColumns2);
   const [chartLayout, setChartLayout] = useState(2);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
   const { currentUser } = useAuth();
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
-
   const { chartData, handleTimePeriodChange, loading } = useWeatherData();
   console.log('Chart data:', chartData);
 
+  const sortChartDataPerCustomer = (chartData) => {
+    if (metricSettings.length > 0) {
+      const filteredData = chartData.filter(chart => 
+        metricSettings.some(metric => metric.metric === chart.metric)
+      );
+      setFilteredChartData(filteredData);
+    }
+  };
+
+  console.log('Filtered chart data:', filteredChartData);
+  
+
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
   const getLogoColor = () => (colorMode === 'light' ? 'black' : 'white');
-
 
   useEffect(() => {
     if (currentUser) {
@@ -86,6 +102,13 @@ const ModularDashboard = ({ statusOfAlerts }) => {
     }
   }, [customerMetrics]);
 
+  useEffect(() => {
+    if (chartData && metricSettings.length > 0) {
+      sortChartDataPerCustomer(chartData);
+    }
+  }, [chartData, metricSettings]);
+
+
   const handleLayoutChange = layout => {
     if (layout === chartLayout) return;
 
@@ -100,8 +123,6 @@ const ModularDashboard = ({ statusOfAlerts }) => {
       setLayoutStable(true);
     }, 0);
   };
-
-
 
   const spin = keyframes`
   0% { transform: rotate(0deg); }
@@ -120,6 +141,37 @@ const ModularDashboard = ({ statusOfAlerts }) => {
       </Flex>
     );
   }
+
+  const handleMenuItemClick = (metric) => {
+    setFilteredChartData(prevData =>
+      prevData.map(chart => 
+        chart.metric === metric ? { ...chart, hidden: !chart.hidden } : chart
+      )
+    );
+    console.log('Filtered chart data after hidden action:', filteredChartData);
+  };
+  
+
+  // const editChart = async (id, metric, timeperiod, type, location, hidden) => {
+  //   try {
+  //     const result = await updateChart(id, metric, timeperiod, type, location, hidden);
+  //     console.log('Updated chart:', result);
+  //   }
+  //   catch (error) {
+  //     console.error('Error updating chart:', error);
+  //   }
+  // }
+
+  // const handleChartEdit = () => {
+  //   const id = chartDataForMetric?.id;
+  //   const metric = chartDataForMetric?.metric;
+  //   const timeperiod = chartDataForMetric?.timeperiod;
+  //   const type = chartType;
+  //   const location = newTitle || chartDataForMetric?.location;
+  //   const hidden = chartDataForMetric?.hidden;
+  //   editChart(id, metric, timeperiod, type, location, hidden);
+  // }
+
 
   return (
     <Box
@@ -228,18 +280,52 @@ const ModularDashboard = ({ statusOfAlerts }) => {
               </Popover>
             )}
             <Tooltip label="Toggle Charts">
-              <MenuButton
-                as={Button}
-                bg="brand.400"
-                color="black"
-                _hover={{ bg: '#d7a247' }}
-                border={'2px solid #fd9801'}
-                size={isLargerThan768 ? 'md' : 'sm'}
-                ml={isLargerThan768 ? '2' : '4'}
+                <MenuButton
+                  as={Button}
+                  bg="brand.400"
+                  color="black"
+                  _hover={{ bg: '#d7a247' }}
+                  border={'2px solid #fd9801'}
+                  onClick={isOpen ? onClose : onOpen}
+                  size={isLargerThan768 ? 'md' : 'sm'}
+                  ml={isLargerThan768 ? '2' : '4'}
+                >
+                  <FaChevronDown />
+                </MenuButton>
+              </Tooltip>
+              <MenuList
+                placement="top"
+                bg={colorMode === 'light' ? '#212121' : 'black'}
+                border={'2px'}
+                borderColor={colorMode === 'light' ? '#212121' : 'black'}
               >
-                <FaChevronDown />
-              </MenuButton>
-            </Tooltip>
+                {customerMetrics.map(metric => (
+                  <MenuItem
+                    key={metric}
+                    onClick={() => handleMenuItemClick(metric)}
+                    bg="#212121"
+                    color="white"
+                    border={'1px solid #212121'}
+                  >
+                    <Flex
+                      alignItems="center"
+                      justifyContent="space-between"
+                      w="100%"
+                    >
+                      <Box display="flex" alignItems="center">
+                        <Box ml="2">
+                          {metric.charAt(0).toUpperCase() + metric.slice(1)}
+                        </Box>
+                      </Box>
+                      <Checkbox
+                        // isChecked={visibleCharts.grandFarm.includes(chart)} // Change to dynamic, need to update local state & DB
+                        onChange={() => handleMenuItemClick(metric)}
+                        colorScheme="green"
+                      />
+                    </Flex>
+                  </MenuItem>
+                ))}
+              </MenuList>
           </motion.div>
         </Menu>
       </Flex>
@@ -266,10 +352,13 @@ const ModularDashboard = ({ statusOfAlerts }) => {
             );
             const chartType = chartDataForMetric?.type;
 
+            const isChartHidden = filteredChartData?.find(
+              chart => chart.metric === metric
+            )?.hidden;
             const dataForChart = ChartDataMapper({ dataForMetric });
 
             // console.log('chartDataForMetric', chartDataForMetric);
-            
+
             const ChartComponent = chartComponents[chartType] || LineChart;
 
             return (
@@ -278,6 +367,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1 }}
               >
+                {!isChartHidden && (
                 <GridItem
                   key={metric}
                   colSpan={{ base: 1, lg: 1 }}
@@ -304,6 +394,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                     />
                   </ChartWrapper>
                 </GridItem>
+                )}
               </MotionBox>
             );
           })}
