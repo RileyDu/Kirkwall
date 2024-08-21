@@ -6,6 +6,7 @@ import {
   useMediaQuery,
   Flex,
   useColorMode,
+  IconButton
 } from '@chakra-ui/react';
 import {
   BrowserRouter as Router,
@@ -29,7 +30,7 @@ import WindSensors from './Frontend/Sensors/WindSensors/WindSensor.js';
 import MobileMenu from './Frontend/MobileMenu/MobileMenu.js';
 import customTheme from './Frontend/Styles/theme.js';
 import { WeatherDataProvider } from './Frontend/WeatherDataContext.js';
-import { FaChessRook } from 'react-icons/fa';
+import { FaChessRook, FaQuestion, FaEllipsisV } from 'react-icons/fa/index.esm.js';
 import { keyframes } from '@emotion/react';
 import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors.js';
 import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySensors.js';
@@ -43,6 +44,9 @@ import RJDashboard from './Frontend/Clients/RjEnergy/RjDashboard.js';
 import RJMap from './Frontend/Maps/RJMap.js';
 import WatchDogProtectDashboard from './Frontend/Clients/WatchDogProtect/WatchDogProtectDashboard.js';
 import WatchdogProtectMap from './Frontend/Maps/WatchdogMap.js';
+import { motion } from 'framer-motion';
+import HelpModal from './Frontend/Modals/HelpModal.js';
+import OptionsModal from './Frontend/Modals/OptionsModal.js';
 import ModularDashboard from './Frontend/Modular/ModularDashboard.js';
 
 const Layout = ({
@@ -63,6 +67,13 @@ const Layout = ({
 
   const { colorMode } = useColorMode();
 
+  const MotionIconButton = motion(IconButton);
+
+  const [isHelpModalOpen, setHelpModalOpen] = useState(false);
+
+  const handleOpenHelpModal = () => setHelpModalOpen(true);
+  const handleCloseHelpModal = () => setHelpModalOpen(false);
+
   return (
     <Flex
       minH="100vh"
@@ -78,6 +89,7 @@ const Layout = ({
           statusOfAlerts={statusOfAlerts}
         />
       )}
+
       <Box
         flex="1"
         overflowY="auto"
@@ -92,12 +104,34 @@ const Layout = ({
       >
         {children}
       </Box>
+
+      <MotionIconButton
+        icon={<FaEllipsisV />}
+        variant="outline"
+        color="#212121"
+        height={10}
+        width={10}
+        bg={'brand.400'}
+        _hover={{ bg: 'brand.800' }}
+        border={'2px solid #fd9801'}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        ml={2}
+        onClick={handleOpenHelpModal}
+        position="fixed"
+        bottom="20px"
+        left="20px"
+        zIndex="1000"
+      />
+
+        
+      
+      <HelpModal isOpen={isHelpModalOpen} onClose={handleCloseHelpModal} />
     </Flex>
   );
 };
 
 const MainApp = () => {
-  // const [weatherData, setWeatherData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isMinimized, setIsMinimized] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -115,6 +149,7 @@ const MainApp = () => {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 `;
+  
   if (loading) {
     return (
       <Flex justify="center" align="center" height="100vh" width="100vw">

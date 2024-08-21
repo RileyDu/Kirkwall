@@ -41,11 +41,15 @@ import {
   FaWater,
   FaLeaf,
   FaCloudRain,
+  FaQuestion
 } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { handleChartChange } from '../Charts/ChartUtils.js';
 import { motion } from 'framer-motion';
+import HelpModal from '../Modals/HelpModal.js';
+import { Checkbox } from '@chakra-ui/react';
+
 
 const MotionBox = motion(Box);
 const MotionTabPanel = motion(TabPanel);
@@ -97,6 +101,10 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const MotionIconButton = motion(IconButton);
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
+  const [isHelpModalOpen, setHelpModalOpen] = useState(false);
+
+  const handleOpenHelpModal = () => setHelpModalOpen(true);
+  const handleCloseHelpModal = () => setHelpModalOpen(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const updateChartTypes = chartData => {
@@ -266,6 +274,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                 Main Dashboard
               </Heading>
               <Menu isOpen={isOpen}>
+
                 <motion.div
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -914,6 +923,8 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
           </MotionTabPanel>
         </TabPanels>
       </Tabs>
+
+
       {/* <VoiceControl onCommand={handleVoiceCommand} />
       {isModalOpen && (
         <ChartExpandModal
@@ -951,8 +962,26 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
           setCurrentTimePeriod={setCurrentTimePeriod}
           sensorMap="grandfarm"
         />
-      )} */}
-    </Box>
+      )} */}  
+        {/* <MotionIconButton
+          icon={<FaQuestion />}
+          variant="outline"
+          color="#212121"
+          height={10}
+          width={10}
+          bg={'brand.400'}
+          _hover={{ bg: 'brand.800' }}
+          border={'2px solid #fd9801'}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          ml={2}
+          onClick={setHelpModalOpen}
+        />
+
+        <HelpModal isOpen={isHelpModalOpen} onClose={handleCloseHelpModal} /> */}
+
+</Box>
+
   );
 };
 

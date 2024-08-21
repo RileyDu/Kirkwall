@@ -64,6 +64,31 @@ const sendEmailAlert = async (toEmails, subject, alertMessage) => {
   }
 };
 
+const sendEnquiryAlert = async (fromEmail, subject, description, attachments) => {
+  const msg = {
+    to: 'aditya@kirkwall.io',
+    from: fromEmail,
+    subject: subject,
+    text: description,
+    attachments: attachments.map(file => ({
+      content: file.content,
+      filename: file.name,
+      type: file.type,
+      disposition: 'attachment',
+    })),
+  };
+
+  try {
+    console.log(`Sending Email from ${fromEmail} to aditya@kirkwall.io: ${subject}`);
+    await sgMail.send(msg);
+    console.log('Email sent successfully');
+  } catch (error) {
+    console.error('Error sending Email:', error);
+  }
+};
+
+
+
 // Send an alert to the database for the metric whose threshold was exceeded
 // This only triggers when a phone/email alert is sent successfully
 // The alert message is stored in the database for future reference & used in the frontend
