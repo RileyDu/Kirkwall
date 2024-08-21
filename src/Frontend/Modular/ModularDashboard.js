@@ -331,9 +331,9 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                     </Box>
                     <Checkbox
                       isChecked={
-                        filteredChartData?.find(
+                        !(filteredChartData?.find(
                           chart => chart.metric === metric
-                        )?.hidden
+                        )?.hidden)
                       }
                       onChange={() => handleMenuItemClick(metric)}
                       colorScheme="green"
