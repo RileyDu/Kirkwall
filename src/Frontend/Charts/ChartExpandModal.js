@@ -23,14 +23,10 @@ import {
   ModalFooter,
   HStack,
   IconButton,
+  Switch,
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard.js';
-import {
-  FaChartLine,
-  FaChartBar,
-  FaBell,
-  FaTrash,
-} from 'react-icons/fa';
+import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts.js';
 import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
@@ -357,7 +353,7 @@ const ChartExpandModal = ({
               <MotionButton
                 variant={'solid'}
                 onClick={() => {
-                  onChartChange(chartID,typeOfChart);
+                  onChartChange(chartID, typeOfChart);
                 }}
                 leftIcon={<FaChartLine />}
                 size={['sm', 'md']}
@@ -372,7 +368,7 @@ const ChartExpandModal = ({
               <MotionButton
                 variant={'solid'}
                 onClick={() => {
-                  onChartChange(chartID,typeOfChart);
+                  onChartChange(chartID, typeOfChart);
                 }}
                 leftIcon={<FaChartBar />}
                 mx={1}
@@ -426,8 +422,8 @@ const ChartExpandModal = ({
                     >
                       Thresholds
                     </Text>
-                    <Flex width={'100%'}>
-                      <HStack width={'100%'} gap={6} justify={'flex-start'}>
+                    <Flex width={'100%'} justify={'space-between'} alignItems={'center'}>
+                      <HStack gap={6} justify={'flex-start'} width={'75%'}>
                         {highThreshold ? (
                           <Text color="white" fontSize={['xs', 'md']}>
                             <strong>High:</strong> {highThreshold}
@@ -450,7 +446,26 @@ const ChartExpandModal = ({
                           </Text>
                         ) : null}
                       </HStack>
+                      <FormControl
+                        display="flex"
+                        alignItems="center"
+                        justify={'flex-end'}
+                        width={'25%'}
+                        ml={24}
+                      >
+                        <FormLabel htmlFor="threshold-alerts" mb="0">
+                          PAUSE THRESHOLDS
+                        </FormLabel>
+                        <Switch
+                          id="threshold-alerts"
+                          mb="1"
+                          // isChecked={threshKill}
+                          // onChange={handleThreshKillToggle}
+                          colorScheme={'orange'}
+                        />
+                      </FormControl>
                     </Flex>
+
                     <Box
                       mt={2}
                       p={2}

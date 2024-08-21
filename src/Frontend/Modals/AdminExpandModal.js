@@ -581,7 +581,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                     <Box>
                       <FormControl display="flex" alignItems="center">
                         <FormLabel htmlFor="threshold-alerts" mb="1" ml={1}>
-                          PAUSE THRESHOLDS
+                          PAUSE ALL THRESHOLDS
                         </FormLabel>
                         <Switch
                           id="threshold-alerts"
