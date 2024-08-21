@@ -32,6 +32,7 @@ import {
   FaDog,
   FaGlobe,
   FaSnowflake,
+  FaBookOpen,
 } from 'react-icons/fa';
 import { GiGroundSprout } from 'react-icons/gi';
 import { FiAlertTriangle } from 'react-icons/fi';
@@ -59,23 +60,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   const [customerRole, setCustomerRole] = useState('');
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    weatherData,
-    loading,
-    error,
-    tempData,
-    humidityData,
-    windData,
-    rainfallData,
-    soilMoistureData,
-    leafWetnessData,
-    watchdogTempData,
-    watchdogHumData,
-    watchdogData,
-    rivercityTempData,
-    rivercityHumData,
-    rivercityData
-  } = useWeatherData();
+
 
   const { currentUser } = useAuth();
   const user = currentUser;
@@ -88,190 +73,33 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
       { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
       { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
       { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
+      { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/grandfarm/map' }
   
     ],
     'jerrycromarty@imprimedicine.com': [
-      // { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+      { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' }
     ],
     'russell@rjenergysolutions.com': [
       { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+      { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' }
     ],
     'trey@watchdogprotect.com': [
     { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
+    { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/watchdogprotect/map' }
   ],
     'default': [
-      // { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
-      // { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
-      // { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
-      // { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
-      // { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
       { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
       { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+      { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' }
     ]
   };
 
-  const userConfig = {
-    'pmo@grandfarm.com': ['Average Temp (°F)', 'Average Humidity (%)', 'Average Wind Speed (mph)', 'Average Soil Moisture (centibars)', 'Total Rainfall (inches)', 'Average Leaf Wetness (0-15)'],
-    'jerrycromarty@imprimedicine.com': ['Rivercity Temperature (°F)', 'Rivercity Humidity (%)'],
-    'russell@rjenergysolutions.com': ['Rivercity Temperature (°F)', 'Rivercity Humidity (%)'],
-    'trey@watchdogprotect.com': ['Garage Average Temp (°F)', 'Garage Humidity (%)'],
-    'test@kirkwall.io': ['Garage Average Temp (°F)', 'Garage Humidity (%)', 'Rivercity Temperature (°F)', 'Rivercity Humidity (%)']
-  };
 
-  const summaryMetrics = [
-    {
-      label: 'Average Temp (°F)',
-      value: tempData
-        ? (
-            tempData.reduce((sum, data) => sum + data.temperature, 0) /
-            tempData.length
-          ).toFixed(2)
-        : weatherData
-        ? (
-            weatherData.reduce((sum, data) => sum + data.temperature, 0) /
-            weatherData.length
-          ).toFixed(2)
-        : 'N/A',
-    },
-    {
-      label: 'Average Humidity (%)',
-      value: humidityData
-        ? (
-            humidityData.reduce((sum, data) => sum + data.percent_humidity, 0) /
-            humidityData.length
-          ).toFixed(2)
-        : weatherData
-        ? (
-            weatherData.reduce((sum, data) => sum + data.percent_humidity, 0) /
-            weatherData.length
-          ).toFixed(2)
-        : 'N/A',
-    },
-    {
-      label: 'Average Wind Speed (mph)',
-      value: windData
-        ? (
-            windData.reduce((sum, data) => sum + data.wind_speed, 0) /
-            windData.length
-          ).toFixed(2)
-        : weatherData
-        ? (
-            weatherData.reduce((sum, data) => sum + data.wind_speed, 0) /
-            weatherData.length
-          ).toFixed(2)
-        : 'N/A',
-    },
-    {
-      label: 'Average Soil Moisture (centibars)',
-      value: soilMoistureData
-        ? (
-            soilMoistureData
-              .reduce((sum, data) => sum + data.soil_moisture, 0) /
-            soilMoistureData.length
-          ).toFixed(2)
-        : weatherData
-        ? (
-            weatherData
-              .reduce((sum, data) => sum + data.soil_moisture, 0) /
-            weatherData.length
-          ).toFixed(2)
-        : 'N/A',
-    },
-    {
-      label: 'Total Rainfall (inches)',
-      value: rainfallData
-        ? rainfallData
-            .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
-            .toFixed(2)
-        : weatherData
-        ? weatherData
-            .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
-            .toFixed(2)
-        : 'N/A',
-    },
-    {
-      label: 'Average Leaf Wetness (0-15)',
-      value: leafWetnessData
-        ? (
-            leafWetnessData
-              .reduce((sum, data) => sum + data.leaf_wetness, 0) /
-            leafWetnessData.length
-          ).toFixed(2)
-        : weatherData
-        ? (
-            weatherData
-              .reduce((sum, data) => sum + data.leaf_wetness, 0) /
-            weatherData.length
-          ).toFixed(2)
-        : 'N/A',
-    },
-    {
-      label: 'Garage Average Temp (°F)',
-      value: watchdogTempData
-        ? (
-          watchdogTempData.reduce((sum, data) => sum + data.temp, 0) /
-          watchdogTempData.length
-          ).toFixed(2)
-        : watchdogData
-        ? (
-          watchdogData.reduce((sum, data) => sum + data.temp, 0) /
-          watchdogData.length
-          ).toFixed(2)
-        : 'N/A',
-    },
-    {
-      label: 'Garage Humidity (%)',
-      value: watchdogHumData
-        ? (
-          watchdogHumData.reduce((sum, data) => sum + data.hum, 0) /
-          watchdogHumData.length
-          ).toFixed(2)
-        : watchdogData
-        ? (
-          watchdogData.reduce((sum, data) => sum + data.hum, 0) /
-          watchdogData.length
-          ).toFixed(2)
-        : 'N/A',
-    },
-    {
-      label: 'Rivercity Temperature (°F)',
-      value: rivercityTempData
-        ? (
-            rivercityTempData.reduce((sum, data) => sum + data.rctemp, 0) /
-            rivercityTempData.length
-          ).toFixed(2)
-        : rivercityData
-        ? (
-          rivercityData.reduce((sum, data) => sum + data.rctemp, 0) /
-          rivercityData.length
-          ).toFixed(2)
-        : 'N/A',
-    },
-    {
-      label: 'Rivercity Humidity (%)',
-      value: rivercityHumData
-        ? (
-            rivercityHumData.reduce((sum, data) => sum + data.humidity, 0) /
-            rivercityHumData.length
-          ).toFixed(2)
-        : (rivercityData && rivercityData.length)
-        ? (
-            rivercityData.reduce((sum, data) => sum + data.humidity, 0) /
-            rivercityData.length
-          ).toFixed(2)
-        : 'N/A',
-    }
-  ];
-
-  const filteredSummaryMetrics = summaryMetrics.filter(metric => {
-    const userMetrics = userConfig[userEmail];
-    return userMetrics && userMetrics.includes(metric.label);
-  });
 
   // console.log(filteredSummaryMetrics)
 
@@ -379,9 +207,9 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           </Box>
         </motion.div>
         <Flex align="center">
-        {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && (
+        {/* {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && (
           <SummaryButton isSummaryOpen={isSummaryOpen} onSummaryToggle={onSummaryToggle} summaryMetrics={filteredSummaryMetrics} />
-        )}
+        )} */}
           {isLargerThan768 && (
             <motion.div {...motionProps}>
               <Tooltip label="Toggle Weather Alerts">

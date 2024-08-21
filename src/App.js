@@ -43,6 +43,7 @@ import { motion } from 'framer-motion';
 import HelpModal from './Frontend/Modals/HelpModal.js';
 import OptionsModal from './Frontend/Modals/OptionsModal.js';
 import ModularDashboard from './Frontend/Modular/ModularDashboard.js';
+import ModularSummary from './Frontend/Modular/ModularSummary.js';
 
 const Layout = ({
   children,
@@ -189,6 +190,14 @@ const MainApp = () => {
                 <ModularDashboard statusOfAlerts={showAlerts} />
               </ProtectedRoute>
             }
+          />
+          <Route
+            path="/summary"
+            element={
+              <ProtectedRoute>
+                <ModularSummary statusOfAlerts={showAlerts} />
+              </ProtectedRoute>
+            } 
           />
           <Route
             path="/TempSensors"
