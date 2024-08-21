@@ -24,6 +24,7 @@ import {
   HStack,
   IconButton,
   Switch,
+  Tooltip,
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard.js';
 import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
@@ -453,16 +454,18 @@ const ChartExpandModal = ({
                         width={'25%'}
                         ml={24}
                       >
+                        <Tooltip label={`Toggle Threshold Alerts For ${title}`}>
                         <FormLabel htmlFor="threshold-alerts" mb="0">
                           PAUSE THRESHOLDS
                         </FormLabel>
+                        </Tooltip>
                         <Switch
                           id="threshold-alerts"
                           mb="1"
                           // isChecked={threshKill}
                           // onChange={handleThreshKillToggle}
                           colorScheme={'orange'}
-                        />
+                          />
                       </FormControl>
                     </Flex>
 
