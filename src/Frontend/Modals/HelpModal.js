@@ -56,7 +56,7 @@ const HelpModal = ({
             formData.append('attachments', file);
         });
 
-        const response = await axios.post('http://localhost:3001/send-enquiry', formData, {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/send-enquiry`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },

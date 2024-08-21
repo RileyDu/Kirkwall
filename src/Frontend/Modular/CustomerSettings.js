@@ -24,7 +24,7 @@ export const CustomerSettings = [
   {
     id: 3,
     name: 'Watchdog Protect',
-    emails: 'trey@watchdogprotect.com',
+    email: 'trey@watchdogprotect.com',
     phones: '',
     metric: ['temp', 'hum'],
   },

@@ -99,12 +99,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     ]
   };
 
-
-
-  // console.log(filteredSummaryMetrics)
-
   const MotionIconButton = motion(IconButton);
-  const MotionButton = motion(Button);
 
   const motionProps = {
     initial: { opacity: 0, x: '-100%' },
