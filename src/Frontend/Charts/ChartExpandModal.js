@@ -447,7 +447,7 @@ const ChartExpandModal = ({
                           </Text>
                         ) : null}
                       </HStack>
-                      <FormControl
+                      {/* <FormControl
                         display="flex"
                         alignItems="center"
                         justify={'flex-end'}
@@ -466,7 +466,7 @@ const ChartExpandModal = ({
                           // onChange={handleThreshKillToggle}
                           colorScheme={'orange'}
                           />
-                      </FormControl>
+                      </FormControl> */}
                     </Flex>
                     <Box
                       mt={2}
