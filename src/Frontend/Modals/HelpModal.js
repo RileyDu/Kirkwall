@@ -48,7 +48,7 @@ const HelpModal = ({
   const handleFormSubmit = async () => {
     try {
         const formData = new FormData();
-        formData.append('fromEmail', currentUser.email);
+        formData.append('fromEmail', currentUser?.email);
         formData.append('title', localTitle);
         formData.append('description', localDescription);
 
@@ -171,7 +171,7 @@ const HelpModal = ({
                       </FormLabel>
                       <Input
                           type="email"
-                          value={currentUser.email} // Linked to email state
+                          value={currentUser?.email} // Linked to email state
                           bg={'white'}
                           border={'2px solid #fd9801'}
                           color={'#212121'}

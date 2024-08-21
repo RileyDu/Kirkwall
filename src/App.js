@@ -100,6 +100,7 @@ const Layout = ({
         {children}
       </Box>
 
+      {shouldShowSidebar && (
       <MotionIconButton
         icon={<FaEllipsisV />}
         variant="outline"
@@ -118,7 +119,7 @@ const Layout = ({
         left="20px"
         zIndex="1000"
       />
-
+      )}
         
       
       <HelpModal isOpen={isHelpModalOpen} onClose={handleCloseHelpModal} />
