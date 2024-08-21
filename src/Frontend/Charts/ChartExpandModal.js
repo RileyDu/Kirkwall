@@ -23,32 +23,35 @@ import {
   ModalFooter,
   HStack,
   IconButton,
+  Switch,
+  Tooltip,
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard.js';
-import {
-  FaChartLine,
-  FaChartBar,
-  FaBell,
-  FaTrash,
-} from 'react-icons/fa/index.esm.js';
+import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts.js';
 import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 
+// This is the modal that appears when a chart is expanded
+// It is a child of the ChartWrapper component
+// It contains the chart, a mini dashboard, and a map, as well as the threshold settings & logs
 const ChartExpandModal = ({
   isOpen,
   onClose,
   title,
   metric,
   onChartChange,
+  chartID,
+  // chartType,
   handleTimePeriodChange,
   weatherData,
   currentTimePeriod,
   setCurrentTimePeriod,
   MapComponent,
   typeOfChart,
+  chartLocation,
 }) => {
   const { colorMode } = useColorMode();
   const [loading, setLoading] = useState(false);
@@ -101,19 +104,17 @@ const ChartExpandModal = ({
   const MotionButton = motion(Button);
   const toast = useToast();
 
+  //Styling based on color mode
   const getBackgroundColor = () => 'gray.700';
   const getContentBackgroundColor = () =>
     colorMode === 'light' ? 'brand.50' : 'gray.800';
-  const getTextColor = () => (colorMode === 'light' ? 'black' : 'white');
   const getModalBackgroundColor = () =>
     colorMode === 'light' ? 'whitesmoke' : 'gray.700';
 
   // Handle time period button click
   const handleTimeButtonClick = async timePeriod => {
     if (timePeriod === currentTimePeriod) return;
-
     setLoading(true);
-
     try {
       await handleTimePeriodChange(metric, timePeriod);
       setCurrentTimePeriod(timePeriod);
@@ -172,6 +173,7 @@ const ChartExpandModal = ({
     }
   };
 
+  // Clear the threshold data and send it to the backend
   const handleFormClear = async () => {
     const timestamp = new Date().toISOString();
     setHighThreshold('');
@@ -195,6 +197,9 @@ const ChartExpandModal = ({
     }
   };
 
+  // Clear alerts for the selected metric
+  // This function is called when the trash icon is clicked on an alert
+  // Toast notifications are used to show the status of the alert deletion
   const clearAlerts = async id => {
     const toastId = 'delete-alert-toast';
 
@@ -282,6 +287,7 @@ const ChartExpandModal = ({
           flexDirection="column"
           bg={getBackgroundColor()}
         >
+          {/* The title and chart location of the selected chart */}
           <ModalHeader
             bg="#2121"
             color="white"
@@ -291,7 +297,7 @@ const ChartExpandModal = ({
             justifyContent="space-between"
             alignItems="center"
           >
-            {title}
+            {title} for {chartLocation}
           </ModalHeader>
           <ModalCloseButton size="lg" color="white" mt={1} />
           <ModalBody
@@ -303,6 +309,8 @@ const ChartExpandModal = ({
             borderBottomRadius={'md'}
             boxShadow="md"
           >
+            {/* Enables the user to select the time period for the chart
+             Talks to the backend to fetch a different limit of data based on the time period selected */}
             <Box display="flex" justifyContent="space-between" mb={2} mt={-2}>
               {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map(timePeriod => (
                 <MotionButton
@@ -333,6 +341,7 @@ const ChartExpandModal = ({
               mb={4}
               h={'40vh'}
             >
+              {/* // If the data is still loading, show a loading spinner */}
               {loading ? (
                 <CircularProgress isIndeterminate color="brand.800" />
               ) : (
@@ -340,11 +349,12 @@ const ChartExpandModal = ({
               )}
             </Flex>
             <Box display="flex" justifyContent="center" mb={4}>
+              {/* // Buttons to change the chart type
+              // syncs with the parent component to change the chart type in the chart wrapper */}
               <MotionButton
                 variant={'solid'}
                 onClick={() => {
-                  setChartType('line');
-                  onChartChange('line');
+                  onChartChange(chartID, typeOfChart);
                 }}
                 leftIcon={<FaChartLine />}
                 size={['sm', 'md']}
@@ -359,8 +369,7 @@ const ChartExpandModal = ({
               <MotionButton
                 variant={'solid'}
                 onClick={() => {
-                  setChartType('bar');
-                  onChartChange('bar');
+                  onChartChange(chartID, typeOfChart);
                 }}
                 leftIcon={<FaChartBar />}
                 mx={1}
@@ -372,6 +381,7 @@ const ChartExpandModal = ({
               >
                 BAR
               </MotionButton>
+              {/* // Button to open the threshold modal */}
               <MotionButton
                 variant={'solid'}
                 onClick={handleOpenThresholdModal}
@@ -393,6 +403,7 @@ const ChartExpandModal = ({
               mt={4}
               flexGrow={1}
             >
+              {/* Display the threshold credentials for the specific metric */}
               <Box
                 bg="gray.700"
                 borderRadius="md"
@@ -412,8 +423,8 @@ const ChartExpandModal = ({
                     >
                       Thresholds
                     </Text>
-                    <Flex width={'100%'}>
-                      <HStack width={'100%'} gap={6} justify={'flex-start'}>
+                    <Flex width={'100%'} justify={'space-between'} alignItems={'center'}>
+                      <HStack gap={6} justify={'flex-start'} width={'75%'}>
                         {highThreshold ? (
                           <Text color="white" fontSize={['xs', 'md']}>
                             <strong>High:</strong> {highThreshold}
@@ -431,11 +442,33 @@ const ChartExpandModal = ({
                         ) : null}
                         {emailsForThreshold?.length > 0 ? (
                           <Text color="white" fontSize={['xs', 'md']}>
-                            <strong>Email:</strong> {emailsForThreshold.join(', ')}
+                            <strong>Email:</strong>{' '}
+                            {emailsForThreshold.join(', ')}
                           </Text>
                         ) : null}
                       </HStack>
+                      <FormControl
+                        display="flex"
+                        alignItems="center"
+                        justify={'flex-end'}
+                        width={'25%'}
+                        ml={24}
+                      >
+                        <Tooltip label={`Toggle Threshold Alerts For ${title}`}>
+                        <FormLabel htmlFor="threshold-alerts" mb="0">
+                          PAUSE THRESHOLDS
+                        </FormLabel>
+                        </Tooltip>
+                        <Switch
+                          id="threshold-alerts"
+                          mb="1"
+                          // isChecked={threshKill}
+                          // onChange={handleThreshKillToggle}
+                          colorScheme={'orange'}
+                          />
+                      </FormControl>
                     </Flex>
+
                     <Box
                       mt={2}
                       p={2}
@@ -447,6 +480,7 @@ const ChartExpandModal = ({
                       maxHeight="200px"
                       height={'100%'}
                     >
+                      {/* Map out all alerts for the metric from the db */}
                       <Stack spacing={2}>
                         {alertsThreshold[metric]?.map((alert, index) => (
                           <Box
@@ -499,6 +533,7 @@ const ChartExpandModal = ({
           </ModalBody>
         </ModalContent>
       </Modal>
+      {/* // Threshold modal to set high/low thresholds & contact details for alerts */}
       <Modal isOpen={isThresholdModalOpen} onClose={handleCloseThresholdModal}>
         <ModalOverlay />
         <ModalContent
@@ -516,7 +551,9 @@ const ChartExpandModal = ({
                   <Input
                     type="text"
                     value={phoneNumber}
-                    onChange={e => handlePhoneNumberChange(e.target.value, index)}
+                    onChange={e =>
+                      handlePhoneNumberChange(e.target.value, index)
+                    }
                     bg={'white'}
                     border={'2px solid #fd9801'}
                     color={'#212121'}

@@ -12,7 +12,7 @@ import {
   Flex,
   IconButton,
 } from '@chakra-ui/react';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa/index.esm.js';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 const FaqsModal = ({ isOpen, onClose }) => {
   const [expandedFaqs, setExpandedFaqs] = useState({});

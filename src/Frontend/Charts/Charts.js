@@ -26,10 +26,12 @@ ChartJS.register(
   Legend
 );
 
+// Helper function to process data for chart
+// Set the parameters for chart.js
 const processWeatherData = (data, key, colorMode) => {
   if (!data) return null;
 
-  const getColorOfLastValue = (colorMode) => {
+  const getColorOfLastValue = colorMode => {
     return colorMode === 'light' ? '#212121' : 'white';
   };
 
@@ -37,7 +39,9 @@ const processWeatherData = (data, key, colorMode) => {
 
   const chartData = {
     labels: reversedData.map(item =>
-      new Date(item.message_timestamp || item.reading_time || item.publishedat).toLocaleTimeString([], {
+      new Date(
+        item.message_timestamp || item.reading_time || item.publishedat
+      ).toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',
       })
@@ -48,11 +52,15 @@ const processWeatherData = (data, key, colorMode) => {
         data: reversedData.map(item => item[key]),
         backgroundColor: '#fd9801',
         borderColor: reversedData.map((item, index) =>
-          index === reversedData.length - 1 ? getColorOfLastValue(colorMode) : '#fd9801'
+          index === reversedData.length - 1
+            ? getColorOfLastValue(colorMode)
+            : '#fd9801'
         ),
         borderWidth: 2,
         pointBackgroundColor: reversedData.map((item, index) =>
-          index === reversedData.length - 1 ? getColorOfLastValue(colorMode) : '#fd9801'
+          index === reversedData.length - 1
+            ? getColorOfLastValue(colorMode)
+            : '#fd9801'
         ),
         pointRadius: reversedData.map((item, index) =>
           index === reversedData.length - 1 ? 5 : 3
@@ -63,25 +71,45 @@ const processWeatherData = (data, key, colorMode) => {
   return chartData;
 };
 
-const getMinMax = (data) => {
+// Helper function to get the min and max values of the data
+const getMinMax = data => {
   const min = Math.min(...data);
   const max = Math.max(...data);
   return { min, max };
 };
 
+// Helper function to create custom chart options
 const createCustomChartOptions = (metric, data, colorMode) => {
   const { min, max } = getMinMax(data);
   const labelColor = colorMode === 'light' ? '#000000' : '#FFFFFF';
   const gridLineColor = colorMode === 'light' ? '#e0e0e0' : '#333333'; // Set grid line color based on color mode
+
+  // Helper function to set the y-axis min value
   const getYmin = (min, max) => {
-    if (min > 0) {
+    if (min > 0 && max > 1) {
       return Math.round(min - 1);
     } else if (min < 0) {
       return Math.round(min - 1);
-    } else if (max > 0) {
-      return Math.round(min - 1);
+    } else if (min === 0 && max < 0.09) {
+      return Math.round(min);
+    } else if (min === 0 && max === 0) {
+      return Math.round(min);
+    } 
   };
-  }
+
+  // Helper function to set the y-axis max value
+  const getYmax = (min, max) => {
+    if (min === 0 && max === 0) {
+      return 1;
+    } else if (min === 0 && max < 0.09) {
+      return 0.1;
+    } else if (max > 0) {
+      return Math.round(max + 1);
+    } else {
+      return Math.round(max + 1);
+    }
+  };
+
   return {
     responsive: true,
     maintainAspectRatio: false,
@@ -92,7 +120,7 @@ const createCustomChartOptions = (metric, data, colorMode) => {
           minRotation: 45,
           autoSkip: true,
           maxTicksLimit: 10,
-          color: labelColor,  // Set label color based on color mode
+          color: labelColor, // Set label color based on color mode
         },
         grid: {
           color: gridLineColor, // Set grid line color
@@ -100,9 +128,9 @@ const createCustomChartOptions = (metric, data, colorMode) => {
       },
       y: {
         min: getYmin(min, max),
-        max: max > 1 ? Math.round(max + 1) : Math.round(max + .5),
+        max: getYmax(min, max),
         ticks: {
-          color: labelColor,  // Set label color based on color mode
+          color: labelColor, // Set label color based on color mode
         },
         grid: {
           color: gridLineColor, // Set grid line color
@@ -153,12 +181,11 @@ const createCustomChartOptions = (metric, data, colorMode) => {
               soil_moisture: 'centibars',
               leaf_wetness: 'out of 15',
             };
-            
+
             const label = labelMap[context.dataset.label] || '';
             const value = context.raw;
             return `${value} ${label}`;
-          }
-          
+          },
         },
       },
       legend: {
@@ -171,6 +198,9 @@ const createCustomChartOptions = (metric, data, colorMode) => {
   };
 };
 
+// LineChart and BarChart components
+// These components take in data and metric as props
+// These are what are actually rendered in the app
 export const LineChart = ({ data, metric }) => {
   const { colorMode } = useColorMode();
   const chartData = processWeatherData(data, metric, colorMode);

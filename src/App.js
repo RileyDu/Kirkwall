@@ -47,6 +47,7 @@ import WatchdogProtectMap from './Frontend/Maps/WatchdogMap.js';
 import { motion } from 'framer-motion';
 import HelpModal from './Frontend/Modals/HelpModal.js';
 import OptionsModal from './Frontend/Modals/OptionsModal.js';
+import ModularDashboard from './Frontend/Modular/ModularDashboard.js';
 
 const Layout = ({
   children,
@@ -54,13 +55,15 @@ const Layout = ({
   toggleSidebar,
   isMobileMenuOpen,
   toggleMobileMenu,
-  statusOfAlerts
+  statusOfAlerts,
 }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const location = useLocation();
 
   const shouldShowSidebar =
-    location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !== '/landing';
+    location.pathname !== '/login' &&
+    location.pathname !== '/signup' &&
+    location.pathname !== '/landing';
 
   const { colorMode } = useColorMode();
 
@@ -72,7 +75,11 @@ const Layout = ({
   const handleCloseHelpModal = () => setHelpModalOpen(false);
 
   return (
-    <Flex minH="100vh" bg={colorMode === 'light' ? 'brand.50' : 'gray.700'} overflowX={'hidden'}>
+    <Flex
+      minH="100vh"
+      bg={colorMode === 'light' ? 'brand.50' : 'gray.700'}
+      overflowX={'hidden'}
+    >
       {isLargerThan768 && shouldShowSidebar && (
         <Sidebar
           isMinimized={isMinimized}
@@ -142,7 +149,7 @@ const MainApp = () => {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 `;
-
+  
   if (loading) {
     return (
       <Flex justify="center" align="center" height="100vh" width="100vw">
@@ -158,9 +165,16 @@ const MainApp = () => {
 
   return (
     <Box>
-      {location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !== '/landing' && (
-        <Header toggleMobileMenu={toggleMobileMenu} isMinimized={isMinimized} isVisible={showAlerts} toggleAlerts={toggleAlerts}/>
-      )}
+      {location.pathname !== '/login' &&
+        location.pathname !== '/signup' &&
+        location.pathname !== '/landing' && (
+          <Header
+            toggleMobileMenu={toggleMobileMenu}
+            isMinimized={isMinimized}
+            isVisible={showAlerts}
+            toggleAlerts={toggleAlerts}
+          />
+        )}
       <Layout
         isMinimized={isMinimized}
         toggleSidebar={toggleSidebar}
@@ -169,38 +183,14 @@ const MainApp = () => {
         statusOfAlerts={showAlerts}
       >
         <Routes>
-          <Route path='/landing' element={<LandingPage />} />
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/imprimed" element={
-            <ProtectedRoute allowedUsers={['jerrycromarty@imprimedicine.com']} >
-              <MedDashboard statusOfAlerts={showAlerts} isMinimized={isMinimized}/>
-            </ProtectedRoute>
-          }/>
-          <Route path="/grandfarm" element={
-            <ProtectedRoute allowedUsers={['pmo@grandfarm.com']}>
-              <GrandFarmDashboard statusOfAlerts={showAlerts} isMinimized={isMinimized}/>
-            </ProtectedRoute>
-          }/>
-          <Route path='/rjenergy' element={
-            <ProtectedRoute allowedUsers={['russell@rjenergysolutions.com']}>
-              <RJDashboard statusOfAlerts={showAlerts} isMinimized={isMinimized}/>
-            </ProtectedRoute>
-          }/>
-          <Route path='/watchdogprotect' element={
-            <ProtectedRoute allowedUsers={['trey@watchdogprotect.com']}>
-              <WatchDogProtectDashboard statusOfAlerts={showAlerts} isMinimized={isMinimized}/>
-            </ProtectedRoute>
-          }/>
           <Route
             path="/"
             element={
-              <ProtectedRoute allowedUsers={['test@kirkwall.io']} redirectPaths={{'jerrycromarty@imprimedicine.com' : '/imprimed', 'pmo@grandfarm.com' : '/grandfarm', 'russell@rjenergysolutions.com' :'/rjenergy', 'trey@watchdogprotect.com' : '/watchdogprotect' }}>
-                <MainContent
-                  isMinimized={isMinimized}
-                  timePeriod={timePeriod}
-                  statusOfAlerts={showAlerts}
-                />
+              <ProtectedRoute>
+                <ModularDashboard statusOfAlerts={showAlerts} />
               </ProtectedRoute>
             }
           />
@@ -208,7 +198,7 @@ const MainApp = () => {
             path="/TempSensors"
             element={
               <ProtectedRoute>
-                <TempSensors statusOfAlerts={showAlerts}/>
+                <TempSensors statusOfAlerts={showAlerts} />
               </ProtectedRoute>
             }
           />
@@ -224,7 +214,7 @@ const MainApp = () => {
             path="/SoilMoistureSensors"
             element={
               <ProtectedRoute>
-                <SoilSensors  />
+                <SoilSensors />
               </ProtectedRoute>
             }
           />
@@ -248,7 +238,7 @@ const MainApp = () => {
             path="/WatchdogSensors"
             element={
               <ProtectedRoute>
-                <WatchdogSensors statusOfAlerts={showAlerts}  />
+                <WatchdogSensors statusOfAlerts={showAlerts} />
               </ProtectedRoute>
             }
           />
@@ -256,7 +246,7 @@ const MainApp = () => {
             path="/RivercitySensors"
             element={
               <ProtectedRoute>
-                <RivercitySensors statusOfAlerts={showAlerts}  />
+                <RivercitySensors statusOfAlerts={showAlerts} />
               </ProtectedRoute>
             }
           />
@@ -264,42 +254,44 @@ const MainApp = () => {
             path="/map"
             element={
               <ProtectedRoute>
-                <MapComponent statusOfAlerts={showAlerts}/>
+                <MapComponent statusOfAlerts={showAlerts} />
               </ProtectedRoute>
             }
           />
           <Route
-          path="/imprimed/map"
-          element={
-            <ProtectedRoute allowedUsers={['jerrycromarty@imprimedicine.com']}>
-              <ImpriMedMap statusOfAlerts={showAlerts}/>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/grandfarm/map"
-          element={
-            <ProtectedRoute allowedUsers={['pmo@grandfarm.com']}>
-              <GrandFarmMap statusOfAlerts={showAlerts}/>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/rjenergy/map"
-          element={
-            <ProtectedRoute allowedUsers={['russell@rjenergysolutions.com']}>
-              <RJMap statusOfAlerts={showAlerts}/>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/watchdogprotect/map"
-          element={
-            <ProtectedRoute allowedUsers={['trey@watchdogprotect.com']}>
-              <WatchdogProtectMap statusOfAlerts={showAlerts}/>
-            </ProtectedRoute>
-          }
-        />
+            path="/imprimed/map"
+            element={
+              <ProtectedRoute
+                allowedUsers={['jerrycromarty@imprimedicine.com']}
+              >
+                <ImpriMedMap statusOfAlerts={showAlerts} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/grandfarm/map"
+            element={
+              <ProtectedRoute allowedUsers={['pmo@grandfarm.com']}>
+                <GrandFarmMap statusOfAlerts={showAlerts} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rjenergy/map"
+            element={
+              <ProtectedRoute allowedUsers={['russell@rjenergysolutions.com']}>
+                <RJMap statusOfAlerts={showAlerts} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/watchdogprotect/map"
+            element={
+              <ProtectedRoute allowedUsers={['trey@watchdogprotect.com']}>
+                <WatchdogProtectMap statusOfAlerts={showAlerts} />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Layout>
       <MobileMenu isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} />

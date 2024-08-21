@@ -12,17 +12,15 @@ import {
   Stack,
   Text,
   Center,
-  Divider,
   useBreakpointValue,
   FormErrorMessage,
   Image,
   Link,
-  Spinner,
-  useMediaQuery,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
+// error messages for Firebase Auth
 const errorMessages = {
   'auth/invalid-email': 'The email address is not valid.',
   'auth/user-disabled': 'The user account has been disabled.',
@@ -34,10 +32,9 @@ const errorMessages = {
   'auth/invalid-credential': 'Your password or email is invalid.',
 };
 
-const MotionBox = motion(Box);
-const MotionHeading = motion(Heading);
 const MotionText = motion(Text);
 
+// Login component
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -52,15 +49,12 @@ const Login = () => {
     md: '/kirkwall_logo_1_white.png',
   });
 
-  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
-
-
-  const validateEmail = (email) => {
+  const validateEmail = email => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
   };
 
-  const handleLogin = async (event) => {
+  const handleLogin = async event => {
     event.preventDefault();
     setIsLoading(true);
     let hasError = false;
@@ -88,30 +82,26 @@ const Login = () => {
     }
 
     const auth = getAuth();
+
+    // Sign in with email and password
+    // Redirect to the appropriate dashboard based on the user's email
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.log('User logged in successfully');
-      if (email === 'jerrycromarty@imprimedicine.com'){
-        navigate('/imprimed');
-      } else if (email === 'pmo@grandfarm.com'){
-        navigate('/grandfarm');
-      } else if (email === 'russell@rjenergysolutions.com'){
-        navigate('/rjenergy');
-      } else if (email === 'trey@watchdogprotect.com'){
-        navigate('/watchdogprotect');
-      } else {
         navigate('/');
-      }
     } catch (error) {
       const errorCode = error.code;
-      const errorMessage = errorMessages[errorCode] || 'An unexpected error occurred. Please try again.';
+      const errorMessage =
+        errorMessages[errorCode] ||
+        'An unexpected error occurred. Please try again.';
       setError(errorMessage);
       setIsLoading(false);
     }
   };
 
+  // Let user press enter to log in after entering email and password
   useEffect(() => {
-    const handleEnterPress = (event) => {
+    const handleEnterPress = event => {
       if (event.key === 'Enter') {
         handleLogin(event);
       }
@@ -123,54 +113,94 @@ const Login = () => {
   }, [email, password]);
 
   return (
-    <Flex minH="100vh" bg="#1A202C" color="white" direction="column" justify="center" align="center" >
-      <Container maxW="md" py={{ base: '12', md: '24' }} px={{ base: '4', sm: '8' }} borderRadius="xl" boxShadow="2xl" bg="#2D3748">
+    <Flex
+      minH="100vh"
+      bg="#1A202C"
+      color="white"
+      direction="column"
+      justify="center"
+      align="center"
+    >
+      <Container
+        maxW="md"
+        py={{ base: '12', md: '24' }}
+        px={{ base: '4', sm: '8' }}
+        borderRadius="xl"
+        boxShadow="2xl"
+        bg="#2D3748"
+      >
         <Stack spacing="8">
           <Box textAlign="center">
-            <Image src={logoSrc} alt="Kirkwall logo" boxSize="200px" mx="auto" mb="4" objectFit="contain" />
-            <Heading size="lg" color="white">Login</Heading>
+            <Image
+              src={logoSrc}
+              alt="Kirkwall logo"
+              boxSize="200px"
+              mx="auto"
+              mb="4"
+              objectFit="contain"
+            />
+            <Heading size="lg" color="white">
+              Login
+            </Heading>
             <Text color="gray.400">Please sign in to continue.</Text>
           </Box>
           <form onSubmit={handleLogin}>
             <Stack spacing="4">
               <FormControl isInvalid={emailError}>
-                <FormLabel htmlFor="email" color="gray.400">Email</FormLabel>
+                <FormLabel htmlFor="email" color="gray.400">
+                  Email
+                </FormLabel>
                 <Input
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   required
                   bg="#2D3748"
                   border="2px solid"
                   borderColor="#F4B860"
                   _hover={{ borderColor: '#F4B860' }}
-                  _focus={{ borderColor: '#F4B860', bg: 'white', color: 'black' }}
+                  _focus={{
+                    borderColor: '#F4B860',
+                    bg: 'white',
+                    color: 'black',
+                  }}
                   focusBorderColor="#F4B860"
                   color="white"
                 />
                 <FormErrorMessage>{emailError}</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={passwordError}>
-                <FormLabel htmlFor="password" color="gray.400">Password</FormLabel>
+                <FormLabel htmlFor="password" color="gray.400">
+                  Password
+                </FormLabel>
                 <Input
                   id="password"
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   required
                   bg="#2D3748"
                   border="2px solid"
                   borderColor="#F4B860"
                   _hover={{ borderColor: '#F4B860' }}
-                  _focus={{ borderColor: '#F4B860', bg: 'white', color: 'black' }}
+                  _focus={{
+                    borderColor: '#F4B860',
+                    bg: 'white',
+                    color: 'black',
+                  }}
                   focusBorderColor="#F4B860"
                   color="white"
                 />
                 <FormErrorMessage>{passwordError}</FormErrorMessage>
               </FormControl>
               {error && (
-                <MotionText color="red.500" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.5 }}>
+                <MotionText
+                  color="red.500"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                >
                   {error}
                 </MotionText>
               )}
@@ -195,9 +225,11 @@ const Login = () => {
           {/* <Text color="gray.400" textAlign="center">
             Don't have an account? <Link color="#F4B860">Sign up</Link>
           </Text> */}
-                    {/* <Divider my="4" /> */}
+          {/* <Divider my="4" /> */}
           <Text color="gray.400" textAlign="center">
-            <Link color="#F4B860" onClick={() => navigate('/landing')}>Back to Home</Link>
+            <Link color="#F4B860" onClick={() => navigate('/landing')}>
+              Back to Home
+            </Link>
           </Text>
         </Stack>
       </Container>

@@ -1,7 +1,7 @@
 import { Box, Text, Flex, useColorMode } from '@chakra-ui/react';
-import { MinusIcon, AddIcon } from '@chakra-ui/icons';
 
-const getLabelForMetric = metric => {
+// Adds labels to the value based on the metric
+export const getLabelForMetric = metric => {
   const metricLabels = {
     temperature: { label: '°F', addSpace: false },
     temp: { label: '°F', addSpace: false },
@@ -35,12 +35,17 @@ const getLabelForMetric = metric => {
   return metricLabels[metric] || { label: '', addSpace: false };
 };
 
-const MiniDashboard = ({ weatherData, metric, adjustTimePeriod, setCurrentValue }) => {
+// MiniDashboard component
+// Displays the time period, current value, min, and max values for a metric
+// Used in multiple places in the app
+const MiniDashboard = ({ weatherData, metric, setCurrentValue }) => {
+  // Reverse the data so that the most recent data is at the end
   const reversedData = [...weatherData]?.reverse();
+  // Get the current data for the metric
   const currentData = reversedData.map((data) => data[metric]);
 
   const { colorMode } = useColorMode();
-
+  // Get the min, max, and most recent value for the metric
   const min = currentData.length > 0 ? Math.min(...currentData) : 'N/A';
   const max = currentData.length > 0 ? Math.max(...currentData) : 'N/A';
   const mostRecentValue =
@@ -48,6 +53,9 @@ const MiniDashboard = ({ weatherData, metric, adjustTimePeriod, setCurrentValue 
 
     if (setCurrentValue) setCurrentValue(mostRecentValue);
 
+  // Calculate the time period based on the length of the data
+  // Also based on the metric, grand farm comes in 5 minute intervals
+  // While everything else is in 10 minute intervals
   const calculateTimePeriod = (dataLength) => {
     const totalMinutes =
       metric === 'temperature' ||

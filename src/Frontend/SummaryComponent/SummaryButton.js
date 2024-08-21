@@ -31,8 +31,6 @@ const SummaryButton = ({ isSummaryOpen, onSummaryToggle, summaryMetrics }) => {
           px={{ base: 4, md: 6 }}
           mr="4"
           variant="sidebar"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
           bg="#F4B860"
           color="black"
         >
