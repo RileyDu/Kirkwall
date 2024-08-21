@@ -34,7 +34,7 @@ app.post('/send-enquiry', upload.array('attachments', 10), async (req, res) => {
     }));
 
     const msg = {
-        to: 'adityabp@hotmail.co.uk',
+        to: 'ujjwal@kirkwall.io',
         from: {
             name: 'Contact Form',
             email: 'alerts@kirkwall.io'
