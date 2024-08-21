@@ -300,7 +300,6 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                 onClick={isOpen ? onClose : onOpen}
                 size={isLargerThan768 ? 'md' : 'sm'}
                 ml={isLargerThan768 ? '2' : '4'}
-                mr={-3}
               >
                 <FaChevronDown />
               </MenuButton>

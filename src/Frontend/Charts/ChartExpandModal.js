@@ -468,7 +468,6 @@ const ChartExpandModal = ({
                           />
                       </FormControl>
                     </Flex>
-
                     <Box
                       mt={2}
                       p={2}
