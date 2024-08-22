@@ -1,7 +1,27 @@
-import { Flex, Stack, Button, Box, IconButton, useColorMode } from '@chakra-ui/react';
-import { WiThermometer, WiStrongWind, WiRain, WiHumidity } from 'react-icons/wi';
-import { FaDog, FaGlobe, FaSnowflake, FaChevronRight, FaChevronLeft, FaBook, FaBookOpen } from 'react-icons/fa';
-import { GiGroundSprout } from "react-icons/gi";
+import {
+  Flex,
+  Stack,
+  Button,
+  Box,
+  IconButton,
+  useColorMode,
+} from '@chakra-ui/react';
+import {
+  WiThermometer,
+  WiStrongWind,
+  WiRain,
+  WiHumidity,
+} from 'react-icons/wi';
+import {
+  FaDog,
+  FaGlobe,
+  FaSnowflake,
+  FaChevronRight,
+  FaChevronLeft,
+  FaBook,
+  FaBookOpen,
+} from 'react-icons/fa';
+import { GiGroundSprout } from 'react-icons/gi';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useWeatherData } from '../WeatherDataContext.js';
@@ -12,7 +32,6 @@ const MotionFlex = motion(Flex);
 const MotionStack = motion(Stack);
 const MotionIconButton = motion(IconButton);
 const MotionButton = motion(Button);
-
 
 const buttonStyleProps = {
   justifyContent: 'flex-start',
@@ -37,84 +56,74 @@ const motionProps = {
 
 const buttonConfig = {
   'pmo@grandfarm.com': [
-    { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
-    { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
+    {
+      icon: <WiThermometer size="30" />,
+      label: 'Temperature',
+      route: '/TempSensors',
+    },
+    {
+      icon: <WiHumidity size="30" />,
+      label: 'Humidity',
+      route: '/HumiditySensors',
+    },
     { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
-    { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
+    {
+      icon: <GiGroundSprout size="30" />,
+      label: 'Soil',
+      route: '/SoilMoistureSensors',
+    },
     { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
     // { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
-    { icon: <FaGlobe size="30" />, label: 'Map', route: '/grandfarm/map' }
-
+    { icon: <FaGlobe size="30" />, label: 'Map', route: '/grandfarm/map' },
   ],
   'jerrycromarty@imprimedicine.com': [
     { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
-    { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' }
+    { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' },
   ],
   'russell@rjenergysolutions.com': [
-    { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+    {
+      icon: <FaSnowflake size="30" />,
+      label: 'Rivercity',
+      route: '/RivercitySensors',
+    },
     // { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
-    { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' }
+    { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' },
   ],
   'trey@watchdogprotect.com': [
     { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
     // { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
-    { icon: <FaGlobe size="30" />, label: 'Map', route: '/watchdogprotect/map' }
+    {
+      icon: <FaGlobe size="30" />,
+      label: 'Map',
+      route: '/watchdogprotect/map',
+    },
   ],
-  'default': [
+  default: [
     { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
-    { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+    {
+      icon: <FaSnowflake size="30" />,
+      label: 'Rivercity',
+      route: '/RivercitySensors',
+    },
     { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
-    { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' }
-  ]
+    { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' },
+  ],
 };
 
-const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts }) => {
+const Sidebar = ({
+  isMinimized,
+  toggleSidebar,
+  isMobileMenuOpen,
+  statusOfAlerts,
+}) => {
   const navigate = useNavigate();
-  const { colorMode } = useColorMode();
   const { loading } = useWeatherData();
-  const [customerRole, setCustomerRole] = useState('');
 
   // Fetch current user email
   const { currentUser } = useAuth();
   const user = currentUser;
   const userEmail = user ? user.email : 'default';
 
-  useEffect(() => {
-    if (user) {
-      if (user.email === 'pmo@grandfarm.com') {
-        setCustomerRole('gf');
-      } else if (user.email === 'jerrycromarty@imprimedicine.com') {
-        setCustomerRole('imprimed');
-      } else if (user.email === 'russell@rjenergysolutions.com') {
-        setCustomerRole('rj');
-      } else if (user.email === 'trey@watchdogprotect.com') {
-        setCustomerRole('wdp');
-      } 
-      else {
-        setCustomerRole('default');
-      }
-    }
-  }, [user]);
-
-  const handleNavigation = () => {
-    switch (customerRole) {
-      case 'gf':
-        navigate('/grandfarm');
-        break;
-      case 'imprimed':
-        navigate('/imprimed');
-        break;
-      case 'rj':
-        navigate('/rjenergy');
-        break;
-      case 'wdp':
-        navigate('/watchdogprotect');
-        break;
-      default:
-        navigate('/');
-        break;
-    }
-  };
 
   const sidebarVariants = {
     collapsed: {
@@ -135,7 +144,7 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
     return null;
   }
 
-  const renderButtons = (isMinimized) => {
+  const renderButtons = isMinimized => {
     const buttons = buttonConfig[userEmail] || buttonConfig['default'];
     return isMinimized ? (
       <MinimizedSidebarContent buttons={buttons} navigate={navigate} />
@@ -170,17 +179,17 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
               src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
               alt="kirkwall logo"
               style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
-              onClick={() => handleNavigation()}
+              onClick={() => navigate('/')}
             />
           </Box>
         ) : (
-          <motion.div >
+          <motion.div>
             <Box ml={'2rem'}>
               <img
                 src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
                 alt="kirkwall logo"
                 style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
-                onClick={() => handleNavigation()}
+                onClick={() => navigate('/')}
               />
             </Box>
           </motion.div>
@@ -198,13 +207,15 @@ const Sidebar = ({ isMinimized, toggleSidebar, isMobileMenuOpen, statusOfAlerts 
       </Box>
       <Box mt="auto" p="4" justifyContent={'center'} display={'flex'}>
         <IconButton
-          icon={<Box 
-            as={motion.div}
-            initial={isMinimized ? { rotate: 0 } : { rotate: 360 }}
-            animate={isMinimized ? { rotate: 360 } : { rotate: 0 }}
-          >
-            {isMinimized ? <FaChevronRight /> : <FaChevronLeft />}
-          </Box>}
+          icon={
+            <Box
+              as={motion.div}
+              initial={isMinimized ? { rotate: 0 } : { rotate: 360 }}
+              animate={isMinimized ? { rotate: 360 } : { rotate: 0 }}
+            >
+              {isMinimized ? <FaChevronRight /> : <FaChevronLeft />}
+            </Box>
+          }
           onClick={toggleSidebar}
           aria-label={isMinimized ? 'Expand' : 'Minimize'}
           bg="#F4B860"
@@ -237,7 +248,7 @@ const SidebarContent = ({ buttons, navigate }) => (
 );
 
 const MinimizedSidebarContent = ({ buttons, navigate }) => (
-  <MotionStack spacing="4" mt={16} >
+  <MotionStack spacing="4" mt={16}>
     {buttons.map((btn, index) => (
       <MotionIconButton
         key={index}

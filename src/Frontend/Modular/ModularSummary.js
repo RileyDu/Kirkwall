@@ -35,17 +35,6 @@ const ModularSummary = ({ statusOfAlerts }) => {
       display="flex"
       flexDirection="column"
     >
-      {/* <div>
-        <h1>Modular Summary</h1>
-        <div>
-          {filteredSummaryMetrics.map((metric, index) => (
-            <div key={index}>
-              <p>{metric.label}</p>
-              <p>{metric.value}</p>
-            </div>
-          ))}
-        </div>
-      </div> */}
       <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                 {filteredSummaryMetrics.map((metric, index) => (
                   <GridItem key={index}>
