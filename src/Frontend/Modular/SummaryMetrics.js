@@ -1,4 +1,3 @@
-// SummaryMetrics.js
 import { useWeatherData } from '../WeatherDataContext.js';
 
 export const SummaryMetrics = () => {
@@ -16,8 +15,6 @@ export const SummaryMetrics = () => {
     rivercityHumData,
     watchdogData,
     rivercityData,
-    impriFreezerOneTempData,
-    impriFreezerOneHumData,
     impriFreezerTwoTempData,
     impriFreezerTwoHumData,
     impriFreezerThreeTempData,
@@ -26,326 +23,122 @@ export const SummaryMetrics = () => {
     impriFridgeOneHumData,
     impriFridgeTwoTempData,
     impriFridgeTwoHumData,
-    impriIncuOneTempData,
-    impriIncuOneHumData,
     impriIncuTwoTempData,
     impriIncuTwoHumData,
   } = useWeatherData();
 
+  const calculateMetrics = (data, metric) => {
+    if (!data || data.length === 0) return { average: 'N/A', current: 'N/A', high: 'N/A', low: 'N/A' };
+
+    const sum = data.reduce((sum, item) => sum + item[metric], 0);
+    const average = (sum / data.length).toFixed(2);
+    const current = data[data.length - 1][metric].toFixed(2);
+    const high = Math.max(...data.map(item => item[metric])).toFixed(2);
+    const low = Math.min(...data.map(item => item[metric])).toFixed(2);
+
+    return { average, current, high, low };
+  };
+
   return [
     {
       label: 'Average Temp (°F)',
-      value: tempData
-        ? (
-            tempData.reduce((sum, data) => sum + data.temperature, 0) /
-            tempData.length
-          ).toFixed(2)
-        : weatherData
-        ? (
-            weatherData.reduce((sum, data) => sum + data.temperature, 0) /
-            weatherData.length
-          ).toFixed(2)
-        : 'N/A',
+      ...calculateMetrics(tempData || weatherData, 'temperature'),
       metric: 'temperature',
     },
     {
       label: 'Average Humidity (%)',
-      value: humidityData
-        ? (
-            humidityData.reduce((sum, data) => sum + data.percent_humidity, 0) /
-            humidityData.length
-          ).toFixed(2)
-        : weatherData
-        ? (
-            weatherData.reduce((sum, data) => sum + data.percent_humidity, 0) /
-            weatherData.length
-          ).toFixed(2)
-        : 'N/A',
+      ...calculateMetrics(humidityData || weatherData, 'percent_humidity'),
       metric: 'percent_humidity',
     },
     {
       label: 'Average Wind Speed (mph)',
-      value: windData
-        ? (
-            windData.reduce((sum, data) => sum + data.wind_speed, 0) /
-            windData.length
-          ).toFixed(2)
-        : weatherData
-        ? (
-            weatherData.reduce((sum, data) => sum + data.wind_speed, 0) /
-            weatherData.length
-          ).toFixed(2)
-        : 'N/A',
+      ...calculateMetrics(windData || weatherData, 'wind_speed'),
       metric: 'wind_speed',
     },
     {
       label: 'Average Soil Moisture (centibars)',
-      value: soilMoistureData
-        ? (
-            soilMoistureData.reduce(
-              (sum, data) => sum + data.soil_moisture,
-              0
-            ) / soilMoistureData.length
-          ).toFixed(2)
-        : weatherData
-        ? (
-            weatherData.reduce((sum, data) => sum + data.soil_moisture, 0) /
-            weatherData.length
-          ).toFixed(2)
-        : 'N/A',
+      ...calculateMetrics(soilMoistureData || weatherData, 'soil_moisture'),
       metric: 'soil_moisture',
     },
     {
       label: 'Total Rainfall (inches)',
-      value: rainfallData
-        ? rainfallData
-            .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
-            .toFixed(2)
-        : weatherData
-        ? weatherData
-            .reduce((sum, data) => sum + data.rain_15_min_inches, 0)
-            .toFixed(2)
-        : 'N/A',
+      ...calculateMetrics(rainfallData || weatherData, 'rain_15_min_inches'),
       metric: 'rain_15_min_inches',
     },
     {
       label: 'Average Leaf Wetness (0-15)',
-      value: leafWetnessData
-        ? (
-            leafWetnessData.reduce((sum, data) => sum + data.leaf_wetness, 0) /
-            leafWetnessData.length
-          ).toFixed(2)
-        : weatherData
-        ? (
-            weatherData.reduce((sum, data) => sum + data.leaf_wetness, 0) /
-            weatherData.length
-          ).toFixed(2)
-        : 'N/A',
+      ...calculateMetrics(leafWetnessData || weatherData, 'leaf_wetness'),
       metric: 'leaf_wetness',
     },
     {
       label: 'Garage Average Temp (°F)',
-      value: watchdogTempData
-        ? (
-            watchdogTempData.reduce((sum, data) => sum + data.temp, 0) /
-            watchdogTempData.length
-          ).toFixed(2)
-        : watchdogData
-        ? (
-            watchdogData.reduce((sum, data) => sum + data.temp, 0) /
-            watchdogData.length
-          ).toFixed(2)
-        : 'N/A',
+      ...calculateMetrics(watchdogTempData || watchdogData, 'temp'),
       metric: 'temp',
     },
     {
       label: 'Garage Humidity (%)',
-      value: watchdogHumData
-        ? (
-            watchdogHumData.reduce((sum, data) => sum + data.hum, 0) /
-            watchdogHumData.length
-          ).toFixed(2)
-        : watchdogData
-        ? (
-            watchdogData.reduce((sum, data) => sum + data.hum, 0) /
-            watchdogData.length
-          ).toFixed(2)
-        : 'N/A',
+      ...calculateMetrics(watchdogHumData || watchdogData, 'hum'),
       metric: 'hum',
     },
     {
       label: 'Rivercity Temperature (°F)',
-      value: rivercityTempData
-        ? (
-            rivercityTempData.reduce((sum, data) => sum + data.rctemp, 0) /
-            rivercityTempData.length
-          ).toFixed(2)
-        : rivercityData
-        ? (
-            rivercityData.reduce((sum, data) => sum + data.rctemp, 0) /
-            rivercityData.length
-          ).toFixed(2)
-        : 'N/A',
+      ...calculateMetrics(rivercityTempData || rivercityData, 'rctemp'),
       metric: 'rctemp',
     },
     {
       label: 'Rivercity Humidity (%)',
-      value: rivercityHumData
-        ? (
-            rivercityHumData.reduce((sum, data) => sum + data.humidity, 0) /
-            rivercityHumData.length
-          ).toFixed(2)
-        : rivercityData && rivercityData.length
-        ? (
-            rivercityData.reduce((sum, data) => sum + data.humidity, 0) /
-            rivercityData.length
-          ).toFixed(2)
-        : 'N/A',
+      ...calculateMetrics(rivercityHumData || rivercityData, 'humidity'),
       metric: 'humidity',
     },
-    // {
-    //   label: 'Impri Freezer #1 (°C)',
-    //   value: impriFreezerOneTempData
-    //     ? (
-    //         impriFreezerOneTempData.reduce(
-    //           (sum, data) => sum + data.imFreezerOneTemp,
-    //           0
-    //         ) / impriFreezerOneTempData.length
-    //       ).toFixed(2)
-    //     : 'N/A',
-    //   metric: 'imFreezerOneTemp',
-    // },
-    // {
-    //   label: 'Impri Freezer #1 (%)',
-    //   value: impriFreezerOneHumData
-    //     ? (
-    //         impriFreezerOneHumData.reduce(
-    //           (sum, data) => sum + data.imFreezerOneHum,
-    //           0
-    //         ) / impriFreezerOneHumData.length
-    //       ).toFixed(2)
-    //     : 'N/A',
-    //   metric: 'imFreezerOneHum',
-    // },
     {
-        label: 'Impri Freezer #2 (°C)',
-        value: impriFreezerTwoTempData
-          ? (
-              impriFreezerTwoTempData.reduce(
-                (sum, data) => sum + data.imFreezerTwoTemp,
-                0
-              ) / impriFreezerTwoTempData.length
-            ).toFixed(2)
-          : 'N/A',
-        metric: 'imFreezerTwoTemp',
+      label: 'Impri Freezer #2 (°C)',
+      ...calculateMetrics(impriFreezerTwoTempData, 'imFreezerTwoTemp'),
+      metric: 'imFreezerTwoTemp',
     },
     {
-        label: 'Impri Freezer #2 (%)',
-        value: impriFreezerTwoHumData
-          ? (
-              impriFreezerTwoHumData.reduce(
-                (sum, data) => sum + data.imFreezerTwoHum,
-                0
-              ) / impriFreezerTwoHumData.length
-            ).toFixed(2)
-          : 'N/A',
-        metric: 'imFreezerTwoHum',
+      label: 'Impri Freezer #2 (%)',
+      ...calculateMetrics(impriFreezerTwoHumData, 'imFreezerTwoHum'),
+      metric: 'imFreezerTwoHum',
     },
     {
-        label: 'Impri Freezer #3 (°C)',
-        value: impriFreezerThreeTempData
-          ? (
-              impriFreezerThreeTempData.reduce(
-                (sum, data) => sum + data.imFreezerThreeTemp,
-                0
-              ) / impriFreezerThreeTempData.length
-            ).toFixed(2)
-          : 'N/A',
-        metric: 'imFreezerThreeTemp',
+      label: 'Impri Freezer #3 (°C)',
+      ...calculateMetrics(impriFreezerThreeTempData, 'imFreezerThreeTemp'),
+      metric: 'imFreezerThreeTemp',
     },
     {
-        label: 'Impri Freezer #3 (%)',
-        value: impriFreezerThreeHumData
-          ? (
-              impriFreezerThreeHumData.reduce(
-                (sum, data) => sum + data.imFreezerThreeHum,
-                0
-              ) / impriFreezerThreeHumData.length
-            ).toFixed(2)
-          : 'N/A',
-        metric: 'imFreezerThreeHum',
+      label: 'Impri Freezer #3 (%)',
+      ...calculateMetrics(impriFreezerThreeHumData, 'imFreezerThreeHum'),
+      metric: 'imFreezerThreeHum',
     },
     {
-        label: 'Impri Fridge #1 (°C)',
-        value: impriFridgeOneTempData
-          ? (
-              impriFridgeOneTempData.reduce(
-                (sum, data) => sum + data.imFridgeOneTemp,
-                0
-              ) / impriFridgeOneTempData.length
-            ).toFixed(2)
-          : 'N/A',
-        metric: 'imFridgeOneTemp',
+      label: 'Impri Fridge #1 (°C)',
+      ...calculateMetrics(impriFridgeOneTempData, 'imFridgeOneTemp'),
+      metric: 'imFridgeOneTemp',
     },
     {
-        label: 'Impri Fridge #1 (%)',
-        value: impriFridgeOneHumData
-          ? (
-              impriFridgeOneHumData.reduce(
-                (sum, data) => sum + data.imFridgeOneHum,
-                0
-              ) / impriFridgeOneHumData.length
-            ).toFixed(2)
-          : 'N/A',
-        metric: 'imFridgeOneHum',
+      label: 'Impri Fridge #1 (%)',
+      ...calculateMetrics(impriFridgeOneHumData, 'imFridgeOneHum'),
+      metric: 'imFridgeOneHum',
     },
     {
-        label: 'Impri Fridge #2 (°C)',
-        value: impriFridgeTwoTempData
-          ? (
-              impriFridgeTwoTempData.reduce(
-                (sum, data) => sum + data.imFridgeTwoTemp,
-                0
-              ) / impriFridgeTwoTempData.length
-            ).toFixed(2)
-          : 'N/A',
-        metric: 'imFridgeTwoTemp',
+      label: 'Impri Fridge #2 (°C)',
+      ...calculateMetrics(impriFridgeTwoTempData, 'imFridgeTwoTemp'),
+      metric: 'imFridgeTwoTemp',
     },
     {
-        label: 'Impri Fridge #2 (%)',
-        value: impriFridgeTwoHumData
-          ? (
-              impriFridgeTwoHumData.reduce(
-                (sum, data) => sum + data.imFridgeTwoHum,
-                0
-              ) / impriFridgeTwoHumData.length
-            ).toFixed(2)
-          : 'N/A',
-        metric: 'imFridgeTwoHum',
-    },
-    // {
-    //     label: 'Impri Incubator #1 (°C)',
-    //     value: impriIncuOneTempData
-    //       ? (
-    //           impriIncuOneTempData
-    //             .reduce((sum, data) => sum + data.imIncubatorOneTemp, 0) /
-    //             impriIncuOneTempData.length
-    //         ).toFixed(2)
-    //         : 'N/A',
-    //     metric: 'imIncubatorOneTemp',
-    // },
-    // {
-    //     label: 'Impri Incubator #1 (%)',
-    //     value: impriIncuOneHumData
-    //       ? (
-    //           impriIncuOneHumData
-    //             .reduce((sum, data) => sum + data.imIncubatorOneHum, 0) /
-    //             impriIncuOneHumData.length
-    //         ).toFixed(2)
-    //         : 'N/A',
-    //     metric: 'imIncubatorOneHum',
-    // },
-    {
-        label: 'Impri Incubator #2 (°C)',
-        value: impriIncuTwoTempData
-          ? (
-              impriIncuTwoTempData
-                .reduce((sum, data) => sum + data.imIncubatorTwoTemp, 0) /
-                impriIncuTwoTempData.length
-            ).toFixed(2)
-            : 'N/A',
-        metric: 'imIncubatorTwoTemp',
+      label: 'Impri Fridge #2 (%)',
+      ...calculateMetrics(impriFridgeTwoHumData, 'imFridgeTwoHum'),
+      metric: 'imFridgeTwoHum',
     },
     {
-        label: 'Impri Incubator #2 (%)',
-        value: impriIncuTwoHumData
-          ? (
-              impriIncuTwoHumData
-                .reduce((sum, data) => sum + data.imIncubatorTwoHum, 0) /
-                impriIncuTwoHumData.length
-            ).toFixed(2)
-            : 'N/A',
-        metric: 'imIncubatorTwoHum',
-    }
+      label: 'Impri Incubator #2 (°C)',
+      ...calculateMetrics(impriIncuTwoTempData, 'imIncubatorTwoTemp'),
+      metric: 'imIncubatorTwoTemp',
+    },
+    {
+      label: 'Impri Incubator #2 (%)',
+      ...calculateMetrics(impriIncuTwoHumData, 'imIncubatorTwoHum'),
+      metric: 'imIncubatorTwoHum',
+    },
   ];
 };
