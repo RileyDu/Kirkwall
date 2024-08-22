@@ -63,7 +63,7 @@ const buttonConfig = {
   'default': [
     { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
     { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
-    // { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
+    { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' }
   ]
 };
