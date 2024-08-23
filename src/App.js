@@ -30,7 +30,7 @@ import WindSensors from './Frontend/Sensors/WindSensors/WindSensor.js';
 import MobileMenu from './Frontend/MobileMenu/MobileMenu.js';
 import customTheme from './Frontend/Styles/theme.js';
 import { WeatherDataProvider } from './Frontend/WeatherDataContext.js';
-import { FaChessRook, FaQuestion, FaEllipsisV } from 'react-icons/fa/index.esm.js';
+import { FaChessRook, FaQuestion, FaEllipsisV } from 'react-icons/fa';
 import { keyframes } from '@emotion/react';
 import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors.js';
 import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySensors.js';
@@ -55,31 +55,31 @@ const Layout = ({
   toggleSidebar,
   isMobileMenuOpen,
   toggleMobileMenu,
-  statusOfAlerts,
+  statusOfAlerts
 }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const location = useLocation();
 
   const shouldShowSidebar =
-    location.pathname !== '/login' &&
-    location.pathname !== '/signup' &&
-    location.pathname !== '/landing';
+    location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !== '/landing';
 
   const { colorMode } = useColorMode();
 
   const MotionIconButton = motion(IconButton);
 
-  const [isHelpModalOpen, setHelpModalOpen] = useState(false);
+  const [isOptionsModalOpen, setOptionsModalOpen] = useState(false); // State for OptionsModal
+  const [isHelpModalOpen, setHelpModalOpen] = useState(false); // State for HelpModal
 
-  const handleOpenHelpModal = () => setHelpModalOpen(true);
+  const handleOpenOptionsModal = () => setOptionsModalOpen(true);
+  const handleCloseOptionsModal = () => setOptionsModalOpen(false);
+  const handleOpenHelpModal = () => {
+    setHelpModalOpen(true);
+    handleCloseOptionsModal(); // Close the OptionsModal when opening the HelpModal
+  };
   const handleCloseHelpModal = () => setHelpModalOpen(false);
 
   return (
-    <Flex
-      minH="100vh"
-      bg={colorMode === 'light' ? 'brand.50' : 'gray.700'}
-      overflowX={'hidden'}
-    >
+    <Flex minH="100vh" bg={colorMode === 'light' ? 'brand.50' : 'gray.700'} overflowX={'hidden'}>
       {isLargerThan768 && shouldShowSidebar && (
         <Sidebar
           isMinimized={isMinimized}
@@ -117,19 +117,34 @@ const Layout = ({
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         ml={2}
-        onClick={handleOpenHelpModal}
+        onClick={handleOpenOptionsModal}
         position="fixed"
         bottom="20px"
         left="20px"
         zIndex="1000"
       />
 
-        
-      
-      <HelpModal isOpen={isHelpModalOpen} onClose={handleCloseHelpModal} />
+      <OptionsModal
+        isOpen={isOptionsModalOpen}
+        onClose={handleCloseOptionsModal}
+        onContactUsClick={handleOpenHelpModal} // Opens the HelpModal when Contact Us is clicked
+        onHelpClick={handleCloseOptionsModal} // Closes the OptionsModal when Help is clicked
+      />
+
+      <HelpModal
+        isOpen={isHelpModalOpen}
+        onClose={handleCloseHelpModal}
+        title="" // Pass any necessary props
+        description="" // Pass any necessary props
+        setTitle={() => {}}
+        setDescription={() => {}}
+      />
     </Flex>
   );
 };
+
+
+
 
 const MainApp = () => {
   const [loading, setLoading] = useState(false);

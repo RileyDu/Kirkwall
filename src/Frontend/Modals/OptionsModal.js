@@ -14,7 +14,7 @@ import {
     Icon,
   } from '@chakra-ui/react';
   import React from 'react';
-  import { FaQuestionCircle, FaHandsHelping } from 'react-icons/fa/index.esm.js';
+  import { FaQuestionCircle, FaHandsHelping } from 'react-icons/fa';
   
   const OptionsModal = ({ isOpen, onClose, onContactUsClick, onHelpClick }) => {
     const { colorMode } = useColorMode();
@@ -41,6 +41,7 @@ import {
                   Help
                 </Text>
               </Box>
+
             </VStack>
           </ModalBody>
           <ModalFooter>
