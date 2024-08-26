@@ -132,7 +132,7 @@ const ModularSummary = ({ statusOfAlerts }) => {
                     >
                       <Stat>
                         <Box>
-                          <StatLabel>{metric.label}</StatLabel>
+                          <StatLabel>{metric.label} for {metric.timeOfData}</StatLabel>
                         </Box>
                         <SimpleGrid columns={2} spacing={4}>
                           <Box>

@@ -31,6 +31,33 @@ export const SummaryMetrics = () => {
     impriIncuTwoHumData,
   } = useWeatherData();
 
+  const calculateTimePeriod = (metric, dataLength) => {
+    const totalMinutes =
+      metric === 'temperature' ||
+      metric === 'percent_humidity' ||
+      metric === 'wind_speed' ||
+      metric === 'rain_15_min_inches' ||
+      metric === 'soil_moisture' ||
+      metric === 'leaf_wetness'
+        ? dataLength * 5
+        : dataLength * 10;
+    const totalHours = Math.floor(totalMinutes / 60);
+
+    if (totalHours < 2) {
+      return `${totalHours} Hour`;
+    } else if (totalHours < 24) {
+      return `${totalHours} Hours`;
+    } else if (totalHours < 72) {
+      // Less than 3 days
+      return '1 Day';
+    } else if (totalHours < 168) {
+      // Less than 1 week
+      return '3 Days';
+    } else {
+      return '1 Week';
+    }
+  };
+
   const calculateMetrics = (data, metric) => {
     if (!data || data.length === 0) return { average: 'N/A', current: 'N/A', high: 'N/A', low: 'N/A' };
 
@@ -41,7 +68,9 @@ export const SummaryMetrics = () => {
     const high = Math.max(...data.map(item => item[metric])).toFixed(2);
     const low = Math.min(...data.map(item => item[metric])).toFixed(2);
 
-    return { average, current, high, low };
+    const timeOfData = (data && calculateTimePeriod(metric, data.length - 1))
+
+    return { average, current, high, low, timeOfData };
   };
 
   return [
