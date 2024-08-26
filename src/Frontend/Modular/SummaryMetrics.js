@@ -64,6 +64,7 @@ export const SummaryMetrics = () => {
     
     const sum = data.reduce((sum, item) => sum + item[metric], 0);
     const average = (sum / data.length).toFixed(2);
+    
     const current = data[0][metric].toFixed(2);
     const high = Math.max(...data.map(item => item[metric])).toFixed(2);
     const low = Math.min(...data.map(item => item[metric])).toFixed(2);

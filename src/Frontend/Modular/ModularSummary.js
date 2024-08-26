@@ -109,7 +109,11 @@ const ModularSummary = ({ statusOfAlerts }) => {
       display="flex"
       flexDirection="column"
     >
-      <Tabs isFitted variant="solid-rounded" colorScheme={colorMode === 'light' ? 'brand' : 'gray'}>
+      <Tabs
+        isFitted
+        variant="solid-rounded"
+        colorScheme={colorMode === 'light' ? 'brand' : 'gray'}
+      >
         <TabList mb="1em">
           <Tab>Statistics Overview</Tab>
           <Tab>Alert Backlog</Tab>
@@ -120,7 +124,11 @@ const ModularSummary = ({ statusOfAlerts }) => {
               Statistics Overview
             </Heading>
             <Grid
-              templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }}
+              templateColumns={{
+                base: 'repeat(1, 1fr)',
+                md: 'repeat(2, 1fr)',
+                lg: 'repeat(4, 1fr)',
+              }}
               gap={6}
             >
               {filteredSummaryMetrics.map((metric, index) => {
@@ -175,9 +183,9 @@ const ModularSummary = ({ statusOfAlerts }) => {
                       ) : (
                         <Stat>
                           <Box>
-                            <StatLabel>
+                            <StatNumber>
                               {metric.label} for {metric.timeOfData}
-                            </StatLabel>
+                            </StatNumber>
                           </Box>
                           <SimpleGrid columns={2} spacing={4}>
                             <Box>
@@ -214,45 +222,49 @@ const ModularSummary = ({ statusOfAlerts }) => {
               Alerts Backlog
             </Heading>
             <Box
-              bg={colorMode === 'light' ? 'gray.100' : 'gray.800'}
-              borderRadius="lg"
-              p={4}
-              boxShadow="xl"
-              h="auto"
-              overflowY="scroll"
+              display={'flex'}
+              justifyContent={'center'}
+              alignItems={'center'}
             >
-              <Stack spacing={4}>
-                {alertsThreshold?.length > 0 ? (
-                  alertsThreshold.map((alert, alertIndex) => (
-                    <Box
-                      key={alertIndex}
-                      bg="orange.400"
-                      p={3}
-                      borderRadius="md"
-                      boxShadow="md"
-                    >
+              <Box
+                bg={colorMode === 'light' ? '#212121' : 'gray.800'}
+                borderRadius="lg"
+                p={4}
+                boxShadow="xl"
+                maxH={'calc(100vh - 250px)'}
+                overflowY="scroll"
+                maxW={'fit-content'}
+              >
+                <Stack spacing={4}>
+                  {alertsThreshold?.length > 0 ? (
+                    alertsThreshold.map((alert, alertIndex) => (
+                      <Box
+                        key={alertIndex}
+                        bg="orange.400"
+                        p={3}
+                        borderRadius="md"
+                        boxShadow="md"
+                        _hover={{ transform: 'scale(1.01)' }}
+                        maxWidth="fit-content"
+                      >
+                        <Flex justify="space-between" align="center">
+                          <Text color="#212121" fontSize="lg">
+                            {alert.message}
+                          </Text>
+                        </Flex>
+                      </Box>
+                    ))
+                  ) : (
+                    <Box bg="orange.400" p={3} borderRadius="md" boxShadow="md">
                       <Flex justify="space-between" align="center">
                         <Text color="#212121" fontSize="sm">
-                          {alert.message}
+                          No Alerts
                         </Text>
                       </Flex>
                     </Box>
-                  ))
-                ) : (
-                  <Box
-                    bg="orange.400"
-                    p={3}
-                    borderRadius="md"
-                    boxShadow="md"
-                  >
-                    <Flex justify="space-between" align="center">
-                      <Text color="#212121" fontSize="sm">
-                        No Alerts
-                      </Text>
-                    </Flex>
-                  </Box>
-                )}
-              </Stack>
+                  )}
+                </Stack>
+              </Box>
             </Box>
           </TabPanel>
         </TabPanels>
