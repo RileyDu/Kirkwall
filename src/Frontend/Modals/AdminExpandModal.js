@@ -364,6 +364,18 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     setSelectedTab(index); // Update the selected tab index state
   };
 
+  // Group alerts by metric
+
+  const groupedAlerts = Array.isArray(alertsThreshold) && alertsThreshold?.reduce((acc, alert) => {
+    const { metric } = alert;
+          if (!acc[metric]) {
+            acc[metric] = [];
+          }
+          acc[metric].push(alert);
+          return acc;
+        }, {});
+
+
   // Function to toggle threshold kill for DB and local state
   const handleThreshKillToggle = async () => {
     const newThreshKill = !threshKill; // Toggle the current value
@@ -638,9 +650,9 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                             transition={{ duration: 0.5 }}
                           >
                             <Box maxH="300px" h={'300px'} overflowY="scroll">
-                              {alertsThreshold[tab.metric]?.length ? (
+                              {groupedAlerts[tab.metric]?.length ? (
                                 <Stack spacing={2}>
-                                  {alertsThreshold[tab.metric].map(
+                                  {groupedAlerts[tab.metric].map(
                                     (alert, alertIndex) => (
                                       <Box
                                         key={alertIndex}
