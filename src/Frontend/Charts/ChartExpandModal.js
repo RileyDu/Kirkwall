@@ -239,6 +239,15 @@ const ChartExpandModal = ({
     }
   };
 
+  const groupedAlerts = Array.isArray(alertsThreshold) && alertsThreshold?.reduce((acc, alert) => {
+    const { metric } = alert;
+          if (!acc[metric]) {
+            acc[metric] = [];
+          }
+          acc[metric].push(alert);
+          return acc;
+        }, {});
+
   // Add a new phone number input
   const handleAddPhoneNumber = () => {
     setPhoneNumbers([...phoneNumbers, '']);
@@ -481,7 +490,7 @@ const ChartExpandModal = ({
                     >
                       {/* Map out all alerts for the metric from the db */}
                       <Stack spacing={2}>
-                        {alertsThreshold[metric]?.map((alert, index) => (
+                        {groupedAlerts[metric]?.map((alert, index) => (
                           <Box
                             key={index}
                             bg="orange.400"
