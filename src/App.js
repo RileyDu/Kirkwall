@@ -180,7 +180,7 @@ const MainApp = () => {
         statusOfAlerts={showAlerts}
       >
         <Routes>
-          <Route path="/landing" element={<LandingPage />} />
+          {/* <Route path="/landing" element={<LandingPage />} /> */}
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
           <Route

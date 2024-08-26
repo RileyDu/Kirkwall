@@ -227,7 +227,7 @@ const Login = () => {
           </Text> */}
           {/* <Divider my="4" /> */}
           <Text color="gray.400" textAlign="center">
-            <Link color="#F4B860" onClick={() => navigate('/landing')}>
+            <Link color="#F4B860" href='https://www.kirkwall.io'>
               Back to Home
             </Link>
           </Text>

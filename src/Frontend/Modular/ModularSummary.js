@@ -24,11 +24,13 @@ import { SummaryMetrics } from './SummaryMetrics.js';
 import { CustomerSettings } from './CustomerSettings.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { keyframes } from '@emotion/react';
+import { motion } from 'framer-motion';
 
 const ModularSummary = ({ statusOfAlerts }) => {
   const { colorMode } = useColorMode();
   const { currentUser } = useAuth();
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
+  const MotionBox = motion(Box);
   const userEmail = currentUser.email;
   const userMetrics =
     CustomerSettings.find(customer => customer.email === userEmail)?.metric ||
@@ -107,7 +109,7 @@ const ModularSummary = ({ statusOfAlerts }) => {
       display="flex"
       flexDirection="column"
     >
-      <Tabs isFitted variant="soft-rounded" colorScheme="brand">
+      <Tabs isFitted variant="solid-rounded" colorScheme={colorMode === 'light' ? 'brand' : 'gray'}>
         <TabList mb="1em">
           <Tab>Statistics Overview</Tab>
           <Tab>Alert Backlog</Tab>
@@ -117,62 +119,91 @@ const ModularSummary = ({ statusOfAlerts }) => {
             <Heading size="lg" mb="4" textAlign="center">
               Statistics Overview
             </Heading>
-            <Grid templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(4, 1fr)' }} gap={6}>
+            <Grid
+              templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }}
+              gap={6}
+            >
               {filteredSummaryMetrics.map((metric, index) => {
                 const { label, addSpace } = getLabelForMetric(metric.metric);
-                const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
+                const formatValue = value =>
+                  `${value}${addSpace ? ' ' : ''}${label}`;
+
                 return (
                   <GridItem key={index}>
-                    <Box
-                      bgGradient="linear(to-t, brand.500, brand.900)"
+                    <MotionBox
+                      // initial={{ opacity: 0, scale: 0.5 }}
+                      // animate={{ opacity: 1, scale: 1 }}
+                      // transition={{ duration: 0.5 }}
+                      // bgGradient="linear(to-t, brand.500, brand.900)"
+                      bg="#212121"
                       borderRadius="lg"
                       boxShadow="xl"
                       p={4}
                       color="white"
+                      _hover={{ boxShadow: '2xl', transform: 'scale(1.02)' }}
                     >
-                        {isLargerThan768 &&
-                      <Stat>
-                        <Box>
-                          <StatLabel>{metric.label} for {metric.timeOfData}</StatLabel>
-                        </Box>
-                        <SimpleGrid columns={2} spacing={4}>
-                          <Box>
-                            <StatNumber>{formatValue(metric.current)} Current</StatNumber>
-                          </Box>
-                          <Box>
-                            <StatNumber>{formatValue(metric.high)} High</StatNumber>
-                          </Box>
-                          <Box>
-                            <StatNumber>{formatValue(metric.average)} Average</StatNumber>
-                          </Box>
-                          <Box>
-                            <StatNumber>{formatValue(metric.low)} Low</StatNumber>
-                          </Box>
-                        </SimpleGrid>
-                      </Stat>
-                        }
-                        {!isLargerThan768 &&
+                      {isLargerThan768 ? (
                         <Stat>
                           <Box>
-                          <StatLabel>{metric.label} for {metric.timeOfData}</StatLabel>
-                        </Box>
-                        <SimpleGrid columns={2} spacing={4}>
-                          <Box>
-                            <StatNumber>{formatValue(metric.current)} Now</StatNumber>
+                            <StatLabel>
+                              {metric.label} for {metric.timeOfData}
+                            </StatLabel>
                           </Box>
-                          <Box>
-                            <StatNumber>{formatValue(metric.high)} Hi</StatNumber>
-                          </Box>
-                          <Box>
-                            <StatNumber>{formatValue(metric.average)} Avg</StatNumber>
-                          </Box>
-                          <Box>
-                            <StatNumber>{formatValue(metric.low)} Lo</StatNumber>
-                          </Box>
-                        </SimpleGrid>
+                          <SimpleGrid columns={2} spacing={4}>
+                            <Box>
+                              <StatNumber>
+                                {formatValue(metric.current)} Current
+                              </StatNumber>
+                            </Box>
+                            <Box>
+                              <StatNumber>
+                                {formatValue(metric.high)} High
+                              </StatNumber>
+                            </Box>
+                            <Box>
+                              <StatNumber>
+                                {formatValue(metric.average)} Average
+                              </StatNumber>
+                            </Box>
+                            <Box>
+                              <StatNumber>
+                                {formatValue(metric.low)} Low
+                              </StatNumber>
+                            </Box>
+                          </SimpleGrid>
                         </Stat>
-                        }
-                    </Box>
+                      ) : (
+                        <Stat>
+                          <Box>
+                            <StatLabel>
+                              {metric.label} for {metric.timeOfData}
+                            </StatLabel>
+                          </Box>
+                          <SimpleGrid columns={2} spacing={4}>
+                            <Box>
+                              <StatNumber>
+                                {formatValue(metric.current)} Now
+                              </StatNumber>
+                            </Box>
+                            <Box>
+                              <StatNumber>
+                                {formatValue(metric.high)} Hi
+                              </StatNumber>
+                            </Box>
+                            <Box>
+                              <StatNumber>
+                                {formatValue(metric.average)} Avg
+                              </StatNumber>
+                            </Box>
+                            <Box>
+                              <StatNumber>
+                                {formatValue(metric.low)} Lo
+                              </StatNumber>
+                            </Box>
+                          </SimpleGrid>
+                        </Stat>
+                      )}
+                    </MotionBox>
                   </GridItem>
                 );
               })}
@@ -213,7 +244,6 @@ const ModularSummary = ({ statusOfAlerts }) => {
                     p={3}
                     borderRadius="md"
                     boxShadow="md"
-                    _hover={{ transform: 'scale(1.05)', transition: '0.3s' }}
                   >
                     <Flex justify="space-between" align="center">
                       <Text color="#212121" fontSize="sm">
