@@ -330,8 +330,6 @@ export const WeatherDataProvider = ({ children }) => {
 
   const fetchAlertsThreshold = async () => {
     const userMetrics = CustomerSettings.find ((customer) => customer.email === currentUser.email).metric;
-
-
     try {
       const response = await getAlertsPerUserByMetric(userMetrics);
       console.log('Alerts Threshold 0:', response.data.alerts);
@@ -357,14 +355,14 @@ export const WeatherDataProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchAlertsThreshold();
+    {currentUser && fetchAlertsThreshold()}
 
     const intervalId = setInterval(() => {
       fetchAlertsThreshold();
     }, 30000); // 30 seconds
 
     return () => clearInterval(intervalId); // Cleanup interval on component unmount
-  }, [getAlerts]);
+  }, [getAlertsPerUserByMetric, currentUser]);
 
   useEffect(() => {
     if (Object.values(dataLoaded).some(loaded => loaded)) {

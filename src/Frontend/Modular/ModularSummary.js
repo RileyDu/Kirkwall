@@ -9,6 +9,12 @@ import {
   Text,
   Stack,
   Heading,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  SimpleGrid,
 } from '@chakra-ui/react';
 import { FaChessRook } from 'react-icons/fa';
 import { useColorMode } from '@chakra-ui/color-mode';
@@ -67,81 +73,101 @@ const ModularSummary = ({ statusOfAlerts }) => {
       display="flex"
       flexDirection="column"
     >
-      <Flex justify={'center'}>
-        <Heading size="lg" mb="4">
-          Summary
-        </Heading>
-      </Flex>
-      <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-        {filteredSummaryMetrics.map((metric, index) => (
-          <GridItem key={index}>
+      <Tabs isFitted variant="enclosed">
+        <TabList mb="1em">
+          <Tab>Statistics Overview</Tab>
+          <Tab>Alert Backlog</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <Heading size="lg" mb="4" textAlign="center">
+              Statistics Overview
+            </Heading>
+            <Grid templateColumns="repeat(4, 1fr)" gap={6}>
+              {filteredSummaryMetrics.map((metric, index) => (
+                  <GridItem key={index}>
+                    <Box
+                      bgGradient="linear(to-r, teal.500, blue.500)"
+                      borderRadius="lg"
+                      boxShadow="xl"
+                      p={4}
+                      color="white"
+                    >
+                      <Stat>
+                          <Box>
+                            <StatLabel>{metric.label}</StatLabel>
+                          </Box>
+                        <SimpleGrid columns={2} spacing={4}>
+                          <Box>
+                            <StatNumber>{metric.current} Current</StatNumber>
+                          </Box>
+                          <Box>
+                            <StatNumber>{metric.high} High</StatNumber>
+                          </Box>
+                          <Box>
+                            <StatNumber>{metric.average} Average</StatNumber>
+                          </Box>
+                          <Box>
+                            <StatNumber>{metric.low} Low</StatNumber>
+                          </Box>
+                        </SimpleGrid>
+                      </Stat>
+                    </Box>
+                  </GridItem>
+                ))}
+              </Grid>
+          </TabPanel>
+          <TabPanel>
+            <Heading size="lg" mb="4" textAlign="center">
+              Alerts Backlog
+            </Heading>
             <Box
-              bgGradient="linear(to-r, teal.500, blue.500)"
+              // mt={8}
+              bg={colorMode === 'light' ? 'gray.100' : 'gray.800'}
               borderRadius="lg"
-              boxShadow="xl"
               p={4}
-              color="white"
+              boxShadow="xl"
+              // maxH="300px"
+              h="auto"
+              overflowY="scroll"
             >
-              <Stat>
-                <StatLabel>{metric.label}</StatLabel>
-                <StatNumber>{metric.average} Average</StatNumber>
-                <StatNumber>{metric.current} Current</StatNumber>
-                <StatNumber>{metric.high} High</StatNumber>
-                <StatNumber>{metric.low} Low</StatNumber>
-              </Stat>
+              <Stack spacing={4}>
+                {alertsThreshold?.length > 0 ? (
+                  alertsThreshold.map((alert, alertIndex) => (
+                    <Box
+                      key={alertIndex}
+                      bg="orange.400"
+                      p={3}
+                      borderRadius="md"
+                      boxShadow="md"
+                    >
+                      <Flex justify="space-between" align="center">
+                        <Text color="#212121" fontSize="sm">
+                          {alert.message}
+                        </Text>
+                      </Flex>
+                    </Box>
+                  ))
+                ) : (
+                  <Box
+                    bg="orange.400"
+                    p={3}
+                    borderRadius="md"
+                    boxShadow="md"
+                    _hover={{ transform: 'scale(1.05)', transition: '0.3s' }}
+                  >
+                    <Flex justify="space-between" align="center">
+                      <Text color="#212121" fontSize="sm">
+                        No Alerts
+                      </Text>
+                    </Flex>
+                  </Box>
+                )}
+              </Stack>
             </Box>
-          </GridItem>
-        ))}
-      </Grid>
-      <Heading size="md" mt={8} textAlign={'center'}>
-        Recent Alerts
-      </Heading>
-      <Box
-        mt={8}
-        bg={colorMode === 'light' ? 'gray.100' : 'gray.800'}
-        borderRadius="lg"
-        p={4}
-        boxShadow="xl"
-        maxH="300px"
-        overflowY="scroll"
-      >
-        <Stack spacing={4}>
-          <Box>
-            {alertsThreshold?.length > 0 ? (
-              alertsThreshold.map((alert, alertIndex) => (
-                <Box
-                  key={alertIndex}
-                  bg="orange.400"
-                  p={3}
-                  borderRadius="md"
-                  boxShadow="md"
-                  _hover={{ transform: 'scale(1.05)', transition: '0.3s' }}
-                >
-                  <Flex justify="space-between" align="center">
-                    <Text color="#212121" fontSize="sm">
-                      {alert.message}
-                    </Text>
-                  </Flex>
-                </Box>
-              ))
-            ) : (
-              <Box
-                bg="orange.400"
-                p={3}
-                borderRadius="md"
-                boxShadow="md"
-                _hover={{ transform: 'scale(1.05)', transition: '0.3s' }}
-              >
-                <Flex justify="space-between" align="center">
-                  <Text color="#212121" fontSize="sm">
-                    No Alerts
-                  </Text>
-                </Flex>
-              </Box>
-            )}
-          </Box>
-        </Stack>
-      </Box>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </Box>
   );
 };
