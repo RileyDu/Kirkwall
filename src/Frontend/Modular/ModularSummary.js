@@ -1,4 +1,15 @@
-import { Box, Grid, GridItem, Stat, StatLabel, StatNumber, Flex } from '@chakra-ui/react';
+import {
+  Box,
+  Grid,
+  GridItem,
+  Stat,
+  StatLabel,
+  StatNumber,
+  Flex,
+  Text,
+  Stack,
+  Heading,
+} from '@chakra-ui/react';
 import { FaChessRook } from 'react-icons/fa';
 import { useColorMode } from '@chakra-ui/color-mode';
 import { useMediaQuery } from '@chakra-ui/media-query';
@@ -13,16 +24,17 @@ const ModularSummary = ({ statusOfAlerts }) => {
   const { currentUser } = useAuth();
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const userEmail = currentUser.email;
+  const userMetrics =
+    CustomerSettings.find(customer => customer.email === userEmail)?.metric ||
+    [];
 
-  const { loading } = useWeatherData();
+  const { loading, alertsThreshold } = useWeatherData();
 
-  // Call SummaryMetrics to get the array
   const metrics = SummaryMetrics();
 
-  const filteredSummaryMetrics = metrics.filter(metric => {
-    const userMetrics = CustomerSettings.find(customer => customer.email === userEmail)?.metric || [];    
-    return userMetrics.includes(metric.metric);
-  });
+  const filteredSummaryMetrics = metrics.filter(metric =>
+    userMetrics.includes(metric.metric)
+  );
 
   const getLogoColor = () => (colorMode === 'light' ? 'black' : 'white');
   const spin = keyframes`
@@ -41,7 +53,7 @@ const ModularSummary = ({ statusOfAlerts }) => {
         />
       </Flex>
     );
-  }    
+  }
 
   return (
     <Box
@@ -55,19 +67,70 @@ const ModularSummary = ({ statusOfAlerts }) => {
       display="flex"
       flexDirection="column"
     >
-      <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                {filteredSummaryMetrics.map((metric, index) => (
-                  <GridItem key={index}>
-                    <Stat>
-                      <StatLabel color="white" textDecoration={'underline'}>{metric.label}</StatLabel>
-                      <StatNumber color="white">{metric.average} Average</StatNumber>
-                      <StatNumber color="white">{metric.current} Current</StatNumber>
-                      <StatNumber color="white">{metric.high} High</StatNumber>
-                      <StatNumber color="white">{metric.low} Low </StatNumber>
-                    </Stat>
-                  </GridItem>
-                ))}
-              </Grid>
+      <Flex justify={'center'}>
+        <Heading size="lg" mb="4">
+          Summary
+        </Heading>
+      </Flex>
+      <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+        {filteredSummaryMetrics.map((metric, index) => (
+          <GridItem key={index}>
+            <Box
+              bgGradient="linear(to-r, teal.500, blue.500)"
+              borderRadius="lg"
+              boxShadow="xl"
+              p={4}
+              color="white"
+            >
+              <Stat>
+                <StatLabel>{metric.label}</StatLabel>
+                <StatNumber>{metric.average} Average</StatNumber>
+                <StatNumber>{metric.current} Current</StatNumber>
+                <StatNumber>{metric.high} High</StatNumber>
+                <StatNumber>{metric.low} Low</StatNumber>
+              </Stat>
+            </Box>
+          </GridItem>
+        ))}
+      </Grid>
+      <Box
+        mt={8}
+        bg={colorMode === 'light' ? 'gray.100' : 'gray.800'}
+        borderRadius="lg"
+        p={4}
+        boxShadow="xl"
+        maxH="300px"
+        overflowY="scroll"
+      >
+        <Stack spacing={4}>
+          {filteredSummaryMetrics.map((metric, index) => (
+            <Box key={index}>
+              {alertsThreshold[metric.metric]?.length ? (
+                alertsThreshold[metric.metric].map((alert, alertIndex) => (
+                  <Box
+                    key={alertIndex}
+                    bg="orange.400"
+                    p={3}
+                    borderRadius="md"
+                    boxShadow="md"
+                    _hover={{ transform: 'scale(1.05)', transition: '0.3s' }}
+                  >
+                    <Flex justify="space-between" align="center">
+                      <Text color="#212121" fontSize="sm">
+                        {alert.message}
+                      </Text>
+                    </Flex>
+                  </Box>
+                ))
+              ) : (
+                <Text color={colorMode === 'light' ? 'gray.700' : 'gray.300'}>
+                  No alerts for {metric.label}
+                </Text>
+              )}
+            </Box>
+          ))}
+        </Stack>
+      </Box>
     </Box>
   );
 };

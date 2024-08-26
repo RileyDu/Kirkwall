@@ -15,6 +15,8 @@ export const SummaryMetrics = () => {
     rivercityHumData,
     watchdogData,
     rivercityData,
+    impriFreezerOneTempData,
+    impriFreezerOneHumData,
     impriFreezerTwoTempData,
     impriFreezerTwoHumData,
     impriFreezerThreeTempData,
@@ -23,6 +25,8 @@ export const SummaryMetrics = () => {
     impriFridgeOneHumData,
     impriFridgeTwoTempData,
     impriFridgeTwoHumData,
+    impriIncuOneTempData,
+    impriIncuOneHumData,
     impriIncuTwoTempData,
     impriIncuTwoHumData,
   } = useWeatherData();
@@ -90,6 +94,16 @@ export const SummaryMetrics = () => {
       ...calculateMetrics(rivercityHumData || rivercityData, 'humidity'),
       metric: 'humidity',
     },
+    // {
+    //   label: 'Impri Freezer #1 (°C)',
+    //   ...calculateMetrics(impriFreezerOneTempData, 'imFreezerOneTemp'),
+    //   metric: 'imFreezerOneTemp',
+    // },
+    // {
+    //   label: 'Impri Freezer #1 (%)',
+    //   ...calculateMetrics(impriFreezerOneHumData, 'imFreezerOneHum'),
+    //   metric: 'imFreezerOneHum',
+    // },
     {
       label: 'Impri Freezer #2 (°C)',
       ...calculateMetrics(impriFreezerTwoTempData, 'imFreezerTwoTemp'),
@@ -130,6 +144,16 @@ export const SummaryMetrics = () => {
       ...calculateMetrics(impriFridgeTwoHumData, 'imFridgeTwoHum'),
       metric: 'imFridgeTwoHum',
     },
+    // {
+    //   label: 'Impri Incubator #1 (°C)',
+    //   ...calculateMetrics(impriIncuOneTempData, 'imIncubatorOneTemp'),
+    //   metric: 'imIncubatorOneTemp',
+    // },
+    // {
+    //   label: 'Impri Incubator #1 (%)',
+    //   ...calculateMetrics(impriIncuOneHumData, 'imIncubatorOneHum'),
+    //   metric: 'imIncubatorOneHum',
+    // },
     {
       label: 'Impri Incubator #2 (°C)',
       ...calculateMetrics(impriIncuTwoTempData, 'imIncubatorTwoTemp'),
