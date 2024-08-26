@@ -73,7 +73,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
       { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
       { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
       { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
-      { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
+      // { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/grandfarm/map' }
   
     ],

@@ -73,7 +73,7 @@ const buttonConfig = {
       route: '/SoilMoistureSensors',
     },
     { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
-    { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
+    // { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/grandfarm/map' },
   ],
   'jerrycromarty@imprimedicine.com': [

@@ -44,6 +44,8 @@ const ModularSummary = ({ statusOfAlerts }) => {
     userMetrics.includes(metric.metric)
   );
 
+  const isGrandFarm = currentUser.email === 'pmo@grandfarm.com';
+
   const getLabelForMetric = metric => {
     const metricLabels = {
       temperature: { label: '°F', addSpace: false },
@@ -150,7 +152,7 @@ const ModularSummary = ({ statusOfAlerts }) => {
                       color="white"
                       _hover={{ boxShadow: '2xl', transform: 'scale(1.02)' }}
                     >
-                      {isLargerThan768 ? (
+                      {isLargerThan768 && !isGrandFarm ? (
                         <Stat>
                           <Box>
                             <StatLabel>
