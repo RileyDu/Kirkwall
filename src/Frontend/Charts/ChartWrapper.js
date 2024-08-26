@@ -121,6 +121,11 @@ const ChartWrapper = ({
     return isLargerThan768 && routesWithCloseButton.includes(location.pathname);
   };
 
+  const isDashboard = () => {
+    const routesWithTitle = ['/']
+    return routesWithTitle.includes(location.pathname);
+  }
+
   // Function to toggle between map and chart
   const toggleMap = () => {
     setShowMap(!showMap);
@@ -395,13 +400,13 @@ const ChartWrapper = ({
             {title}
           </Box>
           <Flex alignItems="center">
-            {/* {isLargerThan768 && ( */}
               <>
                 <motion.div
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 1 }}
-                >
+                  >
+                  {isDashboard() && (
                   <Box
                     border="2px"
                     borderColor="#fd9801"
@@ -460,6 +465,7 @@ const ChartWrapper = ({
                       </PopoverContent>
                     </Popover>
                   </Box>
+                  )}
                 </motion.div>
               {chartLayout !== 3 && isLargerThan768 && (
                 <motion.div
