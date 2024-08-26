@@ -34,9 +34,10 @@ export const SummaryMetrics = () => {
   const calculateMetrics = (data, metric) => {
     if (!data || data.length === 0) return { average: 'N/A', current: 'N/A', high: 'N/A', low: 'N/A' };
 
+    
     const sum = data.reduce((sum, item) => sum + item[metric], 0);
     const average = (sum / data.length).toFixed(2);
-    const current = data[data.length - 1][metric].toFixed(2);
+    const current = data[0][metric].toFixed(2);
     const high = Math.max(...data.map(item => item[metric])).toFixed(2);
     const low = Math.min(...data.map(item => item[metric])).toFixed(2);
 
@@ -45,52 +46,52 @@ export const SummaryMetrics = () => {
 
   return [
     {
-      label: 'Average Temp (°F)',
+      label: 'Average Temperature',
       ...calculateMetrics(tempData || weatherData, 'temperature'),
       metric: 'temperature',
     },
     {
-      label: 'Average Humidity (%)',
+      label: 'Average Humidity',
       ...calculateMetrics(humidityData || weatherData, 'percent_humidity'),
       metric: 'percent_humidity',
     },
     {
-      label: 'Average Wind Speed (mph)',
+      label: 'Average Wind Speed',
       ...calculateMetrics(windData || weatherData, 'wind_speed'),
       metric: 'wind_speed',
     },
     {
-      label: 'Average Soil Moisture (centibars)',
+      label: 'Average Soil Moisture',
       ...calculateMetrics(soilMoistureData || weatherData, 'soil_moisture'),
       metric: 'soil_moisture',
     },
     {
-      label: 'Total Rainfall (inches)',
+      label: 'Total Rainfall',
       ...calculateMetrics(rainfallData || weatherData, 'rain_15_min_inches'),
       metric: 'rain_15_min_inches',
     },
     {
-      label: 'Average Leaf Wetness (0-15)',
+      label: 'Average Leaf Wetness',
       ...calculateMetrics(leafWetnessData || weatherData, 'leaf_wetness'),
       metric: 'leaf_wetness',
     },
     {
-      label: 'Garage Temp (°F)',
+      label: 'Garage Temperature',
       ...calculateMetrics(watchdogTempData || watchdogData, 'temp'),
       metric: 'temp',
     },
     {
-      label: 'Garage Humidity (%)',
+      label: 'Garage Humidity',
       ...calculateMetrics(watchdogHumData || watchdogData, 'hum'),
       metric: 'hum',
     },
     {
-      label: 'Rivercity Temperature (°F)',
+      label: 'Rivercity Temperature',
       ...calculateMetrics(rivercityTempData || rivercityData, 'rctemp'),
       metric: 'rctemp',
     },
     {
-      label: 'Rivercity Humidity (%)',
+      label: 'Rivercity Humidity',
       ...calculateMetrics(rivercityHumData || rivercityData, 'humidity'),
       metric: 'humidity',
     },
@@ -105,62 +106,62 @@ export const SummaryMetrics = () => {
     //   metric: 'imFreezerOneHum',
     // },
     {
-      label: 'Impri Freezer #2 (°C)',
+      label: 'Impri Freezer #2 ',
       ...calculateMetrics(impriFreezerTwoTempData, 'imFreezerTwoTemp'),
       metric: 'imFreezerTwoTemp',
     },
     {
-      label: 'Impri Freezer #2 (%)',
+      label: 'Impri Freezer #2',
       ...calculateMetrics(impriFreezerTwoHumData, 'imFreezerTwoHum'),
       metric: 'imFreezerTwoHum',
     },
     {
-      label: 'Impri Freezer #3 (°C)',
+      label: 'Impri Freezer #3',
       ...calculateMetrics(impriFreezerThreeTempData, 'imFreezerThreeTemp'),
       metric: 'imFreezerThreeTemp',
     },
     {
-      label: 'Impri Freezer #3 (%)',
+      label: 'Impri Freezer #3',
       ...calculateMetrics(impriFreezerThreeHumData, 'imFreezerThreeHum'),
       metric: 'imFreezerThreeHum',
     },
     {
-      label: 'Impri Fridge #1 (°C)',
+      label: 'Impri Fridge #1',
       ...calculateMetrics(impriFridgeOneTempData, 'imFridgeOneTemp'),
       metric: 'imFridgeOneTemp',
     },
     {
-      label: 'Impri Fridge #1 (%)',
+      label: 'Impri Fridge #1',
       ...calculateMetrics(impriFridgeOneHumData, 'imFridgeOneHum'),
       metric: 'imFridgeOneHum',
     },
     {
-      label: 'Impri Fridge #2 (°C)',
+      label: 'Impri Fridge #2',
       ...calculateMetrics(impriFridgeTwoTempData, 'imFridgeTwoTemp'),
       metric: 'imFridgeTwoTemp',
     },
     {
-      label: 'Impri Fridge #2 (%)',
+      label: 'Impri Fridge #2',
       ...calculateMetrics(impriFridgeTwoHumData, 'imFridgeTwoHum'),
       metric: 'imFridgeTwoHum',
     },
     // {
-    //   label: 'Impri Incubator #1 (°C)',
+    //   label: 'Impri Incubator #1',
     //   ...calculateMetrics(impriIncuOneTempData, 'imIncubatorOneTemp'),
     //   metric: 'imIncubatorOneTemp',
     // },
     // {
-    //   label: 'Impri Incubator #1 (%)',
+    //   label: 'Impri Incubator #1',
     //   ...calculateMetrics(impriIncuOneHumData, 'imIncubatorOneHum'),
     //   metric: 'imIncubatorOneHum',
     // },
     {
-      label: 'Impri Incubator #2 (°C)',
+      label: 'Impri Incubator #2',
       ...calculateMetrics(impriIncuTwoTempData, 'imIncubatorTwoTemp'),
       metric: 'imIncubatorTwoTemp',
     },
     {
-      label: 'Impri Incubator #2 (%)',
+      label: 'Impri Incubator #2',
       ...calculateMetrics(impriIncuTwoHumData, 'imIncubatorTwoHum'),
       metric: 'imIncubatorTwoHum',
     },

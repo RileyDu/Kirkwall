@@ -42,6 +42,40 @@ const ModularSummary = ({ statusOfAlerts }) => {
     userMetrics.includes(metric.metric)
   );
 
+  const getLabelForMetric = metric => {
+    const metricLabels = {
+      temperature: { label: '°F', addSpace: false },
+      temp: { label: '°F', addSpace: false },
+      rctemp: { label: '°F', addSpace: false },
+
+      imFreezerOneTemp: { label: '°C', addSpace: false },
+      imFreezerTwoTemp: { label: '°C', addSpace: false },
+      imFreezerThreeTemp: { label: '°C', addSpace: false },
+      imFridgeOneTemp: { label: '°C', addSpace: false },
+      imFridgeTwoTemp: { label: '°C', addSpace: false },
+      imIncubatorOneTemp: { label: '°C', addSpace: false },
+      imIncubatorTwoTemp: { label: '°C', addSpace: false },
+
+      imFreezerOneHum: { label: '%', addSpace: false },
+      imFreezerTwoHum: { label: '%', addSpace: false },
+      imFreezerThreeHum: { label: '%', addSpace: false },
+      imFridgeOneHum: { label: '%', addSpace: false },
+      imFridgeTwoHum: { label: '%', addSpace: false },
+      imIncubatorOneHum: { label: '%', addSpace: false },
+      imIncubatorTwoHum: { label: '%', addSpace: false },
+
+      hum: { label: '%', addSpace: false },
+      percent_humidity: { label: '%', addSpace: false },
+      humidity: { label: '%', addSpace: false },
+      rain_15_min_inches: { label: 'inches', addSpace: true },
+      wind_speed: { label: 'MPH', addSpace: true },
+      soil_moisture: { label: 'centibars', addSpace: true },
+      leaf_wetness: { label: 'out of 15', addSpace: true },
+    };
+
+    return metricLabels[metric] || { label: '', addSpace: false };
+  };
+
   const getLogoColor = () => (colorMode === 'light' ? 'black' : 'white');
   const spin = keyframes`
   0% { transform: rotate(0deg); }
@@ -84,7 +118,10 @@ const ModularSummary = ({ statusOfAlerts }) => {
               Statistics Overview
             </Heading>
             <Grid templateColumns="repeat(4, 1fr)" gap={6}>
-              {filteredSummaryMetrics.map((metric, index) => (
+              {filteredSummaryMetrics.map((metric, index) => {
+                const { label, addSpace } = getLabelForMetric(metric.metric);
+                const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
+                return (
                   <GridItem key={index}>
                     <Box
                       bgGradient="linear(to-r, teal.500, blue.500)"
@@ -94,40 +131,39 @@ const ModularSummary = ({ statusOfAlerts }) => {
                       color="white"
                     >
                       <Stat>
-                          <Box>
-                            <StatLabel>{metric.label}</StatLabel>
-                          </Box>
+                        <Box>
+                          <StatLabel>{metric.label}</StatLabel>
+                        </Box>
                         <SimpleGrid columns={2} spacing={4}>
                           <Box>
-                            <StatNumber>{metric.current} Current</StatNumber>
+                            <StatNumber>{formatValue(metric.current)} Current</StatNumber>
                           </Box>
                           <Box>
-                            <StatNumber>{metric.high} High</StatNumber>
+                            <StatNumber>{formatValue(metric.high)} High</StatNumber>
                           </Box>
                           <Box>
-                            <StatNumber>{metric.average} Average</StatNumber>
+                            <StatNumber>{formatValue(metric.average)} Average</StatNumber>
                           </Box>
                           <Box>
-                            <StatNumber>{metric.low} Low</StatNumber>
+                            <StatNumber>{formatValue(metric.low)} Low</StatNumber>
                           </Box>
                         </SimpleGrid>
                       </Stat>
                     </Box>
                   </GridItem>
-                ))}
-              </Grid>
+                );
+              })}
+            </Grid>
           </TabPanel>
           <TabPanel>
             <Heading size="lg" mb="4" textAlign="center">
               Alerts Backlog
             </Heading>
             <Box
-              // mt={8}
               bg={colorMode === 'light' ? 'gray.100' : 'gray.800'}
               borderRadius="lg"
               p={4}
               boxShadow="xl"
-              // maxH="300px"
               h="auto"
               overflowY="scroll"
             >
