@@ -117,7 +117,7 @@ const ModularSummary = ({ statusOfAlerts }) => {
             <Heading size="lg" mb="4" textAlign="center">
               Statistics Overview
             </Heading>
-            <Grid templateColumns="repeat(4, 1fr)" gap={6}>
+            <Grid templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(4, 1fr)' }} gap={6}>
               {filteredSummaryMetrics.map((metric, index) => {
                 const { label, addSpace } = getLabelForMetric(metric.metric);
                 const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
@@ -130,6 +130,7 @@ const ModularSummary = ({ statusOfAlerts }) => {
                       p={4}
                       color="white"
                     >
+                        {isLargerThan768 &&
                       <Stat>
                         <Box>
                           <StatLabel>{metric.label} for {metric.timeOfData}</StatLabel>
@@ -149,6 +150,28 @@ const ModularSummary = ({ statusOfAlerts }) => {
                           </Box>
                         </SimpleGrid>
                       </Stat>
+                        }
+                        {!isLargerThan768 &&
+                        <Stat>
+                          <Box>
+                          <StatLabel>{metric.label} for {metric.timeOfData}</StatLabel>
+                        </Box>
+                        <SimpleGrid columns={2} spacing={4}>
+                          <Box>
+                            <StatNumber>{formatValue(metric.current)} Now</StatNumber>
+                          </Box>
+                          <Box>
+                            <StatNumber>{formatValue(metric.high)} Hi</StatNumber>
+                          </Box>
+                          <Box>
+                            <StatNumber>{formatValue(metric.average)} Avg</StatNumber>
+                          </Box>
+                          <Box>
+                            <StatNumber>{formatValue(metric.low)} Lo</StatNumber>
+                          </Box>
+                        </SimpleGrid>
+                        </Stat>
+                        }
                     </Box>
                   </GridItem>
                 );
