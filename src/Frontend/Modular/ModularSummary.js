@@ -93,6 +93,9 @@ const ModularSummary = ({ statusOfAlerts }) => {
           </GridItem>
         ))}
       </Grid>
+      <Heading size="md" mt={8} textAlign={'center'}>
+        Recent Alerts
+      </Heading>
       <Box
         mt={8}
         bg={colorMode === 'light' ? 'gray.100' : 'gray.800'}
@@ -103,32 +106,40 @@ const ModularSummary = ({ statusOfAlerts }) => {
         overflowY="scroll"
       >
         <Stack spacing={4}>
-          {filteredSummaryMetrics.map((metric, index) => (
-            <Box key={index}>
-              {alertsThreshold[metric.metric]?.length ? (
-                alertsThreshold[metric.metric].map((alert, alertIndex) => (
-                  <Box
-                    key={alertIndex}
-                    bg="orange.400"
-                    p={3}
-                    borderRadius="md"
-                    boxShadow="md"
-                    _hover={{ transform: 'scale(1.05)', transition: '0.3s' }}
-                  >
-                    <Flex justify="space-between" align="center">
-                      <Text color="#212121" fontSize="sm">
-                        {alert.message}
-                      </Text>
-                    </Flex>
-                  </Box>
-                ))
-              ) : (
-                <Text color={colorMode === 'light' ? 'gray.700' : 'gray.300'}>
-                  No alerts for {metric.label}
-                </Text>
-              )}
-            </Box>
-          ))}
+          <Box>
+            {alertsThreshold?.length > 0 ? (
+              alertsThreshold.map((alert, alertIndex) => (
+                <Box
+                  key={alertIndex}
+                  bg="orange.400"
+                  p={3}
+                  borderRadius="md"
+                  boxShadow="md"
+                  _hover={{ transform: 'scale(1.05)', transition: '0.3s' }}
+                >
+                  <Flex justify="space-between" align="center">
+                    <Text color="#212121" fontSize="sm">
+                      {alert.message}
+                    </Text>
+                  </Flex>
+                </Box>
+              ))
+            ) : (
+              <Box
+                bg="orange.400"
+                p={3}
+                borderRadius="md"
+                boxShadow="md"
+                _hover={{ transform: 'scale(1.05)', transition: '0.3s' }}
+              >
+                <Flex justify="space-between" align="center">
+                  <Text color="#212121" fontSize="sm">
+                    No Alerts
+                  </Text>
+                </Flex>
+              </Box>
+            )}
+          </Box>
         </Stack>
       </Box>
     </Box>

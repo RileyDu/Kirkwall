@@ -328,6 +328,27 @@ async function getAlerts() {
   return executeGraphqlQuery(query);
 }
 
+async function getAlertsPerUserByMetric(userMetrics) {
+  const filter = userMetrics.map(metric => `metric = '${metric}'`).join(' OR ');
+
+  // GraphQL query with the dynamically generated filter
+const query = `
+query getAlerts($filter: String!) {
+  alerts(ordering: "id desc", limit: 100, filter: $filter) {
+    timestamp
+    metric
+    id
+    message
+  }
+}
+`;
+  const variables = {
+    filter: filter,
+  };
+  return executeGraphqlQuery(query, variables);
+  
+}
+
 // Function to add a new alert to the database
 // This is used when a threshold is exceeded in the cron job and an alert is sent
 async function createAlert(metric, message, timestamp) {
@@ -636,4 +657,5 @@ export {
   getChartData,
   updateChart,
   getAllAdmins,
+  getAlertsPerUserByMetric,
 };

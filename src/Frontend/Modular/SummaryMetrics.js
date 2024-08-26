@@ -75,7 +75,7 @@ export const SummaryMetrics = () => {
       metric: 'leaf_wetness',
     },
     {
-      label: 'Garage Average Temp (°F)',
+      label: 'Garage Temp (°F)',
       ...calculateMetrics(watchdogTempData || watchdogData, 'temp'),
       metric: 'temp',
     },
