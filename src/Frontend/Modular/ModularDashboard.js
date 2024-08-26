@@ -380,7 +380,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                   {!isChartHidden && (
                     <MotionBox
                       layout // This will ensure smooth position transitions
-                      initial={{ opacity: 0, height: 0, scale: 0 }}
+                      initial={{ opacity: 0, height: 'auto', scale: .5 }}
                       animate={{ opacity: 1, height: 'auto', scale: 1 }}
                       exit={{ opacity: 0, height: 0, scale: 0 }}
                       transition={{ duration: 1 }}

@@ -107,7 +107,7 @@ const ModularSummary = ({ statusOfAlerts }) => {
       display="flex"
       flexDirection="column"
     >
-      <Tabs isFitted variant="enclosed">
+      <Tabs isFitted variant="soft-rounded" colorScheme="brand">
         <TabList mb="1em">
           <Tab>Statistics Overview</Tab>
           <Tab>Alert Backlog</Tab>
@@ -124,7 +124,7 @@ const ModularSummary = ({ statusOfAlerts }) => {
                 return (
                   <GridItem key={index}>
                     <Box
-                      bgGradient="linear(to-r, teal.500, blue.500)"
+                      bgGradient="linear(to-t, brand.500, brand.900)"
                       borderRadius="lg"
                       boxShadow="xl"
                       p={4}
