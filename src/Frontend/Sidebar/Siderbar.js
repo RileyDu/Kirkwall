@@ -77,7 +77,7 @@ const buttonConfig = {
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/grandfarm/map' },
   ],
   'jerrycromarty@imprimedicine.com': [
-    { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
+    // { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' },
   ],
   'russell@rjenergysolutions.com': [
@@ -105,7 +105,7 @@ const buttonConfig = {
       label: 'Rivercity',
       route: '/RivercitySensors',
     },
-    { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
+    // { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' },
   ],
 };
@@ -123,7 +123,6 @@ const Sidebar = ({
   const { currentUser } = useAuth();
   const user = currentUser;
   const userEmail = user ? user.email : 'default';
-
 
   const sidebarVariants = {
     collapsed: {
