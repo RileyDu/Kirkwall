@@ -286,7 +286,7 @@ async function getLatestThreshold() {
 
 // Function to create a new threshold for a metric in the database
 // This is used when a user sets a new threshold in the UI Expanded Modal
-async function createThreshold(metric, high, low, phone, email, timestamp) {
+async function createThreshold(metric, high, low, phone, email, timestamp, threshkill, timeframe) {
   const mutation = `
     mutation($i: thresholdsInput! ) {
       create_thresholds(input: $i) {
@@ -296,6 +296,8 @@ async function createThreshold(metric, high, low, phone, email, timestamp) {
         phone
         email
         timestamp
+        thresh_kill
+        timeframe
       }
     }
   `;
@@ -307,6 +309,8 @@ async function createThreshold(metric, high, low, phone, email, timestamp) {
       phone: phone,
       email: email,
       timestamp: timestamp,
+      thresh_kill: threshkill,
+      timeframe: timeframe,
     },
   };
   return executeGraphqlQuery(mutation, variables);

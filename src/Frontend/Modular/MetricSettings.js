@@ -162,7 +162,7 @@ export const MetricSettings = [
     {
         id:17,
         metric:"imFridgeOneTemp",
-        name:"Friidge #1 (°C)",
+        name:"Fridge #1 (°C)",
         unit:"°C",
         color:"red",
         company:"ImpriMed",

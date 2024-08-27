@@ -62,6 +62,8 @@ const ChartExpandModal = ({
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
   const [currentValue, setCurrentValue] = useState(null);
+  const [threshKill, setThreshKill] = useState(false);
+  const [timeframe, setTimeframe] = useState('');
   const { thresholds, alertsThreshold, fetchAlertsThreshold } =
     useWeatherData();
 
@@ -72,7 +74,9 @@ const ChartExpandModal = ({
     const lowThreshold = threshold?.low ?? '';
     const phone = threshold?.phone ?? '';
     const email = threshold?.email ?? '';
-    return { highThreshold, lowThreshold, phone, email };
+    const timeframe = threshold?.timeframe ?? '';
+    const threshkill = threshold?.thresh_kill ?? '';
+    return { highThreshold, lowThreshold, phone, email, timeframe, threshkill };
   };
 
   // Update the threshold values when the metric or thresholds change, fetched from the database
@@ -80,6 +84,8 @@ const ChartExpandModal = ({
     const latestThreshold = findLatestThreshold(metric);
     setHighThreshold(latestThreshold.highThreshold);
     setLowThreshold(latestThreshold.lowThreshold);
+    setThreshKill(latestThreshold.threshkill);
+    setTimeframe(latestThreshold.timeframe);
 
     // Ensure phone numbers are set as an array
     const phoneNumbersArray = latestThreshold.phone
@@ -163,7 +169,9 @@ const ChartExpandModal = ({
         parseFloat(lowThreshold),
         phoneNumbersString,
         emailsString,
-        timestamp
+        timestamp,
+        threshkill,
+        timeframe
       );
       console.log('Alerts Set');
     } catch (error) {
@@ -456,7 +464,7 @@ const ChartExpandModal = ({
                           </Text>
                         ) : null}
                       </HStack>
-                      {/* <FormControl
+                      <FormControl
                         display="flex"
                         alignItems="center"
                         justify={'flex-end'}
@@ -475,7 +483,7 @@ const ChartExpandModal = ({
                           // onChange={handleThreshKillToggle}
                           colorScheme={'orange'}
                           />
-                      </FormControl> */}
+                      </FormControl>
                     </Flex>
                     <Box
                       mt={2}
