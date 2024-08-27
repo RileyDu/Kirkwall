@@ -25,6 +25,14 @@ import {
   IconButton,
   Switch,
   Tooltip,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard.js';
 import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
@@ -33,6 +41,7 @@ import { LineChart, BarChart } from '../Charts/Charts.js';
 import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
+import TimeInputPolyfill from 'react-time-input-polyfill';
 
 // This is the modal that appears when a chart is expanded
 // It is a child of the ChartWrapper component
@@ -64,6 +73,10 @@ const ChartExpandModal = ({
   const [currentValue, setCurrentValue] = useState(null);
   const [threshKill, setThreshKill] = useState(false);
   const [timeframe, setTimeframe] = useState('');
+  const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
+  const [selectedHour, setSelectedHour] = useState('');
+  const [selectedMinute, setSelectedMinute] = useState('');
+
   const { thresholds, alertsThreshold, fetchAlertsThreshold } =
     useWeatherData();
 
@@ -75,7 +88,7 @@ const ChartExpandModal = ({
     const phone = threshold?.phone ?? '';
     const email = threshold?.email ?? '';
     const timeframe = threshold?.timeframe ?? '';
-    const threshkill = threshold?.thresh_kill ?? '';
+    const threshkill = threshold?.thresh_kill ?? false;
     return { highThreshold, lowThreshold, phone, email, timeframe, threshkill };
   };
 
@@ -170,7 +183,7 @@ const ChartExpandModal = ({
         phoneNumbersString,
         emailsString,
         timestamp,
-        threshkill,
+        threshKill,
         timeframe
       );
       console.log('Alerts Set');
@@ -247,14 +260,16 @@ const ChartExpandModal = ({
     }
   };
 
-  const groupedAlerts = Array.isArray(alertsThreshold) && alertsThreshold?.reduce((acc, alert) => {
-    const { metric } = alert;
-          if (!acc[metric]) {
-            acc[metric] = [];
-          }
-          acc[metric].push(alert);
-          return acc;
-        }, {});
+  const groupedAlerts =
+    Array.isArray(alertsThreshold) &&
+    alertsThreshold?.reduce((acc, alert) => {
+      const { metric } = alert;
+      if (!acc[metric]) {
+        acc[metric] = [];
+      }
+      acc[metric].push(alert);
+      return acc;
+    }, {});
 
   // Add a new phone number input
   const handleAddPhoneNumber = () => {
@@ -288,6 +303,19 @@ const ChartExpandModal = ({
     const updatedEmails = [...emailsForThreshold];
     updatedEmails[index] = value;
     setEmailsForThreshold(updatedEmails);
+  };
+
+  const handleTimePickerSubmit = () => {
+    const timeframe = `${selectedHour}:${selectedMinute}`;
+    console.log('Selected Timeframe:', timeframe);
+    setIsTimePickerOpen(false); // Close the popover
+  };
+
+  const handleThreshKillToggle = () => {
+    setThreshKill(!threshKill);
+    if (!threshKill) {
+      setIsTimePickerOpen(true); // Open the popover when toggling to true
+    }
   };
 
   return (
@@ -440,7 +468,11 @@ const ChartExpandModal = ({
                     >
                       Thresholds
                     </Text>
-                    <Flex width={'100%'} justify={'space-between'} alignItems={'center'}>
+                    <Flex
+                      width={'100%'}
+                      justify={'space-between'}
+                      alignItems={'center'}
+                    >
                       <HStack gap={6} justify={'flex-start'} width={'75%'}>
                         {highThreshold ? (
                           <Text color="white" fontSize={['xs', 'md']}>
@@ -464,7 +496,7 @@ const ChartExpandModal = ({
                           </Text>
                         ) : null}
                       </HStack>
-                      <FormControl
+                      {/* <FormControl
                         display="flex"
                         alignItems="center"
                         justify={'flex-end'}
@@ -479,11 +511,72 @@ const ChartExpandModal = ({
                         <Switch
                           id="threshold-alerts"
                           mb="1"
-                          // isChecked={threshKill}
+                          isChecked={threshKill}
                           // onChange={handleThreshKillToggle}
                           colorScheme={'orange'}
                           />
-                      </FormControl>
+                      </FormControl> */}
+                      <Box fontSize={['xs', 'lg']} ml={12} mb={-1}>
+                        Pause Threshold
+                      </Box>
+                      <Popover
+                        isOpen={isTimePickerOpen}
+                        onClose={() => setIsTimePickerOpen(false)}
+                        closeOnBlur={false}
+                        placement='top'
+                        width={'auto'}
+                      >
+                        <PopoverTrigger>
+                          <Switch
+                            id="threshold-alerts"
+                            isChecked={threshKill}
+                            onChange={handleThreshKillToggle}
+                            colorScheme={'orange'}
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent width="auto" maxWidth="fit-content">
+                        <PopoverArrow />
+                          <PopoverCloseButton />
+                          <PopoverBody>
+                            <Flex alignItems={'center'} justifyContent={'center'}>
+                              <Input
+                                type="number"
+                                placeholder="HH"
+                                value={selectedHour}
+                                onChange={e => setSelectedHour(e.target.value)}
+                                max={23}
+                                min={0}
+                                width="60px"
+                                mr={2}
+                                textAlign={'center'}
+                              />
+                              :
+                              <Input
+                                type="number"
+                                placeholder="MM"
+                                value={selectedMinute}
+                                onChange={e =>
+                                  setSelectedMinute(e.target.value)
+                                }
+                                max={59}
+                                min={0}
+                                width="60px"
+                                ml={2}
+                                textAlign={'center'}
+                              />
+                            </Flex>
+                          </PopoverBody>
+                          <PopoverFooter display="flex" justifyContent="center">
+                            <Button
+                              onClick={handleTimePickerSubmit}
+                              colorScheme="orange"
+                              
+                            >
+                              Set Timeframe to Pause Alerts
+                            </Button>
+                          </PopoverFooter>
+                        </PopoverContent>
+                      </Popover>
                     </Flex>
                     <Box
                       mt={2}
