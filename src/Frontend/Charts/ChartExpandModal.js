@@ -73,6 +73,7 @@ const ChartExpandModal = ({
   const [currentValue, setCurrentValue] = useState(null);
   const [threshKill, setThreshKill] = useState(false);
   const [timeframe, setTimeframe] = useState('');
+  const [newTimeframe, setNewTimeframe] = useState('');
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
   const [selectedHour, setSelectedHour] = useState('');
   const [selectedMinute, setSelectedMinute] = useState('');
@@ -115,10 +116,12 @@ const ChartExpandModal = ({
     setEmailsForThreshold(emailsArray);
   }, [metric, thresholds]);
 
-  const apiUrl =
-    process.env.NODE_ENV === 'production'
-      ? 'https://kirkwall-demo.vercel.app'
-      : 'http://localhost:3001';
+  useEffect(() => {
+    if (newTimeframe) {
+      // Only submit the form if the timeframe has been set
+      handleFormSubmit();
+    }
+  }, [newTimeframe]);
 
   const MotionButton = motion(Button);
   const toast = useToast();
@@ -174,6 +177,7 @@ const ChartExpandModal = ({
     const timestamp = new Date().toISOString();
     const phoneNumbersString = phoneNumbers.join(', '); // Join phone numbers into a single string
     const emailsString = emailsForThreshold.join(', '); // Join emails into a single string
+    const timeOfPause = newTimeframe || timeframe;
 
     try {
       await createThreshold(
@@ -184,7 +188,7 @@ const ChartExpandModal = ({
         emailsString,
         timestamp,
         threshKill,
-        timeframe
+        timeOfPause
       );
       console.log('Alerts Set');
     } catch (error) {
@@ -305,18 +309,27 @@ const ChartExpandModal = ({
     setEmailsForThreshold(updatedEmails);
   };
 
-  const handleTimePickerSubmit = () => {
-    const timeframe = `${selectedHour}:${selectedMinute}`;
-    console.log('Selected Timeframe:', timeframe);
-    setIsTimePickerOpen(false); // Close the popover
-  };
+const handleTimePickerSubmit = () => {
+  // Format the timeframe in the interval syntax PostgreSQL expects
+  const timeframe = `${selectedHour}:${selectedMinute}:00`;
 
-  const handleThreshKillToggle = () => {
-    setThreshKill(!threshKill);
-    if (!threshKill) {
-      setIsTimePickerOpen(true); // Open the popover when toggling to true
-    }
-  };
+  console.log('Selected Timeframe:', timeframe);
+  setIsTimePickerOpen(false); // Close the popover
+  setNewTimeframe(timeframe);
+  handleFormSubmit();
+};
+
+useEffect(() => {
+  if (threshKill) {
+    setIsTimePickerOpen(true);
+  } else {
+    setIsTimePickerOpen(false);
+  }
+}, [threshKill]);
+
+const handleThreshKillToggle = () => {
+  setThreshKill(prev => !prev);
+};
 
   return (
     <Box>
