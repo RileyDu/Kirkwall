@@ -185,7 +185,7 @@ const ChartWrapper = ({
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
   const getBackgroundColor = colorMode =>
-    colorMode === 'light' ? '#f5f5f5' : 'gray.800';
+    colorMode === 'light' ? '#e0e0e0' : 'gray.800';
 
   const handleTitleChange = e => setNewTitle(e.target.value);
   const handleTitleSubmit = () => {

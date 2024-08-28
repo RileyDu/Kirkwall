@@ -400,7 +400,7 @@ const calculateTimeOfToggle = (timestamp, timeframe) => {
                   whileTap={{ scale: 0.9 }}
                   onClick={() => handleTimeButtonClick(timePeriod)}
                   bg={
-                    currentTimePeriod === timePeriod ? 'orange.400' : 'gray.100'
+                    currentTimePeriod === timePeriod ? '#3D5A80' : 'gray.100'
                   }
                   color={currentTimePeriod === timePeriod ? 'white' : 'black'}
                   size={['sm', 'md']}
@@ -631,7 +631,7 @@ const calculateTimeOfToggle = (timestamp, timeframe) => {
                         {groupedAlerts[metric]?.map((alert, index) => (
                           <Box
                             key={index}
-                            bg="orange.400"
+                            bg="#cee8ff"
                             p={2}
                             borderRadius="md"
                             boxShadow="md"
@@ -639,7 +639,7 @@ const calculateTimeOfToggle = (timestamp, timeframe) => {
                             <Flex justify="space-between" align="center" mr={1}>
                               <Text color="#212121">{alert.message}</Text>
                               <FaTrash
-                                color="white"
+                                color="#212121"
                                 onClick={() => clearAlerts(alert.id)}
                                 aria-label="Delete alert"
                                 cursor="pointer"

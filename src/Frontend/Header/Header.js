@@ -166,7 +166,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     fontSize: 'md',
     borderRadius: 'md',
     mb: 4,
-    bg: '#F4B860',
+    bg: '#cee8ff',
     color: '#212121',
     _hover: {
       bg: '#d7a247',
@@ -188,7 +188,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         left="0"
         width="100%"
         zIndex="1001"
-        borderBottom="3px solid #F4B860"
+        borderBottom="3px solid #cee8ff"
         height="64px"
       >
         <motion.div {...motionProps}>
@@ -322,7 +322,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         <DrawerOverlay />
         <DrawerContent bg="#2D3748" color="white">
           <DrawerCloseButton />
-          <DrawerHeader borderBottomWidth="1px" borderBottomColor="#F4B860">
+          <DrawerHeader borderBottomWidth="1px" borderBottomColor="#cee8ff">
             Menu
           </DrawerHeader>
           <DrawerBody color={'#212121'}>
@@ -341,17 +341,17 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
               </motion.div>
                 <motion.div {...motionProps}>
                   <Button
-                    leftIcon={
-                      <Avatar
-                        size="sm"
-                        name="Kirkwall Logo"
-                        src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
-                      />
-                    }
+                    // leftIcon={
+                    //   <Avatar
+                    //     size="sm"
+                    //     name="Kirkwall Logo"
+                    //     src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
+                    //   />
+                    // }
                     {...buttonStyleProps}
                     onClick={() => handleNavigation('/login')}
                   >
-                    Logout
+                    LOGOUT
                   </Button>
                 </motion.div>
               <AdminExpandModal isOpen={isOpen} onClose={onClose} title="Admin Panel" userEmail={currentUser.email} />

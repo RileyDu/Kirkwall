@@ -83,7 +83,7 @@ const getMinMax = data => {
 const createCustomChartOptions = (metric, data, colorMode) => {
   const { min, max } = getMinMax(data);
   const labelColor = colorMode === 'light' ? '#000000' : '#FFFFFF';
-  const gridLineColor = colorMode === 'light' ? '#e0e0e0' : '#333333'; // Set grid line color based on color mode
+  const gridLineColor = colorMode === 'light' ? 'whitesmoke' : '#333333'; // Set grid line color based on color mode
 
   // Helper function to set the y-axis min value
   const getYmin = (min, max) => {

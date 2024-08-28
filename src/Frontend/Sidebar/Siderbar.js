@@ -40,7 +40,7 @@ const buttonStyleProps = {
   fontSize: 'md',
   borderRadius: 'md',
   mb: 4,
-  bg: '#F4B860',
+  bg: '#cee8ff',
   color: 'black',
   _hover: {
     bg: '#d7a247',
@@ -217,9 +217,9 @@ const Sidebar = ({
           }
           onClick={toggleSidebar}
           aria-label={isMinimized ? 'Expand' : 'Minimize'}
-          bg="#F4B860"
+          bg="#cee8ff"
           color="black"
-          _hover={{ bg: '#d7a247' }}
+          _hover={{ bg: '#3D5A80', color: 'white' }}
           _focus={{ boxShadow: 'none' }}
           size="lg"
           rounded="full"
@@ -239,6 +239,8 @@ const SidebarContent = ({ buttons, navigate }) => (
         {...buttonStyleProps}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
+        _hover={{ bg: '#3D5A80', color: 'white' }}
+
       >
         {btn.label}
       </MotionButton>
@@ -256,9 +258,9 @@ const MinimizedSidebarContent = ({ buttons, navigate }) => (
         aria-label={btn.label}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        bg="#F4B860"
+        bg="#cee8ff"
         color="black"
-        _hover={{ bg: '#d7a247' }}
+        _hover={{ bg: '#3D5A80', color: 'white' }}
       />
     ))}
   </MotionStack>
