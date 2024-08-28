@@ -152,7 +152,7 @@ const ModularSummary = ({ statusOfAlerts }) => {
                       color="white"
                       _hover={{ boxShadow: '2xl', transform: 'scale(1.02)' }}
                     >
-                      {isLargerThan768 && !isGrandFarm ? (
+                      {/* {isLargerThan768 && !isGrandFarm ? (
                         <Stat>
                           <Box>
                             <StatLabel>
@@ -182,37 +182,37 @@ const ModularSummary = ({ statusOfAlerts }) => {
                             </Box>
                           </SimpleGrid>
                         </Stat>
-                      ) : (
+                      ) : ( */}
                         <Stat>
                           <Box>
-                            <StatNumber>
+                            <StatNumber fontSize={['lg', 'xl']} textDecoration="underline">
                               {metric.label} for {metric.timeOfData}
                             </StatNumber>
                           </Box>
                           <SimpleGrid columns={2} spacing={4}>
                             <Box>
-                              <StatNumber>
+                              <StatNumber fontSize={['md', 'lg']}>
                                 {formatValue(metric.current)} Now
                               </StatNumber>
                             </Box>
                             <Box>
-                              <StatNumber>
-                                {formatValue(metric.high)} Hi
+                            <StatNumber fontSize={['md', 'lg']}>
+                            {formatValue(metric.high)} Hi
                               </StatNumber>
                             </Box>
                             <Box>
-                              <StatNumber>
-                                {formatValue(metric.average)} Avg
+                            <StatNumber fontSize={['md', 'lg']}>
+                            {formatValue(metric.average)} Avg
                               </StatNumber>
                             </Box>
                             <Box>
-                              <StatNumber>
-                                {formatValue(metric.low)} Lo
+                            <StatNumber fontSize={['md', 'lg']}>
+                            {formatValue(metric.low)} Lo
                               </StatNumber>
                             </Box>
                           </SimpleGrid>
                         </Stat>
-                      )}
+                      {/* )} */}
                     </MotionBox>
                   </GridItem>
                 );

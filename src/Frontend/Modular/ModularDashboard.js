@@ -186,7 +186,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
 
   return (
     <Box
-      bg={colorMode === 'light' ? 'brand.50' : 'gray.700'}
+      bg={colorMode === 'light' ? '#FFFFFF' : 'gray.700'}
       color={colorMode === 'light' ? 'black' : 'white'}
       flex="1"
       p="4"
@@ -219,9 +219,9 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                         variant="outline"
                         size={iconSize}
                         color="#212121"
-                        bg={'brand.400'}
+                        bg={'#cee8ff'}
                         _hover={{ bg: 'brand.800' }}
-                        border={'2px solid #fd9801'}
+                        border={'2px solid #3D5A80'}
                         onClick={() => setIsPopoverOpen(!isPopoverOpen)}
                       />
                     </Tooltip>
@@ -254,9 +254,9 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                           aria-label="1 Column Layout"
                           onClick={() => handleLayoutChange(1)}
                           color="#212121"
-                          bg={chartLayout === 1 ? 'brand.800' : 'brand.400'}
+                          bg={chartLayout === 1 ? '#3D5A80' : '#cee8ff'}
                           _hover={{ bg: 'brand.800' }}
-                          border={'2px solid #fd9801'}
+                          border={'2px solid #3D5A80'}
                         />
                       </Tooltip>
                       <Tooltip label="2 Column">
@@ -267,9 +267,9 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                           aria-label="2 Column Layout"
                           onClick={() => handleLayoutChange(2)}
                           color="#212121"
-                          bg={chartLayout === 2 ? 'brand.800' : 'brand.400'}
+                          bg={chartLayout === 2 ? '#3D5A80' : '#cee8ff'}
                           _hover={{ bg: 'brand.800' }}
-                          border={'2px solid #fd9801'}
+                          border={'2px solid #3D5A80'}
                         />
                       </Tooltip>
                       <Tooltip label="3 Column">
@@ -280,9 +280,9 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                           aria-label="3 Column Layout"
                           onClick={() => handleLayoutChange(3)}
                           color="#212121"
-                          bg={chartLayout === 3 ? 'brand.800' : 'brand.400'}
+                          bg={chartLayout === 3 ? '#3D5A80' : '#cee8ff'}
                           _hover={{ bg: 'brand.800' }}
-                          border={'2px solid #fd9801'}
+                          border={'2px solid #3D5A80'}
                         />
                       </Tooltip>
                     </Flex>
@@ -293,10 +293,10 @@ const ModularDashboard = ({ statusOfAlerts }) => {
             <Tooltip label="Toggle Charts">
               <MenuButton
                 as={Button}
-                bg="brand.400"
+                bg="#cee8ff"
                 color="black"
                 _hover={{ bg: '#d7a247' }}
-                border={'2px solid #fd9801'}
+                border={'2px solid #3D5A80'}
                 onClick={isOpen ? onClose : onOpen}
                 size={isLargerThan768 ? 'md' : 'sm'}
                 ml={isLargerThan768 ? '2' : '4'}

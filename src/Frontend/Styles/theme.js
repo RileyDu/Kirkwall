@@ -1,4 +1,4 @@
-import { extendTheme } from '@chakra-ui/react';
+import { color, extendTheme } from '@chakra-ui/react';
 
 const customTheme = extendTheme({
   colors: {
@@ -36,7 +36,7 @@ const customTheme = extendTheme({
   styles: {
     global: (props) => ({
       body: {
-        bg: props.colorMode === 'light' ? 'brand.50' : 'gray.800',
+        bg: props.colorMode === 'light' ? '#FFFFFF' : 'gray.700',
         color: props.colorMode === 'light' ? 'gray.800' : 'white',
       },
       a: {
@@ -59,13 +59,14 @@ const customTheme = extendTheme({
       variants: {
         pill: {
           borderRadius: 'full',
-          border: '3px solid #FD9801',
+          border: '3px solid #3D5A80',
           _hover: {
-            bg: 'brand.800',
+            bg: '#3D5A80',
+            color: 'white',
           },
           _active: {
-            bg: 'brand.500',
-            color: '#212121',
+            bg: '#3D5A80',
+            color: 'white',
           },
         },
         sidebar: {
@@ -74,6 +75,20 @@ const customTheme = extendTheme({
           color: '#212121',
           _hover: {
             bg: 'brand.800',
+          },
+          _active: {
+            bg: 'brand.500',
+            color: '#212121',
+          },
+        },
+        blue: {
+          borderRadius: 'full',
+          border: '3px solid #3D5A80',
+          color: '#212121',
+          bg: '#cee8ff',
+          _hover: {
+            bg: '#3D5A80',
+            color: 'white',
           },
           _active: {
             bg: 'brand.500',

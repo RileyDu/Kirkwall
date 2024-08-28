@@ -41,8 +41,7 @@ import { LineChart, BarChart } from '../Charts/Charts.js';
 import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
-import TimeInputPolyfill from 'react-time-input-polyfill';
-
+import { format } from 'date-fns';
 // This is the modal that appears when a chart is expanded
 // It is a child of the ChartWrapper component
 // It contains the chart, a mini dashboard, and a map, as well as the threshold settings & logs
@@ -73,7 +72,9 @@ const ChartExpandModal = ({
   const [currentValue, setCurrentValue] = useState(null);
   const [threshKill, setThreshKill] = useState(false);
   const [timeframe, setTimeframe] = useState('');
+  const [timestamp, setTimestamp] = useState('');
   const [newTimeframe, setNewTimeframe] = useState('');
+  const [timeOfToggle, setTimeOfToggle] = useState('');
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
   const [selectedHour, setSelectedHour] = useState('');
   const [selectedMinute, setSelectedMinute] = useState('');
@@ -90,7 +91,8 @@ const ChartExpandModal = ({
     const email = threshold?.email ?? '';
     const timeframe = threshold?.timeframe ?? '';
     const threshkill = threshold?.thresh_kill ?? false;
-    return { highThreshold, lowThreshold, phone, email, timeframe, threshkill };
+    const timestamp = threshold?.timestamp ?? '';
+    return { highThreshold, lowThreshold, phone, email, timeframe, threshkill, timestamp };
   };
 
   // Update the threshold values when the metric or thresholds change, fetched from the database
@@ -100,6 +102,10 @@ const ChartExpandModal = ({
     setLowThreshold(latestThreshold.lowThreshold);
     setThreshKill(latestThreshold.threshkill);
     setTimeframe(latestThreshold.timeframe);
+    setTimestamp(latestThreshold.timestamp);
+
+    // const calculatedTimeOfToggle = calculateTimeOfToggle(latestThreshold.timestamp, latestThreshold.timeframe);
+    // setTimeOfToggle(calculatedTimeOfToggle);
 
     // Ensure phone numbers are set as an array
     const phoneNumbersArray = latestThreshold.phone
@@ -331,6 +337,22 @@ const handleThreshKillToggle = () => {
   setThreshKill(prev => !prev);
 };
 
+const calculateTimeOfToggle = (timestamp, timeframe) => {
+  // Parse the timestamp to a Date object
+  const timestampDate = new Date(timestamp);
+
+  // Convert timeframe to milliseconds
+  const [hours, minutes, seconds] = timeframe.split(':').map(Number);
+  const timeframeInMs =
+    (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
+
+  // Calculate the timeOfToggle
+  const timeOfToggleDate = new Date(timestampDate.getTime() + timeframeInMs);
+
+  // Format timeOfToggle for display
+  return format(timeOfToggleDate, 'yyyy-MM-dd HH:mm:ss');
+};
+
   return (
     <Box>
       <Modal onClose={onClose} isOpen={isOpen}>
@@ -395,7 +417,7 @@ const handleThreshKillToggle = () => {
               p={4}
               borderRadius="md"
               boxShadow="md"
-              border="2px solid #fd9801"
+              border="2px solid #00BCD4"
               mb={4}
               h={'40vh'}
             >
@@ -417,9 +439,9 @@ const handleThreshKillToggle = () => {
                 leftIcon={<FaChartLine />}
                 size={['sm', 'md']}
                 mx={1}
-                whileHover={{ scale: 1.1 }}
+                whileHover={{ scale: 1.1, bg: '#00BCD4' }}
                 whileTap={{ scale: 0.9 }}
-                bg={typeOfChart === 'line' ? 'orange.400' : 'gray.100'}
+                bg={typeOfChart === 'line' ? '#3D5A80' : 'gray.100'}
                 color={typeOfChart === 'line' ? 'white' : 'black'}
               >
                 LINE
@@ -529,8 +551,10 @@ const handleThreshKillToggle = () => {
                           colorScheme={'orange'}
                           />
                       </FormControl> */}
+                      {/* {timeOfToggle &&  <Text>Your threshold will turn back on @ {timeOfToggle}</Text>}
                       <Box fontSize={['xs', 'lg']} ml={12} mb={-1}>
                         Pause Threshold
+                        
                       </Box>
                       <Popover
                         isOpen={isTimePickerOpen}
@@ -589,7 +613,7 @@ const handleThreshKillToggle = () => {
                             </Button>
                           </PopoverFooter>
                         </PopoverContent>
-                      </Popover>
+                      </Popover> */}
                     </Flex>
                     <Box
                       mt={2}

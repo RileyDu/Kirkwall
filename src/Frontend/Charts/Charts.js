@@ -32,7 +32,7 @@ const processWeatherData = (data, key, colorMode) => {
   if (!data) return null;
 
   const getColorOfLastValue = colorMode => {
-    return colorMode === 'light' ? '#212121' : 'white';
+    return colorMode === 'light' ? '#00BCD4' : 'white';
   };
 
   const reversedData = [...data].reverse();
@@ -50,17 +50,18 @@ const processWeatherData = (data, key, colorMode) => {
       {
         label: key,
         data: reversedData.map(item => item[key]),
-        backgroundColor: '#fd9801',
+        backgroundColor: '#4d648d',
         borderColor: reversedData.map((item, index) =>
           index === reversedData.length - 1
             ? getColorOfLastValue(colorMode)
-            : '#fd9801'
+            : '#4d648d'
         ),
         borderWidth: 2,
+        borderRadius: 30,
         pointBackgroundColor: reversedData.map((item, index) =>
           index === reversedData.length - 1
             ? getColorOfLastValue(colorMode)
-            : '#fd9801'
+            : '#4d648d'
         ),
         pointRadius: reversedData.map((item, index) =>
           index === reversedData.length - 1 ? 5 : 3

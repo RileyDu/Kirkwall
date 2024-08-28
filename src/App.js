@@ -73,7 +73,7 @@ const Layout = ({
   return (
     <Flex
       minH="100vh"
-      bg={colorMode === 'light' ? 'brand.50' : 'gray.700'}
+      bg={colorMode === 'light' ? '#FFFFFF' : 'gray.700'}
       overflowX={'hidden'}
     >
       {isLargerThan768 && shouldShowSidebar && (
