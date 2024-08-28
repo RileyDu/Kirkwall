@@ -68,8 +68,8 @@ const processWeatherData = (data, key, colorMode) => {
         pointRadius: reversedData.map((item, index) =>
           index === reversedData.length - 1 ? 5 : 3
         ),
-        cubicInterpolationMode: 'monotone', // Add this line to enable smooth curves
-        tension: 0.4,
+        // cubicInterpolationMode: 'monotone', // Add this line to enable smooth curves
+        // tension: 0.4,
         fill: 'start',
       },
     ],
