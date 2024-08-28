@@ -59,7 +59,7 @@ const processWeatherData = (data, key, colorMode) => {
             : '#4d648d'
         ),
         borderWidth: 2,
-        borderRadius: 30,
+        // borderRadius: 30,
         pointBackgroundColor: reversedData.map((item, index) =>
           index === reversedData.length - 1
             ? getColorOfLastValue(colorMode)
