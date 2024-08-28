@@ -91,7 +91,7 @@ const customTheme = extendTheme({
             color: 'white',
           },
           _active: {
-            bg: 'brand.500',
+            bg: '#3D5A80',
             color: '#212121',
           },
         },
@@ -115,7 +115,7 @@ const customTheme = extendTheme({
     Modal: {
       baseStyle: (props) => ({
         dialog: {
-          bg: props.colorMode === 'light' ? 'brand.50' : 'gray.800',
+          bg: props.colorMode === 'light' ? '#F0F4F8' : 'gray.800',
           color: props.colorMode === 'light' ? 'gray.800' : 'white',
         },
       }),

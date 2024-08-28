@@ -23,16 +23,6 @@ import {
   ModalFooter,
   HStack,
   IconButton,
-  Switch,
-  Tooltip,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard.js';
 import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
@@ -135,7 +125,9 @@ const ChartExpandModal = ({
   //Styling based on color mode
   const getBackgroundColor = () => 'gray.700';
   const getContentBackgroundColor = () =>
-    colorMode === 'light' ? 'brand.50' : 'gray.800';
+    colorMode === 'light' ? '#F0F4F8' : 'gray.800';
+  const getChartBgColor = () =>
+    colorMode === 'light' ? '#e0e0e0' : 'gray.800';
   const getModalBackgroundColor = () =>
     colorMode === 'light' ? 'whitesmoke' : 'gray.700';
 
@@ -413,7 +405,7 @@ const calculateTimeOfToggle = (timestamp, timeframe) => {
               justify="center"
               alignItems="center"
               flexGrow={2}
-              bg={getContentBackgroundColor()}
+              bg={getChartBgColor()}
               p={4}
               borderRadius="md"
               boxShadow="md"
@@ -456,7 +448,7 @@ const calculateTimeOfToggle = (timestamp, timeframe) => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 size={['sm', 'md']}
-                bg={typeOfChart === 'bar' ? 'orange.400' : 'gray.100'}
+                bg={typeOfChart === 'bar' ? '#3D5A80' : 'gray.100'}
                 color={typeOfChart === 'bar' ? 'white' : 'black'}
               >
                 BAR

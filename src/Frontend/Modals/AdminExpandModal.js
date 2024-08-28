@@ -462,7 +462,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                 gap={6}
                 height="100%"
               >
-                <GridItem border="5px solid #fd9801" p={3}>
+                <GridItem border="5px solid #cee8ff" p={3}>
                   <Heading mb={3} fontSize="2xl">
                     Profile
                   </Heading>
@@ -471,7 +471,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                       alignContent="center"
                       textAlign="center"
                       boxSize="150px"
-                      border="5px solid #fd9801"
+                      border="5px solid #cee8ff"
                       borderRadius="150px"
                     >
                       <Image
@@ -542,7 +542,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                   </Box>
                 </GridItem>
 
-                <GridItem border="5px solid #fd9801" p={3}>
+                <GridItem border="5px solid #cee8ff" p={3}>
                   <Heading mb={3} fontSize="2xl">
                     Alerts in the Last Hour
                   </Heading>
@@ -581,7 +581,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
 
                 <GridItem
                   colSpan={isLargerThan768 ? 2 : 1}
-                  border="5px solid #fd9801"
+                  border="5px solid #cee8ff"
                   p={3}
                 >
                   <Flex
@@ -620,8 +620,8 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                   </Flex>
                   {isLargerThan768 && (
                     <Tabs
-                      variant="soft-rounded"
-                      colorScheme="orange"
+                      variant="solid-rounded"
+                      colorScheme="gray"
                       isFitted
                       onChange={handleTabChange}
                     >
@@ -631,8 +631,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                             key={index}
                             fontSize={{ base: 'xs', md: 'sm' }}
                             p={{ base: '2', md: '3' }}
-                            color={colorMode === 'light' ? 'black' : 'white'}
-                            _selected={{ color: 'white', bg: 'orange.400' }}
+                            // _selected={{ color: 'white', bg: 'orange.400' }}
                           >
                             {tab.label}
                           </Tab>
@@ -656,7 +655,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                                     (alert, alertIndex) => (
                                       <Box
                                         key={alertIndex}
-                                        bg="orange.400"
+                                        bg="#cee8ff"
                                         p={2}
                                         borderRadius="md"
                                         boxShadow="md"

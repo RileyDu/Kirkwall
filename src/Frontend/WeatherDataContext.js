@@ -253,7 +253,7 @@ export const WeatherDataProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (currentUser &&  currentUser.email === 'pmo@grandfarm.com') {
+    if (currentUser &&  currentUser?.email === 'pmo@grandfarm.com') {
       const fetchData = async () => {
         try {
           const response = await getWeatherData('all', '37'); // default time period
@@ -279,7 +279,7 @@ export const WeatherDataProvider = ({ children }) => {
   }, [currentUser]);
 
   useEffect(() => {
-    if (currentUser && (currentUser.email === 'test@kirkwall.io')) {
+    if (currentUser && (currentUser?.email === 'test@kirkwall.io')) {
       const fetchData = async () => {
         try {
           if (currentUser.email === 'test@kirkwall.io') {
@@ -329,7 +329,7 @@ export const WeatherDataProvider = ({ children }) => {
   }, [currentUser]);
 
   const fetchAlertsThreshold = async () => {
-    const userMetrics = CustomerSettings.find ((customer) => customer.email === currentUser.email).metric;
+    const userMetrics = CustomerSettings.find ((customer) => customer.email === currentUser?.email)?.metric;
     try {
       const response = await getAlertsPerUserByMetric(userMetrics);
       console.log('Alerts Threshold 0:', response.data.alerts);

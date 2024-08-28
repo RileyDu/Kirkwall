@@ -107,7 +107,7 @@ const HelpModal = ({
                           value={localTitle}
                           onChange={(e) => setLocalTitle(e.target.value)}
                           bg={'white'}
-                          border={'2px solid #fd9801'}
+                          border={'2px solid #3D5A80'}
                           color={'#212121'}
                       />
                   </FormControl>
@@ -120,7 +120,7 @@ const HelpModal = ({
                           value={localDescription}
                           onChange={(e) => setLocalDescription(e.target.value)}
                           bg={'white'}
-                          border={'2px solid #fd9801'}
+                          border={'2px solid #3D5A80'}
                           color={'#212121'}
                           minHeight="120px" // Adjusted for longer text input
                       />
@@ -173,7 +173,7 @@ const HelpModal = ({
                           type="email"
                           value={currentUser?.email} // Linked to email state
                           bg={'white'}
-                          border={'2px solid #fd9801'}
+                          border={'2px solid #3D5A80'}
                           color={'#212121'}
                       />
                   </FormControl>
@@ -181,9 +181,10 @@ const HelpModal = ({
               <ModalFooter>
                   <Button
                       variant="solid"
-                      bg="orange.400"
-                      color="white"
-                      _hover={{ bg: 'orange.500' }}
+                      bg="#cee8ff"
+                      color="black"
+                      border={'2px solid #3D5A80'}
+                      _hover={{ bg: '#3D5A80', color: 'white' }}
                       mr={3}
                       onClick={handleFormSubmit}
                   >
