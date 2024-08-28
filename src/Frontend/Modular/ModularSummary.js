@@ -101,7 +101,7 @@ const ModularSummary = ({ statusOfAlerts }) => {
 
   return (
     <Box
-      bg={colorMode === 'light' ? 'brand.50' : 'gray.700'}
+      bg={colorMode === 'light' ? 'white' : 'gray.700'}
       color={colorMode === 'light' ? 'black' : 'white'}
       flex="1"
       p="4"
@@ -114,7 +114,7 @@ const ModularSummary = ({ statusOfAlerts }) => {
       <Tabs
         isFitted
         variant="solid-rounded"
-        colorScheme={colorMode === 'light' ? 'brand' : 'gray'}
+        colorScheme={colorMode === 'light' ? 'gray' : 'gray'}
       >
         <TabList mb="1em">
           <Tab>Statistics Overview</Tab>
@@ -242,7 +242,7 @@ const ModularSummary = ({ statusOfAlerts }) => {
                     alertsThreshold.map((alert, alertIndex) => (
                       <Box
                         key={alertIndex}
-                        bg="orange.400"
+                        bg="#cee8ff"
                         p={3}
                         borderRadius="md"
                         boxShadow="md"

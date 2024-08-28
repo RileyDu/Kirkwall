@@ -220,7 +220,8 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                         size={iconSize}
                         color="#212121"
                         bg={'#cee8ff'}
-                        _hover={{ bg: 'brand.800' }}
+                        _hover={{ bg: '#3D5A80', color: 'white' }}
+                        _active={{ bg: '#3D5A80', color: 'white' }}
                         border={'2px solid #3D5A80'}
                         onClick={() => setIsPopoverOpen(!isPopoverOpen)}
                       />
@@ -255,7 +256,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                           onClick={() => handleLayoutChange(1)}
                           color="#212121"
                           bg={chartLayout === 1 ? '#3D5A80' : '#cee8ff'}
-                          _hover={{ bg: 'brand.800' }}
+                          _hover={{ bg: '#3D5A80', color: 'white' }}
                           border={'2px solid #3D5A80'}
                         />
                       </Tooltip>
@@ -268,7 +269,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                           onClick={() => handleLayoutChange(2)}
                           color="#212121"
                           bg={chartLayout === 2 ? '#3D5A80' : '#cee8ff'}
-                          _hover={{ bg: 'brand.800' }}
+                          _hover={{ bg: '#3D5A80', color: 'white' }}
                           border={'2px solid #3D5A80'}
                         />
                       </Tooltip>
@@ -281,7 +282,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                           onClick={() => handleLayoutChange(3)}
                           color="#212121"
                           bg={chartLayout === 3 ? '#3D5A80' : '#cee8ff'}
-                          _hover={{ bg: 'brand.800' }}
+                          _hover={{ bg: '#3D5A80', color: 'white' }}
                           border={'2px solid #3D5A80'}
                         />
                       </Tooltip>
@@ -295,7 +296,8 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                 as={Button}
                 bg="#cee8ff"
                 color="black"
-                _hover={{ bg: '#d7a247' }}
+                _hover={{ bg: '#3D5A80', color: 'white' }}
+                _active={{ bg: '#3D5A80', color: 'white' }}
                 border={'2px solid #3D5A80'}
                 onClick={isOpen ? onClose : onOpen}
                 size={isLargerThan768 ? 'md' : 'sm'}
