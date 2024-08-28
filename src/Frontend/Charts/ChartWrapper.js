@@ -377,7 +377,7 @@ const ChartWrapper = ({
     <>
       <Box
         border="2px"
-        borderColor="#00BCD4"
+        borderColor="#3D5A80"
         borderRadius="md"
         boxShadow="md"
         p="4"
