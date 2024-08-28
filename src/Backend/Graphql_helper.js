@@ -277,6 +277,8 @@ async function getLatestThreshold() {
         email
         timestamp
         id
+        thresh_kill
+        timeframe
       }
     }
       
