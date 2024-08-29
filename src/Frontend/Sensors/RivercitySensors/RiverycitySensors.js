@@ -70,7 +70,7 @@ import {
           <Box width="100%">
             <Box color={colorMode === 'light' ? 'black' : 'white'}>
               <ChartWrapper
-                title="Temperature (°F)"
+                title="Temperature in Freezer (°F)"
                 onChartChange={handleChartChange(setRivercityTempChartType)}
                 weatherData={rivercityTempData || rivercityData}
                 metric="rctemp"
@@ -106,7 +106,7 @@ import {
             <Box color={colorMode === 'light' ? 'black' : 'white'}>
             <GridItem colSpan={{ base: 1, lg: 1 }} display="flex">
                     <ChartWrapper
-                      title="Humidity (%)"
+                      title="Humidity in Freezer (%)"
                       onChartChange={handleChartChange(setRivercityHumChartType)}
                       weatherData={rivercityHumData || rivercityData}
                       metric="humidity"

@@ -158,14 +158,14 @@ const Login = () => {
                   required
                   bg="#2D3748"
                   border="2px solid"
-                  borderColor="#F4B860"
-                  _hover={{ borderColor: '#F4B860' }}
+                  borderColor="#cee8ff"
+                  _hover={{ borderColor: '#cee8ff' }}
                   _focus={{
-                    borderColor: '#F4B860',
+                    borderColor: '#cee8ff',
                     bg: 'white',
                     color: 'black',
                   }}
-                  focusBorderColor="#F4B860"
+                  focusBorderColor="#cee8ff"
                   color="white"
                 />
                 <FormErrorMessage>{emailError}</FormErrorMessage>
@@ -182,14 +182,14 @@ const Login = () => {
                   required
                   bg="#2D3748"
                   border="2px solid"
-                  borderColor="#F4B860"
-                  _hover={{ borderColor: '#F4B860' }}
+                  borderColor="#cee8ff"
+                  _hover={{ borderColor: '#cee8ff' }}
                   _focus={{
-                    borderColor: '#F4B860',
+                    borderColor: '#cee8ff',
                     bg: 'white',
                     color: 'black',
                   }}
-                  focusBorderColor="#F4B860"
+                  focusBorderColor="#cee8ff"
                   color="white"
                 />
                 <FormErrorMessage>{passwordError}</FormErrorMessage>
@@ -206,13 +206,11 @@ const Login = () => {
               )}
               <Button
                 type="submit"
-                colorScheme="yellow"
                 size="lg"
                 fontSize="md"
                 borderRadius="full"
-                bg="#F4B860"
+                bg="#cee8ff"
                 color="black"
-                _hover={{ bg: '#d7a247' }}
                 isLoading={isLoading}
                 loadingText="Logging in"
               >
@@ -227,7 +225,7 @@ const Login = () => {
           </Text> */}
           {/* <Divider my="4" /> */}
           <Text color="gray.400" textAlign="center">
-            <Link color="#F4B860" onClick={() => navigate('/landing')}>
+            <Link color="white" href='https://www.kirkwall.io' textDecoration={'underline'}>
               Back to Home
             </Link>
           </Text>

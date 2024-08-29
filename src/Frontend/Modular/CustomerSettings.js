@@ -5,7 +5,18 @@ export const CustomerSettings = [
     name: 'Kirkwall',
     email: 'test@kirkwall.io',
     phone: '',
-    metric: ['temp', 'hum', 'rctemp', 'humidity'],
+    metric: [
+      'temp',
+      'hum',
+      'rctemp',
+      'humidity',
+      'temperature',
+      'percent_humidity',
+      'wind_speed',
+      'soil_moisture',
+      'rain_15_min_inches',
+      'leaf_wetness',
+    ],
   },
   {
     id: 2,
@@ -24,7 +35,7 @@ export const CustomerSettings = [
   {
     id: 3,
     name: 'Watchdog Protect',
-    emails: 'trey@watchdogprotect.com',
+    email: 'trey@watchdogprotect.com',
     phones: '',
     metric: ['temp', 'hum'],
   },

@@ -92,8 +92,8 @@ const MiniDashboard = ({ weatherData, metric, setCurrentValue }) => {
           alignItems="center"
           justifyContent="center"
           p={2}
-          border="2px solid"
-          borderColor={colorMode === 'light' ? 'brand.800' : 'white'}
+          border="3px solid"
+          borderColor={colorMode === 'light' ? '#cee8ff' : 'white'}
           color={colorMode === 'light' ? '#212121' : 'white'}
           bg={colorMode === 'light' ? 'white' : ''}
           borderRadius="md"
@@ -113,8 +113,8 @@ const MiniDashboard = ({ weatherData, metric, setCurrentValue }) => {
           alignItems="center"
           justifyContent="center"
           p={2}
-          border="2px solid"
-          borderColor={colorMode === 'light' ? 'brand.800' : 'white'}
+          border="3px solid"
+          borderColor={colorMode === 'light' ? '#cee8ff' : 'white'}
           color={colorMode === 'light' ? '#212121' : 'white'}
           bg={colorMode === 'light' ? 'white' : ''}
           borderRadius="md"
@@ -134,8 +134,8 @@ const MiniDashboard = ({ weatherData, metric, setCurrentValue }) => {
           alignItems="center"
           justifyContent="center"
           p={2}
-          border="2px solid"
-          borderColor={colorMode === 'light' ? 'brand.800' : 'white'}
+          border="3px solid"
+          borderColor={colorMode === 'light' ? '#cee8ff' : 'white'}
           color={colorMode === 'light' ? '#212121' : 'white'}
           bg={colorMode === 'light' ? 'white' : ''}
           borderRadius="md"
@@ -155,8 +155,8 @@ const MiniDashboard = ({ weatherData, metric, setCurrentValue }) => {
           alignItems="center"
           justifyContent="center"
           p={2}
-          border="2px solid"
-          borderColor={colorMode === 'light' ? 'brand.800' : 'white'}
+          border="3px solid"
+          borderColor={colorMode === 'light' ? '#cee8ff' : 'white'}
           color={colorMode === 'light' ? '#212121' : 'white'}
           bg={colorMode === 'light' ? 'white' : ''}
           borderRadius="md"

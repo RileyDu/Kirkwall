@@ -95,7 +95,6 @@ const OptionsModal = ({ isOpen, onClose, onContactUsClick, onHelpClick, onFaqsCl
         callback={handleJoyrideCallback}
         disableScrolling={true}
       />
-
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent

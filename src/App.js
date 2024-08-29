@@ -21,7 +21,6 @@ import SignUp from './Frontend/AuthComponents/Signup.js';
 import Login from './Frontend/AuthComponents/Login.js';
 import Header from './Frontend/Header/Header.js';
 import Sidebar from './Frontend/Sidebar/Siderbar.js';
-import MainContent from './Frontend/Main/Main.js';
 import TempSensors from './Frontend/Sensors/TempSensors/TempSensors.js';
 import HumiditySensors from './Frontend/Sensors/HumiditySensors/HumiditySensors.js';
 import SoilSensors from './Frontend/Sensors/SoilSensors/SoilSensors.js';
@@ -37,18 +36,15 @@ import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySens
 import MapComponent from './Frontend/Maps/KirkwallMap.js';
 import LandingPage from './Frontend/LandingPage/LandingPage.js';
 import ImpriMedMap from './Frontend/Maps/ImpriMedMap.js';
-import GrandFarmDashboard from './Frontend/Clients/GrandFarm/GrandFarm.js';
-import MedDashboard from './Frontend/Clients/ImpriMed/MedDashboard.js';
 import GrandFarmMap from './Frontend/Maps/GrandFarmMap.js';
-import RJDashboard from './Frontend/Clients/RjEnergy/RjDashboard.js';
 import RJMap from './Frontend/Maps/RJMap.js';
-import WatchDogProtectDashboard from './Frontend/Clients/WatchDogProtect/WatchDogProtectDashboard.js';
 import WatchdogProtectMap from './Frontend/Maps/WatchdogMap.js';
 import { motion } from 'framer-motion';
 import HelpModal from './Frontend/Modals/HelpModal.js';
 import OptionsModal from './Frontend/Modals/OptionsModal.js';
 import ModularDashboard from './Frontend/Modular/ModularDashboard.js';
 import FaqsModal from './Frontend/Modals/FaqsModal.js';
+import ModularSummary from './Frontend/Modular/ModularSummary.js';
 
 const Layout = ({
   children,
@@ -96,7 +92,11 @@ const Layout = ({
 
 
   return (
-    <Flex minH="100vh" bg={colorMode === 'light' ? 'brand.50' : 'gray.700'} overflowX={'hidden'}>
+    <Flex
+      minH="100vh"
+      bg={colorMode === 'light' ? '#FFFFFF' : 'gray.700'}
+      overflowX={'hidden'}
+    >
       {isLargerThan768 && shouldShowSidebar && (
         <Sidebar
           isMinimized={isMinimized}
@@ -122,16 +122,16 @@ const Layout = ({
         {children}
       </Box>
 
-
+      {shouldShowSidebar && (
       <MotionIconButton
         icon={<FaQuestion />}
         variant="outline"
         color="#212121"
         height={10}
         width={10}
-        bg={'brand.400'}
-        _hover={{ bg: 'brand.800' }}
-        border={'2px solid #fd9801'}
+        bg={'#cee8ff'}
+        _hover={{ bg: '#3D5A80', color: 'white' }}
+        border={'2px solid #3D5A80'}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         ml={2}
@@ -155,6 +155,7 @@ const Layout = ({
         startTourButtonRef={startTourButtonRef} 
         runThresholdTour={runThresholdTour}
         setRunThresholdTour={setRunThresholdTour}
+      )}
         
       />
 
@@ -245,7 +246,7 @@ const MainApp = () => {
         setRunThresholdTour={setRunThresholdTour}
       >
         <Routes>
-          <Route path="/landing" element={<LandingPage />} />
+          {/* <Route path="/landing" element={<LandingPage />} /> */}
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
           <Route
@@ -255,6 +256,14 @@ const MainApp = () => {
                 <ModularDashboard statusOfAlerts={showAlerts} expandButtonRef={expandButtonRef} runThresholdTour={runThresholdTour} setRunThresholdTour={setRunThresholdTour} />
               </ProtectedRoute>
             }
+          />
+          <Route
+            path="/summary"
+            element={
+              <ProtectedRoute>
+                <ModularSummary statusOfAlerts={showAlerts} />
+              </ProtectedRoute>
+            } 
           />
           <Route
             path="/TempSensors"

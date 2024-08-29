@@ -147,6 +147,11 @@ const ChartWrapper = ({
     return isLargerThan768 && routesWithCloseButton.includes(location.pathname);
   };
 
+  const isDashboard = () => {
+    const routesWithTitle = ['/']
+    return routesWithTitle.includes(location.pathname);
+  }
+
   // Function to toggle between map and chart
   const toggleMap = () => {
     setShowMap(!showMap);
@@ -206,7 +211,7 @@ const ChartWrapper = ({
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
   const getBackgroundColor = colorMode =>
-    colorMode === 'light' ? '#f9f9f9' : 'gray.800';
+    colorMode === 'light' ? '#e0e0e0' : 'gray.800';
 
   const handleTitleChange = e => setNewTitle(e.target.value);
   const handleTitleSubmit = () => {
@@ -428,7 +433,7 @@ const ChartWrapper = ({
 
       <Box
         border="2px"
-        borderColor="#fd9801"
+        borderColor="#3D5A80"
         borderRadius="md"
         boxShadow="md"
         p="4"
@@ -451,22 +456,22 @@ const ChartWrapper = ({
             {title}
           </Box>
           <Flex alignItems="center">
-            {/* {isLargerThan768 && ( */}
               <>
                 <motion.div
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 1 }}
-                >
+                  >
+                  {isDashboard() && (
                   <Box
                     border="2px"
-                    borderColor="#fd9801"
+                    borderColor="#3D5A80"
                     borderRadius="lg"
                     px={2}
                     py={.5}
                     mr={2}
-                    bg={'brand.400'}
-                    color={'#212121'}
+                    bg={'#cee8ff'}
+                    color={'black'}
                   >
                     <Popover trigger="hover" placement="bottom">
                       <PopoverTrigger>
@@ -495,20 +500,20 @@ const ChartWrapper = ({
                         >
                           EDIT TITLE{' '}
                         </PopoverHeader>
-                        <PopoverBody>
+                        <PopoverBody bg={'#cee8ff'}>
                           <Input
                             value={newTitle}
                             onChange={handleTitleChange}
                             sx={{
                               color: 'black',
                               bg: 'white',
-                              border: '2px solid #fd9801',
+                              border: '2px solid #3D5A80',
                             }}
                           />
                           <Button
                             mt={2}
                             onClick={handleTitleSubmit}
-                            variant={'sidebar'}
+                            variant={'blue'}
                           >
                             Save
                           </Button>
@@ -516,6 +521,7 @@ const ChartWrapper = ({
                       </PopoverContent>
                     </Popover>
                   </Box>
+                  )}
                 </motion.div>
               {chartLayout !== 3 && isLargerThan768 && (
                 <motion.div
@@ -525,13 +531,13 @@ const ChartWrapper = ({
                 >
                   <Box
                     border="2px"
-                    borderColor="#fd9801"
+                    borderColor="#3D5A80"
                     borderRadius="lg"
                     px={2}
                     py={.5}
                     mr={2}
-                    bg={'brand.400'}
-                    color={'#212121'}
+                    bg={'#cee8ff'}
+                    color={'black'}
                   >
                     <Tooltip label="Current Value">
                       <Text fontSize={fontSize}>
@@ -550,13 +556,13 @@ const ChartWrapper = ({
             >
               <Box
                 border="2px"
-                borderColor="#fd9801"
+                borderColor="#3D5A80"
                 borderRadius="lg"
                 px={2}
                 py={.5}
                 mr={2}
-                bg={'brand.400'}
-                color={'#212121'}
+                bg={'#cee8ff'}
+                color={'black'}
               >
                 <Popover
                   trigger="hover"
@@ -602,10 +608,11 @@ const ChartWrapper = ({
                               onClick={() => handleTimeButtonClick(timePeriod)}
                               bg={
                                 currentTimePeriod === timePeriod
-                                  ? 'brand.800'
+                                  ? '#3D5A80'
                                   : 'gray.100'
                               }
-                              color="black"
+                              _hover={{ bg: '#3D5A80', color: 'white' }}
+                              color={currentTimePeriod === timePeriod ? 'white' : 'black'}
                               fontSize={fontSize}
                               flex="1 1 0" // Ensures buttons take equal space and grow
                               m={0} // Remove margin
@@ -632,12 +639,12 @@ const ChartWrapper = ({
                   id="step1"              
                   icon={<FaMap />}
                   variant="outline"
-                  color="#212121"
+                  color="black"
                   size={iconSize}
-                  bg={'brand.400'}
-                  _hover={{ bg: 'brand.800' }}
+                  bg={'#cee8ff'}
+                  _hover={{ bg: '#cee8ff' }}
                   onClick={toggleMap}
-                  border={'2px solid #fd9801'}
+                  border={'2px solid #3D5A80'}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   mr={2}
@@ -656,10 +663,10 @@ const ChartWrapper = ({
                   variant="outline"
                   color="#212121"
                   size={iconSize}
-                  bg={'brand.400'}
-                  _hover={{ bg: 'brand.800' }}
+                  bg={'#cee8ff'}
+                  _hover={{ bg: '#cee8ff' }}
                   onClick={() => handleChartTypeChange(chartID, chartType)}
-                  border={'2px solid #fd9801'}
+                  border={'2px solid #3D5A80'}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   mr={2}
@@ -703,10 +710,10 @@ const ChartWrapper = ({
                   variant="outline"
                   color="#212121"
                   size={iconSize}
-                  bg={'brand.400'}
-                  _hover={{ bg: 'brand.800' }}
+                  bg={'#cee8ff'}
+                  _hover={{ bg: '#cee8ff' }}
                   onClick={() => handleMenuItemClick(metric)}
-                  border={'2px solid #fd9801'}
+                  border={'2px solid #3D5A80'}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   ml={2}

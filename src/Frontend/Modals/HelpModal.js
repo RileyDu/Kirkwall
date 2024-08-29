@@ -48,7 +48,7 @@ const HelpModal = ({
   const handleFormSubmit = async () => {
     try {
         const formData = new FormData();
-        formData.append('fromEmail', currentUser.email);
+        formData.append('fromEmail', currentUser?.email);
         formData.append('title', localTitle);
         formData.append('description', localDescription);
 
@@ -56,7 +56,7 @@ const HelpModal = ({
             formData.append('attachments', file);
         });
 
-        const response = await axios.post('http://localhost:3001/send-enquiry', formData, {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/send-enquiry`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -107,7 +107,7 @@ const HelpModal = ({
                           value={localTitle}
                           onChange={(e) => setLocalTitle(e.target.value)}
                           bg={'white'}
-                          border={'2px solid #fd9801'}
+                          border={'2px solid #3D5A80'}
                           color={'#212121'}
                       />
                   </FormControl>
@@ -120,7 +120,7 @@ const HelpModal = ({
                           value={localDescription}
                           onChange={(e) => setLocalDescription(e.target.value)}
                           bg={'white'}
-                          border={'2px solid #fd9801'}
+                          border={'2px solid #3D5A80'}
                           color={'#212121'}
                           minHeight="120px" // Adjusted for longer text input
                       />
@@ -171,9 +171,9 @@ const HelpModal = ({
                       </FormLabel>
                       <Input
                           type="email"
-                          value={currentUser.email} // Linked to email state
+                          value={currentUser?.email} // Linked to email state
                           bg={'white'}
-                          border={'2px solid #fd9801'}
+                          border={'2px solid #3D5A80'}
                           color={'#212121'}
                       />
                   </FormControl>
@@ -181,9 +181,10 @@ const HelpModal = ({
               <ModalFooter>
                   <Button
                       variant="solid"
-                      bg="orange.400"
-                      color="white"
-                      _hover={{ bg: 'orange.500' }}
+                      bg="#cee8ff"
+                      color="black"
+                      border={'2px solid #3D5A80'}
+                      _hover={{ bg: '#3D5A80', color: 'white' }}
                       mr={3}
                       onClick={handleFormSubmit}
                   >

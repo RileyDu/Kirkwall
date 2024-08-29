@@ -12,7 +12,7 @@ const ProtectedRoute = ({
 
   // If the current user is not logged in, redirect to the landing page
   if (!currentUser) {
-    return <Navigate to="/landing" />;
+    return <Navigate to="/login" />;
   }
 
   // Check if the current user is allowed to access this route

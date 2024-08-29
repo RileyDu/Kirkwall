@@ -315,6 +315,12 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
       { label: 'Humidity (Watchdog)', metric: 'hum' },
       { label: 'Temperature (Rivercity)', metric: 'rctemp' },
       { label: 'Humidity (Rivercity)', metric: 'humidity' },
+      { label: 'Temperature (GF)', metric: 'temperature' },
+      { label: 'Humidity (GF)', metric: 'percent_humidity' },
+      { label: 'Wind Speed (GF)', metric: 'wind_speed' },
+      { label: 'Soil Moisture (GF)', metric: 'soil_moisture' },
+      { label: 'Leaf Wetness (GF)', metric: 'leaf_wetness' },
+      { label: 'Rainfall (GF)', metric: 'rain_15_min_inches' },
     ],
   };
 
@@ -363,6 +369,18 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     setTitle(label);
     setSelectedTab(index); // Update the selected tab index state
   };
+
+  // Group alerts by metric
+
+  const groupedAlerts = Array.isArray(alertsThreshold) && alertsThreshold?.reduce((acc, alert) => {
+    const { metric } = alert;
+          if (!acc[metric]) {
+            acc[metric] = [];
+          }
+          acc[metric].push(alert);
+          return acc;
+        }, {});
+
 
   // Function to toggle threshold kill for DB and local state
   const handleThreshKillToggle = async () => {
@@ -450,7 +468,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                 gap={6}
                 height="100%"
               >
-                <GridItem border="5px solid #fd9801" p={3}>
+                <GridItem border="5px solid #cee8ff" p={3}>
                   <Heading mb={3} fontSize="2xl">
                     Profile
                   </Heading>
@@ -459,7 +477,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                       alignContent="center"
                       textAlign="center"
                       boxSize="150px"
-                      border="5px solid #fd9801"
+                      border="5px solid #cee8ff"
                       borderRadius="150px"
                     >
                       <Image
@@ -530,7 +548,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                   </Box>
                 </GridItem>
 
-                <GridItem border="5px solid #fd9801" p={3}>
+                <GridItem border="5px solid #cee8ff" p={3}>
                   <Heading mb={3} fontSize="2xl">
                     Alerts in the Last Hour
                   </Heading>
@@ -569,7 +587,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
 
                 <GridItem
                   colSpan={isLargerThan768 ? 2 : 1}
-                  border="5px solid #fd9801"
+                  border="5px solid #cee8ff"
                   p={3}
                 >
                   <Flex
@@ -608,8 +626,8 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                   </Flex>
                   {isLargerThan768 && (
                     <Tabs
-                      variant="soft-rounded"
-                      colorScheme="orange"
+                      variant="solid-rounded"
+                      colorScheme="gray"
                       isFitted
                       onChange={handleTabChange}
                     >
@@ -619,8 +637,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                             key={index}
                             fontSize={{ base: 'xs', md: 'sm' }}
                             p={{ base: '2', md: '3' }}
-                            color={colorMode === 'light' ? 'black' : 'white'}
-                            _selected={{ color: 'white', bg: 'orange.400' }}
+                            // _selected={{ color: 'white', bg: 'orange.400' }}
                           >
                             {tab.label}
                           </Tab>
@@ -638,13 +655,13 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                             transition={{ duration: 0.5 }}
                           >
                             <Box maxH="300px" h={'300px'} overflowY="scroll">
-                              {alertsThreshold[tab.metric]?.length ? (
+                              {groupedAlerts[tab.metric]?.length ? (
                                 <Stack spacing={2}>
-                                  {alertsThreshold[tab.metric].map(
+                                  {groupedAlerts[tab.metric].map(
                                     (alert, alertIndex) => (
                                       <Box
                                         key={alertIndex}
-                                        bg="orange.400"
+                                        bg="#cee8ff"
                                         p={2}
                                         borderRadius="md"
                                         boxShadow="md"

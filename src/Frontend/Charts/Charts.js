@@ -11,6 +11,7 @@ import {
   Tooltip,
   Legend,
   ArcElement,
+  Filler
 } from 'chart.js';
 import { Box, Spinner, useColorMode } from '@chakra-ui/react';
 
@@ -21,6 +22,7 @@ ChartJS.register(
   PointElement,
   LineElement,
   ArcElement,
+  Filler,
   Title,
   Tooltip,
   Legend
@@ -32,7 +34,7 @@ const processWeatherData = (data, key, colorMode) => {
   if (!data) return null;
 
   const getColorOfLastValue = colorMode => {
-    return colorMode === 'light' ? '#212121' : 'white';
+    return colorMode === 'light' ? '#212121' : '#cee8ff';
   };
 
   const reversedData = [...data].reverse();
@@ -50,21 +52,25 @@ const processWeatherData = (data, key, colorMode) => {
       {
         label: key,
         data: reversedData.map(item => item[key]),
-        backgroundColor: '#fd9801',
+        backgroundColor: '#4d648d80',
         borderColor: reversedData.map((item, index) =>
           index === reversedData.length - 1
             ? getColorOfLastValue(colorMode)
-            : '#fd9801'
+            : '#4d648d'
         ),
         borderWidth: 2,
+        // borderRadius: 30,
         pointBackgroundColor: reversedData.map((item, index) =>
           index === reversedData.length - 1
             ? getColorOfLastValue(colorMode)
-            : '#fd9801'
+            : '#4d648d'
         ),
         pointRadius: reversedData.map((item, index) =>
           index === reversedData.length - 1 ? 5 : 3
         ),
+        // cubicInterpolationMode: 'monotone', // Add this line to enable smooth curves
+        // tension: 0.4,
+        fill: 'start',
       },
     ],
   };
@@ -82,7 +88,7 @@ const getMinMax = data => {
 const createCustomChartOptions = (metric, data, colorMode) => {
   const { min, max } = getMinMax(data);
   const labelColor = colorMode === 'light' ? '#000000' : '#FFFFFF';
-  const gridLineColor = colorMode === 'light' ? '#e0e0e0' : '#333333'; // Set grid line color based on color mode
+  const gridLineColor = colorMode === 'light' ? 'whitesmoke' : '#333333'; // Set grid line color based on color mode
 
   // Helper function to set the y-axis min value
   const getYmin = (min, max) => {
