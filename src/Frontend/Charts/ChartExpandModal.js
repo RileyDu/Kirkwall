@@ -101,7 +101,6 @@ const ChartExpandModal = ({
   const startTour = () => {
     setIsTourRunning(true);
     setActiveChartID(chartID);
-
   };
 
 
@@ -134,15 +133,11 @@ const ChartExpandModal = ({
     },
     {
       target: '.thresholds-display',
-      content: 'View your current thresholds and alerts here.',
-    },
-    {
-      target: '.mini-dashboard',
-      content: 'This mini dashboard shows key metrics at a glance.',
+      content: 'View your current readings, thresholds and alerts here.',
     },
     {
       target: '.map-component',
-      content: 'View geographical data related to your metrics here.',
+      content: 'View the geolocation of the sensor.',
     },
   ];
 
@@ -478,17 +473,18 @@ const calculateTimeOfToggle = (timestamp, timeframe) => {
             alignItems="center"
           >
             {title} for {chartLocation}
-          </ModalHeader>
-
-          <Button
+          <IconButton
             ref={startTourButtonRef}
-            leftIcon={<FaQuestionCircle />}
+            icon={<FaQuestionCircle />}
             onClick={startTour}
             size="sm"
             colorScheme="blue"
+            mr={10}
           >
-            Start Tour
-          </Button>
+            
+          </IconButton>
+          </ModalHeader>
+
           
           <ModalCloseButton size="lg" color="white" mt={1} />
           <ModalBody
@@ -784,7 +780,7 @@ const calculateTimeOfToggle = (timestamp, timeframe) => {
                 boxShadow="md"
                 p={4}
                 height="430px"
-                className="mini-dashboard"
+                className='map-component'
               >
                 <Box height="100%">
                   <MapComponent />
