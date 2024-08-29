@@ -21,6 +21,13 @@ const OptionsModal = ({ isOpen, onClose, onContactUsClick, onHelpClick, onFaqsCl
   const { colorMode } = useColorMode();
   const [runTour, setRunTour] = useState(false);
 
+  const getColor = () => {
+    if (colorMode === 'light') {
+      return 'gray.600';
+    } else {
+      return 'white';
+    }
+  };
 
   const steps = [
     {
@@ -109,21 +116,21 @@ const OptionsModal = ({ isOpen, onClose, onContactUsClick, onHelpClick, onFaqsCl
           <ModalCloseButton color="white" size="lg" mt={1} />
           <ModalBody>
             <VStack spacing={8}>
-              <Box textAlign="center" onClick={onContactUsClick} cursor="pointer">
-                <Icon as={FaQuestionCircle} w={12} h={12} color="gray.600" />
-                <Text fontSize="lg" color="gray.600" mt={2}>
+              <Box textAlign="center" onClick={onContactUsClick} cursor="pointer" mt={4}>
+                <Icon as={FaQuestionCircle} w={12} h={12} color={getColor()} />
+                <Text fontSize="lg" color={getColor()} mt={2}>
                   Contact Us
                 </Text>
               </Box>
               <Box textAlign="center" onClick={handleHelpClick} cursor="pointer" id="step3">
-                <Icon as={FaHandsHelping} w={12} h={12} color="gray.600" />
-                <Text fontSize="lg" color="gray.600" mt={2}>
+                <Icon as={FaHandsHelping} w={12} h={12} color={getColor()} />
+                <Text fontSize="lg" color={getColor()} mt={2}>
                   Tutorial
                 </Text>
               </Box>
               <Box textAlign="center" onClick={onFaqsClick} cursor="pointer">
-                <Icon as={FaInfoCircle} w={12} h={12} color="gray.600" />
-                <Text fontSize="lg" color="gray.600" mt={2}>
+                <Icon as={FaInfoCircle} w={12} h={12} color={getColor()} />
+                <Text fontSize="lg" color={getColor()} mt={2}>
                   FAQs
                 </Text>
               </Box>
