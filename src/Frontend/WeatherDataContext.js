@@ -253,7 +253,7 @@ export const WeatherDataProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (currentUser &&  currentUser?.email === 'pmo@grandfarm.com') {
+    if (currentUser &&  currentUser?.email === 'pmo@grandfarm.com' || currentUser?.email === 'test@kirkwall.io') {
       const fetchData = async () => {
         try {
           const response = await getWeatherData('all', '37'); // default time period
