@@ -47,7 +47,7 @@ const chartComponents = {
   // Add more chart types here as needed
 };
 
-const ModularDashboard = ({ statusOfAlerts }) => {
+const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour, runThresholdTour, setRunThresholdTour }) => {
   const [customerMetrics, setCustomerMetrics] = useState([]);
   const [customerName, setCustomerName] = useState('');
   const [metricSettings, setMetricSettings] = useState([]);
@@ -64,6 +64,8 @@ const ModularDashboard = ({ statusOfAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
   const { chartData, handleTimePeriodChange, loading } = useWeatherData();
+
+
 
   const sortChartDataPerCustomer = chartData => {
     if (metricSettings.length > 0) {
@@ -184,7 +186,13 @@ const ModularDashboard = ({ statusOfAlerts }) => {
     }
   };
 
+
+
+
   return (
+
+
+    
     <Box
       bg={colorMode === 'light' ? '#FFFFFF' : 'gray.700'}
       color={colorMode === 'light' ? 'black' : 'white'}
@@ -396,7 +404,7 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                         <ChartWrapper
                           key={metric}
                           title={title}
-                          metric={metric}
+                          msetric={metric}
                           flex="1"
                           display="flex"
                           flexDirection="column"
@@ -407,6 +415,11 @@ const ModularDashboard = ({ statusOfAlerts }) => {
                           handleMenuItemClick={handleMenuItemClick}
                           setFilteredChartData={setFilteredChartData}
                           chartLayout={chartLayout}
+                          expandButtonRef={expandButtonRef}
+                          runTour={runTour}
+                          setRunTour={setRunTour}
+                          runThresholdTour={runThresholdTour} 
+                          setRunThresholdTour={setRunThresholdTour}
                         >
                           <ChartComponent
                             data={dataForChart}
