@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   ChakraProvider,
   Box,
@@ -48,6 +48,7 @@ import { motion } from 'framer-motion';
 import HelpModal from './Frontend/Modals/HelpModal.js';
 import OptionsModal from './Frontend/Modals/OptionsModal.js';
 import ModularDashboard from './Frontend/Modular/ModularDashboard.js';
+import FaqsModal from './Frontend/Modals/FaqsModal.js';
 
 const Layout = ({
   children,
@@ -55,7 +56,11 @@ const Layout = ({
   toggleSidebar,
   isMobileMenuOpen,
   toggleMobileMenu,
-  statusOfAlerts
+  statusOfAlerts,
+  expandButtonRef,
+  startTourButtonRef,
+  runThresholdTour,
+  setRunThresholdTour
 }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const location = useLocation();
@@ -68,7 +73,8 @@ const Layout = ({
   const MotionIconButton = motion(IconButton);
 
   const [isOptionsModalOpen, setOptionsModalOpen] = useState(false); // State for OptionsModal
-  const [isHelpModalOpen, setHelpModalOpen] = useState(false); // State for HelpModal
+  const [isFaqsModalOpen, setFaqsModalOpen] = useState(false);
+  const [isHelpModalOpen, setHelpModalOpen] = useState(false); 
 
   const handleOpenOptionsModal = () => setOptionsModalOpen(true);
   const handleCloseOptionsModal = () => setOptionsModalOpen(false);
@@ -76,7 +82,18 @@ const Layout = ({
     setHelpModalOpen(true);
     handleCloseOptionsModal(); // Close the OptionsModal when opening the HelpModal
   };
+
+  const handleOpenFaqsModal = () => {
+    setFaqsModalOpen(true);
+    setOptionsModalOpen(false); // Close OptionsModal when opening FaqsModal
+  };
   const handleCloseHelpModal = () => setHelpModalOpen(false);
+  const handleCloseFaqsModal = () => setFaqsModalOpen(false);
+
+  const [runTour, setRunTour] = useState(false);
+
+
+
 
   return (
     <Flex minH="100vh" bg={colorMode === 'light' ? 'brand.50' : 'gray.700'} overflowX={'hidden'}>
@@ -105,8 +122,9 @@ const Layout = ({
         {children}
       </Box>
 
+
       <MotionIconButton
-        icon={<FaEllipsisV />}
+        icon={<FaQuestion />}
         variant="outline"
         color="#212121"
         height={10}
@@ -127,9 +145,21 @@ const Layout = ({
       <OptionsModal
         isOpen={isOptionsModalOpen}
         onClose={handleCloseOptionsModal}
-        onContactUsClick={handleOpenHelpModal} // Opens the HelpModal when Contact Us is clicked
-        onHelpClick={handleCloseOptionsModal} // Closes the OptionsModal when Help is clicked
+        expandButtonRef={expandButtonRef}
+        onContactUsClick={handleOpenHelpModal}
+        onHelpClick={() => {
+          handleCloseOptionsModal();
+          setRunTour(true);
+        }}
+        onFaqsClick={handleOpenFaqsModal}
+        startTourButtonRef={startTourButtonRef} 
+        runThresholdTour={runThresholdTour}
+        setRunThresholdTour={setRunThresholdTour}
+        
       />
+
+
+
 
       <HelpModal
         isOpen={isHelpModalOpen}
@@ -139,6 +169,12 @@ const Layout = ({
         setTitle={() => {}}
         setDescription={() => {}}
       />
+
+      <FaqsModal
+        isOpen={isFaqsModalOpen}
+        onClose={handleCloseFaqsModal} // Close the FaqsModal
+      />
+
     </Flex>
   );
 };
@@ -153,12 +189,19 @@ const MainApp = () => {
   const [timePeriod, setTimePeriod] = useState(37); // Default time period
   const location = useLocation();
   const [showAlerts, setShowAlerts] = useState(false);
+  const [runThresholdTour, setRunThresholdTour] = useState(false);
+
+  const expandButtonRef = useRef(null);
+
+
+  const startTourButtonRef = useRef(null); 
 
   const toggleAlerts = () => {
     setShowAlerts(!showAlerts);
   };
   const toggleSidebar = () => setIsMinimized(!isMinimized);
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+
 
   const spin = keyframes`
   0% { transform: rotate(0deg); }
@@ -196,6 +239,10 @@ const MainApp = () => {
         isMobileMenuOpen={isMobileMenuOpen}
         toggleMobileMenu={toggleMobileMenu}
         statusOfAlerts={showAlerts}
+        expandButtonRef={expandButtonRef}
+        startTourButtonRef={startTourButtonRef}
+        runThresholdTour={runThresholdTour}
+        setRunThresholdTour={setRunThresholdTour}
       >
         <Routes>
           <Route path="/landing" element={<LandingPage />} />
@@ -205,7 +252,7 @@ const MainApp = () => {
             path="/"
             element={
               <ProtectedRoute>
-                <ModularDashboard statusOfAlerts={showAlerts} />
+                <ModularDashboard statusOfAlerts={showAlerts} expandButtonRef={expandButtonRef} runThresholdTour={runThresholdTour} setRunThresholdTour={setRunThresholdTour} />
               </ProtectedRoute>
             }
           />
@@ -315,6 +362,7 @@ const MainApp = () => {
 };
 
 const App = () => {
+
   return (
     <ChakraProvider theme={customTheme}>
       <Router>

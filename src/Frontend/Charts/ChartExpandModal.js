@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -27,12 +27,13 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard.js';
-import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
+import { FaChartLine, FaChartBar, FaBell, FaTrash, FaQuestionCircle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts.js';
 import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
+import Joyride, { STATUS } from 'react-joyride';
 
 // This is the modal that appears when a chart is expanded
 // It is a child of the ChartWrapper component
@@ -52,6 +53,13 @@ const ChartExpandModal = ({
   MapComponent,
   typeOfChart,
   chartLocation,
+  runThresholdTour,
+  setRunThresholdTour,
+  isTourRunning,
+  setIsTourRunning,
+  activeChartID,
+  setActiveChartID
+
 }) => {
   const { colorMode } = useColorMode();
   const [loading, setLoading] = useState(false);
@@ -65,6 +73,9 @@ const ChartExpandModal = ({
   const { thresholds, alertsThreshold, fetchAlertsThreshold } =
     useWeatherData();
 
+
+  
+
   // Find the latest threshold for the selected metric, assign a graph to the threshold
   const findLatestThreshold = metric => {
     const threshold = thresholds.find(threshold => threshold.metric === metric);
@@ -74,6 +85,60 @@ const ChartExpandModal = ({
     const email = threshold?.email ?? '';
     return { highThreshold, lowThreshold, phone, email };
   };
+
+
+  const startTour = () => {
+    setIsTourRunning(true);
+    setActiveChartID(chartID);
+
+  };
+
+
+
+  const handleJoyrideCallback = (data) => {
+    const { status } = data;
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+      setIsTourRunning(false);
+      setActiveChartID(null);
+    }
+  };
+
+  const tourSteps = [
+    {
+      target: '.time-period-buttons',
+      disableBeacon: true,
+      content: 'Select different time periods for your data here.',
+    },
+    {
+      target: '.chart-area',
+      content: 'This is where your selected chart is displayed.',
+    },
+    {
+      target: '.chart-type-buttons',
+      content: 'Switch between line and bar charts here.',
+    },
+    {
+      target: '.set-thresholds-button',
+      content: 'Set alerts for specific thresholds here.',
+    },
+    {
+      target: '.thresholds-display',
+      content: 'View your current thresholds and alerts here.',
+    },
+    {
+      target: '.mini-dashboard',
+      content: 'This mini dashboard shows key metrics at a glance.',
+    },
+    {
+      target: '.map-component',
+      content: 'View geographical data related to your metrics here.',
+    },
+  ];
+
+  
+
+
+  
 
   // Update the threshold values when the metric or thresholds change, fetched from the database
   useEffect(() => {
@@ -172,6 +237,10 @@ const ChartExpandModal = ({
       setIsThresholdModalOpen(false);
     }
   };
+
+  const startTourButtonRef = useRef(null);
+  const [clickButton, setClickButton] = useState(true);
+
 
   // Clear the threshold data and send it to the backend
   const handleFormClear = async () => {
@@ -273,7 +342,45 @@ const ChartExpandModal = ({
     setEmailsForThreshold(updatedEmails);
   };
 
+  const handleThresholdTourCallback = (data) => {
+    const { status } = data;
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+      setRunThresholdTour(false); // Reset the tour state after it finishes or is skipped
+    }
+  };
+  
+  
+  useEffect(() => {
+    if (runThresholdTour && activeChartID === chartID) {
+      setTimeout(() => {
+        if (startTourButtonRef.current) {
+          startTourButtonRef.current.click();
+        }
+      }, 1500);
+      setRunThresholdTour(false);
+    }
+  }, [runThresholdTour, setRunThresholdTour, activeChartID, chartID]);
+
+
   return (
+
+    <>
+      <Joyride
+        steps={tourSteps}
+        run={isTourRunning && activeChartID === chartID}
+        continuous={true}
+        showSkipButton={true}
+        showProgress={true}
+        callback={handleJoyrideCallback}
+        disableScrolling={true}
+        styles={{
+          options: {
+            zIndex: 10000,
+          },
+        }}
+      />
+
+
     <Box>
       <Modal onClose={onClose} isOpen={isOpen}>
         <ModalOverlay />
@@ -299,6 +406,17 @@ const ChartExpandModal = ({
           >
             {title} for {chartLocation}
           </ModalHeader>
+
+          <Button
+            ref={startTourButtonRef}
+            leftIcon={<FaQuestionCircle />}
+            onClick={startTour}
+            size="sm"
+            colorScheme="blue"
+          >
+            Start Tour
+          </Button>
+          
           <ModalCloseButton size="lg" color="white" mt={1} />
           <ModalBody
             display="flex"
@@ -311,7 +429,7 @@ const ChartExpandModal = ({
           >
             {/* Enables the user to select the time period for the chart
              Talks to the backend to fetch a different limit of data based on the time period selected */}
-            <Box display="flex" justifyContent="space-between" mb={2} mt={-2}>
+            <Box display="flex" justifyContent="space-between" mb={2} mt={-2} className="time-period-buttons">
               {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map(timePeriod => (
                 <MotionButton
                   key={timePeriod}
@@ -340,6 +458,7 @@ const ChartExpandModal = ({
               border="2px solid #fd9801"
               mb={4}
               h={'40vh'}
+              className="chart-area"
             >
               {/* // If the data is still loading, show a loading spinner */}
               {loading ? (
@@ -348,7 +467,7 @@ const ChartExpandModal = ({
                 renderChart()
               )}
             </Flex>
-            <Box display="flex" justifyContent="center" mb={4}>
+            <Box display="flex" justifyContent="center" mb={4} className="chart-type-buttons">
               {/* // Buttons to change the chart type
               // syncs with the parent component to change the chart type in the chart wrapper */}
               <MotionButton
@@ -392,6 +511,7 @@ const ChartExpandModal = ({
                 size={['sm', 'md']}
                 bg={'gray.100'}
                 color={'black'}
+                className="set-thresholds-button"
               >
                 SET THRESHOLDS
               </MotionButton>
@@ -410,6 +530,7 @@ const ChartExpandModal = ({
                 boxShadow="md"
                 p={4}
                 height="430px"
+                className="thresholds-display"
               >
                 {highThreshold || lowThreshold ? (
                   <>
@@ -524,6 +645,7 @@ const ChartExpandModal = ({
                 boxShadow="md"
                 p={4}
                 height="430px"
+                className="mini-dashboard"
               >
                 <Box height="100%">
                   <MapComponent />
@@ -665,6 +787,7 @@ const ChartExpandModal = ({
         </ModalContent>
       </Modal>
     </Box>
+    </>
   );
 };
 

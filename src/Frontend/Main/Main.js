@@ -54,7 +54,7 @@ import { Checkbox } from '@chakra-ui/react';
 const MotionBox = motion(Box);
 const MotionTabPanel = motion(TabPanel);
 
-const MainContent = ({ timePeriod, statusOfAlerts }) => {
+const MainContent = ({ timePeriod, statusOfAlerts, expandButtonRef }) => {
   const {
     weatherData,
     tempData,
@@ -106,6 +106,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
   const handleOpenHelpModal = () => setHelpModalOpen(true);
   const handleCloseHelpModal = () => setHelpModalOpen(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
 
   const updateChartTypes = chartData => {
     chartData.forEach(chart => {
@@ -519,6 +520,7 @@ const MainContent = ({ timePeriod, statusOfAlerts }) => {
                         chart="temperature"
                         chartLayout={chartLayout}
                         typeOfChart={watchdogTempChartType}
+                        expandButtonRef={expandButtonRef} // Pass the reference here
                       >
                         {watchdogTempChartType === 'line' ? (
                           <LineChart
