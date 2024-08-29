@@ -688,10 +688,10 @@ const ChartWrapper = ({
                 variant="outline"
                 color="#212121"
                 size={iconSize}
-                bg={'brand.400'}
-                _hover={{ bg: 'brand.800' }}
+                bg={'#cee8ff'}
+                _hover={{ bg: '#cee8ff' }}
                 onClick={handleExpandChart}  //  this line
-                border={'2px solid #fd9801'}
+                border={'2px solid #3D5A80'}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               />

@@ -123,6 +123,7 @@ const Layout = ({
       </Box>
 
       {shouldShowSidebar && (
+        <>
       <MotionIconButton
         icon={<FaQuestion />}
         variant="outline"
@@ -154,10 +155,10 @@ const Layout = ({
         onFaqsClick={handleOpenFaqsModal}
         startTourButtonRef={startTourButtonRef} 
         runThresholdTour={runThresholdTour}
-        setRunThresholdTour={setRunThresholdTour}
+        setRunThresholdTour={setRunThresholdTour}        
+        />
+      </>
       )}
-        
-      />
 
 
 
