@@ -33,7 +33,7 @@ const WatchdogProtectMap = ({ statusOfAlerts }) => {
     margin: '0 auto',
     borderRadius: '5px',
     boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
-    border: '3px solid #fd9801',
+    border: '3px solid #00BCD4',
   };
 
   const mapOptions = {

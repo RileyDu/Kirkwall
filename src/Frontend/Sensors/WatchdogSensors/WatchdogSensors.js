@@ -121,7 +121,7 @@ export default function WatchdogSensors({ statusOfAlerts }) {
           </Box>
           <Box color={colorMode === 'light' ? 'black' : 'white'}>
             <ChartWrapper
-                      title="Humidity (%)"
+                      title="Humidity in Garage (%)"
                       onChartChange={handleChartChange(setWatchdogHumidityChartType)}
                       weatherData={watchdogHumData || watchdogData}
                       metric="hum"

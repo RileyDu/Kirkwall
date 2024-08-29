@@ -7,8 +7,10 @@ import {
   getAlerts,
   getLatestThreshold,
   getChartData,
+  getAlertsPerUserByMetric
 } from '../Backend/Graphql_helper.js';
 import { useAuth } from './AuthComponents/AuthContext.js';
+import { CustomerSettings } from './Modular/CustomerSettings.js';
 
 const WeatherDataContext = createContext();
 
@@ -251,7 +253,7 @@ export const WeatherDataProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (currentUser &&  currentUser.email === 'pmo@grandfarm.com') {
+    if (currentUser &&  currentUser?.email === 'pmo@grandfarm.com' || currentUser?.email === 'test@kirkwall.io') {
       const fetchData = async () => {
         try {
           const response = await getWeatherData('all', '37'); // default time period
@@ -277,7 +279,7 @@ export const WeatherDataProvider = ({ children }) => {
   }, [currentUser]);
 
   useEffect(() => {
-    if (currentUser && (currentUser.email === 'test@kirkwall.io')) {
+    if (currentUser && (currentUser?.email === 'test@kirkwall.io')) {
       const fetchData = async () => {
         try {
           if (currentUser.email === 'test@kirkwall.io') {
@@ -327,9 +329,10 @@ export const WeatherDataProvider = ({ children }) => {
   }, [currentUser]);
 
   const fetchAlertsThreshold = async () => {
+    const userMetrics = CustomerSettings.find ((customer) => customer.email === currentUser?.email)?.metric;
     try {
-      const response = await getAlerts();
-      // console.log('Alerts Threshold 0:', response.data.alerts);
+      const response = await getAlertsPerUserByMetric(userMetrics);
+      console.log('Alerts Threshold 0:', response.data.alerts);
       if (Array.isArray(response.data.alerts)) {
         const groupedAlerts = response.data.alerts.reduce((acc, alert) => {
           const { metric } = alert;
@@ -339,8 +342,8 @@ export const WeatherDataProvider = ({ children }) => {
           acc[metric].push(alert);
           return acc;
         }, {});
-        setAlertsThreshold(groupedAlerts);
-        // console.log('Alerts Threshold 1st:', groupedAlerts);
+        setAlertsThreshold(response.data.alerts);
+        console.log('Alerts Threshold 1st:', groupedAlerts);
       } else {
         setAlertsThreshold({ 'not set': ['not set'] });
         // console.log('Alerts Threshold 2nd:', { 'not set': ['not set'] });
@@ -352,14 +355,14 @@ export const WeatherDataProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchAlertsThreshold();
+    {currentUser && fetchAlertsThreshold()}
 
     const intervalId = setInterval(() => {
       fetchAlertsThreshold();
     }, 30000); // 30 seconds
 
     return () => clearInterval(intervalId); // Cleanup interval on component unmount
-  }, [getAlerts]);
+  }, [getAlertsPerUserByMetric, currentUser]);
 
   useEffect(() => {
     if (Object.values(dataLoaded).some(loaded => loaded)) {

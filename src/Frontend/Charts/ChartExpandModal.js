@@ -25,18 +25,13 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard.js';
-import {
-  FaChartLine,
-  FaChartBar,
-  FaBell,
-  FaTrash,
-} from 'react-icons/fa';
+import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts.js';
 import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
-
+import { format } from 'date-fns';
 // This is the modal that appears when a chart is expanded
 // It is a child of the ChartWrapper component
 // It contains the chart, a mini dashboard, and a map, as well as the threshold settings & logs
@@ -65,6 +60,15 @@ const ChartExpandModal = ({
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
   const [currentValue, setCurrentValue] = useState(null);
+  const [threshKill, setThreshKill] = useState(false);
+  const [timeframe, setTimeframe] = useState('');
+  const [timestamp, setTimestamp] = useState('');
+  const [newTimeframe, setNewTimeframe] = useState('');
+  const [timeOfToggle, setTimeOfToggle] = useState('');
+  const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
+  const [selectedHour, setSelectedHour] = useState('');
+  const [selectedMinute, setSelectedMinute] = useState('');
+
   const { thresholds, alertsThreshold, fetchAlertsThreshold } =
     useWeatherData();
 
@@ -75,7 +79,10 @@ const ChartExpandModal = ({
     const lowThreshold = threshold?.low ?? '';
     const phone = threshold?.phone ?? '';
     const email = threshold?.email ?? '';
-    return { highThreshold, lowThreshold, phone, email };
+    const timeframe = threshold?.timeframe ?? '';
+    const threshkill = threshold?.thresh_kill ?? false;
+    const timestamp = threshold?.timestamp ?? '';
+    return { highThreshold, lowThreshold, phone, email, timeframe, threshkill, timestamp };
   };
 
   // Update the threshold values when the metric or thresholds change, fetched from the database
@@ -83,6 +90,12 @@ const ChartExpandModal = ({
     const latestThreshold = findLatestThreshold(metric);
     setHighThreshold(latestThreshold.highThreshold);
     setLowThreshold(latestThreshold.lowThreshold);
+    setThreshKill(latestThreshold.threshkill);
+    setTimeframe(latestThreshold.timeframe);
+    setTimestamp(latestThreshold.timestamp);
+
+    // const calculatedTimeOfToggle = calculateTimeOfToggle(latestThreshold.timestamp, latestThreshold.timeframe);
+    // setTimeOfToggle(calculatedTimeOfToggle);
 
     // Ensure phone numbers are set as an array
     const phoneNumbersArray = latestThreshold.phone
@@ -99,10 +112,12 @@ const ChartExpandModal = ({
     setEmailsForThreshold(emailsArray);
   }, [metric, thresholds]);
 
-  const apiUrl =
-    process.env.NODE_ENV === 'production'
-      ? 'https://kirkwall-demo.vercel.app'
-      : 'http://localhost:3001';
+  useEffect(() => {
+    if (newTimeframe) {
+      // Only submit the form if the timeframe has been set
+      handleFormSubmit();
+    }
+  }, [newTimeframe]);
 
   const MotionButton = motion(Button);
   const toast = useToast();
@@ -110,7 +125,9 @@ const ChartExpandModal = ({
   //Styling based on color mode
   const getBackgroundColor = () => 'gray.700';
   const getContentBackgroundColor = () =>
-    colorMode === 'light' ? 'brand.50' : 'gray.800';
+    colorMode === 'light' ? '#F0F4F8' : 'gray.800';
+  const getChartBgColor = () =>
+    colorMode === 'light' ? '#e0e0e0' : 'gray.800';
   const getModalBackgroundColor = () =>
     colorMode === 'light' ? 'whitesmoke' : 'gray.700';
 
@@ -158,6 +175,7 @@ const ChartExpandModal = ({
     const timestamp = new Date().toISOString();
     const phoneNumbersString = phoneNumbers.join(', '); // Join phone numbers into a single string
     const emailsString = emailsForThreshold.join(', '); // Join emails into a single string
+    const timeOfPause = newTimeframe || timeframe;
 
     try {
       await createThreshold(
@@ -166,7 +184,9 @@ const ChartExpandModal = ({
         parseFloat(lowThreshold),
         phoneNumbersString,
         emailsString,
-        timestamp
+        timestamp,
+        threshKill,
+        timeOfPause
       );
       console.log('Alerts Set');
     } catch (error) {
@@ -242,6 +262,17 @@ const ChartExpandModal = ({
     }
   };
 
+  const groupedAlerts =
+    Array.isArray(alertsThreshold) &&
+    alertsThreshold?.reduce((acc, alert) => {
+      const { metric } = alert;
+      if (!acc[metric]) {
+        acc[metric] = [];
+      }
+      acc[metric].push(alert);
+      return acc;
+    }, {});
+
   // Add a new phone number input
   const handleAddPhoneNumber = () => {
     setPhoneNumbers([...phoneNumbers, '']);
@@ -275,6 +306,44 @@ const ChartExpandModal = ({
     updatedEmails[index] = value;
     setEmailsForThreshold(updatedEmails);
   };
+
+const handleTimePickerSubmit = () => {
+  // Format the timeframe in the interval syntax PostgreSQL expects
+  const timeframe = `${selectedHour}:${selectedMinute}:00`;
+
+  console.log('Selected Timeframe:', timeframe);
+  setIsTimePickerOpen(false); // Close the popover
+  setNewTimeframe(timeframe);
+  handleFormSubmit();
+};
+
+useEffect(() => {
+  if (threshKill) {
+    setIsTimePickerOpen(true);
+  } else {
+    setIsTimePickerOpen(false);
+  }
+}, [threshKill]);
+
+const handleThreshKillToggle = () => {
+  setThreshKill(prev => !prev);
+};
+
+const calculateTimeOfToggle = (timestamp, timeframe) => {
+  // Parse the timestamp to a Date object
+  const timestampDate = new Date(timestamp);
+
+  // Convert timeframe to milliseconds
+  const [hours, minutes, seconds] = timeframe.split(':').map(Number);
+  const timeframeInMs =
+    (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
+
+  // Calculate the timeOfToggle
+  const timeOfToggleDate = new Date(timestampDate.getTime() + timeframeInMs);
+
+  // Format timeOfToggle for display
+  return format(timeOfToggleDate, 'yyyy-MM-dd HH:mm:ss');
+};
 
   return (
     <Box>
@@ -323,7 +392,7 @@ const ChartExpandModal = ({
                   whileTap={{ scale: 0.9 }}
                   onClick={() => handleTimeButtonClick(timePeriod)}
                   bg={
-                    currentTimePeriod === timePeriod ? 'orange.400' : 'gray.100'
+                    currentTimePeriod === timePeriod ? '#3D5A80' : 'gray.100'
                   }
                   color={currentTimePeriod === timePeriod ? 'white' : 'black'}
                   size={['sm', 'md']}
@@ -336,11 +405,11 @@ const ChartExpandModal = ({
               justify="center"
               alignItems="center"
               flexGrow={2}
-              bg={getContentBackgroundColor()}
+              bg={getChartBgColor()}
               p={4}
               borderRadius="md"
               boxShadow="md"
-              border="2px solid #fd9801"
+              border="2px solid #00BCD4"
               mb={4}
               h={'40vh'}
             >
@@ -357,14 +426,14 @@ const ChartExpandModal = ({
               <MotionButton
                 variant={'solid'}
                 onClick={() => {
-                  onChartChange(chartID,typeOfChart);
+                  onChartChange(chartID, typeOfChart);
                 }}
                 leftIcon={<FaChartLine />}
                 size={['sm', 'md']}
                 mx={1}
-                whileHover={{ scale: 1.1 }}
+                whileHover={{ scale: 1.1, bg: '#00BCD4' }}
                 whileTap={{ scale: 0.9 }}
-                bg={typeOfChart === 'line' ? 'orange.400' : 'gray.100'}
+                bg={typeOfChart === 'line' ? '#3D5A80' : 'gray.100'}
                 color={typeOfChart === 'line' ? 'white' : 'black'}
               >
                 LINE
@@ -372,14 +441,14 @@ const ChartExpandModal = ({
               <MotionButton
                 variant={'solid'}
                 onClick={() => {
-                  onChartChange(chartID,typeOfChart);
+                  onChartChange(chartID, typeOfChart);
                 }}
                 leftIcon={<FaChartBar />}
                 mx={1}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 size={['sm', 'md']}
-                bg={typeOfChart === 'bar' ? 'orange.400' : 'gray.100'}
+                bg={typeOfChart === 'bar' ? '#3D5A80' : 'gray.100'}
                 color={typeOfChart === 'bar' ? 'white' : 'black'}
               >
                 BAR
@@ -426,8 +495,12 @@ const ChartExpandModal = ({
                     >
                       Thresholds
                     </Text>
-                    <Flex width={'100%'}>
-                      <HStack width={'100%'} gap={6} justify={'flex-start'}>
+                    <Flex
+                      width={'100%'}
+                      justify={'space-between'}
+                      alignItems={'center'}
+                    >
+                      <HStack gap={6} justify={'flex-start'} width={'75%'}>
                         {highThreshold ? (
                           <Text color="white" fontSize={['xs', 'md']}>
                             <strong>High:</strong> {highThreshold}
@@ -450,6 +523,89 @@ const ChartExpandModal = ({
                           </Text>
                         ) : null}
                       </HStack>
+                      {/* <FormControl
+                        display="flex"
+                        alignItems="center"
+                        justify={'flex-end'}
+                        width={'25%'}
+                        ml={24}
+                      >
+                        <Tooltip label={`Toggle Threshold Alerts For ${title}`}>
+                        <FormLabel htmlFor="threshold-alerts" mb="0">
+                          PAUSE THRESHOLDS
+                        </FormLabel>
+                        </Tooltip>
+                        <Switch
+                          id="threshold-alerts"
+                          mb="1"
+                          isChecked={threshKill}
+                          // onChange={handleThreshKillToggle}
+                          colorScheme={'orange'}
+                          />
+                      </FormControl> */}
+                      {/* {timeOfToggle &&  <Text>Your threshold will turn back on @ {timeOfToggle}</Text>}
+                      <Box fontSize={['xs', 'lg']} ml={12} mb={-1}>
+                        Pause Threshold
+                        
+                      </Box>
+                      <Popover
+                        isOpen={isTimePickerOpen}
+                        onClose={() => setIsTimePickerOpen(false)}
+                        closeOnBlur={false}
+                        placement='top'
+                        width={'auto'}
+                      >
+                        <PopoverTrigger>
+                          <Switch
+                            id="threshold-alerts"
+                            isChecked={threshKill}
+                            onChange={handleThreshKillToggle}
+                            colorScheme={'orange'}
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent width="auto" maxWidth="fit-content">
+                        <PopoverArrow />
+                          <PopoverCloseButton />
+                          <PopoverBody>
+                            <Flex alignItems={'center'} justifyContent={'center'}>
+                              <Input
+                                type="number"
+                                placeholder="HH"
+                                value={selectedHour}
+                                onChange={e => setSelectedHour(e.target.value)}
+                                max={23}
+                                min={0}
+                                width="60px"
+                                mr={2}
+                                textAlign={'center'}
+                              />
+                              :
+                              <Input
+                                type="number"
+                                placeholder="MM"
+                                value={selectedMinute}
+                                onChange={e =>
+                                  setSelectedMinute(e.target.value)
+                                }
+                                max={59}
+                                min={0}
+                                width="60px"
+                                ml={2}
+                                textAlign={'center'}
+                              />
+                            </Flex>
+                          </PopoverBody>
+                          <PopoverFooter display="flex" justifyContent="center">
+                            <Button
+                              onClick={handleTimePickerSubmit}
+                              colorScheme="orange"
+                              
+                            >
+                              Set Timeframe to Pause Alerts
+                            </Button>
+                          </PopoverFooter>
+                        </PopoverContent>
+                      </Popover> */}
                     </Flex>
                     <Box
                       mt={2}
@@ -464,10 +620,10 @@ const ChartExpandModal = ({
                     >
                       {/* Map out all alerts for the metric from the db */}
                       <Stack spacing={2}>
-                        {alertsThreshold[metric]?.map((alert, index) => (
+                        {groupedAlerts[metric]?.map((alert, index) => (
                           <Box
                             key={index}
-                            bg="orange.400"
+                            bg="#cee8ff"
                             p={2}
                             borderRadius="md"
                             boxShadow="md"
@@ -475,7 +631,7 @@ const ChartExpandModal = ({
                             <Flex justify="space-between" align="center" mr={1}>
                               <Text color="#212121">{alert.message}</Text>
                               <FaTrash
-                                color="white"
+                                color="#212121"
                                 onClick={() => clearAlerts(alert.id)}
                                 aria-label="Delete alert"
                                 cursor="pointer"
