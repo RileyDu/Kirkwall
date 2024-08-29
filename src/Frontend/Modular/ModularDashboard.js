@@ -47,7 +47,7 @@ const chartComponents = {
   // Add more chart types here as needed
 };
 
-const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour, runThresholdTour, setRunThresholdTour }) => {
+const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour, runThresholdTour, setRunThresholdTour, setIsTourRunning, isTourRunning, activeChartID, setActiveChartID }) => {
   const [customerMetrics, setCustomerMetrics] = useState([]);
   const [customerName, setCustomerName] = useState('');
   const [metricSettings, setMetricSettings] = useState([]);
@@ -420,6 +420,10 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
                           setRunTour={setRunTour}
                           runThresholdTour={runThresholdTour} 
                           setRunThresholdTour={setRunThresholdTour}
+                          isTourRunning={isTourRunning}
+                          setIsTourRunning={setIsTourRunning}
+                          activeChartID={activeChartID}
+                          setActiveChartID={setActiveChartID}
                         >
                           <ChartComponent
                             data={dataForChart}

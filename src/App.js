@@ -56,7 +56,11 @@ const Layout = ({
   expandButtonRef,
   startTourButtonRef,
   runThresholdTour,
-  setRunThresholdTour
+  setRunThresholdTour,
+  setIsTourRunning,
+  isTourRunning,
+  activeChartID,
+  setActiveChartID
 }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const location = useLocation();
@@ -155,7 +159,11 @@ const Layout = ({
         onFaqsClick={handleOpenFaqsModal}
         startTourButtonRef={startTourButtonRef} 
         runThresholdTour={runThresholdTour}
-        setRunThresholdTour={setRunThresholdTour}        
+        setRunThresholdTour={setRunThresholdTour}
+        setIsTourRunning={setIsTourRunning}
+        isTourRunning={isTourRunning}
+        activeChartID={activeChartID}
+        setActiveChartID={setActiveChartID}        
         />
       </>
       )}
@@ -192,6 +200,10 @@ const MainApp = () => {
   const location = useLocation();
   const [showAlerts, setShowAlerts] = useState(false);
   const [runThresholdTour, setRunThresholdTour] = useState(false);
+  const [isTourRunning, setIsTourRunning] = useState(false);
+  const [activeChartID, setActiveChartID] = useState(null);
+
+
 
   const expandButtonRef = useRef(null);
 
@@ -245,6 +257,10 @@ const MainApp = () => {
         startTourButtonRef={startTourButtonRef}
         runThresholdTour={runThresholdTour}
         setRunThresholdTour={setRunThresholdTour}
+        isTourRunning={isTourRunning}
+        setIsTourRunning={setIsTourRunning}
+        activeChartID={activeChartID}
+        setActiveChartID={setActiveChartID}
       >
         <Routes>
           {/* <Route path="/landing" element={<LandingPage />} /> */}
@@ -254,7 +270,8 @@ const MainApp = () => {
             path="/"
             element={
               <ProtectedRoute>
-                <ModularDashboard statusOfAlerts={showAlerts} expandButtonRef={expandButtonRef} runThresholdTour={runThresholdTour} setRunThresholdTour={setRunThresholdTour} />
+                <ModularDashboard statusOfAlerts={showAlerts} expandButtonRef={expandButtonRef} runThresholdTour={runThresholdTour} setRunThresholdTour={setRunThresholdTour}         isTourRunning={isTourRunning}
+        setIsTourRunning={setIsTourRunning} activeChartID={activeChartID} setActiveChartID={setActiveChartID} />
               </ProtectedRoute>
             }
           />

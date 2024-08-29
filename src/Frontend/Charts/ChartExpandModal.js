@@ -82,7 +82,6 @@ const ChartExpandModal = ({
     useWeatherData();
 
 
-  
 
   // Find the latest threshold for the selected metric, assign a graph to the threshold
   const findLatestThreshold = metric => {
@@ -121,22 +120,27 @@ const ChartExpandModal = ({
     },
     {
       target: '.chart-area',
+      disableBeacon: true,
       content: 'This is where your selected chart is displayed.',
     },
     {
       target: '.chart-type-buttons',
+      disableBeacon: true,
       content: 'Switch between line and bar charts here.',
     },
     {
       target: '.set-thresholds-button',
+      disableBeacon: true,
       content: 'Set alerts for specific thresholds here.',
     },
     {
       target: '.thresholds-display',
+      disableBeacon: true,
       content: 'View your current readings, thresholds and alerts here.',
     },
     {
       target: '.map-component',
+      disableBeacon: true,
       content: 'View the geolocation of the sensor.',
     },
   ];
@@ -445,6 +449,9 @@ const calculateTimeOfToggle = (timestamp, timeframe) => {
           options: {
             zIndex: 10000,
           },
+          buttonClose: {
+            display: 'none',
+          }
         }}
       />
 
@@ -472,7 +479,7 @@ const calculateTimeOfToggle = (timestamp, timeframe) => {
             justifyContent="space-between"
             alignItems="center"
           >
-            {title} for {chartLocation}
+            {title} for {chartLocation} {chartID} {activeChartID}
           <IconButton
             ref={startTourButtonRef}
             icon={<FaQuestionCircle />}

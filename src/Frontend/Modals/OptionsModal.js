@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -16,10 +16,32 @@ import {
 } from '@chakra-ui/react';
 import Joyride, { STATUS } from 'react-joyride';
 import { FaQuestionCircle, FaHandsHelping, FaInfoCircle } from 'react-icons/fa';
+import { interval } from 'date-fns';
+import { CustomerSettings } from '../Modular/CustomerSettings.js';
+import { MetricSettings } from '../Modular/MetricSettings.js';
+import { useAuth } from '../AuthComponents/AuthContext.js';
 
-const OptionsModal = ({ isOpen, onClose, onContactUsClick, onHelpClick, onFaqsClick, expandButtonRef, runThresholdTour, setRunThresholdTour, chartId }) => {
+const OptionsModal = ({
+  isOpen,
+  onClose,
+  onContactUsClick,
+  onHelpClick,
+  onFaqsClick,
+  expandButtonRef,
+  runThresholdTour,
+  setRunThresholdTour,
+  chartId,
+  isTourRunning,
+  setIsTourRunning,
+  activeChartID,
+  setActiveChartID,
+}) => {
   const { colorMode } = useColorMode();
   const [runTour, setRunTour] = useState(false);
+  const { currentUser } = useAuth();
+  const [customerMetrics, setCustomerMetrics] = useState([]);
+  const [metricSettings, setMetricSettings] = useState([]);
+
 
   const getColor = () => {
     if (colorMode === 'light') {
@@ -28,6 +50,32 @@ const OptionsModal = ({ isOpen, onClose, onContactUsClick, onHelpClick, onFaqsCl
       return 'white';
     }
   };
+
+  useEffect(() => {
+    if (currentUser) {
+      const customer = CustomerSettings.find(
+        customer => customer.email === currentUser.email
+      );
+      if (customer) {
+        setCustomerMetrics(customer.metric);
+      }
+    }
+  }, [currentUser]);
+
+
+  useEffect(() => {
+    if (customerMetrics.length > 0) {
+      const selectedMetrics = MetricSettings.filter(metric =>
+        customerMetrics.includes(metric.metric)
+      );
+      if (selectedMetrics) {
+        setMetricSettings(selectedMetrics);
+      }
+    }
+  }, [customerMetrics]);
+
+  console.log(metricSettings);
+  
 
   const steps = [
     {
@@ -43,11 +91,20 @@ const OptionsModal = ({ isOpen, onClose, onContactUsClick, onHelpClick, onFaqsCl
       disableBeacon: true,
     },
     {
+      target: '#step4',
+      disableBeacon: true,
+      content: 'Choose to hide this chart from the dashboard.',
+      placement: 'bottom',
+    },
+    {
       target: '#step3',
       disableBeacon: true,
       content: (
         <Box>
-          <Text>On the click of this button, more features such as setting thresholds for the current parameter are available.</Text>
+          <Text>
+            On the click of this button, more features such as setting
+            thresholds for the current parameter are available.
+          </Text>
           <Button
             mt={4}
             colorScheme="blue"
@@ -55,7 +112,10 @@ const OptionsModal = ({ isOpen, onClose, onContactUsClick, onHelpClick, onFaqsCl
               if (expandButtonRef.current) {
                 expandButtonRef.current.click();
                 setRunTour(false); // Stop the current tour (if needed)
-                setRunThresholdTour(chartId);
+                // setRunThresholdTour(chartId);
+                // setActiveChartID(metricSettings[metricSettings.length - 1].id);
+                setIsTourRunning(true);
+                setActiveChartID(6);
               } else {
                 console.error('Expand Chart button not found');
               }
@@ -67,15 +127,9 @@ const OptionsModal = ({ isOpen, onClose, onContactUsClick, onHelpClick, onFaqsCl
       ),
       placement: 'bottom',
     },
-    {
-      target: '#step4',
-      disableBeacon: true,
-      content: 'Choose to hide this chart from the dashboard.',
-      placement: 'bottom',
-    },
   ];
 
-  const handleJoyrideCallback = (data) => {
+  const handleJoyrideCallback = data => {
     const { status } = data;
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       setRunTour(false); // Reset the tour state after it finishes or is skipped
@@ -101,6 +155,14 @@ const OptionsModal = ({ isOpen, onClose, onContactUsClick, onHelpClick, onFaqsCl
         showProgress={true}
         callback={handleJoyrideCallback}
         disableScrolling={true}
+        styles={{
+          options: {
+            zIndex: 10000,
+          },
+          buttonClose: {
+            display: 'none',
+          }
+        }}
       />
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -116,13 +178,24 @@ const OptionsModal = ({ isOpen, onClose, onContactUsClick, onHelpClick, onFaqsCl
           <ModalCloseButton color="white" size="lg" mt={1} />
           <ModalBody>
             <VStack spacing={8}>
-              <Box textAlign="center" onClick={onContactUsClick} cursor="pointer" mt={4}>
+              <Box
+                textAlign="center"
+                onClick={onContactUsClick}
+                cursor="pointer"
+                mt={4}
+              >
                 <Icon as={FaQuestionCircle} w={12} h={12} color={getColor()} />
                 <Text fontSize="lg" color={getColor()} mt={2}>
                   Contact Us
                 </Text>
               </Box>
-              <Box textAlign="center" onClick={handleHelpClick} cursor="pointer" id="step3" mb={4}>
+              <Box
+                textAlign="center"
+                onClick={handleHelpClick}
+                cursor="pointer"
+                id="step3"
+                mb={4}
+              >
                 <Icon as={FaHandsHelping} w={12} h={12} color={getColor()} />
                 <Text fontSize="lg" color={getColor()} mt={2}>
                   Tutorial

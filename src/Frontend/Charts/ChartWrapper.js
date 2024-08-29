@@ -78,8 +78,11 @@ const ChartWrapper = ({
   setFilteredChartData,
   expandButtonRef,
   runThresholdTour,
-  setRunThresholdTour
-  
+  setRunThresholdTour,
+  setIsTourRunning,
+  isTourRunning,
+  activeChartID,
+  setActiveChartID,
 }) => {
   const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
   const [loading, setLoading] = useState(false);
@@ -411,8 +414,8 @@ const ChartWrapper = ({
   };
   
 
-  const [isTourRunning, setIsTourRunning] = useState(false);
-  const [activeChartID, setActiveChartID] = useState(null);
+  // const [isTourRunning, setIsTourRunning] = useState(false);
+  // const [activeChartID, setActiveChartID] = useState(null);
 
 
   // const handleJoyrideCallback = (data) => {
