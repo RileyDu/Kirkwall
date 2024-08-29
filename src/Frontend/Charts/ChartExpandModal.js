@@ -456,7 +456,7 @@ const calculateTimeOfToggle = (timestamp, timeframe) => {
       />
 
 
-    <Box>
+    <Box >
       <Modal onClose={onClose} isOpen={isOpen}>
         <ModalOverlay />
         <ModalContent
@@ -479,17 +479,7 @@ const calculateTimeOfToggle = (timestamp, timeframe) => {
             justifyContent="space-between"
             alignItems="center"
           >
-            {title} for {chartLocation} {chartID} {activeChartID}
-          <IconButton
-            ref={startTourButtonRef}
-            icon={<FaQuestionCircle />}
-            onClick={startTour}
-            size="sm"
-            colorScheme="blue"
-            mr={10}
-          >
-            
-          </IconButton>
+            {title} for {chartLocation}
           </ModalHeader>
 
           

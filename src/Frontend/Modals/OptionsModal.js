@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Button,
@@ -26,7 +26,6 @@ const OptionsModal = ({
   onClose,
   onContactUsClick,
   onHelpClick,
-  onFaqsClick,
   expandButtonRef,
   runThresholdTour,
   setRunThresholdTour,
@@ -41,15 +40,10 @@ const OptionsModal = ({
   const { currentUser } = useAuth();
   const [customerMetrics, setCustomerMetrics] = useState([]);
   const [metricSettings, setMetricSettings] = useState([]);
+  const joyrideRef = useRef(); // Create the joyrideRef
 
 
-  const getColor = () => {
-    if (colorMode === 'light') {
-      return 'gray.600';
-    } else {
-      return 'white';
-    }
-  };
+  const getColor = () => (colorMode === 'light' ? 'gray.600' : 'white');
 
   useEffect(() => {
     if (currentUser) {
@@ -61,7 +55,6 @@ const OptionsModal = ({
       }
     }
   }, [currentUser]);
-
 
   useEffect(() => {
     if (customerMetrics.length > 0) {
@@ -75,7 +68,6 @@ const OptionsModal = ({
   }, [customerMetrics]);
 
   console.log(metricSettings);
-  
 
   const steps = [
     {
@@ -83,56 +75,90 @@ const OptionsModal = ({
       content: 'See the geolocation of the sensor.',
       disableBeacon: true,
       placement: 'bottom',
+      hideBackButton: true,
     },
     {
       target: '#step2',
       content: 'Toggle between line and bar chart.',
       placement: 'bottom',
       disableBeacon: true,
+      hideBackButton: true,
     },
     {
       target: '#step4',
       disableBeacon: true,
       content: 'Choose to hide this chart from the dashboard.',
       placement: 'bottom',
+      hideBackButton: true,
     },
     {
       target: '#step3',
       disableBeacon: true,
-      content: (
-        <Box>
-          <Text>
-            On the click of this button, more features such as setting
-            thresholds for the current parameter are available.
-          </Text>
-          <Button
-            mt={4}
-            colorScheme="blue"
-            onClick={() => {
-              if (expandButtonRef.current) {
-                expandButtonRef.current.click();
-                setRunTour(false); // Stop the current tour (if needed)
-                // setRunThresholdTour(chartId);
-                // setActiveChartID(metricSettings[metricSettings.length - 1].id);
-                setIsTourRunning(true);
-                setActiveChartID(6);
-              } else {
-                console.error('Expand Chart button not found');
-              }
-            }}
-          >
-            Tour Thresholds
-          </Button>
-        </Box>
-      ),
+      content: 'This is how you access more features for your chart.',
       placement: 'bottom',
+      hideBackButton: true,
+    },
+    {
+      target: '#step3',
+      disableBeacon: true,
+      content: 'This is the expanded modal for your chart.',
+      placement: 'bottom',
+      spotlightPadding: 0,
+      disableOverlay: true,
+      hideBackButton: true,
+    },
+    {
+      target: '.time-period-buttons',
+      disableBeacon: true,
+      content: 'Select different time periods for your data here.',
+      hideBackButton: true,
+    },
+    {
+      target: '.chart-area',
+      disableBeacon: true,
+      content: 'This is where your selected chart is displayed.',
+      hideBackButton: true,
+
+    },
+    {
+      target: '.chart-type-buttons',
+      disableBeacon: true,
+      content: 'Switch between line and bar charts here.',
+      hideBackButton: true,
+    },
+    {
+      target: '.set-thresholds-button',
+      disableBeacon: true,
+      content: 'Set alerts for specific thresholds here.',
+      hideBackButton: true,
+    },
+    {
+      target: '.thresholds-display',
+      disableBeacon: true,
+      content: 'View your current readings, thresholds and alerts here.',
+      hideBackButton: true,
+    },
+    {
+      target: '.map-component',
+      disableBeacon: true,
+      content: 'View the geolocation of the sensor.',
+      hideBackButton: true,
     },
   ];
 
   const handleJoyrideCallback = data => {
-    const { status } = data;
+    const { status, index } = data;
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       setRunTour(false); // Reset the tour state after it finishes or is skipped
+    } else if (index === 4 && expandButtonRef.current) {
+      // Trigger the click when reaching the step 3
+      expandButtonRef.current.click();
+      setTimeout(() => {
+        // Continue the tour after 1 second delay
+        if (joyrideRef.current) {
+          joyrideRef.current.next();
+        }
+      }, 2000);
     }
   };
 
@@ -161,7 +187,7 @@ const OptionsModal = ({
           },
           buttonClose: {
             display: 'none',
-          }
+          },
         }}
       />
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -201,12 +227,6 @@ const OptionsModal = ({
                   Tutorial
                 </Text>
               </Box>
-              {/* <Box textAlign="center" onClick={onFaqsClick} cursor="pointer" mb={4}>
-                <Icon as={FaInfoCircle} w={12} h={12} color={getColor()} />
-                <Text fontSize="lg" color={getColor()} mt={2}>
-                  FAQs
-                </Text>
-              </Box> */}
             </VStack>
           </ModalBody>
         </ModalContent>
