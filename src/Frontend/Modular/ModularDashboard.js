@@ -404,7 +404,7 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
                         <ChartWrapper
                           key={metric}
                           title={title}
-                          msetric={metric}
+                          metric={metric}
                           flex="1"
                           display="flex"
                           flexDirection="column"

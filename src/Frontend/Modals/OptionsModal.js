@@ -32,13 +32,13 @@ const OptionsModal = ({ isOpen, onClose, onContactUsClick, onHelpClick, onFaqsCl
   const steps = [
     {
       target: '#step1',
-      content: 'This is the first step of the tour',
+      content: 'See the geolocation of the sensor.',
       disableBeacon: true,
       placement: 'bottom',
     },
     {
       target: '#step2',
-      content: 'This is the second step of the tour',
+      content: 'Toggle between line and bar chart.',
       placement: 'bottom',
       disableBeacon: true,
     },
@@ -70,7 +70,7 @@ const OptionsModal = ({ isOpen, onClose, onContactUsClick, onHelpClick, onFaqsCl
     {
       target: '#step4',
       disableBeacon: true,
-      content: 'This is the final step of the tour',
+      content: 'Choose to hide this chart from the dashboard.',
       placement: 'bottom',
     },
   ];
@@ -122,31 +122,20 @@ const OptionsModal = ({ isOpen, onClose, onContactUsClick, onHelpClick, onFaqsCl
                   Contact Us
                 </Text>
               </Box>
-              <Box textAlign="center" onClick={handleHelpClick} cursor="pointer" id="step3">
+              <Box textAlign="center" onClick={handleHelpClick} cursor="pointer" id="step3" mb={4}>
                 <Icon as={FaHandsHelping} w={12} h={12} color={getColor()} />
                 <Text fontSize="lg" color={getColor()} mt={2}>
                   Tutorial
                 </Text>
               </Box>
-              <Box textAlign="center" onClick={onFaqsClick} cursor="pointer">
+              {/* <Box textAlign="center" onClick={onFaqsClick} cursor="pointer" mb={4}>
                 <Icon as={FaInfoCircle} w={12} h={12} color={getColor()} />
                 <Text fontSize="lg" color={getColor()} mt={2}>
                   FAQs
                 </Text>
-              </Box>
+              </Box> */}
             </VStack>
           </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="solid"
-              bg="gray.400"
-              color="white"
-              _hover={{ bg: 'gray.500' }}
-              onClick={onClose}
-            >
-              Close
-            </Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
     </>
