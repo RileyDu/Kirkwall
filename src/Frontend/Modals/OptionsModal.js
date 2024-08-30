@@ -150,7 +150,7 @@ const OptionsModal = ({
     const { status, index } = data;
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       setRunTour(false); // Reset the tour state after it finishes or is skipped
-    } else if (index === 4 && expandButtonRef.current) {
+    } else if (index === 4) {
       // Trigger the click when reaching the step 3
       expandButtonRef.current.click();
       setTimeout(() => {
