@@ -104,46 +104,13 @@ const ChartExpandModal = ({
 
 
 
-  const handleJoyrideCallback = (data) => {
-    const { status } = data;
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
-      setIsTourRunning(false);
-      setActiveChartID(null);
-    }
-  };
+  // const handleJoyrideCallback = (data) => {
+  //   const { status } = data;
+  //   if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+  //   }
+  // };
 
-  const tourSteps = [
-    {
-      target: '.time-period-buttons',
-      disableBeacon: true,
-      content: 'Select different time periods for your data here.',
-    },
-    {
-      target: '.chart-area',
-      disableBeacon: true,
-      content: 'This is where your selected chart is displayed.',
-    },
-    {
-      target: '.chart-type-buttons',
-      disableBeacon: true,
-      content: 'Switch between line and bar charts here.',
-    },
-    {
-      target: '.set-thresholds-button',
-      disableBeacon: true,
-      content: 'Set alerts for specific thresholds here.',
-    },
-    {
-      target: '.thresholds-display',
-      disableBeacon: true,
-      content: 'View your current readings, thresholds and alerts here.',
-    },
-    {
-      target: '.map-component',
-      disableBeacon: true,
-      content: 'View the geolocation of the sensor.',
-    },
-  ];
+
 
   
 
@@ -437,25 +404,6 @@ const calculateTimeOfToggle = (timestamp, timeframe) => {
   return (
 
     <>
-      <Joyride
-        steps={tourSteps}
-        run={isTourRunning && activeChartID === chartID}
-        continuous={true}
-        showSkipButton={true}
-        showProgress={true}
-        callback={handleJoyrideCallback}
-        disableScrolling={true}
-        styles={{
-          options: {
-            zIndex: 10000,
-          },
-          buttonClose: {
-            display: 'none',
-          }
-        }}
-      />
-
-
     <Box >
       <Modal onClose={onClose} isOpen={isOpen}>
         <ModalOverlay />

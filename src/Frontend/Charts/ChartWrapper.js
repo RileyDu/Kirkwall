@@ -77,12 +77,12 @@ const ChartWrapper = ({
   handleMenuItemClick,
   setFilteredChartData,
   expandButtonRef,
-  runThresholdTour,
-  setRunThresholdTour,
-  setIsTourRunning,
-  isTourRunning,
-  activeChartID,
-  setActiveChartID,
+  // runThresholdTour,
+  // setRunThresholdTour,
+  // setIsTourRunning,
+  // isTourRunning,
+  // activeChartID,
+  // setActiveChartID,
 }) => {
   const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
   const [loading, setLoading] = useState(false);
@@ -408,10 +408,10 @@ const ChartWrapper = ({
 
   //  const [runThresholdTour, setRunThresholdTour] = useState(false);
 
-  const handleExpandChart = () => {
-    onOpen();
-    setRunThresholdTour(true); // Start the threshold tour
-  };
+  // const handleExpandChart = () => {
+  //   onOpen();
+  //   setRunThresholdTour(true); // Start the threshold tour
+  // };
   
 
   // const [isTourRunning, setIsTourRunning] = useState(false);
@@ -693,7 +693,7 @@ const ChartWrapper = ({
                 size={iconSize}
                 bg={'#cee8ff'}
                 _hover={{ bg: '#cee8ff' }}
-                onClick={handleExpandChart}  //  this line
+                onClick={onOpen}  //  this line
                 border={'2px solid #3D5A80'}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -756,12 +756,12 @@ const ChartWrapper = ({
         typeOfChart={typeOfChart}
         chartLocation={newTitle || chartDataForMetric?.location}
         runModalTour={runModalTour}
-        runThresholdTour={runThresholdTour}
-        setRunThresholdTour={setRunThresholdTour}
-        isTourRunning={isTourRunning}
-        setIsTourRunning={setIsTourRunning}
-        activeChartID={activeChartID}
-        setActiveChartID={setActiveChartID}
+        // runThresholdTour={runThresholdTour}
+        // setRunThresholdTour={setRunThresholdTour}
+        // isTourRunning={isTourRunning}
+        // setIsTourRunning={setIsTourRunning}
+        // activeChartID={activeChartID}
+        // setActiveChartID={setActiveChartID}
       />
     </>
   );
