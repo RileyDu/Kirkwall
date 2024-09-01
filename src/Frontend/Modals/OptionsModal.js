@@ -13,6 +13,7 @@ import {
   useColorMode,
   VStack,
   Icon,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import Joyride, { STATUS } from 'react-joyride';
 import { FaQuestionCircle, FaHandsHelping, FaInfoCircle } from 'react-icons/fa';
@@ -41,6 +42,7 @@ const OptionsModal = ({
   const [customerMetrics, setCustomerMetrics] = useState([]);
   const [metricSettings, setMetricSettings] = useState([]);
   const joyrideRef = useRef(); // Create the joyrideRef
+  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
 
   const getColor = () => (colorMode === 'light' ? 'gray.600' : 'white');
@@ -150,7 +152,7 @@ const OptionsModal = ({
     const { status, index } = data;
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       setRunTour(false); // Reset the tour state after it finishes or is skipped
-    } else if (index === 4) {
+    } else if (index === 4 && expandButtonRef.current) {
       // Trigger the click when reaching the step 3
       expandButtonRef.current.click();
       setTimeout(() => {
@@ -215,6 +217,7 @@ const OptionsModal = ({
                   Contact Us
                 </Text>
               </Box>
+              {isLargerThan768 &&
               <Box
                 textAlign="center"
                 onClick={handleHelpClick}
@@ -227,6 +230,7 @@ const OptionsModal = ({
                   Tutorial
                 </Text>
               </Box>
+              }
             </VStack>
           </ModalBody>
         </ModalContent>
