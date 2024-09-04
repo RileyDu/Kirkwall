@@ -76,6 +76,7 @@ const ChartExpandModal = ({
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
   const [selectedHour, setSelectedHour] = useState('');
   const [selectedMinute, setSelectedMinute] = useState('');
+  const [userHasChosenTimeframe, setUserHasChosenTimeframe] = useState(false);
   const threshKillChanged = useRef(false);
 
   const { thresholds, alertsThreshold, fetchAlertsThreshold } =
@@ -187,11 +188,11 @@ const ChartExpandModal = ({
     const emailsString = emailsForThreshold.join(', '); // Join emails into a single string
 
     // Use the newTimeframe if it's available, otherwise use the cleared timeframe when pause is off
-    const timeOfPause = threshKill ? newTimeframe || timeframe : null; // Ensure `null` when threshKill is off
+    console.log('threshKill', threshKill);
     console.log('newTimeframe', newTimeframe);
     console.log('timeframe', timeframe);
+    const timeOfPause = threshKill ? newTimeframe || timeframe : null; // Ensure `null` when threshKill is off
     console.log('timeOfPause', timeOfPause);
-    console.log('threshKill', threshKill);
 
     try {
       await createThreshold(
@@ -324,20 +325,26 @@ const ChartExpandModal = ({
   };
 
   const handleTimePickerSubmit = () => {
-    // Format the timeframe in the interval syntax PostgreSQL expects
     const timeframe = `${selectedHour}:${selectedMinute}:00`;
-
     console.log('Selected Timeframe:', timeframe);
+  
     setIsTimePickerOpen(false); // Close the popover
-    setNewTimeframe(timeframe);
+    setNewTimeframe(timeframe); // Set the new timeframe
+    setUserHasChosenTimeframe(true);
     let currentTime = new Date().toISOString();
+    setNewTimeframe(timeframe);
     const calculatedTimeOfToggle = calculateTimeOfToggle(
       currentTime,
-      newTimeframe
+      timeframe
     );
     setTimeOfToggle(calculatedTimeOfToggle);
-    handleFormSubmit();
   };
+
+  useEffect(() => {
+    if (userHasChosenTimeframe) {
+      handleFormSubmit(); // Call the form submit after the newTimeframe is updated
+    }
+  }, [userHasChosenTimeframe]);
 
   useEffect(() => {
     if (threshKill && !timeframe) {
