@@ -23,15 +23,22 @@ import {
   ModalFooter,
   HStack,
   IconButton,
+  Switch,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverBody,
+  PopoverFooter,
 } from '@chakra-ui/react';
 import MiniDashboard from './ChartDashboard.js';
-import { FaChartLine, FaChartBar, FaBell, FaTrash, FaQuestionCircle } from 'react-icons/fa';
+import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts.js';
 import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
-import Joyride, { STATUS } from 'react-joyride';
 import { format } from 'date-fns';
 
 // This is the modal that appears when a chart is expanded
@@ -44,7 +51,6 @@ const ChartExpandModal = ({
   metric,
   onChartChange,
   chartID,
-  // chartType,
   handleTimePeriodChange,
   weatherData,
   currentTimePeriod,
@@ -52,13 +58,6 @@ const ChartExpandModal = ({
   MapComponent,
   typeOfChart,
   chartLocation,
-  runThresholdTour,
-  setRunThresholdTour,
-  isTourRunning,
-  setIsTourRunning,
-  activeChartID,
-  setActiveChartID
-
 }) => {
   const { colorMode } = useColorMode();
   const [loading, setLoading] = useState(false);
@@ -96,26 +95,6 @@ const ChartExpandModal = ({
     return { highThreshold, lowThreshold, phone, email, timeframe, threshkill, timestamp };
   };
 
-
-  const startTour = () => {
-    setIsTourRunning(true);
-    setActiveChartID(chartID);
-  };
-
-
-
-  // const handleJoyrideCallback = (data) => {
-  //   const { status } = data;
-  //   if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
-  //   }
-  // };
-
-
-
-  
-
-
-  
 
   // Update the threshold values when the metric or thresholds change, fetched from the database
   useEffect(() => {
@@ -343,24 +322,6 @@ const ChartExpandModal = ({
     setEmailsForThreshold(updatedEmails);
   };
 
-  const handleThresholdTourCallback = (data) => {
-    const { status } = data;
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
-      setRunThresholdTour(false); // Reset the tour state after it finishes or is skipped
-    }
-  };
-  
-  
-  useEffect(() => {
-    if (runThresholdTour && activeChartID === chartID) {
-      setTimeout(() => {
-        if (startTourButtonRef.current) {
-          startTourButtonRef.current.click();
-        }
-      }, 1500);
-      setRunThresholdTour(false);
-    }
-  }, [runThresholdTour, setRunThresholdTour, activeChartID, chartID]);
 
 
 const handleTimePickerSubmit = () => {
@@ -606,10 +567,9 @@ const calculateTimeOfToggle = (timestamp, timeframe) => {
                           colorScheme={'orange'}
                           />
                       </FormControl> */}
-                      {/* {timeOfToggle &&  <Text>Your threshold will turn back on @ {timeOfToggle}</Text>}
-                      <Box fontSize={['xs', 'lg']} ml={12} mb={-1}>
+                      {timeOfToggle &&  <Text>Your threshold will turn back on @ {timeOfToggle}</Text>}
+                      <Box fontSize={['xs', 'lg']} ml={12} mb={-1} color="white">
                         Pause Threshold
-                        
                       </Box>
                       <Popover
                         isOpen={isTimePickerOpen}
@@ -668,7 +628,7 @@ const calculateTimeOfToggle = (timestamp, timeframe) => {
                             </Button>
                           </PopoverFooter>
                         </PopoverContent>
-                      </Popover> */}
+                      </Popover>
                     </Flex>
                     <Box
                       mt={2}

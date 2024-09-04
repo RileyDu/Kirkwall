@@ -62,8 +62,6 @@ const OptionsModal = ({
     }
   }, [customerMetrics]);
 
-  console.log(metricSettings);
-
   const steps = [
     {
       target: '#step1',
