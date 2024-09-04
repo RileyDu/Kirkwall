@@ -109,10 +109,10 @@ const ChartExpandModal = ({
   useEffect(() => {
     const latestThreshold = findLatestThreshold(metric);
 
-    if (latestThreshold.timestamp && latestThreshold.timeframe) {
+    if (latestThreshold?.timestamp && latestThreshold?.timeframe) {
       const { formatted, date } = calculateTimeOfToggle(
-        latestThreshold.timestamp,
-        latestThreshold.timeframe
+        latestThreshold?.timestamp,
+        latestThreshold?.timeframe
       );
       setTimeOfToggle(formatted);
       setToggleTimeAsDate(date);
@@ -758,6 +758,12 @@ const ChartExpandModal = ({
                               >
                                 Set Timeframe to Pause Alerts
                               </Button>
+                              {/* <Button
+                                onClick={}
+                                variant="blue"
+                              >
+                                Pause Alerts Indefinitely
+                              </Button> */}
                             </PopoverFooter>
                           </PopoverContent>
                         </Popover>
