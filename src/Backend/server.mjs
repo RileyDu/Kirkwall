@@ -196,24 +196,34 @@ const checkThresholds = async () => {
 
     // Loop through each threshold and check if the current value exceeds the threshold
     for (const threshold of latestThresholds) {
-      const { id, metric, high, low, phone, email } = threshold;
+      const { id, metric, high, low, phone, email, thresh_kill, timeframe, timestamp } = threshold;
 
       // Find the admin associated with this threshold metric
       // Split the email string into an array of emails
       const emails = email ? email.split(',').map(em => em.trim()) : [];
-
-      // Check if any admin associated with these emails has thresh_kill set to true
-      const shouldSkip = emails.some(email => {
+      const adminThreshKill = emails.some(email => {
         const admin = admins.data.admin.find(admin => admin.email === email);
         return admin && admin.thresh_kill;
       });
 
-      // Skip the threshold check if thresh_kill is set to true for the admin and their metrics
-      if (shouldSkip) {
-        console.log(
-          `Skipping threshold check for ${metric} due to thresh_kill.`
-        );
+      // Skip the threshold check if thresh_kill is set to true for the admin
+      if (adminThreshKill) {
+        console.log(`Skipping threshold check for ${metric} due to admin-level thresh_kill.`);
         continue;
+      }
+
+      // Check if the individual threshold's killswitch is enabled and if the pause period has expired
+      if (thresh_kill && timeframe) {
+        const timePeriodDuration = moment.duration(timeframe); // Convert timeframe (e.g., "2:00:00") to moment duration
+        const pauseEndTime = moment(timestamp).add(timePeriodDuration); // Calculate when the pause should end
+
+        // Check if the current time is before the end of the pause period
+        if (moment().isBefore(pauseEndTime)) {
+          console.log(`Skipping threshold check for ${metric} due to threshold-level pause still active.`);
+          continue;
+        } else {
+          console.log(`Threshold-level pause has expired for ${metric}, resuming checks.`);
+        }
       }
 
       // Get the latest data for the metric
