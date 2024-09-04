@@ -191,6 +191,7 @@ const OptionsModal = ({
             border: '2px solid black',
             bg: colorMode === 'light' ? 'whitesmoke' : 'gray.700',
           }}
+          maxW={['90vw', '25vw']}  // Responsive array for max width
         >
           <ModalHeader bg="gray.800" color="white">
             Choose an Option

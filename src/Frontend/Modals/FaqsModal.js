@@ -52,8 +52,8 @@ const FaqsModal = ({ isOpen, onClose }) => {
         sx={{
           border: '2px solid black',
           bg: colorMode === 'light' ? 'whitesmoke' : 'gray.700',
-          maxW: '600px',
         }}
+        maxW={['90vw', '600px']}  // Responsive array for max width
       >
         <ModalHeader bg="gray.800" color="white">
           FAQs
