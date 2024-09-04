@@ -28,13 +28,7 @@ const OptionsModal = ({
   onContactUsClick,
   onHelpClick,
   expandButtonRef,
-  runThresholdTour,
-  setRunThresholdTour,
-  chartId,
-  isTourRunning,
-  setIsTourRunning,
-  activeChartID,
-  setActiveChartID,
+  onFaqsClick
 }) => {
   const { colorMode } = useColorMode();
   const [runTour, setRunTour] = useState(false);
@@ -43,7 +37,6 @@ const OptionsModal = ({
   const [metricSettings, setMetricSettings] = useState([]);
   const joyrideRef = useRef(); // Create the joyrideRef
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
-
 
   const getColor = () => (colorMode === 'light' ? 'gray.600' : 'white');
 
@@ -120,7 +113,6 @@ const OptionsModal = ({
       disableBeacon: true,
       content: 'This is where your selected chart is displayed.',
       hideBackButton: true,
-
     },
     {
       target: '.chart-type-buttons',
@@ -192,7 +184,7 @@ const OptionsModal = ({
           },
         }}
       />
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} >
         <ModalOverlay />
         <ModalContent
           sx={{
@@ -213,24 +205,30 @@ const OptionsModal = ({
                 mt={4}
               >
                 <Icon as={FaQuestionCircle} w={12} h={12} color={getColor()} />
-                <Text fontSize="lg" color={getColor()} mt={2}>
+                <Text fontSize="lg" color={getColor()}>
                   Contact Us
                 </Text>
               </Box>
-              {isLargerThan768 &&
-              <Box
-                textAlign="center"
-                onClick={handleHelpClick}
-                cursor="pointer"
-                id="step3"
-                mb={4}
-              >
-                <Icon as={FaHandsHelping} w={12} h={12} color={getColor()} />
-                <Text fontSize="lg" color={getColor()} mt={2}>
-                  Tutorial
+              {isLargerThan768 && (
+                <Box
+                  textAlign="center"
+                  onClick={handleHelpClick}
+                  cursor="pointer"
+                  id="step3"
+                  mb={4}
+                >
+                  <Icon as={FaHandsHelping} w={12} h={12} color={getColor()} />
+                  <Text fontSize="lg" color={getColor()}>
+                    Tutorial
+                  </Text>
+                </Box>
+              )}
+              <Box textAlign="center" onClick={onFaqsClick} cursor="pointer">
+                <Icon as={FaInfoCircle} w={12} h={12} color={getColor()} />
+                <Text fontSize="lg" color={getColor()} mb={4}>
+                  FAQs
                 </Text>
               </Box>
-              }
             </VStack>
           </ModalBody>
         </ModalContent>

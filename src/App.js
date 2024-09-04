@@ -257,10 +257,6 @@ const MainApp = () => {
         startTourButtonRef={startTourButtonRef}
         runThresholdTour={runThresholdTour}
         setRunThresholdTour={setRunThresholdTour}
-        // isTourRunning={isTourRunning}
-        // setIsTourRunning={setIsTourRunning}
-        // activeChartID={activeChartID}
-        // setActiveChartID={setActiveChartID}
       >
         <Routes>
           {/* <Route path="/landing" element={<LandingPage />} /> */}
