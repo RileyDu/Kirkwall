@@ -142,7 +142,7 @@ const ChartExpandModal = ({
     const intervalId = setInterval(() => {
       const now = new Date();
       // const toggleTime = new Date(timeOfToggle);
-      console.log('now:', now, 'toggleTimeAsDate:', toggleTimeAsDate);
+      // console.log('now:', now, 'toggleTimeAsDate:', toggleTimeAsDate);
       if (now >= toggleTimeAsDate) {
         submitNewThresholdAfterPause();
         toast({
