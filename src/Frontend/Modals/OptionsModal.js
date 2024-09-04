@@ -194,7 +194,7 @@ const OptionsModal = ({
           maxW={['90vw', '25vw']}  // Responsive array for max width
         >
           <ModalHeader bg="gray.800" color="white">
-            Choose an Option
+            Help Options
           </ModalHeader>
           <ModalCloseButton color="white" size="lg" mt={1} />
           <ModalBody>
