@@ -10,6 +10,7 @@ import {
   getChartData,
   getImpriMedData,
   getAllAdmins,
+  createThreshold
 } from './Graphql_helper.js';
 import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
@@ -223,6 +224,29 @@ const checkThresholds = async () => {
           continue;
         } else {
           console.log(`Threshold-level pause has expired for ${metric}, resuming checks.`);
+
+          // The pause period has expired, so we need to create a new entry to update the `thresh_kill` and `timeframe` values.
+          const timestampNow = new Date().toISOString();
+          // const phoneNumbersString = phone ? phone.split(',').map(num => num.trim()).join(', ') : '';
+          // const emailsString = email ? emails.join(', ') : '';
+
+          // Create a new threshold entry with `thresh_kill` set to false and `timeframe` set to null
+          try {
+            await createThreshold(
+              metric,
+              high, // existing high threshold value
+              low, // existing low threshold value
+              phone,
+              email,
+              timestampNow,
+              false, // Set thresh_kill to false
+              null // Set timeframe to null
+            );
+            console.log(`New threshold entry created for ${metric} with thresh_kill off and no timeframe because OG timeframe has expired.`);
+            console.log(`high: ${high}, low: ${low}, phone: ${phone}, email: ${email}, thresh_kill: false, timeframe: null`);
+          } catch (error) {
+            console.error('Error creating new threshold entry:', error);
+          }
         }
       }
 
