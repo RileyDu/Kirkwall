@@ -16,7 +16,7 @@ import {
   useMediaQuery,
 } from '@chakra-ui/react';
 import Joyride, { STATUS } from 'react-joyride';
-import { FaQuestionCircle, FaHandsHelping, FaInfoCircle } from 'react-icons/fa';
+import { FaQuestionCircle, FaHandsHelping, FaInfoCircle, FaMailBulk, FaQuestion } from 'react-icons/fa';
 import { interval } from 'date-fns';
 import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { MetricSettings } from '../Modular/MetricSettings.js';
@@ -28,7 +28,7 @@ const OptionsModal = ({
   onContactUsClick,
   onHelpClick,
   expandButtonRef,
-  onFaqsClick
+  onFaqsClick,
 }) => {
   const { colorMode } = useColorMode();
   const [runTour, setRunTour] = useState(false);
@@ -184,7 +184,7 @@ const OptionsModal = ({
           },
         }}
       />
-      <Modal isOpen={isOpen} onClose={onClose} >
+      <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent
           sx={{
@@ -204,7 +204,7 @@ const OptionsModal = ({
                 cursor="pointer"
                 mt={4}
               >
-                <Icon as={FaQuestionCircle} w={12} h={12} color={getColor()} />
+                <Icon as={FaMailBulk} w={12} h={12} color={getColor()} />
                 <Text fontSize="lg" color={getColor()}>
                   Contact Us
                 </Text>
@@ -224,7 +224,7 @@ const OptionsModal = ({
                 </Box>
               )}
               <Box textAlign="center" onClick={onFaqsClick} cursor="pointer">
-                <Icon as={FaInfoCircle} w={12} h={12} color={getColor()} />
+                <Icon as={FaQuestion} w={12} h={12} color={getColor()} />
                 <Text fontSize="lg" color={getColor()} mb={4}>
                   FAQs
                 </Text>
