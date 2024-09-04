@@ -74,10 +74,13 @@ const ChartExpandModal = ({
   const [newTimeframe, setNewTimeframe] = useState('');
   const [timeOfToggle, setTimeOfToggle] = useState('');
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
-  const [selectedHour, setSelectedHour] = useState('');
-  const [selectedMinute, setSelectedMinute] = useState('');
+  const [selectedHour, setSelectedHour] = useState('00');
+  const [selectedMinute, setSelectedMinute] = useState('00');
   const [userHasChosenTimeframe, setUserHasChosenTimeframe] = useState(false);
+  const [toggleTimeAsDate, setToggleTimeAsDate] = useState('');
   const threshKillChanged = useRef(false);
+  const MotionButton = motion(Button);
+  const toast = useToast();
 
   const { thresholds, alertsThreshold, fetchAlertsThreshold } =
     useWeatherData();
@@ -107,13 +110,14 @@ const ChartExpandModal = ({
     const latestThreshold = findLatestThreshold(metric);
 
     if (latestThreshold.timestamp && latestThreshold.timeframe) {
-      const calculatedTimeOfToggle = calculateTimeOfToggle(
+      const { formatted, date } = calculateTimeOfToggle(
         latestThreshold.timestamp,
         latestThreshold.timeframe
       );
-      setTimeOfToggle(calculatedTimeOfToggle);
+      setTimeOfToggle(formatted);
+      setToggleTimeAsDate(date);
     } else {
-      console.error('Timestamp or timeframe missing from threshold data');
+      // console.error('Timestamp or timeframe missing from threshold data');
     }
 
     setHighThreshold(latestThreshold.highThreshold);
@@ -130,8 +134,32 @@ const ChartExpandModal = ({
     );
   }, [metric, thresholds]);
 
-  const MotionButton = motion(Button);
-  const toast = useToast();
+  // If the time of toggle is set, start polling for the threshold timeframe to be met and reverse thresh_kill
+  useEffect(() => {
+    if (!toggleTimeAsDate) return;
+
+    console.log('toggleTimeAsDate:', toggleTimeAsDate);
+    const intervalId = setInterval(() => {
+      const now = new Date();
+      // const toggleTime = new Date(timeOfToggle);
+      console.log('now:', now, 'toggleTimeAsDate:', toggleTimeAsDate);
+      if (now >= toggleTimeAsDate) {
+        submitNewThresholdAfterPause();
+        toast({
+          title: 'Threshold pause ended.',
+          description: 'Alerts are now active again.',
+          status: 'info',
+          duration: 5000,
+          isClosable: true,
+        });
+        clearInterval(intervalId); // Stop polling once the threshold is submitted
+        setTimeOfToggle('');
+        setToggleTimeAsDate('');
+      }
+    }, 10000);
+
+    return () => clearInterval(intervalId);
+  }, [toggleTimeAsDate]);
 
   //Styling based on color mode
   const getBackgroundColor = () => 'gray.700';
@@ -210,6 +238,34 @@ const ChartExpandModal = ({
       console.error('Error creating threshold:', error);
     } finally {
       setIsThresholdModalOpen(false);
+    }
+  };
+
+  const submitNewThresholdAfterPause = async () => {
+    const timestamp = new Date().toISOString();
+    const phoneNumbersString = phoneNumbers.join(', ');
+    const emailsString = emailsForThreshold.join(', ');
+
+    try {
+      // Create a new threshold with `thresh_kill` set to false and `timeframe` set to null
+      await createThreshold(
+        metric,
+        parseFloat(highThreshold),
+        parseFloat(lowThreshold),
+        phoneNumbersString,
+        emailsString,
+        timestamp,
+        false, // Turn off thresh_kill
+        null // Clear the timeframe
+      );
+      console.log(
+        'Threshold updated: thresh_kill turned off and timeframe cleared.'
+      );
+      // Optionally, you can update the state to reflect that the pause has ended
+      setThreshKill(false);
+      setTimeframe('');
+    } catch (error) {
+      console.error('Error submitting new threshold after pause:', error);
     }
   };
 
@@ -327,7 +383,7 @@ const ChartExpandModal = ({
   const handleTimePickerSubmit = () => {
     const timeframe = `${selectedHour}:${selectedMinute}:00`;
     console.log('Selected Timeframe:', timeframe);
-  
+
     setIsTimePickerOpen(false); // Close the popover
     setNewTimeframe(timeframe); // Set the new timeframe
     setUserHasChosenTimeframe(true);
@@ -337,7 +393,11 @@ const ChartExpandModal = ({
       currentTime,
       timeframe
     );
-    setTimeOfToggle(calculatedTimeOfToggle);
+    // Fix: only pass the formatted string to `timeOfToggle`
+    setTimeOfToggle(calculatedTimeOfToggle.formatted);
+
+    // Keep the `date` part for comparisons
+    setToggleTimeAsDate(calculatedTimeOfToggle.date);
   };
 
   useEffect(() => {
@@ -411,7 +471,10 @@ const ChartExpandModal = ({
     const timeframeInMs = (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
     const timeOfToggleDate = new Date(timestampDate.getTime() + timeframeInMs);
 
-    return format(timeOfToggleDate, 'hh:mm a (MMM d) ');
+    return {
+      formatted: format(timeOfToggleDate, 'hh:mm a (MMM d)'),
+      date: timeOfToggleDate,
+    };
   };
 
   return (
@@ -615,7 +678,6 @@ const ChartExpandModal = ({
                             fontSize={'sm'}
                             whiteSpace={'nowrap'}
                           >
-                            {' '}
                             Back on @ {timeOfToggle}
                           </Text>
                         )}
