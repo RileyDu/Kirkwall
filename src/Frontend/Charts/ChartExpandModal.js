@@ -96,31 +96,24 @@ const ChartExpandModal = ({
   };
 
 
-  // Update the threshold values when the metric or thresholds change, fetched from the database
   useEffect(() => {
     const latestThreshold = findLatestThreshold(metric);
+  
+    if (latestThreshold.timestamp && latestThreshold.timeframe) {
+      const calculatedTimeOfToggle = calculateTimeOfToggle(latestThreshold.timestamp, latestThreshold.timeframe);
+      setTimeOfToggle(calculatedTimeOfToggle);
+    } else {
+      console.error("Timestamp or timeframe missing from threshold data");
+    }
+  
     setHighThreshold(latestThreshold.highThreshold);
     setLowThreshold(latestThreshold.lowThreshold);
     setThreshKill(latestThreshold.threshkill);
     setTimeframe(latestThreshold.timeframe);
     setTimestamp(latestThreshold.timestamp);
-
-    // const calculatedTimeOfToggle = calculateTimeOfToggle(latestThreshold.timestamp, latestThreshold.timeframe);
-    // setTimeOfToggle(calculatedTimeOfToggle);
-
-    // Ensure phone numbers are set as an array
-    const phoneNumbersArray = latestThreshold.phone
-      ? latestThreshold.phone.split(',').map(phone => phone.trim()) // Split and trim each phone number
-      : ['']; // Default to an array with an empty string if no phone numbers
-
-    setPhoneNumbers(phoneNumbersArray);
-
-    // Ensure emails are set as an array
-    const emailsArray = latestThreshold.email
-      ? latestThreshold.email.split(',').map(email => email.trim()) // Split and trim each email
-      : ['']; // Default to an array with an empty string if no emails
-
-    setEmailsForThreshold(emailsArray);
+  
+    setPhoneNumbers(latestThreshold.phone?.split(',').map(phone => phone.trim()) || ['']);
+    setEmailsForThreshold(latestThreshold.email?.split(',').map(email => email.trim()) || ['']);
   }, [metric, thresholds]);
 
   useEffect(() => {
@@ -347,19 +340,29 @@ const handleThreshKillToggle = () => {
 };
 
 const calculateTimeOfToggle = (timestamp, timeframe) => {
-  // Parse the timestamp to a Date object
+  if (!timestamp || !timeframe) {
+    console.error("Invalid timestamp or timeframe");
+    return null;
+  }
+
   const timestampDate = new Date(timestamp);
 
-  // Convert timeframe to milliseconds
-  const [hours, minutes, seconds] = timeframe.split(':').map(Number);
-  const timeframeInMs =
-    (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
+  if (isNaN(timestampDate)) {
+    console.error("Invalid timestamp format");
+    return null;
+  }
 
-  // Calculate the timeOfToggle
+  const [hours, minutes, seconds] = timeframe.split(':').map(Number);
+
+  if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
+    console.error("Invalid timeframe format");
+    return null;
+  }
+
+  const timeframeInMs = (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
   const timeOfToggleDate = new Date(timestampDate.getTime() + timeframeInMs);
 
-  // Format timeOfToggle for display
-  return format(timeOfToggleDate, 'yyyy-MM-dd HH:mm:ss');
+  return format(timeOfToggleDate, 'hh:mm a (MMM d) ');
 };
 
   return (
@@ -567,7 +570,7 @@ const calculateTimeOfToggle = (timestamp, timeframe) => {
                           colorScheme={'orange'}
                           />
                       </FormControl> */}
-                      {timeOfToggle &&  <Text>Your threshold will turn back on @ {timeOfToggle}</Text>}
+                      {timeOfToggle &&  <Text color="white"> Back on @ {timeOfToggle}</Text>}
                       <Box fontSize={['xs', 'lg']} ml={12} mb={-1} color="white">
                         Pause Threshold
                       </Box>
