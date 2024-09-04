@@ -179,7 +179,7 @@ const ChartExpandModal = ({
     const timestamp = new Date().toISOString();
     const phoneNumbersString = phoneNumbers.join(', '); // Join phone numbers into a single string
     const emailsString = emailsForThreshold.join(', '); // Join emails into a single string
-    const timeOfPause = newTimeframe || timeframe;
+    const timeOfPause = newTimeframe || timeframe || null;
 
     try {
       await createThreshold(
