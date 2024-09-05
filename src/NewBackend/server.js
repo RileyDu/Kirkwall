@@ -107,7 +107,7 @@ app.get('/api/impriMed_data', async (req, res) => {
       LIMIT $2`;
     
     const result = await client.query(query, [deveui, limit]);
-    console.log('Query result:', result.rows); // Log the result from the query
+    // console.log('Query result:', result.rows); // Log the result from the query
 
     res.status(200).json(result.rows); // Send the data as JSON response
   } catch (error) {

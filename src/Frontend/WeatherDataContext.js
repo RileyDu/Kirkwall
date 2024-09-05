@@ -146,7 +146,7 @@ export const WeatherDataProvider = ({ children }) => {
           deveui: deveui  // This will properly attach the deveui as a query parameter
         }
       });
-      console.log(response.data);
+      // console.log(response.data);
       if (Array.isArray(response.data) && response.data.length > 0) {
         const latestData = response.data;
 
