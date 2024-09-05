@@ -566,7 +566,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                         <>
                           <Box
                             key={index}
-                            bg="orange.400"
+                            bg="#cee8ff"
                             p={2}
                             borderRadius="md"
                             boxShadow="md"
