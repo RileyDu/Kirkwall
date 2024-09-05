@@ -107,31 +107,33 @@ export const WeatherDataProvider = ({ children }) => {
 
   // IMPRIMED DATA FEED LOGIC
   const devices = {
-    freezerOne: "deveui = '0080E1150618C9DE'",
-    freezerTwo: "deveui = '0080E115054FC6DF'",
-    freezerThree: "deveui = '0080E1150618B549'",
-    fridgeOne: "deveui = '0080E1150619155F'",
-    fridgeTwo: "deveui = '0080E115061924EA'",
-    incubatorOne: "deveui = '0080E115054FF1DC'",
-    incubatorTwo: "deveui = '0080E1150618B45F'",
+    freezerOne: '0080E1150618C9DE',
+    freezerTwo: '0080E115054FC6DF',
+    freezerThree: '0080E1150618B549',
+    fridgeOne: '0080E1150619155F',
+    fridgeTwo: '0080E115061924EA',
+    incubatorOne: '0080E115054FF1DC',
+    incubatorTwo: '0080E1150618B45F',
   };
+  
 
   const deveuiPerMetric = {
-    imFreezerOneTemp: "deveui = '0080E1150618C9DE'",
-    imFreezerOneHum: "deveui = '0080E1150618C9DE'",
-    imFreezerTwoTemp: "deveui = '0080E115054FC6DF'",
-    imFreezerTwoHum: "deveui = '0080E115054FC6DF'",
-    imFreezerThreeTemp: "deveui = '0080E1150618B549'",
-    imFreezerThreeHum: "deveui = '0080E1150618B549'",
-    imFridgeOneTemp: "deveui = '0080E1150619155F'",
-    imFridgeOneHum: "deveui = '0080E1150619155F'",
-    imFridgeTwoTemp: "deveui = '0080E115061924EA'",
-    imFridgeTwoHum: "deveui = '0080E115061924EA'",
-    imIncubatorOneTemp: "deveui = '0080E115054FF1DC'",
-    imIncubatorOneHum: "deveui = '0080E115054FF1DC'",
-    imIncubatorTwoTemp: "deveui = '0080E1150618B45F'",
-    imIncubatorTwoHum: "deveui = '0080E1150618B45F'",
+    imFreezerOneTemp: '0080E1150618C9DE',
+    imFreezerOneHum: '0080E1150618C9DE',
+    imFreezerTwoTemp: '0080E115054FC6DF',
+    imFreezerTwoHum: '0080E115054FC6DF',
+    imFreezerThreeTemp: '0080E1150618B549',
+    imFreezerThreeHum: '0080E1150618B549',
+    imFridgeOneTemp: '0080E1150619155F',
+    imFridgeOneHum: '0080E1150619155F',
+    imFridgeTwoTemp: '0080E115061924EA',
+    imFridgeTwoHum: '0080E115061924EA',
+    imIncubatorOneTemp: '0080E115054FF1DC',
+    imIncubatorOneHum: '0080E115054FF1DC',
+    imIncubatorTwoTemp: '0080E1150618B45F',
+    imIncubatorTwoHum: '0080E1150618B45F',
   };
+  
 
   const fetchDeviceData = async (deviceKey, setTempData, setHumData, limit) => {
     const deveui = devices[deviceKey];
@@ -145,8 +147,8 @@ export const WeatherDataProvider = ({ children }) => {
         }
       });
       console.log(response.data);
-      if (Array.isArray(response.data.rivercity_data) && response.data.rivercity_data.length > 0) {
-        const latestData = response.data.rivercity_data;
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        const latestData = response.data;
 
         // Determine the new keys based on the deviceKey
         let tempKey = 'rctemp';
@@ -199,8 +201,8 @@ export const WeatherDataProvider = ({ children }) => {
         // Set the entire array of temperature and humidity data
         setTempData(tempDataArray);
         setHumData(humDataArray);
-        // console.log(`Latest temperature data for ${deviceKey}:`, tempDataArray);
-        // console.log(`Latest humidity data for ${deviceKey}:`, humDataArray);
+        console.log(`Latest temperature data for ${deviceKey}:`, tempDataArray);
+        console.log(`Latest humidity data for ${deviceKey}:`, humDataArray);
       }
     } catch (error) {
       console.error(`Error fetching data for ${deviceKey}:`, error);
