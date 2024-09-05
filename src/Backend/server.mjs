@@ -10,7 +10,7 @@ import {
   getChartData,
   getImpriMedData,
   getAllAdmins,
-  createThreshold
+  createThreshold,
 } from './Graphql_helper.js';
 import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
@@ -76,7 +76,7 @@ const sendAlertToDB = async (metric, message, timestamp) => {
 };
 
 // Sensor locations for alert messages, more descriptive than the metric name in the email/SMS
-const getLocationforAlert = async (metric) => {
+const getLocationforAlert = async metric => {
   try {
     console.log('Getting location data for alert message...');
     const response = await getChartData();
@@ -109,7 +109,7 @@ const extractCurrentValue = (response, metric) => {
 };
 
 // Get the latest thresholds for each metric
-const getLatestThresholds = (thresholds) => {
+const getLatestThresholds = thresholds => {
   const latestThresholds = {};
 
   thresholds.forEach(threshold => {
@@ -131,7 +131,7 @@ const getLatestThresholds = (thresholds) => {
 const lastAlertTimes = {};
 
 // Function to parse timeframe (e.g., "1 day, 0:00:00") to a moment duration
-const parseTimeframeToDuration = (timeframe) => {
+const parseTimeframeToDuration = timeframe => {
   let days = 0;
   let timePart = timeframe;
 
@@ -140,7 +140,7 @@ const parseTimeframeToDuration = (timeframe) => {
     if (dayMatch) {
       days = parseInt(dayMatch[1], 10);
     }
-    timePart = timeframe.split(', ')[1] || "0:00:00";
+    timePart = timeframe.split(', ')[1] || '0:00:00';
   }
 
   const [hours, minutes, seconds] = timePart.split(':').map(Number);
@@ -149,7 +149,7 @@ const parseTimeframeToDuration = (timeframe) => {
     days,
     hours,
     minutes,
-    seconds
+    seconds,
   });
 };
 
@@ -171,7 +171,17 @@ const checkThresholds = async () => {
     const admins = await getAllAdmins();
 
     for (const threshold of latestThresholds) {
-      const { id, metric, high, low, phone, email, thresh_kill, timeframe, timestamp } = threshold;
+      const {
+        id,
+        metric,
+        high,
+        low,
+        phone,
+        email,
+        thresh_kill,
+        timeframe,
+        timestamp,
+      } = threshold;
       const emails = email ? email.split(',').map(em => em.trim()) : [];
       const adminThreshKill = emails.some(email => {
         const admin = admins.data.admin.find(admin => admin.email === email);
@@ -179,7 +189,9 @@ const checkThresholds = async () => {
       });
 
       if (adminThreshKill) {
-        console.log(`Skipping threshold check for ${metric} due to admin-level thresh_kill.`);
+        console.log(
+          `Skipping threshold check for ${metric} due to admin-level thresh_kill.`
+        );
         continue;
       }
 
@@ -189,11 +201,19 @@ const checkThresholds = async () => {
         const pauseEndTime = moment(timestamp).add(timePeriodDuration);
 
         if (moment().isBefore(pauseEndTime)) {
-          console.log(`Skipping threshold check for ${metric} due to sensor-level pause still active. ${formatDateTime(pauseEndTime)} is the end time of the pause.`);
+          console.log(
+            `Skipping threshold check for ${metric} due to sensor-level pause still active. ${formatDateTime(
+              pauseEndTime
+            )} is the end time of the pause.`
+          );
           continue;
         } else {
-          console.log(`Threshold-level pause has expired for ${metric}, resuming checks. ${formatDateTime(pauseEndTime)} was the pause end time.`);
-          
+          console.log(
+            `Threshold-level pause has expired for ${metric}, resuming checks. ${formatDateTime(
+              pauseEndTime
+            )} was the pause end time.`
+          );
+
           const timestampNow = new Date().toISOString();
           try {
             await createThreshold(
@@ -206,14 +226,28 @@ const checkThresholds = async () => {
               false, // Set thresh_kill to false
               null // Clear the timeframe
             );
-            console.log(`New threshold entry created for ${metric} with thresh_kill off and no timeframe.`);
-            console.log(`Timestamp: ${timestampNow}, metric: ${metric}, high: ${high}, low: ${low}, phone: ${phone}, email: ${email}, thresh_kill: false, timeframe: null`);
-            
+            console.log(
+              `New threshold entry created for ${metric} with thresh_kill off and no timeframe.`
+            );
+            console.log(
+              `Timestamp: ${timestampNow}, metric: ${metric}, high: ${high}, low: ${low}, phone: ${phone}, email: ${email}, thresh_kill: false, timeframe: null`
+            );
           } catch (error) {
             console.error('Error creating new threshold entry:', error);
           }
         }
       }
+
+      // Function to rename the key for ImpriMed data
+      const renameKeyToMetric = (data, metric) => {
+        return data.map(d => {
+          const value = metric.endsWith('Temp') ? d.rctemp : d.humidity;
+          return {
+            [metric]: value,
+            publishedat: d.publishedat,
+          };
+        });
+      };
 
       // Get the latest data for the metric
       let responseData;
@@ -345,29 +379,56 @@ const checkThresholds = async () => {
         const location = await getLocationforAlert(metric);
         const message = `${alertMessage} at ${formattedDateTime} for ${location}.`;
 
-        const phoneNumbers = phone ? phone.split(',').map(num => num.trim()) : [];
+        const phoneNumbers = phone
+          ? phone.split(',').map(num => num.trim())
+          : [];
         const emails = email ? email.split(',').map(em => em.trim()) : [];
 
         if (phoneNumbers.length > 0) await sendSMSAlert(phoneNumbers, message);
-        if (emails.length > 0) await sendEmailAlert(emails, 'Threshold Alert', message);
-        if (phoneNumbers.length > 0 || emails.length > 0) await sendAlertToDB(metric, message, now);
+        if (emails.length > 0)
+          await sendEmailAlert(emails, 'Threshold Alert', message);
+        if (phoneNumbers.length > 0 || emails.length > 0)
+          await sendAlertToDB(metric, message, now);
 
         lastAlertTimes[id] = now; // Update last alert time
       };
 
       // Check if the current value exceeds the high or low threshold
-      if (high !== null && currentValue > high) {
-        await sendAlert(
-          `Alert: The ${metric} value of ${formatValue(
-            currentValue
-          )} exceeds the high threshold of ${formatValue(high)}`
-        );
-      } else if (low !== null && currentValue < low) {
-        await sendAlert(
-          `Alert: The ${metric} value of ${formatValue(
-            currentValue
-          )} is below the low threshold of ${formatValue(low)}`
-        );
+      // Check if the current value exceeds the high threshold
+      // Check if the current value exceeds the high threshold
+      if (high !== null) {
+        if (currentValue > high) {
+          console.log(
+            `${metric} High threshold exceeded: CURRENT = ${currentValue} // HIGH THRESHOLD = ${high}`
+          );
+          await sendAlert(
+            `Alert: The ${metric} value of ${formatValue(
+              currentValue
+            )} exceeds the high threshold of ${formatValue(high)}`
+          );
+        } else {
+          console.log(
+            `${metric} High threshold NOT exceeded: CURRENT = ${currentValue} // HIGH THRESHOLD = ${high}`
+          );
+        }
+      }
+
+      // Check if the current value is below the low threshold
+      if (low !== null) {
+        if (currentValue < low) {
+          console.log(
+            `${metric} LOW threshold exceeded: CURRENT = ${currentValue} // LOW THRESHOLD = ${low}`
+          );
+          await sendAlert(
+            `Alert: The ${metric} value of ${formatValue(
+              currentValue
+            )} is below the low threshold of ${formatValue(low)}`
+          );
+        } else {
+          console.log(
+            `${metric} LOW threshold NOT exceeded: CURRENT = ${currentValue} // LOW THRESHOLD = ${low}`
+          );
+        }
       }
     }
   } catch (error) {
