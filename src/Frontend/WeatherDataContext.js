@@ -11,7 +11,7 @@ import {
 } from '../Backend/Graphql_helper.js';
 import { useAuth } from './AuthComponents/AuthContext.js';
 import { CustomerSettings } from './Modular/CustomerSettings.js';
-
+import axios from 'axios';
 const WeatherDataContext = createContext();
 
 export const useWeatherData = () => {
@@ -256,12 +256,15 @@ export const WeatherDataProvider = ({ children }) => {
     if (currentUser && (currentUser?.email === 'pmo@grandfarm.com' || currentUser?.email === 'test@kirkwall.io')) {
       const fetchData = async () => {
         try {
-          const response = await getWeatherData('all', '37'); // default time period
-          if (Array.isArray(response.data.weather_data)) {
-            setWeatherData(response.data.weather_data);
+          // Replace getWeatherData with axios call to the backend API
+          const response = await axios.get(`http://localhost:3000/api/weather_data?limit=37`);
+          
+          if (Array.isArray(response.data)) {
+            setWeatherData(response.data); // Directly using the array returned by backend
           } else {
-            setWeatherData([]);
+            setWeatherData([]); // Fallback if data structure is unexpected
           }
+  
           setLoading(false);
         } catch (error) {
           console.error('Error fetching weather data:', error);
@@ -269,14 +272,18 @@ export const WeatherDataProvider = ({ children }) => {
           setLoading(false);
         }
       };
-
+  
+      // Initial data fetch
       fetchData();
-
+  
+      // Set up interval to fetch data every 30 seconds
       const intervalId = setInterval(fetchData, 30000);
-
+  
+      // Clean up the interval on component unmount
       return () => clearInterval(intervalId);
     }
   }, [currentUser]);
+  
 
   useEffect(() => {
     if (currentUser && (currentUser?.email === 'test@kirkwall.io')) {

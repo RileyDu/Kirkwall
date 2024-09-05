@@ -1,6 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const { Client } = require('pg'); // PostgreSQL client
+const cors = require('cors'); // Import cors package
 require('dotenv').config(); // Load environment variables
 
 const app = express();
@@ -19,6 +20,9 @@ client.connect()
 
 // Middleware to parse incoming JSON
 app.use(express.json());
+
+// Use CORS middleware
+app.use(cors()); // This will allow all origins to access the backend
 
 // Example route for fetching weather data
 app.get('/api/weather_data', async (req, res) => {
