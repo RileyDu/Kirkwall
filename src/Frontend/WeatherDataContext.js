@@ -253,7 +253,7 @@ export const WeatherDataProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (currentUser &&  currentUser?.email === 'pmo@grandfarm.com' || currentUser?.email === 'test@kirkwall.io') {
+    if (currentUser && (currentUser?.email === 'pmo@grandfarm.com' || currentUser?.email === 'test@kirkwall.io')) {
       const fetchData = async () => {
         try {
           const response = await getWeatherData('all', '37'); // default time period
@@ -332,7 +332,7 @@ export const WeatherDataProvider = ({ children }) => {
     const userMetrics = CustomerSettings.find ((customer) => customer.email === currentUser?.email)?.metric;
     try {
       const response = await getAlertsPerUserByMetric(userMetrics);
-      console.log('Alerts Threshold 0:', response.data.alerts);
+      // console.log('Alerts Threshold 0:', response.data.alerts);
       if (Array.isArray(response.data.alerts)) {
         const groupedAlerts = response.data.alerts.reduce((acc, alert) => {
           const { metric } = alert;
@@ -343,7 +343,7 @@ export const WeatherDataProvider = ({ children }) => {
           return acc;
         }, {});
         setAlertsThreshold(response.data.alerts);
-        console.log('Alerts Threshold 1st:', groupedAlerts);
+        // console.log('Alerts Threshold 1st:', groupedAlerts);
       } else {
         setAlertsThreshold({ 'not set': ['not set'] });
         // console.log('Alerts Threshold 2nd:', { 'not set': ['not set'] });
@@ -587,7 +587,7 @@ export const WeatherDataProvider = ({ children }) => {
   const impriMedMetrics = ['imFreezerOneTemp', 'imFreezerOneHum', 'imFreezerTwoTemp', 'imFreezerTwoHum', 'imFreezerThreeTemp', 'imFreezerThreeHum', 'imFridgeOneTemp', 'imFridgeOneHum', 'imFridgeTwoTemp', 'imFridgeTwoHum', 'imIncubatorOneTemp', 'imIncubatorOneHum', 'imIncubatorTwoTemp', 'imIncubatorTwoHum'];
 
   const determineLimitBasedOnTimePeriod = timePeriod => {
-    console.log('Determining limit for time period (weatherData):', timePeriod);
+    // console.log('Determining limit for time period (weatherData):', timePeriod);
     switch (timePeriod) {
       case '1H':
         return 13;
@@ -609,10 +609,10 @@ export const WeatherDataProvider = ({ children }) => {
   };
 
   const watchdogDetermineLimitBasedOnTimePeriod = timePeriod => {
-    console.log(
-      'Determining limit for time period (watchdogData):',
-      timePeriod
-    );
+    // console.log(
+    //   'Determining limit for time period (watchdogData):',
+    //   timePeriod
+    // );
     switch (timePeriod) {
       case '1H':
         return 7;
@@ -634,10 +634,10 @@ export const WeatherDataProvider = ({ children }) => {
   };
 
   const rivercityDetermineLimitBasedOnTimePeriod = timePeriod => {
-    console.log(
-      'Determining limit for time period (rivercityData):',
-      timePeriod
-    );
+    // console.log(
+    //   'Determining limit for time period (rivercityData):',
+    //   timePeriod
+    // );
     switch (timePeriod) {
       case '1H':
         return 7;

@@ -39,6 +39,28 @@ import { useAuth } from '../AuthComponents/AuthContext.js';
 import ImpriMiniMap from '../Maps/ImpriMiniMap.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { updateChart } from '../../Backend/Graphql_helper.js';
+import Joyride, { STATUS } from 'react-joyride';
+
+
+// const steps = [
+//   {
+//     target: '#step1',
+//     content: 'This is the first step of the tour',
+//     disableBeacon: true,
+//   },
+//   {
+//     target: '#step2',
+//     content: 'This is the second step of the tour',
+//   },
+//   {
+//     target: '#step3',
+//     content: 'This is the third step of the tour',
+//   },
+//   {
+//     target: '#step4',
+//     content: 'This is the final step of the tour',
+//   },
+// ];
 
 
 const ChartWrapper = ({
@@ -53,7 +75,14 @@ const ChartWrapper = ({
   typeOfChart,
   chartDataForMetric,
   handleMenuItemClick,
-  setFilteredChartData
+  setFilteredChartData,
+  expandButtonRef,
+  // runThresholdTour,
+  // setRunThresholdTour,
+  // setIsTourRunning,
+  // isTourRunning,
+  // activeChartID,
+  // setActiveChartID,
 }) => {
   const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
   const [loading, setLoading] = useState(false);
@@ -373,8 +402,38 @@ const ChartWrapper = ({
     editChart(id, metric, timeperiod, type, location, hidden);
   }
 
+
+  // const [runTour, setRunTour] = useState(false);
+  const [runModalTour, setRunModalTour] = useState(false);
+
+  //  const [runThresholdTour, setRunThresholdTour] = useState(false);
+
+  // const handleExpandChart = () => {
+  //   onOpen();
+  //   setRunThresholdTour(true); // Start the threshold tour
+  // };
+  
+
+  // const [isTourRunning, setIsTourRunning] = useState(false);
+  // const [activeChartID, setActiveChartID] = useState(null);
+
+
+  // const handleJoyrideCallback = (data) => {
+  //   const { status } = data;
+  //   if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+  //     setRunTour(false);
+  //   }
+  // };
+
+  // const startTour = () => {
+  //   setRunTour(true);
+  // };
+
+
+
   return (
     <>
+
       <Box
         border="2px"
         borderColor="#3D5A80"
@@ -535,7 +594,6 @@ const ChartWrapper = ({
                       mt={[1, -1]}
                     />
                     <PopoverBody color="#212121" p={0}>
-                      {/* Remove padding for full width use */}
                       <Box
                         display="flex"
                         flexWrap="wrap" // Allows buttons to wrap if they don't fit in one line
@@ -581,6 +639,7 @@ const ChartWrapper = ({
             >
               <Tooltip label="Map">
                 <MotionIconButton
+                  id="step1"              
                   icon={<FaMap />}
                   variant="outline"
                   color="black"
@@ -602,6 +661,7 @@ const ChartWrapper = ({
             >
               <Tooltip label="Change Chart Type">
                 <MotionIconButton
+                  id="step2"
                   icon={getChartIcon()}
                   variant="outline"
                   color="#212121"
@@ -624,20 +684,23 @@ const ChartWrapper = ({
               transition={{ duration: 1, delay: 0.5 }}
             >
               <Tooltip label="Expand Chart">
-                <MotionIconButton
-                  icon={<FaExpandAlt />}
-                  variant="outline"
-                  color="black"
-                  size={iconSize}
-                  bg={'#cee8ff'}
-                  _hover={{ bg: '#cee8ff' }}
-                  onClick={onOpen}
-                  border={'2px solid #3D5A80'}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                />
+              <MotionIconButton
+                ref={expandButtonRef}
+                id="step3"
+                icon={<FaExpandAlt />}
+                variant="outline"
+                color="#212121"
+                size={iconSize}
+                bg={'#cee8ff'}
+                _hover={{ bg: '#cee8ff' }}
+                onClick={onOpen}  //  this line
+                border={'2px solid #3D5A80'}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              />
               </Tooltip>
             </motion.div>
+
             {renderCloseButton() && <motion.div
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -645,6 +708,7 @@ const ChartWrapper = ({
             >
               <Tooltip label="Hide Chart">
                 <MotionIconButton
+                  id="step4"
                   icon={<FaEyeSlash />}
                   variant="outline"
                   color="#212121"
@@ -691,6 +755,13 @@ const ChartWrapper = ({
         MapComponent={MapComponent}
         typeOfChart={typeOfChart}
         chartLocation={newTitle || chartDataForMetric?.location}
+        runModalTour={runModalTour}
+        // runThresholdTour={runThresholdTour}
+        // setRunThresholdTour={setRunThresholdTour}
+        // isTourRunning={isTourRunning}
+        // setIsTourRunning={setIsTourRunning}
+        // activeChartID={activeChartID}
+        // setActiveChartID={setActiveChartID}
       />
     </>
   );

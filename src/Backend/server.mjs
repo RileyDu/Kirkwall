@@ -10,6 +10,7 @@ import {
   getChartData,
   getImpriMedData,
   getAllAdmins,
+  createThreshold,
 } from './Graphql_helper.js';
 import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
@@ -64,34 +65,7 @@ const sendEmailAlert = async (toEmails, subject, alertMessage) => {
   }
 };
 
-const sendEnquiryAlert = async (fromEmail, subject, description, attachments) => {
-  const msg = {
-    to: 'aditya@kirkwall.io',
-    from: fromEmail,
-    subject: subject,
-    text: description,
-    attachments: attachments.map(file => ({
-      content: file.content,
-      filename: file.name,
-      type: file.type,
-      disposition: 'attachment',
-    })),
-  };
-
-  try {
-    console.log(`Sending Email from ${fromEmail} to aditya@kirkwall.io: ${subject}`);
-    await sgMail.send(msg);
-    console.log('Email sent successfully');
-  } catch (error) {
-    console.error('Error sending Email:', error);
-  }
-};
-
-
-
 // Send an alert to the database for the metric whose threshold was exceeded
-// This only triggers when a phone/email alert is sent successfully
-// The alert message is stored in the database for future reference & used in the frontend
 const sendAlertToDB = async (metric, message, timestamp) => {
   try {
     console.log(`Sending alert to database: ${message}`);
@@ -115,15 +89,11 @@ const getLocationforAlert = async metric => {
 };
 
 // Extract the current value of the metric from the response data
-// This is used to compare against the threshold values that a user has set
 const extractCurrentValue = (response, metric) => {
-  // Check if the response is an array
   if (Array.isArray(response)) {
-    // Access the first element and get the metric value
     return response[0]?.[metric];
   }
 
-  // Handle the original response structure with nested `data` property
   if (response && response.data) {
     if (Array.isArray(response.data.weather_data)) {
       return response.data.weather_data[0]?.[metric];
@@ -158,12 +128,32 @@ const getLatestThresholds = thresholds => {
 };
 
 // In-memory store for last alert times to prevent spamming alerts
-// DB not needed as this is only used to prevent multiple alerts in a short time
-const lastAlertTimes = {}; // In-memory store for last alert times
+const lastAlertTimes = {};
 
-// THE Main function to check the thresholds for each metric
-// This function is called every 15 minutes to check the latest values against the thresholds
-// This is done by a github action cron job on the 15th minute of every hour
+// Function to parse timeframe (e.g., "1 day, 0:00:00") to a moment duration
+const parseTimeframeToDuration = timeframe => {
+  let days = 0;
+  let timePart = timeframe;
+
+  if (timeframe.includes('day')) {
+    const dayMatch = timeframe.match(/(\d+) day/);
+    if (dayMatch) {
+      days = parseInt(dayMatch[1], 10);
+    }
+    timePart = timeframe.split(', ')[1] || '0:00:00';
+  }
+
+  const [hours, minutes, seconds] = timePart.split(':').map(Number);
+
+  return moment.duration({
+    days,
+    hours,
+    minutes,
+    seconds,
+  });
+};
+
+// Main function to check thresholds
 const checkThresholds = async () => {
   console.log('Checking thresholds...');
 
@@ -176,48 +166,90 @@ const checkThresholds = async () => {
   const debounceTime = 5 * 60 * 1000; // 5 minutes in milliseconds
 
   try {
-    // Get the latest values for each metric
     const thresholds = await getLatestThreshold();
     const latestThresholds = getLatestThresholds(thresholds.data.thresholds);
-    // Renaming the key to metric for the data from ImpriMed
-    // This is because it is all coming from one table column
-    const renameKeyToMetric = (data, metric) => {
-      return data.map(d => {
-        const value = metric.endsWith('Temp') ? d.rctemp : d.humidity;
-        return {
-          [metric]: value,
-          publishedat: d.publishedat,
-        };
-      });
-    };
-
-    // Get all admins to check if any have thresh_kill set to true
     const admins = await getAllAdmins();
 
-    // Loop through each threshold and check if the current value exceeds the threshold
     for (const threshold of latestThresholds) {
-      const { id, metric, high, low, phone, email } = threshold;
-
-      // Find the admin associated with this threshold metric
-      // Split the email string into an array of emails
+      const {
+        id,
+        metric,
+        high,
+        low,
+        phone,
+        email,
+        thresh_kill,
+        timeframe,
+        timestamp,
+      } = threshold;
       const emails = email ? email.split(',').map(em => em.trim()) : [];
-
-      // Check if any admin associated with these emails has thresh_kill set to true
-      const shouldSkip = emails.some(email => {
+      const adminThreshKill = emails.some(email => {
         const admin = admins.data.admin.find(admin => admin.email === email);
         return admin && admin.thresh_kill;
       });
 
-      // Skip the threshold check if thresh_kill is set to true for the admin and their metrics
-      if (shouldSkip) {
+      if (adminThreshKill) {
         console.log(
-          `Skipping threshold check for ${metric} due to thresh_kill.`
+          `Skipping threshold check for ${metric} due to admin-level thresh_kill.`
         );
         continue;
       }
 
+      // Check individual threshold killswitch and timeframe
+      if (thresh_kill && timeframe) {
+        const timePeriodDuration = parseTimeframeToDuration(timeframe); // Use new parser
+        const pauseEndTime = moment(timestamp).add(timePeriodDuration);
+
+        if (moment().isBefore(pauseEndTime)) {
+          console.log(
+            `Skipping threshold check for ${metric} due to sensor-level pause still active. ${formatDateTime(
+              pauseEndTime
+            )} is the end time of the pause.`
+          );
+          continue;
+        } else {
+          console.log(
+            `Threshold-level pause has expired for ${metric}, resuming checks. ${formatDateTime(
+              pauseEndTime
+            )} was the pause end time.`
+          );
+
+          const timestampNow = new Date().toISOString();
+          try {
+            await createThreshold(
+              metric,
+              high,
+              low,
+              phone,
+              email,
+              timestampNow,
+              false, // Set thresh_kill to false
+              null // Clear the timeframe
+            );
+            console.log(
+              `New threshold entry created for ${metric} with thresh_kill off and no timeframe.`
+            );
+            console.log(
+              `Timestamp: ${timestampNow}, metric: ${metric}, high: ${high}, low: ${low}, phone: ${phone}, email: ${email}, thresh_kill: false, timeframe: null`
+            );
+          } catch (error) {
+            console.error('Error creating new threshold entry:', error);
+          }
+        }
+      }
+
+      // Function to rename the key for ImpriMed data
+      const renameKeyToMetric = (data, metric) => {
+        return data.map(d => {
+          const value = metric.endsWith('Temp') ? d.rctemp : d.humidity;
+          return {
+            [metric]: value,
+            publishedat: d.publishedat,
+          };
+        });
+      };
+
       // Get the latest data for the metric
-      // Switch case to get the data from the correct table
       let responseData;
       let response;
       let formattedData;
@@ -329,42 +361,6 @@ const checkThresholds = async () => {
       }
 
       const currentValue = extractCurrentValue(responseData, metric);
-
-      // Function to get the label for the metric for UX purposes in alert messages
-      const getLabelForMetric = metric => {
-        const metricLabels = {
-          temperature: { label: '°F', addSpace: false },
-          temp: { label: '°F', addSpace: false },
-          rctemp: { label: '°F', addSpace: false },
-
-          imFreezerOneTemp: { label: '°C', addSpace: false },
-          imFreezerTwoTemp: { label: '°C', addSpace: false },
-          imFreezerThreeTemp: { label: '°C', addSpace: false },
-          imFridgeOneTemp: { label: '°C', addSpace: false },
-          imFridgeTwoTemp: { label: '°C', addSpace: false },
-          imIncubatorOneTemp: { label: '°C', addSpace: false },
-          imIncubatorTwoTemp: { label: '°C', addSpace: false },
-
-          imFreezerOneHum: { label: '%', addSpace: false },
-          imFreezerTwoHum: { label: '%', addSpace: false },
-          imFreezerThreeHum: { label: '%', addSpace: false },
-          imFridgeOneHum: { label: '%', addSpace: false },
-          imFridgeTwoHum: { label: '%', addSpace: false },
-          imIncubatorOneHum: { label: '%', addSpace: false },
-          imIncubatorTwoHum: { label: '%', addSpace: false },
-
-          hum: { label: '%', addSpace: false },
-          percent_humidity: { label: '%', addSpace: false },
-          humidity: { label: '%', addSpace: false },
-          rain_15_min_inches: { label: 'inches', addSpace: true },
-          wind_speed: { label: 'MPH', addSpace: true },
-          soil_moisture: { label: 'centibars', addSpace: true },
-          leaf_wetness: { label: 'out of 15', addSpace: true },
-        };
-
-        return metricLabels[metric] || { label: '', addSpace: false };
-      };
-
       const { label, addSpace } = getLabelForMetric(metric);
       const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
 
@@ -378,8 +374,6 @@ const checkThresholds = async () => {
         continue;
       }
 
-      // Function to send the alert message to the specified phone numbers and emails
-      //Only triggers if below or above the threshold
       const sendAlert = async alertMessage => {
         const formattedDateTime = formatDateTime(now);
         const location = await getLocationforAlert(metric);
@@ -400,18 +394,41 @@ const checkThresholds = async () => {
       };
 
       // Check if the current value exceeds the high or low threshold
-      if (high !== null && currentValue > high) {
-        await sendAlert(
-          `Alert: The ${metric} value of ${formatValue(
-            currentValue
-          )} exceeds the high threshold of ${formatValue(high)}`
-        );
-      } else if (low !== null && currentValue < low) {
-        await sendAlert(
-          `Alert: The ${metric} value of ${formatValue(
-            currentValue
-          )} is below the low threshold of ${formatValue(low)}`
-        );
+      // Check if the current value exceeds the high threshold
+      // Check if the current value exceeds the high threshold
+      if (high !== null) {
+        if (currentValue > high) {
+          console.log(
+            `${metric} High threshold exceeded: CURRENT = ${currentValue} // HIGH THRESHOLD = ${high}`
+          );
+          await sendAlert(
+            `Alert: The ${metric} value of ${formatValue(
+              currentValue
+            )} exceeds the high threshold of ${formatValue(high)}`
+          );
+        } else {
+          console.log(
+            `${metric} High threshold NOT exceeded: CURRENT = ${currentValue} // HIGH THRESHOLD = ${high}`
+          );
+        }
+      }
+
+      // Check if the current value is below the low threshold
+      if (low !== null) {
+        if (currentValue < low) {
+          console.log(
+            `${metric} LOW threshold exceeded: CURRENT = ${currentValue} // LOW THRESHOLD = ${low}`
+          );
+          await sendAlert(
+            `Alert: The ${metric} value of ${formatValue(
+              currentValue
+            )} is below the low threshold of ${formatValue(low)}`
+          );
+        } else {
+          console.log(
+            `${metric} LOW threshold NOT exceeded: CURRENT = ${currentValue} // LOW THRESHOLD = ${low}`
+          );
+        }
       }
     }
   } catch (error) {
@@ -423,3 +440,35 @@ const checkThresholds = async () => {
 if (import.meta.url === `file://${process.argv[1]}`) {
   checkThresholds();
 }
+
+// Function to get the label for the metric for UX purposes in alert messages
+const getLabelForMetric = metric => {
+  const metricLabels = {
+    temperature: { label: '°F', addSpace: false },
+    temp: { label: '°F', addSpace: false },
+    rctemp: { label: '°F', addSpace: false },
+    imFreezerOneTemp: { label: '°C', addSpace: false },
+    imFreezerTwoTemp: { label: '°C', addSpace: false },
+    imFreezerThreeTemp: { label: '°C', addSpace: false },
+    imFridgeOneTemp: { label: '°C', addSpace: false },
+    imFridgeTwoTemp: { label: '°C', addSpace: false },
+    imIncubatorOneTemp: { label: '°C', addSpace: false },
+    imIncubatorTwoTemp: { label: '°C', addSpace: false },
+    imFreezerOneHum: { label: '%', addSpace: false },
+    imFreezerTwoHum: { label: '%', addSpace: false },
+    imFreezerThreeHum: { label: '%', addSpace: false },
+    imFridgeOneHum: { label: '%', addSpace: false },
+    imFridgeTwoHum: { label: '%', addSpace: false },
+    imIncubatorOneHum: { label: '%', addSpace: false },
+    imIncubatorTwoHum: { label: '%', addSpace: false },
+    hum: { label: '%', addSpace: false },
+    percent_humidity: { label: '%', addSpace: false },
+    humidity: { label: '%', addSpace: false },
+    rain_15_min_inches: { label: 'inches', addSpace: true },
+    wind_speed: { label: 'MPH', addSpace: true },
+    soil_moisture: { label: 'centibars', addSpace: true },
+    leaf_wetness: { label: 'out of 15', addSpace: true },
+  };
+
+  return metricLabels[metric] || { label: '', addSpace: false };
+};

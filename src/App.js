@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   ChakraProvider,
   Box,
@@ -43,6 +43,7 @@ import { motion } from 'framer-motion';
 import HelpModal from './Frontend/Modals/HelpModal.js';
 import OptionsModal from './Frontend/Modals/OptionsModal.js';
 import ModularDashboard from './Frontend/Modular/ModularDashboard.js';
+import FaqsModal from './Frontend/Modals/FaqsModal.js';
 import ModularSummary from './Frontend/Modular/ModularSummary.js';
 
 const Layout = ({
@@ -52,23 +53,47 @@ const Layout = ({
   isMobileMenuOpen,
   toggleMobileMenu,
   statusOfAlerts,
+  expandButtonRef,
+  startTourButtonRef,
+  runThresholdTour,
+  setRunThresholdTour,
+  // setIsTourRunning,
+  // isTourRunning,
+  // activeChartID,
+  // setActiveChartID
 }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const location = useLocation();
 
   const shouldShowSidebar =
-    location.pathname !== '/login' &&
-    location.pathname !== '/signup' &&
-    location.pathname !== '/landing';
+    location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !== '/landing';
 
   const { colorMode } = useColorMode();
 
   const MotionIconButton = motion(IconButton);
 
-  const [isHelpModalOpen, setHelpModalOpen] = useState(false);
+  const [isOptionsModalOpen, setOptionsModalOpen] = useState(false); // State for OptionsModal
+  const [isFaqsModalOpen, setFaqsModalOpen] = useState(false);
+  const [isHelpModalOpen, setHelpModalOpen] = useState(false); 
 
-  const handleOpenHelpModal = () => setHelpModalOpen(true);
+  const handleOpenOptionsModal = () => setOptionsModalOpen(true);
+  const handleCloseOptionsModal = () => setOptionsModalOpen(false);
+  const handleOpenHelpModal = () => {
+    setHelpModalOpen(true);
+    handleCloseOptionsModal(); // Close the OptionsModal when opening the HelpModal
+  };
+
+  const handleOpenFaqsModal = () => {
+    setFaqsModalOpen(true);
+    setOptionsModalOpen(false); // Close OptionsModal when opening FaqsModal
+  };
   const handleCloseHelpModal = () => setHelpModalOpen(false);
+  const handleCloseFaqsModal = () => setFaqsModalOpen(false);
+
+  const [runTour, setRunTour] = useState(false);
+
+
+
 
   return (
     <Flex
@@ -102,8 +127,9 @@ const Layout = ({
       </Box>
 
       {shouldShowSidebar && (
+        <>
       <MotionIconButton
-        icon={<FaEllipsisV />}
+        icon={<FaQuestion />}
         variant="outline"
         color="#212121"
         height={10}
@@ -114,19 +140,57 @@ const Layout = ({
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         ml={2}
-        onClick={handleOpenHelpModal}
+        onClick={handleOpenOptionsModal}
         position="fixed"
         bottom="20px"
         left="20px"
         zIndex="1000"
       />
+
+      <OptionsModal
+        isOpen={isOptionsModalOpen}
+        onClose={handleCloseOptionsModal}
+        expandButtonRef={expandButtonRef}
+        onContactUsClick={handleOpenHelpModal}
+        onHelpClick={() => {
+          handleCloseOptionsModal();
+          setRunTour(true);
+        }}
+        onFaqsClick={handleOpenFaqsModal}
+        startTourButtonRef={startTourButtonRef} 
+        runThresholdTour={runThresholdTour}
+        setRunThresholdTour={setRunThresholdTour}
+        // setIsTourRunning={setIsTourRunning}
+        // isTourRunning={isTourRunning}
+        // activeChartID={activeChartID}
+        // setActiveChartID={setActiveChartID}        
+        />
+      </>
       )}
-        
-      
-      <HelpModal isOpen={isHelpModalOpen} onClose={handleCloseHelpModal} />
+
+
+
+
+      <HelpModal
+        isOpen={isHelpModalOpen}
+        onClose={handleCloseHelpModal}
+        title="" // Pass any necessary props
+        description="" // Pass any necessary props
+        setTitle={() => {}}
+        setDescription={() => {}}
+      />
+
+      <FaqsModal
+        isOpen={isFaqsModalOpen}
+        onClose={handleCloseFaqsModal} // Close the FaqsModal
+      />
+
     </Flex>
   );
 };
+
+
+
 
 const MainApp = () => {
   const [loading, setLoading] = useState(false);
@@ -135,12 +199,23 @@ const MainApp = () => {
   const [timePeriod, setTimePeriod] = useState(37); // Default time period
   const location = useLocation();
   const [showAlerts, setShowAlerts] = useState(false);
+  const [runThresholdTour, setRunThresholdTour] = useState(false);
+  // const [isTourRunning, setIsTourRunning] = useState(false);
+  // const [activeChartID, setActiveChartID] = useState(null);
+
+
+
+  const expandButtonRef = useRef(null);
+
+
+  const startTourButtonRef = useRef(null); 
 
   const toggleAlerts = () => {
     setShowAlerts(!showAlerts);
   };
   const toggleSidebar = () => setIsMinimized(!isMinimized);
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+
 
   const spin = keyframes`
   0% { transform: rotate(0deg); }
@@ -178,6 +253,10 @@ const MainApp = () => {
         isMobileMenuOpen={isMobileMenuOpen}
         toggleMobileMenu={toggleMobileMenu}
         statusOfAlerts={showAlerts}
+        expandButtonRef={expandButtonRef}
+        startTourButtonRef={startTourButtonRef}
+        runThresholdTour={runThresholdTour}
+        setRunThresholdTour={setRunThresholdTour}
       >
         <Routes>
           {/* <Route path="/landing" element={<LandingPage />} /> */}
@@ -187,7 +266,8 @@ const MainApp = () => {
             path="/"
             element={
               <ProtectedRoute>
-                <ModularDashboard statusOfAlerts={showAlerts} />
+                <ModularDashboard statusOfAlerts={showAlerts} expandButtonRef={expandButtonRef} runThresholdTour={runThresholdTour} setRunThresholdTour={setRunThresholdTour}
+         />
               </ProtectedRoute>
             }
           />
@@ -305,6 +385,7 @@ const MainApp = () => {
 };
 
 const App = () => {
+
   return (
     <ChakraProvider theme={customTheme}>
       <Router>
