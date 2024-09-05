@@ -189,7 +189,7 @@ const checkThresholds = async () => {
         const pauseEndTime = moment(timestamp).add(timePeriodDuration);
 
         if (moment().isBefore(pauseEndTime)) {
-          console.log(`Skipping threshold check for ${metric} due to sensor-level pause still active. ${formatDateTime(pauseEndTime)}`);
+          console.log(`Skipping threshold check for ${metric} due to sensor-level pause still active. ${formatDateTime(pauseEndTime)} is the end time of the pause.`);
           continue;
         } else {
           console.log(`Threshold-level pause has expired for ${metric}, resuming checks. ${formatDateTime(pauseEndTime)} was the pause end time.`);
@@ -215,7 +215,160 @@ const checkThresholds = async () => {
         }
       }
 
-      // Continue with the rest of the threshold logic, like checking the current value, sending alerts, etc...
+      // Get the latest data for the metric
+      let responseData;
+      let response;
+      let formattedData;
+      switch (metric) {
+        case 'temperature':
+        case 'percent_humidity':
+        case 'wind_speed':
+        case 'rain_15_min_inches':
+        case 'soil_moisture':
+        case 'leaf_wetness':
+          responseData = await getWeatherData('all', 1);
+          break;
+        case 'temp':
+        case 'hum':
+          responseData = await getWatchdogData('all', 1);
+          break;
+        case 'rctemp':
+        case 'humidity':
+          responseData = await getRivercityData('all', 1);
+          break;
+
+        case 'imFreezerOneTemp':
+          response = await getImpriMedData("deveui = '0080E1150618C9DE'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFreezerOneTemp');
+          break;
+
+        case 'imFreezerOneHum':
+          response = await getImpriMedData("deveui = '0080E1150618C9DE'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFreezerOneHum');
+          break;
+
+        case 'imFreezerTwoTemp':
+          response = await getImpriMedData("deveui = '0080E115054FC6DF'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFreezerTwoTemp');
+          break;
+
+        case 'imFreezerTwoHum':
+          response = await getImpriMedData("deveui = '0080E115054FC6DF'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFreezerTwoHum');
+          break;
+
+        case 'imFreezerThreeTemp':
+          response = await getImpriMedData("deveui = '0080E1150618B549'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFreezerThreeTemp');
+          break;
+
+        case 'imFreezerThreeHum':
+          response = await getImpriMedData("deveui = '0080E1150618B549'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFreezerThreeHum');
+          break;
+
+        case 'imFridgeOneTemp':
+          response = await getImpriMedData("deveui = '0080E1150619155F'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFridgeOneTemp');
+          break;
+
+        case 'imFridgeOneHum':
+          response = await getImpriMedData("deveui = '0080E1150619155F'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFridgeOneHum');
+          break;
+
+        case 'imFridgeTwoTemp':
+          response = await getImpriMedData("deveui = '0080E115061924EA'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFridgeTwoTemp');
+          break;
+
+        case 'imFridgeTwoHum':
+          response = await getImpriMedData("deveui = '0080E115061924EA'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imFridgeTwoHum');
+          break;
+
+        case 'imIncubatorOneTemp':
+          response = await getImpriMedData("deveui = '0080E115054FF1DC'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imIncubatorOneTemp');
+          break;
+
+        case 'imIncubatorOneHum':
+          response = await getImpriMedData("deveui = '0080E115054FF1DC'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imIncubatorOneHum');
+          break;
+
+        case 'imIncubatorTwoTemp':
+          response = await getImpriMedData("deveui = '0080E1150618B45F'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imIncubatorTwoTemp');
+          break;
+
+        case 'imIncubatorTwoHum':
+          response = await getImpriMedData("deveui = '0080E1150618B45F'", 1);
+          formattedData = response.data.rivercity_data;
+          responseData = renameKeyToMetric(formattedData, 'imIncubatorTwoHum');
+          break;
+
+        default:
+          console.error('Invalid metric:', metric);
+          continue;
+      }
+
+      const currentValue = extractCurrentValue(responseData, metric);
+      const { label, addSpace } = getLabelForMetric(metric);
+      const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
+
+      if (currentValue == null) continue;
+
+      const now = new Date();
+
+      // Check if the alert was recently sent
+      if (lastAlertTimes[id] && now - lastAlertTimes[id] < debounceTime) {
+        console.log(`Skipping alert for ${metric}, recently alerted.`);
+        continue;
+      }
+
+      const sendAlert = async alertMessage => {
+        const formattedDateTime = formatDateTime(now);
+        const location = await getLocationforAlert(metric);
+        const message = `${alertMessage} at ${formattedDateTime} for ${location}.`;
+
+        const phoneNumbers = phone ? phone.split(',').map(num => num.trim()) : [];
+        const emails = email ? email.split(',').map(em => em.trim()) : [];
+
+        if (phoneNumbers.length > 0) await sendSMSAlert(phoneNumbers, message);
+        if (emails.length > 0) await sendEmailAlert(emails, 'Threshold Alert', message);
+        if (phoneNumbers.length > 0 || emails.length > 0) await sendAlertToDB(metric, message, now);
+
+        lastAlertTimes[id] = now; // Update last alert time
+      };
+
+      // Check if the current value exceeds the high or low threshold
+      if (high !== null && currentValue > high) {
+        await sendAlert(
+          `Alert: The ${metric} value of ${formatValue(
+            currentValue
+          )} exceeds the high threshold of ${formatValue(high)}`
+        );
+      } else if (low !== null && currentValue < low) {
+        await sendAlert(
+          `Alert: The ${metric} value of ${formatValue(
+            currentValue
+          )} is below the low threshold of ${formatValue(low)}`
+        );
+      }
     }
   } catch (error) {
     console.error('Error checking thresholds:', error);
@@ -226,3 +379,35 @@ const checkThresholds = async () => {
 if (import.meta.url === `file://${process.argv[1]}`) {
   checkThresholds();
 }
+
+// Function to get the label for the metric for UX purposes in alert messages
+const getLabelForMetric = metric => {
+  const metricLabels = {
+    temperature: { label: '°F', addSpace: false },
+    temp: { label: '°F', addSpace: false },
+    rctemp: { label: '°F', addSpace: false },
+    imFreezerOneTemp: { label: '°C', addSpace: false },
+    imFreezerTwoTemp: { label: '°C', addSpace: false },
+    imFreezerThreeTemp: { label: '°C', addSpace: false },
+    imFridgeOneTemp: { label: '°C', addSpace: false },
+    imFridgeTwoTemp: { label: '°C', addSpace: false },
+    imIncubatorOneTemp: { label: '°C', addSpace: false },
+    imIncubatorTwoTemp: { label: '°C', addSpace: false },
+    imFreezerOneHum: { label: '%', addSpace: false },
+    imFreezerTwoHum: { label: '%', addSpace: false },
+    imFreezerThreeHum: { label: '%', addSpace: false },
+    imFridgeOneHum: { label: '%', addSpace: false },
+    imFridgeTwoHum: { label: '%', addSpace: false },
+    imIncubatorOneHum: { label: '%', addSpace: false },
+    imIncubatorTwoHum: { label: '%', addSpace: false },
+    hum: { label: '%', addSpace: false },
+    percent_humidity: { label: '%', addSpace: false },
+    humidity: { label: '%', addSpace: false },
+    rain_15_min_inches: { label: 'inches', addSpace: true },
+    wind_speed: { label: 'MPH', addSpace: true },
+    soil_moisture: { label: 'centibars', addSpace: true },
+    leaf_wetness: { label: 'out of 15', addSpace: true },
+  };
+
+  return metricLabels[metric] || { label: '', addSpace: false };
+};
