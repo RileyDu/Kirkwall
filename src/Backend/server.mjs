@@ -189,10 +189,10 @@ const checkThresholds = async () => {
         const pauseEndTime = moment(timestamp).add(timePeriodDuration);
 
         if (moment().isBefore(pauseEndTime)) {
-          console.log(`Skipping threshold check for ${metric} due to threshold-level pause still active.`);
+          console.log(`Skipping threshold check for ${metric} due to sensor-level pause still active. ${formatDateTime(pauseEndTime)}`);
           continue;
         } else {
-          console.log(`Threshold-level pause has expired for ${metric}, resuming checks.`);
+          console.log(`Threshold-level pause has expired for ${metric}, resuming checks. ${formatDateTime(pauseEndTime)} was the pause end time.`);
           
           const timestampNow = new Date().toISOString();
           try {
@@ -207,6 +207,8 @@ const checkThresholds = async () => {
               null // Clear the timeframe
             );
             console.log(`New threshold entry created for ${metric} with thresh_kill off and no timeframe.`);
+            console.log(`Timestamp: ${timestampNow}, metric: ${metric}, high: ${high}, low: ${low}, phone: ${phone}, email: ${email}, thresh_kill: false, timeframe: null`);
+            
           } catch (error) {
             console.error('Error creating new threshold entry:', error);
           }
