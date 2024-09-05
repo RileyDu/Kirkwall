@@ -381,6 +381,21 @@ const ChartExpandModal = ({
   };
 
   const handleTimePickerSubmit = () => {
+    const hour = parseInt(selectedHour, 10);
+    const minute = parseInt(selectedMinute, 10);
+
+    // Check if both hour and minute are 0
+    if (hour === 0 && minute === 0) {
+      toast({
+        title: 'Invalid Timeframe',
+        description: 'Please enter a valid hour or minute.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return; // Exit the function early
+    }
+
     const timeframe = `${selectedHour}:${selectedMinute}:00`;
     console.log('Selected Timeframe:', timeframe);
 
@@ -453,49 +468,48 @@ const ChartExpandModal = ({
       console.error('Invalid timestamp or timeframe');
       return null;
     }
-  
+
     const timestampDate = new Date(timestamp);
-  
+
     if (isNaN(timestampDate)) {
       console.error('Invalid timestamp format');
       return null;
     }
-  
+
     // Check for the "day" part in the timeframe and parse it
     let days = 0;
     let hours = 0;
     let minutes = 0;
     let seconds = 0;
-  
+
     if (timeframe.includes('day')) {
       const dayMatch = timeframe.match(/(\d+) day/);
       if (dayMatch) {
         days = parseInt(dayMatch[1], 10);
       }
-  
+
       const timePart = timeframe.split(', ')[1]; // Get the "0:00:00" part
       [hours, minutes, seconds] = timePart.split(':').map(Number);
     } else {
       // Parse without days if "day" is not present
       [hours, minutes, seconds] = timeframe.split(':').map(Number);
     }
-  
+
     if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
       console.error('Invalid timeframe format');
       return null;
     }
-  
+
     // Convert days, hours, minutes, and seconds to milliseconds
     const timeframeInMs =
       (days * 24 * 60 * 60 + hours * 60 * 60 + minutes * 60 + seconds) * 1000;
     const timeOfToggleDate = new Date(timestampDate.getTime() + timeframeInMs);
-  
+
     return {
       formatted: format(timeOfToggleDate, 'hh:mm a (MMM d)'),
       date: timeOfToggleDate,
     };
   };
-  
 
   return (
     <>
@@ -653,28 +667,32 @@ const ChartExpandModal = ({
                 >
                   {highThreshold || lowThreshold ? (
                     <>
-                    <Box display={'flex'} justifyContent={'space-between'} alignContent={'center'}>
-                      <Text
-                        fontSize="xl"
-                        fontWeight="bold"
-                        textDecor={'underline'}
-                        pb="2"
-                        // textAlign={'center'}
-                        color="white"
+                      <Box
+                        display={'flex'}
+                        justifyContent={'space-between'}
+                        alignContent={'center'}
                       >
-                        Thresholds
-                      </Text>
-                      {timeOfToggle && (
+                        <Text
+                          fontSize="xl"
+                          fontWeight="bold"
+                          textDecor={'underline'}
+                          pb="2"
+                          // textAlign={'center'}
+                          color="white"
+                        >
+                          Thresholds
+                        </Text>
+                        {timeOfToggle && (
                           <Text
                             color="white"
                             fontSize={'sm'}
                             whiteSpace={'nowrap'}
-                            textDecor='underline'
+                            textDecor="underline"
                           >
                             Back on @ {timeOfToggle}
                           </Text>
                         )}
-                    </Box>
+                      </Box>
                       <Flex
                         width={'100%'}
                         justify={'space-between'}
@@ -741,43 +759,71 @@ const ChartExpandModal = ({
                             width="auto"
                             maxWidth="fit-content"
                             border={'2px solid #3D5A80'}
+                            // p={4}
                           >
                             <PopoverArrow />
                             <PopoverCloseButton />
-                            <PopoverBody>
+                            <PopoverBody mt={8}>
                               <Flex
                                 alignItems={'center'}
                                 justifyContent={'center'}
+                                flexDirection="column"
                               >
-                                <Input
-                                  type="number"
-                                  placeholder="HH"
-                                  value={selectedHour}
-                                  onChange={e =>
-                                    setSelectedHour(e.target.value)
-                                  }
-                                  max={23}
-                                  min={0}
-                                  width="60px"
-                                  mr={2}
-                                  textAlign={'center'}
-                                  border={'2px solid #3D5A80'}
-                                />
-                                :
-                                <Input
-                                  type="number"
-                                  placeholder="MM"
-                                  value={selectedMinute}
-                                  onChange={e =>
-                                    setSelectedMinute(e.target.value)
-                                  }
-                                  max={59}
-                                  min={0}
-                                  width="60px"
-                                  ml={2}
-                                  textAlign={'center'}
-                                  border={'2px solid #3D5A80'}
-                                />
+                                <Flex
+                                  alignItems={'center'}
+                                  justifyContent={'center'}
+                                  mb={4}
+                                >
+                                  <Box textAlign="center" mr={2}>
+                                    <Input
+                                      type="number"
+                                      placeholder="HH"
+                                      value={selectedHour}
+                                      onChange={e =>
+                                        setSelectedHour(e.target.value)
+                                      }
+                                      max={23}
+                                      min={0}
+                                      width="60px"
+                                      textAlign={'center'}
+                                      border={'2px solid #3D5A80'}
+                                    />
+                                    <FormLabel
+                                      mt={1}
+                                      ml={3}
+                                      fontSize="sm"
+                                      textAlign="center"
+                                    >
+                                      HOURS
+                                    </FormLabel>
+                                  </Box>
+                                  <Text fontWeight="bold" mx={2} mb={8}>
+                                    :
+                                  </Text>
+                                  <Box textAlign="center" ml={2}>
+                                    <Input
+                                      type="number"
+                                      placeholder="MM"
+                                      value={selectedMinute}
+                                      onChange={e =>
+                                        setSelectedMinute(e.target.value)
+                                      }
+                                      max={59}
+                                      min={0}
+                                      width="60px"
+                                      textAlign={'center'}
+                                      border={'2px solid #3D5A80'}
+                                    />
+                                    <FormLabel
+                                      mt={1}
+                                      ml={3}
+                                      fontSize="sm"
+                                      textAlign="center"
+                                    >
+                                      MINUTES
+                                    </FormLabel>
+                                  </Box>
+                                </Flex>
                               </Flex>
                             </PopoverBody>
                             <PopoverFooter
@@ -787,15 +833,10 @@ const ChartExpandModal = ({
                               <Button
                                 onClick={handleTimePickerSubmit}
                                 variant="blue"
+                                mt={2}
                               >
                                 Set Timeframe to Pause Alerts
                               </Button>
-                              {/* <Button
-                                onClick={}
-                                variant="blue"
-                              >
-                                Pause Alerts Indefinitely
-                              </Button> */}
                             </PopoverFooter>
                           </PopoverContent>
                         </Popover>
