@@ -134,8 +134,17 @@ export const WeatherDataProvider = ({ children }) => {
   };
 
   const fetchDeviceData = async (deviceKey, setTempData, setHumData, limit) => {
+    const deveui = devices[deviceKey];
+    console.log('Fetching data for deveui:', deveui);
+
     try {
-      const response = await getImpriMedData(devices[deviceKey], limit); // Adjust the limit as needed
+      const response = await axios.get(`http://localhost:3000/api/impriMed_data`, {
+        params: {
+          limit: limit,
+          deveui: deveui  // This will properly attach the deveui as a query parameter
+        }
+      });
+      console.log(response.data);
       if (Array.isArray(response.data.rivercity_data) && response.data.rivercity_data.length > 0) {
         const latestData = response.data.rivercity_data;
 
@@ -286,38 +295,38 @@ export const WeatherDataProvider = ({ children }) => {
   
 
   useEffect(() => {
-    if (currentUser && (currentUser?.email === 'test@kirkwall.io')) {
+    if (currentUser && (currentUser?.email === 'test@kirkwall.io' || currentUser?.email === 'trey@watchdogprotect.com')) {
       const fetchData = async () => {
         try {
           if (currentUser.email === 'test@kirkwall.io') {
             const [watchdogResponse, rivercityResponse] = await Promise.all([
-              getWatchdogData('all', '19'),
-              getRivercityData('all', '19')
+              axios.get('/api/watchdog_data', { params: { type: 'all', limit: '19' } }),
+              axios.get('/api/rivercity_data', { params: { type: 'all', limit: '19' } })
             ]);
-  
-            if (Array.isArray(watchdogResponse.data.watchdog_data)) {
-              setWatchdogData(watchdogResponse.data.watchdog_data);
+            
+            if (Array.isArray(watchdogResponse.data)) {
+              setWatchdogData(watchdogResponse.data);
             } else {
               setWatchdogData([]);
             }
-  
-            if (Array.isArray(rivercityResponse.data.rivercity_data)) {
-              setRivercityData(rivercityResponse.data.rivercity_data);
+    
+            if (Array.isArray(rivercityResponse.data)) {
+              setRivercityData(rivercityResponse.data);
             } else {
               setRivercityData([]);
             }
           } else if (currentUser.email === 'trey@watchdogprotect.com') {
-            const watchdogResponse = await getWatchdogData('all', '19');
-  
-            if (Array.isArray(watchdogResponse.data.watchdog_data)) {
-              setWatchdogData(watchdogResponse.data.watchdog_data);
+            const watchdogResponse = await axios.get('/api/watchdog_data', { params: { type: 'all', limit: '19' } });
+            
+            if (Array.isArray(watchdogResponse.data)) {
+              setWatchdogData(watchdogResponse.data);
             } else {
               setWatchdogData([]);
             }
-  
+    
             setRivercityData([]);  // Clear rivercity data for this user
           }
-  
+    
           setLoading(false);
         } catch (error) {
           console.error('Error fetching data:', error);

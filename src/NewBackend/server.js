@@ -95,6 +95,9 @@ app.get('/api/rivercity_data', async (req, res) => {
 app.get('/api/impriMed_data', async (req, res) => {
   const { deveui, limit = 10 } = req.query; // Get the device id (deveui) and limit from query parameters
 
+  console.log('Received deveui:', deveui, 'Limit:', limit); // Log deveui and limit
+
+
   try {
     const query = `
       SELECT rctemp, humidity, publishedat, deveui 
@@ -104,6 +107,8 @@ app.get('/api/impriMed_data', async (req, res) => {
       LIMIT $2`;
     
     const result = await client.query(query, [deveui, limit]);
+    console.log('Query result:', result.rows); // Log the result from the query
+
     res.status(200).json(result.rows); // Send the data as JSON response
   } catch (error) {
     console.error('Error fetching ImpriMed data:', error);
