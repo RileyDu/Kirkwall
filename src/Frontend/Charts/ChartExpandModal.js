@@ -394,10 +394,10 @@ const ChartExpandModal = ({
       timeframe
     );
     // Fix: only pass the formatted string to `timeOfToggle`
-    setTimeOfToggle(calculatedTimeOfToggle.formatted);
+    setTimeOfToggle(calculatedTimeOfToggle?.formatted);
 
     // Keep the `date` part for comparisons
-    setToggleTimeAsDate(calculatedTimeOfToggle.date);
+    setToggleTimeAsDate(calculatedTimeOfToggle?.date);
   };
 
   useEffect(() => {
@@ -453,29 +453,49 @@ const ChartExpandModal = ({
       console.error('Invalid timestamp or timeframe');
       return null;
     }
-
+  
     const timestampDate = new Date(timestamp);
-
+  
     if (isNaN(timestampDate)) {
       console.error('Invalid timestamp format');
       return null;
     }
-
-    const [hours, minutes, seconds] = timeframe.split(':').map(Number);
-
+  
+    // Check for the "day" part in the timeframe and parse it
+    let days = 0;
+    let hours = 0;
+    let minutes = 0;
+    let seconds = 0;
+  
+    if (timeframe.includes('day')) {
+      const dayMatch = timeframe.match(/(\d+) day/);
+      if (dayMatch) {
+        days = parseInt(dayMatch[1], 10);
+      }
+  
+      const timePart = timeframe.split(', ')[1]; // Get the "0:00:00" part
+      [hours, minutes, seconds] = timePart.split(':').map(Number);
+    } else {
+      // Parse without days if "day" is not present
+      [hours, minutes, seconds] = timeframe.split(':').map(Number);
+    }
+  
     if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
       console.error('Invalid timeframe format');
       return null;
     }
-
-    const timeframeInMs = (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
+  
+    // Convert days, hours, minutes, and seconds to milliseconds
+    const timeframeInMs =
+      (days * 24 * 60 * 60 + hours * 60 * 60 + minutes * 60 + seconds) * 1000;
     const timeOfToggleDate = new Date(timestampDate.getTime() + timeframeInMs);
-
+  
     return {
       formatted: format(timeOfToggleDate, 'hh:mm a (MMM d)'),
       date: timeOfToggleDate,
     };
   };
+  
 
   return (
     <>
@@ -633,16 +653,28 @@ const ChartExpandModal = ({
                 >
                   {highThreshold || lowThreshold ? (
                     <>
+                    <Box display={'flex'} justifyContent={'space-between'} alignContent={'center'}>
                       <Text
                         fontSize="xl"
                         fontWeight="bold"
                         textDecor={'underline'}
                         pb="2"
-                        textAlign={'center'}
+                        // textAlign={'center'}
                         color="white"
                       >
                         Thresholds
                       </Text>
+                      {timeOfToggle && (
+                          <Text
+                            color="white"
+                            fontSize={'sm'}
+                            whiteSpace={'nowrap'}
+                            textDecor='underline'
+                          >
+                            Back on @ {timeOfToggle}
+                          </Text>
+                        )}
+                    </Box>
                       <Flex
                         width={'100%'}
                         justify={'space-between'}
@@ -672,7 +704,7 @@ const ChartExpandModal = ({
                             </Text>
                           ) : null}
                         </HStack>
-                        {timeOfToggle && (
+                        {/* {timeOfToggle && (
                           <Text
                             color="white"
                             fontSize={'sm'}
@@ -680,7 +712,7 @@ const ChartExpandModal = ({
                           >
                             Back on @ {timeOfToggle}
                           </Text>
-                        )}
+                        )} */}
                         <Box
                           fontSize={['xs', 'md']}
                           ml={8}
