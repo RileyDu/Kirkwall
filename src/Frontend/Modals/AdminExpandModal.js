@@ -35,7 +35,7 @@ import {
   Select,
   Switch,
 } from '@chakra-ui/react';
-import { FaBell, FaExpandAlt, FaQuestion } from 'react-icons/fa';
+import { FaBell } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useWeatherData } from '../WeatherDataContext.js';
 import AddInformationFormModal from './AddInformationFormModal.js';
@@ -44,12 +44,12 @@ import {
   updateProfileUrl,
   createThreshold,
   getThresholdsInTheLastHour,
-  updateAdmin,
 } from '../../Backend/Graphql_helper.js';
 import FaqsModal from './FaqsModal.js';
 import SetThresholdsModal from './SetThresholdsModal.js';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 const MotionTabPanel = motion(TabPanel);
+
 
 const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
   const [adminId, setAdminId] = useState();
@@ -386,11 +386,19 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
   const handleThreshKillToggle = async () => {
     const newThreshKill = !threshKill; // Toggle the current value
     setThreshKill(newThreshKill); // Update local state
-
+  
     try {
       const id = adminId;
-      // Send the updated value to the database
-      await updateAdmin(id, firstName, lastName, email, phone, company, newThreshKill);
+      // Send the updated value to the database using Axios PUT request
+      await axios.put(`/api/update_admin/${id}`, {
+        firstname: firstName,
+        lastname: lastName,
+        email: email,
+        phone: phone,
+        company: company,
+        thresh_kill: newThreshKill, // Send the toggled thresh_kill value
+      });
+  
       toast({
         title: 'Threshold alerts updated.',
         description: `Threshold alerts have been ${
@@ -402,6 +410,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
       });
     } catch (error) {
       console.error('Error updating threshold kill:', error);
+  
       toast({
         title: 'Error',
         description: 'Failed to update threshold alerts.',
@@ -411,6 +420,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
       });
     }
   };
+  
 
   // Add a new phone number input
   const handleAddPhoneNumber = () => {
@@ -606,7 +616,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                           mb="1"
                           isChecked={threshKill}
                           onChange={handleThreshKillToggle}
-                          colorScheme={'orange'}
+                          colorScheme={'blue'}
                         />
                       </FormControl>
                       <MotionButton
