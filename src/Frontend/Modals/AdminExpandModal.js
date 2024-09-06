@@ -39,7 +39,6 @@ import { FaBell } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useWeatherData } from '../WeatherDataContext.js';
 import AddInformationFormModal from './AddInformationFormModal.js';
-import { updateProfileUrl } from '../../Backend/Graphql_helper.js';
 import FaqsModal from './FaqsModal.js';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 const MotionTabPanel = motion(TabPanel);
