@@ -4,9 +4,9 @@ import {
   getWatchdogData,
   getRivercityData,
   getImpriMedData,
-  getAlerts,
-  getLatestThreshold,
-  getChartData,
+  // getAlerts,
+  // getLatestThreshold,
+  // getChartData,
   getAlertsPerUserByMetric
 } from '../Backend/Graphql_helper.js';
 import { useAuth } from './AuthComponents/AuthContext.js';
@@ -252,9 +252,9 @@ export const WeatherDataProvider = ({ children }) => {
   useEffect(() => {
     const fetchChartData = async () => {
       try {
-        const response = await getChartData();
-        if (Array.isArray(response.data.charts)) {
-          setChartData(response.data.charts);
+        const response = await axios.get('http://localhost:3000/api/charts');
+        if (Array.isArray(response.data)) {
+          setChartData(response.data);
         }
       } catch (error) {
         console.error('Error fetching chart data:', error);
