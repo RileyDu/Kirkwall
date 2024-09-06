@@ -184,6 +184,26 @@ app.get('/api/alerts_per_user', async (req, res) => {
   }
 });
 
+// New backend route to get alerts from the last hour
+app.get('/api/alerts_last_hour', async (req, res) => {
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString(); // Get the timestamp for one hour ago
+
+  try {
+    // Query to fetch alerts where the timestamp is within the last hour
+    const query = `
+      SELECT metric, timestamp
+      FROM alerts
+      WHERE timestamp > $1
+      ORDER BY timestamp DESC
+    `;
+
+    const result = await client.query(query, [oneHourAgo]);
+    res.status(200).json(result.rows); // Send the alerts as a response
+  } catch (error) {
+    console.error('Error fetching alerts from the last hour:', error);
+    res.status(500).json({ error: 'An error occurred while fetching alerts' });
+  }
+});
 
 
 

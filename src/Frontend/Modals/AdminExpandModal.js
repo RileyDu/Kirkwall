@@ -41,11 +41,8 @@ import { useWeatherData } from '../WeatherDataContext.js';
 import AddInformationFormModal from './AddInformationFormModal.js';
 import {
   updateProfileUrl,
-  createThreshold,
-  getThresholdsInTheLastHour,
 } from '../../Backend/Graphql_helper.js';
 import FaqsModal from './FaqsModal.js';
-import SetThresholdsModal from './SetThresholdsModal.js';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 const MotionTabPanel = motion(TabPanel);
 
@@ -100,19 +97,23 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
   const modalWidth = useBreakpointValue({ base: '95%', md: '90%' });
   const modalHeight = useBreakpointValue({ base: '95vh', md: '85vh' });
 
+
   useEffect(() => {
     const fetchAlertsLastHour = async () => {
       setLoadingAlerts(true);
       try {
-        const result = await getThresholdsInTheLastHour();
-        if (result && result.data && result.data.alerts) {
+        const response = await axios.get('/api/alerts_last_hour'); // Use Axios to call the new backend route
+        const result = response.data;
+        console.log('result', result);
+        if (result && result.length > 0) {
           // Filter alerts based on userConfig
           const userMetrics =
             userConfig[userEmail]?.map(config => config.metric) || [];
-          const filteredAlerts = result.data.alerts.filter(alert =>
+          const filteredAlerts = result.filter(alert =>
             userMetrics.includes(alert.metric)
           );
           setAlertsLastHour(filteredAlerts);
+          console.log('filteredAlerts', filteredAlerts);
         } else {
           setAlertsLastHour([]);
         }
@@ -123,9 +124,10 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
         setLoadingAlerts(false);
       }
     };
-
+  
     fetchAlertsLastHour();
-  }, [userEmail]);
+  }, []); // Make sure userConfig is a dependency as it's used here
+  
 
   // Send threshold data to the backend
   const handleFormSubmit = async () => {
