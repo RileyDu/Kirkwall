@@ -278,6 +278,36 @@ app.put('/api/update_admin/:id', async (req, res) => {
   }
 });
 
+// New backend route to update the admin's profile URL
+app.put('/api/update_profile_url/:id', async (req, res) => {
+  const { id } = req.params;
+  const { firstname, lastname, email, phone, company, thresh_kill, profile_url } = req.body;
+
+  const query = `
+    UPDATE admin
+    SET firstname = $1, lastname = $2, email = $3, phone = $4, company = $5, thresh_kill = $6, profile_url = $7
+    WHERE id = $8
+    RETURNING *`;
+
+  try {
+    const result = await client.query(query, [
+      firstname, 
+      lastname, 
+      email, 
+      phone, 
+      company, 
+      thresh_kill, 
+      profile_url, 
+      id
+    ]);
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error updating profile URL:', error);
+    res.status(500).json({ error: 'An error occurred while updating the profile URL' });
+  }
+});
+
+
 app.get('/api/charts', async (req, res) => {
   try {
     const result = await client.query('SELECT * FROM charts');
