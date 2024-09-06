@@ -40,7 +40,6 @@ import { motion } from 'framer-motion';
 import { useWeatherData } from '../WeatherDataContext.js';
 import AddInformationFormModal from './AddInformationFormModal.js';
 import {
-  getAdminByEmail,
   updateProfileUrl,
   createThreshold,
   getThresholdsInTheLastHour,
@@ -65,6 +64,8 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
   const [threshKill, setThreshKill] = useState(false);
+  const [timeframe, setTimeframe] = useState('');
+  const [newTimeframe, setNewTimeframe] = useState('');
 
   const [uploadedImageUrl, setUploadedImageUrl] = useState('');
 
@@ -126,42 +127,57 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     fetchAlertsLastHour();
   }, [userEmail]);
 
+  // Send threshold data to the backend
   const handleFormSubmit = async () => {
     const timestamp = new Date().toISOString();
     const phoneNumbersString = phoneNumbers.join(', '); // Join phone numbers into a single string
     const emailsString = emailsForThreshold.join(', '); // Join emails into a single string
+  
+
+  
     try {
-      await createThreshold(
+      // Perform Axios POST request to create the threshold
+      await axios.post('/api/create_threshold', {
         metric,
-        parseFloat(highThreshold),
-        parseFloat(lowThreshold),
-        phoneNumbersString,
-        emailsString,
-        timestamp
-      );
-      console.log('Alerts Set');
+        high: parseFloat(highThreshold),
+        low: parseFloat(lowThreshold),
+        phone: phoneNumbersString,
+        email: emailsString,
+        timestamp: timestamp,
+        thresh_kill: threshKill, // Send the correct boolean
+        timeframe: null, // Send `null` if `threshKill` is off
+      });
+  
+      console.log('Alerts Set or Cleared');
     } catch (error) {
       console.error('Error creating threshold:', error);
     } finally {
       setIsThresholdModalOpen(false);
     }
   };
+  
 
+  // Clear the threshold data and send it to the backend
   const handleFormClear = async () => {
     const timestamp = new Date().toISOString();
     setHighThreshold('');
     setLowThreshold('');
     setPhoneNumbers([]);
     setEmailsForThreshold([]);
+  
     try {
-      await createThreshold(
+      // Create a new threshold with empty values to clear the current threshold
+      await axios.post('/api/create_threshold', {
         metric,
-        highThreshold,
-        lowThreshold,
-        phoneNumbers,
-        emailsForThreshold,
-        timestamp
-      );
+        high: null, // Clear high threshold
+        low: null, // Clear low threshold
+        phone: '', // Clear phone numbers
+        email: '', // Clear emails
+        timestamp: timestamp,
+        thresh_kill: false, // Ensure thresh_kill is off
+        timeframe: null, // Clear timeframe
+      });
+      console.log('Alerts Cleared');
     } catch (error) {
       console.error('Error clearing threshold:', error);
     } finally {
