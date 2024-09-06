@@ -479,51 +479,62 @@ const ChartExpandModal = ({
 
   const calculateTimeOfToggle = (timestamp, timeframe) => {
     if (!timestamp || !timeframe) {
-      console.error('Invalid timestamp or timeframe');
+      console.error('Invalid timestamp or timeframe', { timestamp, timeframe });
       return null;
     }
-
+  
+    // Handle timeframe if it's an object
+    if (typeof timeframe === 'object') {
+      // Assuming the object contains properties like { minutes: 1 }
+      const { days = 0, hours = 0, minutes = 0, seconds = 0 } = timeframe;
+      timeframe = `${hours}:${minutes}:${seconds}`;
+    }
+  
+    if (typeof timeframe !== 'string') {
+      console.error('Invalid timeframe type, expected a string', { timeframe });
+      return null;
+    }
+  
     const timestampDate = new Date(timestamp);
-
     if (isNaN(timestampDate)) {
-      console.error('Invalid timestamp format');
+      console.error('Invalid timestamp format', { timestamp });
       return null;
     }
-
-    // Check for the "day" part in the timeframe and parse it
+  
     let days = 0;
     let hours = 0;
     let minutes = 0;
     let seconds = 0;
-
+  
     if (timeframe.includes('day')) {
       const dayMatch = timeframe.match(/(\d+) day/);
       if (dayMatch) {
         days = parseInt(dayMatch[1], 10);
       }
-
-      const timePart = timeframe.split(', ')[1]; // Get the "0:00:00" part
+  
+      const timePart = timeframe.split(', ')[1];
       [hours, minutes, seconds] = timePart.split(':').map(Number);
     } else {
-      // Parse without days if "day" is not present
       [hours, minutes, seconds] = timeframe.split(':').map(Number);
     }
-
+  
     if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
-      console.error('Invalid timeframe format');
+      console.error('Invalid timeframe format', { timeframe });
       return null;
     }
-
-    // Convert days, hours, minutes, and seconds to milliseconds
+  
     const timeframeInMs =
       (days * 24 * 60 * 60 + hours * 60 * 60 + minutes * 60 + seconds) * 1000;
     const timeOfToggleDate = new Date(timestampDate.getTime() + timeframeInMs);
-
+  
     return {
       formatted: format(timeOfToggleDate, 'hh:mm a (MMM d)'),
       date: timeOfToggleDate,
     };
   };
+  
+  
+  
 
   return (
     <>
