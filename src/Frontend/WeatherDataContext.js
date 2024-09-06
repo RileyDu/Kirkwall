@@ -236,9 +236,9 @@ export const WeatherDataProvider = ({ children }) => {
   useEffect(() => {
     const fetchThresholds = async () => {
       try {
-        const result = await getLatestThreshold();
-        if (Array.isArray(result.data.thresholds)) {
-          setThresholds(result.data.thresholds);
+        const result = await axios.get('http://localhost:3000/api/thresholds');
+        if (Array.isArray(result.data)) {
+          setThresholds(result.data);
         }
         // console.log('Thresholds from DB:', thresholds);
       } catch (error) {
