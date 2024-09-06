@@ -34,7 +34,7 @@ import { FaChessRook } from 'react-icons/fa';
 import { FaChevronDown } from 'react-icons/fa';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { keyframes } from '@emotion/react';
-import { updateChart } from '../../Backend/Graphql_helper.js';
+import axios from 'axios'; // Import Axios
 
 import { motion, AnimatePresence } from 'framer-motion';
 const MotionBox = motion(Box);
@@ -158,33 +158,30 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
     } catch (error) {}
   };
 
+
   const handleChartEdit = async (id, hidden) => {
     // Assuming you need to pass all the current metric settings to the backend
     const chartDataForMetric = chartData.find(chart => chart.id === id);
-
+  
     const updatedChartDetails = {
-      id: chartDataForMetric.id,
       metric: chartDataForMetric.metric,
       timeperiod: chartDataForMetric.timeperiod,
       type: chartDataForMetric.type,
       location: chartDataForMetric.location,
       hidden: hidden,
     };
-
+  
     try {
-      const result = await updateChart(
-        updatedChartDetails.id,
-        updatedChartDetails.metric,
-        updatedChartDetails.timeperiod,
-        updatedChartDetails.type,
-        updatedChartDetails.location,
-        updatedChartDetails.hidden
-      );
-      console.log('Updated chart:', result);
+      // Perform Axios PUT request to update the chart
+      const response = await axios.put(`/api/update_chart/${id}`, updatedChartDetails);
+  
+      // Log the updated chart data returned from the server
+      console.log('Updated chart:', response.data);
     } catch (error) {
       console.error('Error updating chart:', error);
     }
   };
+  
 
 
 
