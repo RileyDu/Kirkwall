@@ -14,7 +14,7 @@ import {
   useColorMode,
 } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
-import { updateAdmin } from '../../Backend/Graphql_helper.js';
+import axios from 'axios'; // Import Axios
 
 const AddInformationFormModal = ({
   isOpen,
@@ -60,29 +60,33 @@ const AddInformationFormModal = ({
     setLocalCompany('');
   };
 
-  const handleFormSubmit = async () => {    
-    try {
-      await updateAdmin(
-        id.toString(),
-        localFirstName,
-        localLastName,
-        localEmail,
-        localPhone,
-        localCompany,
-        localThreshKill
-      );
 
+  const handleFormSubmit = async () => {
+    try {
+      // Perform Axios PUT request to update the admin
+      await axios.put(`/api/update_admin/${id}`, {
+        firstname: localFirstName,
+        lastname: localLastName,
+        email: localEmail,
+        phone: localPhone,
+        company: localCompany,
+        thresh_kill: localThreshKill,
+      });
+  
+      // Update the local state after a successful update
       setFirstName(localFirstName);
       setLastName(localLastName);
       setPhone(localPhone);
       setEmail(localEmail);
       setCompany(localCompany);
-
+  
+      // Close the form/modal after update
       onClose();
     } catch (error) {
       console.error('Error updating admin:', error);
     }
   };
+  
 
 
   return (
