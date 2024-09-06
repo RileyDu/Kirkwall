@@ -251,19 +251,19 @@ const ChartExpandModal = ({
     const timestamp = new Date().toISOString();
     const phoneNumbersString = phoneNumbers.join(', ');
     const emailsString = emailsForThreshold.join(', ');
-
+  
     try {
       // Create a new threshold with `thresh_kill` set to false and `timeframe` set to null
-      await createThreshold(
+      await axios.post('/api/create_threshold', {
         metric,
-        parseFloat(highThreshold),
-        parseFloat(lowThreshold),
-        phoneNumbersString,
-        emailsString,
-        timestamp,
-        false, // Turn off thresh_kill
-        null // Clear the timeframe
-      );
+        high: parseFloat(highThreshold),
+        low: parseFloat(lowThreshold),
+        phone: phoneNumbersString,
+        email: emailsString,
+        timestamp: timestamp,
+        thresh_kill: false, // Turn off thresh_kill
+        timeframe: null, // Clear the timeframe
+      });
       console.log(
         'Threshold updated: thresh_kill turned off and timeframe cleared.'
       );
@@ -282,15 +282,19 @@ const ChartExpandModal = ({
     setLowThreshold('');
     setPhoneNumbers([]);
     setEmailsForThreshold([]);
+  
     try {
-      await createThreshold(
+      // Create a new threshold with empty values to clear the current threshold
+      await axios.post('/api/create_threshold', {
         metric,
-        highThreshold,
-        lowThreshold,
-        '',
-        '',
-        timestamp
-      );
+        high: null, // Clear high threshold
+        low: null, // Clear low threshold
+        phone: '', // Clear phone numbers
+        email: '', // Clear emails
+        timestamp: timestamp,
+        thresh_kill: false, // Ensure thresh_kill is off
+        timeframe: null, // Clear timeframe
+      });
       console.log('Alerts Cleared');
     } catch (error) {
       console.error('Error clearing threshold:', error);
