@@ -38,29 +38,7 @@ import RivercityMap from '../Maps/RivercityMiniMap.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import ImpriMiniMap from '../Maps/ImpriMiniMap.js';
 import { useWeatherData } from '../WeatherDataContext.js';
-import { updateChart } from '../../Backend/Graphql_helper.js';
-import Joyride, { STATUS } from 'react-joyride';
-
-
-// const steps = [
-//   {
-//     target: '#step1',
-//     content: 'This is the first step of the tour',
-//     disableBeacon: true,
-//   },
-//   {
-//     target: '#step2',
-//     content: 'This is the second step of the tour',
-//   },
-//   {
-//     target: '#step3',
-//     content: 'This is the third step of the tour',
-//   },
-//   {
-//     target: '#step4',
-//     content: 'This is the final step of the tour',
-//   },
-// ];
+import axios from 'axios';
 
 
 const ChartWrapper = ({
@@ -69,20 +47,12 @@ const ChartWrapper = ({
   metric,
   weatherData,
   handleTimePeriodChange,
-  toggleChartVisibility,
-  section,
   chartLayout,
   typeOfChart,
   chartDataForMetric,
   handleMenuItemClick,
   setFilteredChartData,
   expandButtonRef,
-  // runThresholdTour,
-  // setRunThresholdTour,
-  // setIsTourRunning,
-  // isTourRunning,
-  // activeChartID,
-  // setActiveChartID,
 }) => {
   const [currentTimePeriod, setCurrentTimePeriod] = useState('3H');
   const [loading, setLoading] = useState(false);
@@ -95,20 +65,18 @@ const ChartWrapper = ({
   const [chartType, setChartType] = useState(chartDataForMetric?.type);
   const [chartID, setChartID] = useState(chartDataForMetric?.id);
 
-  
-  
   // Function to handle chart type change and switch between bar and line chart
   // User can switch between bar and line chart by button click
   // Function to handle chart type change
   const handleChartTypeChange = (chartId, currentType) => {
     const newChartType = currentType === 'line' ? 'bar' : 'line';
-    
+
     // Mark this change as user-initiated
     isUserAction.current = true;
-  
+
     // Set the chart type state
     setChartType(newChartType);
-  
+
     // Update chartData with the new chart type
     setFilteredChartData(prevData =>
       prevData.map(chart =>
@@ -125,7 +93,6 @@ const ChartWrapper = ({
       isUserAction.current = false; // Reset the flag after the update
     }
   }, [chartType, chartData]);
-  
 
   const { currentUser } = useAuth();
 
@@ -144,16 +111,21 @@ const ChartWrapper = ({
   const { colorMode } = useColorMode();
 
   // Function to render close button on the chart
-  // Close button is rendered only on the home page and grandfarm, watchdogprotect, imprimed pages for now 
+  // Close button is rendered only on the home page and grandfarm, watchdogprotect, imprimed pages for now
   const renderCloseButton = () => {
-    const routesWithCloseButton = ['/', '/grandfarm', '/watchdogprotect', '/imprimed'];
+    const routesWithCloseButton = [
+      '/',
+      '/grandfarm',
+      '/watchdogprotect',
+      '/imprimed',
+    ];
     return isLargerThan768 && routesWithCloseButton.includes(location.pathname);
   };
 
   const isDashboard = () => {
-    const routesWithTitle = ['/']
+    const routesWithTitle = ['/'];
     return routesWithTitle.includes(location.pathname);
-  }
+  };
 
   // Function to toggle between map and chart
   const toggleMap = () => {
@@ -220,7 +192,7 @@ const ChartWrapper = ({
   const handleTitleSubmit = () => {
     setUserTitle(newTitle);
     handleChartEdit();
- };
+  };
 
   const getLogoToDisplay = (metric, colorMode) => {
     const logoMap = {
@@ -330,7 +302,6 @@ const ChartWrapper = ({
     }
   };
 
-
   const getChartIcon = () => {
     switch (chartType) {
       case 'bar':
@@ -376,7 +347,8 @@ const ChartWrapper = ({
     }
   }, [loading, toast]);
 
-  const timeOfGraph = (weatherData && calculateTimePeriod(weatherData.length - 1));
+  const timeOfGraph =
+    weatherData && calculateTimePeriod(weatherData.length - 1);
 
   const MotionButton = motion(Button);
 
@@ -384,13 +356,18 @@ const ChartWrapper = ({
 
   const editChart = async (id, metric, timeperiod, type, location, hidden) => {
     try {
-      const result = await updateChart(id, metric, timeperiod, type, location, hidden);
+      const result = await axios.put(`/api/update_chart/${id}`, {
+        metric,
+        timeperiod,
+        type,
+        location,
+        hidden,
+      });
       console.log('Updated chart:', result);
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Error updating chart:', error);
     }
-  }
+  };
 
   const handleChartEdit = () => {
     const id = chartDataForMetric?.id;
@@ -400,8 +377,7 @@ const ChartWrapper = ({
     const location = newTitle || chartDataForMetric?.location;
     const hidden = chartDataForMetric?.hidden;
     editChart(id, metric, timeperiod, type, location, hidden);
-  }
-
+  };
 
   // const [runTour, setRunTour] = useState(false);
   const [runModalTour, setRunModalTour] = useState(false);
@@ -412,11 +388,9 @@ const ChartWrapper = ({
   //   onOpen();
   //   setRunThresholdTour(true); // Start the threshold tour
   // };
-  
 
   // const [isTourRunning, setIsTourRunning] = useState(false);
   // const [activeChartID, setActiveChartID] = useState(null);
-
 
   // const handleJoyrideCallback = (data) => {
   //   const { status } = data;
@@ -429,11 +403,8 @@ const ChartWrapper = ({
   //   setRunTour(true);
   // };
 
-
-
   return (
     <>
-
       <Box
         border="2px"
         borderColor="#3D5A80"
@@ -459,19 +430,19 @@ const ChartWrapper = ({
             {title}
           </Box>
           <Flex alignItems="center">
-              <>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 1 }}
-                  >
-                  {isDashboard() && (
+            <>
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1 }}
+              >
+                {isDashboard() && (
                   <Box
                     border="2px"
                     borderColor="#3D5A80"
                     borderRadius="lg"
                     px={2}
-                    py={.5}
+                    py={0.5}
                     mr={2}
                     bg={'#cee8ff'}
                     color={'black'}
@@ -490,7 +461,10 @@ const ChartWrapper = ({
                         p={0} // Remove padding to ensure the content uses full space
                         w="auto" // Ensure width adapts to content
                       >
-                        <PopoverArrow bg="#212121" border={'2px solid #212121'}/>
+                        <PopoverArrow
+                          bg="#212121"
+                          border={'2px solid #212121'}
+                        />
                         <PopoverCloseButton
                           size={closeSize}
                           color="white"
@@ -524,8 +498,8 @@ const ChartWrapper = ({
                       </PopoverContent>
                     </Popover>
                   </Box>
-                  )}
-                </motion.div>
+                )}
+              </motion.div>
               {chartLayout !== 3 && isLargerThan768 && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0 }}
@@ -537,20 +511,20 @@ const ChartWrapper = ({
                     borderColor="#3D5A80"
                     borderRadius="lg"
                     px={2}
-                    py={.5}
+                    py={0.5}
                     mr={2}
                     bg={'#cee8ff'}
                     color={'black'}
                   >
                     <Tooltip label="Current Value">
                       <Text fontSize={fontSize}>
-                         {formatValue(mostRecentValue)}
+                        {formatValue(mostRecentValue)}
                       </Text>
                     </Tooltip>
                   </Box>
                 </motion.div>
               )}
-              </>
+            </>
             {/* // )} */}
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
@@ -562,7 +536,7 @@ const ChartWrapper = ({
                 borderColor="#3D5A80"
                 borderRadius="lg"
                 px={2}
-                py={.5}
+                py={0.5}
                 mr={2}
                 bg={'#cee8ff'}
                 color={'black'}
@@ -615,7 +589,11 @@ const ChartWrapper = ({
                                   : 'gray.100'
                               }
                               _hover={{ bg: '#3D5A80', color: 'white' }}
-                              color={currentTimePeriod === timePeriod ? 'white' : 'black'}
+                              color={
+                                currentTimePeriod === timePeriod
+                                  ? 'white'
+                                  : 'black'
+                              }
                               fontSize={fontSize}
                               flex="1 1 0" // Ensures buttons take equal space and grow
                               m={0} // Remove margin
@@ -632,51 +610,51 @@ const ChartWrapper = ({
             </motion.div>
             {chartLayout !== 3 && isLargerThan768 && (
               <>
-            <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.35 }}
-            >
-              <Tooltip label="Map">
-                <MotionIconButton
-                  id="step1"              
-                  icon={<FaMap />}
-                  variant="outline"
-                  color="black"
-                  size={iconSize}
-                  bg={'#cee8ff'}
-                  _hover={{ bg: '#cee8ff' }}
-                  onClick={toggleMap}
-                  border={'2px solid #3D5A80'}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  mr={2}
-                />
-              </Tooltip>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.35 }}
-            >
-              <Tooltip label="Change Chart Type">
-                <MotionIconButton
-                  id="step2"
-                  icon={getChartIcon()}
-                  variant="outline"
-                  color="#212121"
-                  size={iconSize}
-                  bg={'#cee8ff'}
-                  _hover={{ bg: '#cee8ff' }}
-                  onClick={() => handleChartTypeChange(chartID, chartType)}
-                  border={'2px solid #3D5A80'}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  mr={2}
-                />
-              </Tooltip>
-            </motion.div>
-            </>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 1, delay: 0.35 }}
+                >
+                  <Tooltip label="Map">
+                    <MotionIconButton
+                      id="step1"
+                      icon={<FaMap />}
+                      variant="outline"
+                      color="black"
+                      size={iconSize}
+                      bg={'#cee8ff'}
+                      _hover={{ bg: '#cee8ff' }}
+                      onClick={toggleMap}
+                      border={'2px solid #3D5A80'}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      mr={2}
+                    />
+                  </Tooltip>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 1, delay: 0.35 }}
+                >
+                  <Tooltip label="Change Chart Type">
+                    <MotionIconButton
+                      id="step2"
+                      icon={getChartIcon()}
+                      variant="outline"
+                      color="#212121"
+                      size={iconSize}
+                      bg={'#cee8ff'}
+                      _hover={{ bg: '#cee8ff' }}
+                      onClick={() => handleChartTypeChange(chartID, chartType)}
+                      border={'2px solid #3D5A80'}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      mr={2}
+                    />
+                  </Tooltip>
+                </motion.div>
+              </>
             )}
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
@@ -684,46 +662,48 @@ const ChartWrapper = ({
               transition={{ duration: 1, delay: 0.5 }}
             >
               <Tooltip label="Expand Chart">
-              <MotionIconButton
-                ref={expandButtonRef}
-                id="step3"
-                icon={<FaExpandAlt />}
-                variant="outline"
-                color="#212121"
-                size={iconSize}
-                bg={'#cee8ff'}
-                _hover={{ bg: '#cee8ff' }}
-                onClick={onOpen}  //  this line
-                border={'2px solid #3D5A80'}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              />
-              </Tooltip>
-            </motion.div>
-
-            {renderCloseButton() && <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.5 }}
-            >
-              <Tooltip label="Hide Chart">
                 <MotionIconButton
-                  id="step4"
-                  icon={<FaEyeSlash />}
+                  ref={expandButtonRef}
+                  id="step3"
+                  icon={<FaExpandAlt />}
                   variant="outline"
                   color="#212121"
                   size={iconSize}
                   bg={'#cee8ff'}
                   _hover={{ bg: '#cee8ff' }}
-                  onClick={() => handleMenuItemClick(metric)}
+                  onClick={onOpen} //  this line
                   border={'2px solid #3D5A80'}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  ml={2}
-                  mr={2}
                 />
               </Tooltip>
-            </motion.div>}
+            </motion.div>
+
+            {renderCloseButton() && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 0.5 }}
+              >
+                <Tooltip label="Hide Chart">
+                  <MotionIconButton
+                    id="step4"
+                    icon={<FaEyeSlash />}
+                    variant="outline"
+                    color="#212121"
+                    size={iconSize}
+                    bg={'#cee8ff'}
+                    _hover={{ bg: '#cee8ff' }}
+                    onClick={() => handleMenuItemClick(metric)}
+                    border={'2px solid #3D5A80'}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    ml={2}
+                    mr={2}
+                  />
+                </Tooltip>
+              </motion.div>
+            )}
           </Flex>
         </Flex>
         {showMap && (
