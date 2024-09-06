@@ -217,23 +217,27 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
   useEffect(() => {
     const fetchAdmin = async () => {
       try {
-        const data = await getAdminByEmail(userEmail);
-        setAdminId(data['data']['admin'][0]['id']);
-        setFirstName(data['data']['admin'][0]['firstname']);
-        setLastName(data['data']['admin'][0]['lastname']);
-        setPhone(data['data']['admin'][0]['phone']);
-        setEmail(data['data']['admin'][0]['email']);
-        setCompany(data['data']['admin'][0]['company']);
-        setThreshKill(data['data']['admin'][0]['thresh_kill']);
-        setUploadedImageUrl(data['data']['admin'][0]['profile_url']);
-        console.log(data);
+        const response = await axios.get(`/api/admin/${userEmail}`);
+        const data = response.data;
+  
+        setAdminId(data.id);
+        setFirstName(data.firstname);
+        setLastName(data.lastname);
+        setPhone(data.phone);
+        setEmail(data.email);
+        setCompany(data.company);
+        setThreshKill(data.thresh_kill);
+        setUploadedImageUrl(data.profile_url);
+  
+        console.log(data); // Logging the admin data
       } catch (error) {
-        console.log(error);
+        console.error('Error fetching admin by email:', error);
       }
     };
-
+  
     fetchAdmin();
-  }, []);
+  }, [userEmail]); // Add userEmail as a dependency so it updates when the email changes
+  
 
   const findLatestThreshold = metric => {
     const threshold = thresholds.find(threshold => threshold.metric === metric);
