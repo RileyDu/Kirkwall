@@ -1,14 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import {
-  getWeatherData,
-  getWatchdogData,
-  getRivercityData,
-  getImpriMedData,
-  // getAlerts,
-  // getLatestThreshold,
-  // getChartData,
-  getAlertsPerUserByMetric,
-} from '../Backend/Graphql_helper.js';
 import { useAuth } from './AuthComponents/AuthContext.js';
 import { CustomerSettings } from './Modular/CustomerSettings.js';
 import axios from 'axios';
@@ -479,7 +469,7 @@ export const WeatherDataProvider = ({ children }) => {
     }, 30000); // 30 seconds
 
     return () => clearInterval(intervalId); // Cleanup interval on component unmount
-  }, [getAlertsPerUserByMetric, currentUser]);
+  }, [currentUser]);
 
   useEffect(() => {
     if (Object.values(dataLoaded).some(loaded => loaded)) {
@@ -837,72 +827,88 @@ export const WeatherDataProvider = ({ children }) => {
 
   const fetchSpecificData = async (metric, timePeriod) => {
     try {
+      // Define the limit based on the time period
+      const limit = determineLimitBasedOnTimePeriod(timePeriod);
+  
       if (watchdogMetrics.includes(metric)) {
-        const response = await getWatchdogData(
-          metric,
-          watchdogDetermineLimitBasedOnTimePeriod(timePeriod)
-        );
+        // Fetch watchdog data using Axios
+        const response = await axios.get('/api/watchdog_data', {
+          params: {
+            type: metric, // type: 'temp' or 'hum'
+            limit: limit,
+          },
+        });
         switch (metric) {
           case 'temp':
-            setWatchdogTempData(response.data.watchdog_data);
+            setWatchdogTempData(response.data);
             break;
           case 'hum':
-            setWatchdogHumData(response.data.watchdog_data);
+            setWatchdogHumData(response.data);
             break;
           default:
             break;
         }
       } else if (rivercityMetrics.includes(metric)) {
-        const response = await getRivercityData(
-          metric,
-          rivercityDetermineLimitBasedOnTimePeriod(timePeriod)
-        );
+        // Fetch rivercity data using Axios
+        const response = await axios.get('/api/rivercity_data', {
+          params: {
+            type: metric, // type: 'rctemp' or 'humidity'
+            limit: limit,
+          },
+        });
         switch (metric) {
           case 'rctemp':
-            setRivercityTempData(response.data.rivercity_data);
+            setRivercityTempData(response.data);
             break;
           case 'humidity':
-            setRivercityHumData(response.data.rivercity_data);
+            setRivercityHumData(response.data);
             break;
           default:
             break;
         }
       } else if (weatherMetrics.includes(metric)) {
-        const response = await getWeatherData(
-          metric,
-          determineLimitBasedOnTimePeriod(timePeriod)
-        );
+        // Fetch weather data using Axios
+        const response = await axios.get('/api/weather_data', {
+          params: {
+            type: metric, // type: 'temperature', 'percent_humidity', 'wind_speed', etc.
+            limit: limit,
+          },
+        });
         switch (metric) {
           case 'temperature':
-            setTempData(response.data.weather_data);
-            // console.log('Temperature data:', response.data.weather_data);
+            setTempData(response.data);
             break;
           case 'percent_humidity':
-            setHumidityData(response.data.weather_data);
-            // console.log('Humidity data:', response.data.weather_data);
+            setHumidityData(response.data);
             break;
           case 'wind_speed':
-            setWindData(response.data.weather_data);
-            // console.log('Wind data:', response.data.weather_data);
+            setWindData(response.data);
             break;
           case 'rain_15_min_inches':
-            setRainfallData(response.data.weather_data);
-            // console.log('Rainfall data:', response.data.weather_data);
+            setRainfallData(response.data);
             break;
           case 'soil_moisture':
-            setSoilMoistureData(response.data.weather_data);
-            // console.log('Soil moisture data:', response.data.weather_data);
+            setSoilMoistureData(response.data);
             break;
           case 'leaf_wetness':
-            setLeafWetnessData(response.data.weather_data);
-            // console.log('Leaf wetness data:', response.data.weather_data);
+            setLeafWetnessData(response.data);
             break;
           default:
             break;
         }
       } else if (impriMedMetrics.includes(metric)) {
+        // Fetch impriMed data using Axios
+        const deveui = deveuiPerMetric[metric];
+        const response = await axios.get('/api/impriMed_data', {
+          params: {
+            deveui: deveui,
+            limit: limit,
+          },
+        });
+  
+        const latestData = response.data;
         const renameKeyToMetric = (data, metric) => {
-          return data.map(d => {
+          return data.map((d) => {
             const value = metric.endsWith('Temp') ? d.rctemp : d.humidity;
             return {
               [metric]: value,
@@ -910,85 +916,49 @@ export const WeatherDataProvider = ({ children }) => {
             };
           });
         };
-
-        // Usage example:
-        const deveui = deveuiPerMetric[metric];
-        const response = await getImpriMedData(
-          deveui,
-          rivercityDetermineLimitBasedOnTimePeriod(timePeriod)
-        );
-        const latestData = response.data.rivercity_data;
-
+  
         switch (metric) {
           case 'imFreezerOneTemp':
-            setImpriFreezerOneTempData(
-              renameKeyToMetric(latestData, 'imFreezerOneTemp')
-            );
+            setImpriFreezerOneTempData(renameKeyToMetric(latestData, 'imFreezerOneTemp'));
             break;
           case 'imFreezerOneHum':
-            setImpriFreezerOneHumData(
-              renameKeyToMetric(latestData, 'imFreezerOneHum')
-            );
+            setImpriFreezerOneHumData(renameKeyToMetric(latestData, 'imFreezerOneHum'));
             break;
           case 'imFreezerTwoTemp':
-            setImpriFreezerTwoTempData(
-              renameKeyToMetric(latestData, 'imFreezerTwoTemp')
-            );
+            setImpriFreezerTwoTempData(renameKeyToMetric(latestData, 'imFreezerTwoTemp'));
             break;
           case 'imFreezerTwoHum':
-            setImpriFreezerTwoHumData(
-              renameKeyToMetric(latestData, 'imFreezerTwoHum')
-            );
+            setImpriFreezerTwoHumData(renameKeyToMetric(latestData, 'imFreezerTwoHum'));
             break;
           case 'imFreezerThreeTemp':
-            setImpriFreezerThreeTempData(
-              renameKeyToMetric(latestData, 'imFreezerThreeTemp')
-            );
+            setImpriFreezerThreeTempData(renameKeyToMetric(latestData, 'imFreezerThreeTemp'));
             break;
           case 'imFreezerThreeHum':
-            setImpriFreezerThreeHumData(
-              renameKeyToMetric(latestData, 'imFreezerThreeHum')
-            );
+            setImpriFreezerThreeHumData(renameKeyToMetric(latestData, 'imFreezerThreeHum'));
             break;
           case 'imFridgeOneTemp':
-            setImpriFridgeOneTempData(
-              renameKeyToMetric(latestData, 'imFridgeOneTemp')
-            );
+            setImpriFridgeOneTempData(renameKeyToMetric(latestData, 'imFridgeOneTemp'));
             break;
           case 'imFridgeOneHum':
-            setImpriFridgeOneHumData(
-              renameKeyToMetric(latestData, 'imFridgeOneHum')
-            );
+            setImpriFridgeOneHumData(renameKeyToMetric(latestData, 'imFridgeOneHum'));
             break;
           case 'imFridgeTwoTemp':
-            setImpriFridgeTwoTempData(
-              renameKeyToMetric(latestData, 'imFridgeTwoTemp')
-            );
+            setImpriFridgeTwoTempData(renameKeyToMetric(latestData, 'imFridgeTwoTemp'));
             break;
           case 'imFridgeTwoHum':
-            setImpriFridgeTwoHumData(
-              renameKeyToMetric(latestData, 'imFridgeTwoHum')
-            );
+            setImpriFridgeTwoHumData(renameKeyToMetric(latestData, 'imFridgeTwoHum'));
             break;
           case 'imIncubatorOneTemp':
-            setImpriIncubatorOneTempData(
-              renameKeyToMetric(latestData, 'imIncubatorOneTemp')
-            );
+            setImpriIncubatorOneTempData(renameKeyToMetric(latestData, 'imIncubatorOneTemp'));
             break;
           case 'imIncubatorOneHum':
-            setImpriIncubatorOneHumData(
-              renameKeyToMetric(latestData, 'imIncubatorOneHum')
-            );
+            setImpriIncubatorOneHumData(renameKeyToMetric(latestData, 'imIncubatorOneHum'));
             break;
           case 'imIncubatorTwoTemp':
-            setImpriIncubatorTwoTempData(
-              renameKeyToMetric(latestData, 'imIncubatorTwoTemp')
-            );
+            setImpriIncubatorTwoTempData(renameKeyToMetric(latestData, 'imIncubatorTwoTemp'));
             break;
           case 'imIncubatorTwoHum':
-            setImpriIncubatorTwoHumData(
-              renameKeyToMetric(latestData, 'imIncubatorTwoHum')
-            );
+            setImpriIncubatorTwoHumData(renameKeyToMetric(latestData, 'imIncubatorTwoHum'));
             break;
           default:
             break;
@@ -1000,7 +970,7 @@ export const WeatherDataProvider = ({ children }) => {
       console.error(`Error fetching ${metric} data:`, error);
     }
   };
-
+  
   return (
     <WeatherDataContext.Provider
       value={{
