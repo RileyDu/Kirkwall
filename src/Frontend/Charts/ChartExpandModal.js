@@ -40,6 +40,9 @@ import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 import { format } from 'date-fns';
+import axios from 'axios'; // Import Axios
+
+
 
 // This is the modal that appears when a chart is expanded
 // It is a child of the ChartWrapper component
@@ -214,25 +217,27 @@ const ChartExpandModal = ({
     const timestamp = new Date().toISOString();
     const phoneNumbersString = phoneNumbers.join(', '); // Join phone numbers into a single string
     const emailsString = emailsForThreshold.join(', '); // Join emails into a single string
-
+  
     // Use the newTimeframe if it's available, otherwise use the cleared timeframe when pause is off
     console.log('threshKill', threshKill);
     console.log('newTimeframe', newTimeframe);
     console.log('timeframe', timeframe);
     const timeOfPause = threshKill ? newTimeframe || timeframe : null; // Ensure `null` when threshKill is off
     console.log('timeOfPause', timeOfPause);
-
+  
     try {
-      await createThreshold(
+      // Perform Axios POST request to create the threshold
+      await axios.post('/api/create_threshold', {
         metric,
-        parseFloat(highThreshold),
-        parseFloat(lowThreshold),
-        phoneNumbersString,
-        emailsString,
-        timestamp,
-        threshKill, // This will send the correct boolean
-        timeOfPause // This will be `null` when threshKill is off
-      );
+        high: parseFloat(highThreshold),
+        low: parseFloat(lowThreshold),
+        phone: phoneNumbersString,
+        email: emailsString,
+        timestamp: timestamp,
+        thresh_kill: threshKill, // Send the correct boolean
+        timeframe: timeOfPause, // Send `null` if `threshKill` is off
+      });
+  
       console.log('Alerts Set or Cleared');
     } catch (error) {
       console.error('Error creating threshold:', error);
@@ -240,6 +245,7 @@ const ChartExpandModal = ({
       setIsThresholdModalOpen(false);
     }
   };
+  
 
   const submitNewThresholdAfterPause = async () => {
     const timestamp = new Date().toISOString();
@@ -296,9 +302,9 @@ const ChartExpandModal = ({
   // Clear alerts for the selected metric
   // This function is called when the trash icon is clicked on an alert
   // Toast notifications are used to show the status of the alert deletion
-  const clearAlerts = async id => {
+  const clearAlerts = async (id) => {
     const toastId = 'delete-alert-toast';
-
+  
     // Show loading toast notification
     toast({
       id: toastId,
@@ -308,11 +314,14 @@ const ChartExpandModal = ({
       duration: null,
       isClosable: true,
     });
-
+  
     try {
-      await deleteAlert(id);
-      await fetchAlertsThreshold(); // Fetch alerts after deleting
-
+      // Perform Axios DELETE request to delete the alert
+      await axios.delete(`/api/delete_alert/${id}`);
+  
+      // Fetch alerts after deleting the alert
+      await fetchAlertsThreshold();
+  
       // Update the toast to success
       toast.update(toastId, {
         title: 'Alert deleted.',
@@ -323,7 +332,7 @@ const ChartExpandModal = ({
       });
     } catch (error) {
       console.error('Error deleting alert:', error);
-
+  
       // Update the toast to error
       toast.update(toastId, {
         title: 'Error deleting alert.',
@@ -334,6 +343,7 @@ const ChartExpandModal = ({
       });
     }
   };
+  
 
   const groupedAlerts =
     Array.isArray(alertsThreshold) &&
