@@ -17,16 +17,16 @@
   ],
   "rewrites": [
     {
-      "src": "/send-enquiry",
-      "dest": "src/NewBackend/ContactForm/SendEmail.mjs"
+      "source": "/send-enquiry",
+      "destination": "src/NewBackend/ContactForm/SendEmail.mjs"
     },
     {
-      "src": "/api/(.*)",
-      "dest": "src/NewBackend/server.js"
+      "source": "/api/(.*)",
+      "destination": "src/NewBackend/server.js"
     },
     {
-      "src": "/(.*)",
-      "dest": "/"
+      "source": "/(.*)",
+      "destination": "/"
     }
   ]
 }
