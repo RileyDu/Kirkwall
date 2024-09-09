@@ -2,12 +2,8 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import {
-  getWeatherData,
-  getWatchdogData,
-  getRivercityData,
   getLatestThreshold,
   createAlert,
-  getChartData,
   getImpriMedData,
   getAllAdmins,
   createThreshold,
@@ -15,6 +11,7 @@ import {
 import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
 import moment from 'moment-timezone';
+import axios from 'axios';
 
 console.log('Initializing script...');
 
@@ -79,8 +76,8 @@ const sendAlertToDB = async (metric, message, timestamp) => {
 const getLocationforAlert = async metric => {
   try {
     console.log('Getting location data for alert message...');
-    const response = await getChartData();
-    const charts = response.data.charts;
+    const response = await axios.get('http://localhost:3000/api/charts');
+    const charts = response.data;
     const location = charts.find(chart => chart.metric === metric)?.location;
     return location;
   } catch (error) {
@@ -260,15 +257,21 @@ const checkThresholds = async () => {
         case 'rain_15_min_inches':
         case 'soil_moisture':
         case 'leaf_wetness':
-          responseData = await getWeatherData('all', 1);
+          responseData = await axios.get(
+            `http://localhost:3000/api/weather_data?limit=1&type=${metric}`
+          );
           break;
         case 'temp':
         case 'hum':
-          responseData = await getWatchdogData('all', 1);
+          responseData = await axios.get(
+            `http://localhost:3000/api/watchdog_data?limit=1&type=${metric}`
+          );
           break;
         case 'rctemp':
         case 'humidity':
-          responseData = await getRivercityData('all', 1);
+          responseData = await axios.get(
+            `http://localhost:3000/api/rivercity_data?limit=1&type=${metric}`
+          )
           break;
 
         case 'imFreezerOneTemp':
