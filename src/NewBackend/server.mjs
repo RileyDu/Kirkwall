@@ -4,7 +4,6 @@ dotenv.config();
 import {
   getLatestThreshold,
   createAlert,
-  getAllAdmins,
   createThreshold,
 } from '../Backend/Graphql_helper.js';
 import twilio from 'twilio';
@@ -65,11 +64,16 @@ const sendEmailAlert = async (toEmails, subject, alertMessage) => {
 const sendAlertToDB = async (metric, message, timestamp) => {
   try {
     console.log(`Sending alert to database: ${message}`);
-    await createAlert(metric, message, timestamp);
+    await axios.post('http://localhost:3000/api/create_alert', {
+      metric: metric,
+      message: message,
+      timestamp: timestamp,
+    });
   } catch (error) {
     console.error('Error sending alert to database:', error);
   }
 };
+
 
 // Sensor locations for alert messages, more descriptive than the metric name in the email/SMS
 const getLocationforAlert = async metric => {
