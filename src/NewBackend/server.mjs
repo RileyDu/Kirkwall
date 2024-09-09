@@ -161,7 +161,8 @@ const checkThresholds = async () => {
   try {
     const thresholds = await getLatestThreshold();
     const latestThresholds = getLatestThresholds(thresholds.data.thresholds);
-    const admins = await getAllAdmins();
+    const admins = await axios.get('http://localhost:3000/api/admins');
+    
 
     for (const threshold of latestThresholds) {
       const {
@@ -175,19 +176,31 @@ const checkThresholds = async () => {
         timeframe,
         timestamp,
       } = threshold;
+    
+      // Split and trim emails and phone numbers
       const emails = email ? email.split(',').map(em => em.trim()) : [];
-      const adminThreshKill = emails.some(email => {
-        const admin = admins.data.admin.find(admin => admin.email === email);
+      const phones = phone ? phone.split(',').map(ph => ph.trim()) : [];
+    
+      // Check if any admin matches for the threshold alert credentials email or phone and has thresh_kill set to true
+      const adminThreshKillByEmail = emails.some(email => {
+        const admin = admins.data.find(admin => admin.email === email);
         return admin && admin.thresh_kill;
       });
-
-      if (adminThreshKill) {
+    
+      const adminThreshKillByPhone = phones.some(phone => {
+        const admin = admins.data.find(admin => admin.phone === phone);
+        return admin && admin.thresh_kill;
+      });
+    
+      // If either email or phone returns true for thresh_kill, skip the threshold check
+      if (adminThreshKillByEmail || adminThreshKillByPhone) {
         console.log(
           `Skipping threshold check for ${metric} due to admin-level thresh_kill.`
         );
         continue;
       }
-
+    
+    
       // Check individual threshold killswitch and timeframe
       if (thresh_kill && timeframe) {
         const timePeriodDuration = parseTimeframeToDuration(timeframe); // Use new parser
