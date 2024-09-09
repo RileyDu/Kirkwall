@@ -4,7 +4,6 @@ dotenv.config();
 import {
   getLatestThreshold,
   createAlert,
-  getImpriMedData,
   getAllAdmins,
   createThreshold,
 } from '../Backend/Graphql_helper.js';
@@ -101,7 +100,6 @@ const extractCurrentValue = (response, metric) => {
   console.error('Invalid response structure:', response);
   return null;
 };
-
 
 // Get the latest thresholds for each metric
 const getLatestThresholds = thresholds => {
@@ -248,6 +246,7 @@ const checkThresholds = async () => {
       let responseData;
       let response;
       let formattedData;
+
       switch (metric) {
         case 'temperature':
         case 'percent_humidity':
@@ -259,109 +258,139 @@ const checkThresholds = async () => {
             `http://localhost:3000/api/weather_data?limit=1`
           );
           break;
+
         case 'temp':
         case 'hum':
           responseData = await axios.get(
             `http://localhost:3000/api/watchdog_data?limit=1`
           );
           break;
+
         case 'rctemp':
         case 'humidity':
           responseData = await axios.get(
             `http://localhost:3000/api/rivercity_data?limit=1`
-          )
+          );
           break;
 
         case 'imFreezerOneTemp':
-          response = await getImpriMedData("deveui = '0080E1150618C9DE'", 1);
-          formattedData = response.data.rivercity_data;
+          response = await axios.get(
+            `http://localhost:3000/api/impriMed_data?deveui=0080E1150618C9DE&limit=1`
+          );
+          formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerOneTemp');
           break;
 
         case 'imFreezerOneHum':
-          response = await getImpriMedData("deveui = '0080E1150618C9DE'", 1);
-          formattedData = response.data.rivercity_data;
+          response = await axios.get(
+            `http://localhost:3000/api/impriMed_data?deveui=0080E1150618C9DE&limit=1`
+          );
+          formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerOneHum');
           break;
 
         case 'imFreezerTwoTemp':
-          response = await getImpriMedData("deveui = '0080E115054FC6DF'", 1);
-          formattedData = response.data.rivercity_data;
+          response = await axios.get(
+            `http://localhost:3000/api/impriMed_data?deveui=0080E115054FC6DF&limit=1`
+          );
+          formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerTwoTemp');
           break;
 
         case 'imFreezerTwoHum':
-          response = await getImpriMedData("deveui = '0080E115054FC6DF'", 1);
-          formattedData = response.data.rivercity_data;
+          response = await axios.get(
+            `http://localhost:3000/api/impriMed_data?deveui=0080E115054FC6DF&limit=1`
+          );
+          formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerTwoHum');
           break;
 
         case 'imFreezerThreeTemp':
-          response = await getImpriMedData("deveui = '0080E1150618B549'", 1);
-          formattedData = response.data.rivercity_data;
+          response = await axios.get(
+            `http://localhost:3000/api/impriMed_data?deveui=0080E1150618B549&limit=1`
+          );
+          formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerThreeTemp');
           break;
 
         case 'imFreezerThreeHum':
-          response = await getImpriMedData("deveui = '0080E1150618B549'", 1);
-          formattedData = response.data.rivercity_data;
+          response = await axios.get(
+            `http://localhost:3000/api/impriMed_data?deveui=0080E1150618B549&limit=1`
+          );
+          formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerThreeHum');
           break;
 
         case 'imFridgeOneTemp':
-          response = await getImpriMedData("deveui = '0080E1150619155F'", 1);
-          formattedData = response.data.rivercity_data;
+          response = await axios.get(
+            `http://localhost:3000/api/impriMed_data?deveui=0080E1150619155F&limit=1`
+          );
+          formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFridgeOneTemp');
           break;
 
         case 'imFridgeOneHum':
-          response = await getImpriMedData("deveui = '0080E1150619155F'", 1);
-          formattedData = response.data.rivercity_data;
+          response = await axios.get(
+            `http://localhost:3000/api/impriMed_data?deveui=0080E1150619155F&limit=1`
+          );
+          formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFridgeOneHum');
           break;
 
         case 'imFridgeTwoTemp':
-          response = await getImpriMedData("deveui = '0080E115061924EA'", 1);
-          formattedData = response.data.rivercity_data;
+          response = await axios.get(
+            `http://localhost:3000/api/impriMed_data?deveui=0080E115061924EA&limit=1`
+          );
+          formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFridgeTwoTemp');
           break;
 
         case 'imFridgeTwoHum':
-          response = await getImpriMedData("deveui = '0080E115061924EA'", 1);
-          formattedData = response.data.rivercity_data;
+          response = await axios.get(
+            `http://localhost:3000/api/impriMed_data?deveui=0080E115061924EA&limit=1`
+          );
+          formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFridgeTwoHum');
           break;
 
         case 'imIncubatorOneTemp':
-          response = await getImpriMedData("deveui = '0080E115054FF1DC'", 1);
-          formattedData = response.data.rivercity_data;
+          response = await axios.get(
+            `http://localhost:3000/api/impriMed_data?deveui=0080E115054FF1DC&limit=1`
+          );
+          formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imIncubatorOneTemp');
           break;
 
         case 'imIncubatorOneHum':
-          response = await getImpriMedData("deveui = '0080E115054FF1DC'", 1);
-          formattedData = response.data.rivercity_data;
+          response = await axios.get(
+            `http://localhost:3000/api/impriMed_data?deveui=0080E115054FF1DC&limit=1`
+          );
+          formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imIncubatorOneHum');
           break;
 
         case 'imIncubatorTwoTemp':
-          response = await getImpriMedData("deveui = '0080E1150618B45F'", 1);
-          formattedData = response.data.rivercity_data;
+          response = await axios.get(
+            `http://localhost:3000/api/impriMed_data?deveui=0080E1150618B45F&limit=1`
+          );
+          formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imIncubatorTwoTemp');
           break;
 
         case 'imIncubatorTwoHum':
-          response = await getImpriMedData("deveui = '0080E1150618B45F'", 1);
-          formattedData = response.data.rivercity_data;
+          response = await axios.get(
+            `http://localhost:3000/api/impriMed_data?deveui=0080E1150618B45F&limit=1`
+          );
+          formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imIncubatorTwoHum');
           break;
 
         default:
           console.error('Invalid metric:', metric);
-          continue;
       }
+
       // console.log('Response data:', responseData);
-      
+
       const currentValue = extractCurrentValue(responseData, metric);
       const { label, addSpace } = getLabelForMetric(metric);
       const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
