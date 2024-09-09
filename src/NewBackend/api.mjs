@@ -1,11 +1,17 @@
-const express = require('express');
-const axios = require('axios');
-const { Client } = require('pg'); // PostgreSQL client
-const cors = require('cors'); // Import cors package
-require('dotenv').config(); // Load environment variables
+// const express = require('express');
+// const axios = require('axios');
+// const { Client } = require('pg'); // PostgreSQL client
+// const cors = require('cors'); // Import cors package
+// require('dotenv').config(); // Load environment variables
 const port = process.env.PORT || 3000;
 const app = express();
 
+import dotenv from 'dotenv';
+dotenv.config();
+import express from 'express';
+import pkg from 'pg';
+import cors from 'cors';
+const { Client } = pkg; // PostgreSQL client
 
 if (process.env.NODE_ENV === 'production') {
   console.log('Running in production');
@@ -350,4 +356,3 @@ app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
 
-module.exports = app;

@@ -9,7 +9,7 @@
       }
     },
     {
-      "src": "src/NewBackend/server.js",
+      "src": "src/NewBackend/api.mjs",
       "use": "@vercel/node"
     },
     {
@@ -17,22 +17,18 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)", 
-      "dest": "/src/NewBackend/server.js" 
+      "source": "/api/(.*)",
+      "destination": "/src/NewBackend/api.mjs"
     },
     {
-      "src": "/send-enquiry",      
-      "dest": "/src/NewBackend/ContactForm/SendEmail.mjs" 
+      "source": "/send-enquiry",
+      "destination": "/src/NewBackend/ContactForm/SendEmail.mjs"
     },
     {
-      "src": "/(.*)",  
-      "dest": "/index.html",       
-      "headers": {
-        "Accept": "text/html"
-      }
+      "source": "/(.*)",
+      "destination": "/"
     }
   ]
 }
-
