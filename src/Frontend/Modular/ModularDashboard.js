@@ -35,6 +35,7 @@ import { FaChevronDown } from 'react-icons/fa';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { keyframes } from '@emotion/react';
 import axios from 'axios'; // Import Axios
+import api from '../../api.js';
 
 import { motion, AnimatePresence } from 'framer-motion';
 const MotionBox = motion(Box);
@@ -173,7 +174,7 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
   
     try {
       // Perform Axios PUT request to update the chart
-      const response = await axios.put(`/api/update_chart/${id}`, updatedChartDetails);
+      const response = await api.put(`/api/update_chart/${id}`, updatedChartDetails);
   
       // Log the updated chart data returned from the server
       console.log('Updated chart:', response.data);

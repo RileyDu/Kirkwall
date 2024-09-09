@@ -2,7 +2,9 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthComponents/AuthContext.js';
 import { CustomerSettings } from './Modular/CustomerSettings.js';
 import axios from 'axios';
+import api from '../api.js';
 const WeatherDataContext = createContext();
+
 
 export const useWeatherData = () => {
   return useContext(WeatherDataContext);
@@ -177,7 +179,7 @@ export const WeatherDataProvider = ({ children }) => {
     console.log('Fetching data for deveui:', deveui);
 
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `http://localhost:3000/api/impriMed_data`,
         {
           params: {
@@ -303,7 +305,7 @@ export const WeatherDataProvider = ({ children }) => {
   useEffect(() => {
     const fetchThresholds = async () => {
       try {
-        const result = await axios.get('http://localhost:3000/api/thresholds');
+        const result = await api.get('http://localhost:3000/api/thresholds');
         if (Array.isArray(result.data)) {
           setThresholds(result.data);
         }
@@ -319,7 +321,7 @@ export const WeatherDataProvider = ({ children }) => {
   useEffect(() => {
     const fetchChartData = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/charts');
+        const response = await api.get('http://localhost:3000/api/charts');
         if (Array.isArray(response.data)) {
           setChartData(response.data);
         }
@@ -339,7 +341,7 @@ export const WeatherDataProvider = ({ children }) => {
       const fetchData = async () => {
         try {
           // Replace getWeatherData with axios call to the backend API
-          const response = await axios.get(
+          const response = await api.get(
             `http://localhost:3000/api/weather_data?limit=37`
           );
 
@@ -378,10 +380,10 @@ export const WeatherDataProvider = ({ children }) => {
         try {
           if (currentUser.email === 'test@kirkwall.io') {
             const [watchdogResponse, rivercityResponse] = await Promise.all([
-              axios.get('/api/watchdog_data', {
+              api.get('/api/watchdog_data', {
                 params: { type: 'all', limit: '19' },
               }),
-              axios.get('/api/rivercity_data', {
+              api.get('/api/rivercity_data', {
                 params: { type: 'all', limit: '19' },
               }),
             ]);
@@ -398,7 +400,7 @@ export const WeatherDataProvider = ({ children }) => {
               setRivercityData([]);
             }
           } else if (currentUser.email === 'trey@watchdogprotect.com') {
-            const watchdogResponse = await axios.get('/api/watchdog_data', {
+            const watchdogResponse = await api.get('/api/watchdog_data', {
               params: { type: 'all', limit: '19' },
             });
 
@@ -435,7 +437,7 @@ export const WeatherDataProvider = ({ children }) => {
     )?.metric;
 
     try {
-      const response = await axios.get('/api/alerts_per_user', {
+      const response = await api.get('/api/alerts_per_user', {
         params: {
           userMetrics, // Automatically serialized as query string
         },
@@ -832,7 +834,7 @@ export const WeatherDataProvider = ({ children }) => {
   
       if (watchdogMetrics.includes(metric)) {
         // Fetch watchdog data using Axios
-        const response = await axios.get('/api/watchdog_data', {
+        const response = await api.get('/api/watchdog_data', {
           params: {
             type: metric, // type: 'temp' or 'hum'
             limit: limit,
@@ -850,7 +852,7 @@ export const WeatherDataProvider = ({ children }) => {
         }
       } else if (rivercityMetrics.includes(metric)) {
         // Fetch rivercity data using Axios
-        const response = await axios.get('/api/rivercity_data', {
+        const response = await api.get('/api/rivercity_data', {
           params: {
             type: metric, // type: 'rctemp' or 'humidity'
             limit: limit,
@@ -868,7 +870,7 @@ export const WeatherDataProvider = ({ children }) => {
         }
       } else if (weatherMetrics.includes(metric)) {
         // Fetch weather data using Axios
-        const response = await axios.get('/api/weather_data', {
+        const response = await api.get('/api/weather_data', {
           params: {
             type: metric, // type: 'temperature', 'percent_humidity', 'wind_speed', etc.
             limit: limit,
@@ -899,7 +901,7 @@ export const WeatherDataProvider = ({ children }) => {
       } else if (impriMedMetrics.includes(metric)) {
         // Fetch impriMed data using Axios
         const deveui = deveuiPerMetric[metric];
-        const response = await axios.get('/api/impriMed_data', {
+        const response = await api.get('/api/impriMed_data', {
           params: {
             deveui: deveui,
             limit: limit,

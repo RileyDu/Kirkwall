@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // Import Axios
+import api from '../../api.js';
 
 const AddInformationFormModal = ({
   isOpen,
@@ -64,7 +65,7 @@ const AddInformationFormModal = ({
   const handleFormSubmit = async () => {
     try {
       // Perform Axios PUT request to update the admin
-      await axios.put(`/api/update_admin/${id}`, {
+      await api.put(`/api/update_admin/${id}`, {
         firstname: localFirstName,
         lastname: localLastName,
         email: localEmail,

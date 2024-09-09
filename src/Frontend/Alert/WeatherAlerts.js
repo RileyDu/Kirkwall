@@ -23,6 +23,7 @@ import {
   FormLabel,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import api from '../../api.js';
 import { FaChevronDown } from 'react-icons/fa';
 import { SettingsIcon } from '@chakra-ui/icons';
 import { useAuth } from '../AuthComponents/AuthContext.js';
@@ -64,7 +65,7 @@ function WeatherAlerts({ isVisible }) {
   const fetchWeatherAlerts = async () => {
     try {
       // console.log(`Fetching weather alerts for state: ${stateCode}`);
-      const response = await axios.get(
+      const response = await api.get(
         `https://api.weather.gov/alerts/active?area=${stateCode}`
       );
       // console.log('API response:', response.data);

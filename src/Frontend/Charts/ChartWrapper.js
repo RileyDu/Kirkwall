@@ -39,6 +39,7 @@ import { useAuth } from '../AuthComponents/AuthContext.js';
 import ImpriMiniMap from '../Maps/ImpriMiniMap.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import axios from 'axios';
+import api from '../../api.js';
 
 
 const ChartWrapper = ({
@@ -356,7 +357,7 @@ const ChartWrapper = ({
 
   const editChart = async (id, metric, timeperiod, type, location, hidden) => {
     try {
-      const result = await axios.put(`/api/update_chart/${id}`, {
+      const result = await api.put(`/api/update_chart/${id}`, {
         metric,
         timeperiod,
         type,

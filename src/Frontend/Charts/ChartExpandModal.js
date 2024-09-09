@@ -40,6 +40,7 @@ import { useWeatherData } from '../WeatherDataContext.js';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 import { format } from 'date-fns';
 import axios from 'axios'; // Import Axios
+import api from '../../api.js';
 
 
 
@@ -226,7 +227,7 @@ const ChartExpandModal = ({
   
     try {
       // Perform Axios POST request to create the threshold
-      await axios.post('/api/create_threshold', {
+      await api.post('/api/create_threshold', {
         metric,
         high: parseFloat(highThreshold),
         low: parseFloat(lowThreshold),
@@ -253,7 +254,7 @@ const ChartExpandModal = ({
   
     try {
       // Create a new threshold with `thresh_kill` set to false and `timeframe` set to null
-      await axios.post('/api/create_threshold', {
+      await api.post('/api/create_threshold', {
         metric,
         high: parseFloat(highThreshold),
         low: parseFloat(lowThreshold),
@@ -284,7 +285,7 @@ const ChartExpandModal = ({
   
     try {
       // Create a new threshold with empty values to clear the current threshold
-      await axios.post('/api/create_threshold', {
+      await api.post('/api/create_threshold', {
         metric,
         high: null, // Clear high threshold
         low: null, // Clear low threshold
@@ -320,7 +321,7 @@ const ChartExpandModal = ({
   
     try {
       // Perform Axios DELETE request to delete the alert
-      await axios.delete(`/api/delete_alert/${id}`);
+      await api.delete(`/api/delete_alert/${id}`);
   
       // Fetch alerts after deleting the alert
       await fetchAlertsThreshold();

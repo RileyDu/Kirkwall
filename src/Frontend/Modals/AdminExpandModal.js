@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import api from '../../api.js';
 import { Image } from 'cloudinary-react';
 import {
   Box,
@@ -97,7 +98,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     const fetchAlertsLastHour = async () => {
       setLoadingAlerts(true);
       try {
-        const response = await axios.get('/api/alerts_last_hour'); // Use Axios to call the new backend route
+        const response = await api.get('/api/alerts_last_hour'); // Use Axios to call the new backend route
         const result = response.data;
         console.log('result', result);
         if (result && result.length > 0) {
@@ -131,7 +132,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
 
     try {
       // Perform Axios POST request to create the threshold
-      await axios.post('/api/create_threshold', {
+      await api.post('/api/create_threshold', {
         metric,
         high: parseFloat(highThreshold),
         low: parseFloat(lowThreshold),
@@ -160,7 +161,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
 
     try {
       // Create a new threshold with empty values to clear the current threshold
-      await axios.post('/api/create_threshold', {
+      await api.post('/api/create_threshold', {
         metric,
         high: null, // Clear high threshold
         low: null, // Clear low threshold
@@ -186,7 +187,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
 
     try {
       // Upload image to Cloudinary
-      const cloudinaryResponse = await axios.post(
+      const cloudinaryResponse = await api.post(
         'https://api.cloudinary.com/v1_1/dklraztco/image/upload',
         formData
       );
@@ -196,7 +197,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
       const userId = adminId;
 
       // Send the updated profile URL and other admin data to the backend
-      const response = await axios.put(`/api/update_profile_url/${userId}`, {
+      const response = await api.put(`/api/update_profile_url/${userId}`, {
         firstname: firstName,
         lastname: lastName,
         email: email,
@@ -215,7 +216,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
   useEffect(() => {
     const fetchAdmin = async () => {
       try {
-        const response = await axios.get(`/api/admin/${userEmail}`);
+        const response = await api.get(`/api/admin/${userEmail}`);
         const data = response.data;
 
         setAdminId(data.id);
@@ -391,7 +392,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     try {
       const id = adminId;
       // Send the updated value to the database using Axios PUT request
-      await axios.put(`/api/update_admin/${id}`, {
+      await api.put(`/api/update_admin/${id}`, {
         firstname: firstName,
         lastname: lastName,
         email: email,
