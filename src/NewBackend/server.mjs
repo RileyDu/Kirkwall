@@ -3,8 +3,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 import {
   getLatestThreshold,
-  createAlert,
-  createThreshold,
 } from '../Backend/Graphql_helper.js';
 import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
@@ -226,16 +224,16 @@ const checkThresholds = async () => {
 
           const timestampNow = new Date().toISOString();
           try {
-            await createThreshold(
+            await axios.post('http://localhost:3000/api/create_threshold', {
               metric,
-              high,
-              low,
-              phone,
-              email,
-              timestampNow,
-              false, // Set thresh_kill to false
-              null // Clear the timeframe
-            );
+              high: high,
+              low: low,
+              phone: phone,
+              email: email,
+              timestamp: timestampNow,
+              thresh_kill: false, // Set thresh_kill to false
+              timeframe:null // Clear the timeframe
+            });
             console.log(
               `New threshold entry created for ${metric} with thresh_kill off and no timeframe.`
             );
