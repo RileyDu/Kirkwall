@@ -2,13 +2,15 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/NewBackend/server.js",
-      "use": "@vercel/node"
-    },
-    {
       "src": "package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "build" }
+      "config": {
+        "distDir": "build"
+      }
+    },
+    {
+      "src": "src/NewBackend/server.js",
+      "use": "@vercel/node"
     },
     {
       "src": "src/NewBackend/ContactForm/SendEmail.mjs",
@@ -26,7 +28,14 @@
     },
     {
       "source": "/(.*)",
-      "destination": "/"
+      "destination": "/index.html",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept",
+          "value": "text/html"
+        }
+      ]
     }
   ]
 }
