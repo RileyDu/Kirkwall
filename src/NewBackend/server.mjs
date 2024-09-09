@@ -161,8 +161,8 @@ const checkThresholds = async () => {
   const debounceTime = 5 * 60 * 1000; // 5 minutes in milliseconds
 
   try {
-    const thresholds = await getLatestThreshold();
-    const latestThresholds = getLatestThresholds(thresholds.data.thresholds);
+    const thresholds = await axios.get('http://localhost:3000/api/thresholds');
+    const latestThresholds = getLatestThresholds(thresholds.data);
     const admins = await axios.get('http://localhost:3000/api/admins');
     
 
