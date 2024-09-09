@@ -5,6 +5,7 @@ import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
 import moment from 'moment-timezone';
 import axios from 'axios';
+import api from '../api.js';
 
 console.log('Initializing script...');
 
@@ -59,7 +60,7 @@ const sendEmailAlert = async (toEmails, subject, alertMessage) => {
 const sendAlertToDB = async (metric, message, timestamp) => {
   try {
     console.log(`Sending alert to database: ${message}`);
-    await axios.post('http://localhost:3000/api/create_alert', {
+    await api.post('http://localhost:3000/api/create_alert', {
       metric: metric,
       message: message,
       timestamp: timestamp,
@@ -74,7 +75,7 @@ const sendAlertToDB = async (metric, message, timestamp) => {
 const getLocationforAlert = async metric => {
   try {
     console.log('Getting location data for alert message...');
-    const response = await axios.get('http://localhost:3000/api/charts');
+    const response = await api.get('http://localhost:3000/api/charts');
     const charts = response.data;
     const location = charts.find(chart => chart.metric === metric)?.location;
     return location;
@@ -158,9 +159,9 @@ const checkThresholds = async () => {
   const debounceTime = 5 * 60 * 1000; // 5 minutes in milliseconds
 
   try {
-    const thresholds = await axios.get('http://localhost:3000/api/thresholds');
+    const thresholds = await api.get('http://localhost:3000/api/thresholds');
     const latestThresholds = getLatestThresholds(thresholds.data);
-    const admins = await axios.get('http://localhost:3000/api/admins');
+    const admins = await api.get('http://localhost:3000/api/admins');
     
 
     for (const threshold of latestThresholds) {
@@ -221,7 +222,7 @@ const checkThresholds = async () => {
 
           const timestampNow = new Date().toISOString();
           try {
-            await axios.post('http://localhost:3000/api/create_threshold', {
+            await api.post('http://localhost:3000/api/create_threshold', {
               metric,
               high: high,
               low: low,
@@ -266,27 +267,27 @@ const checkThresholds = async () => {
         case 'rain_15_min_inches':
         case 'soil_moisture':
         case 'leaf_wetness':
-          responseData = await axios.get(
+          responseData = await api.get(
             `http://localhost:3000/api/weather_data?limit=1`
           );
           break;
 
         case 'temp':
         case 'hum':
-          responseData = await axios.get(
+          responseData = await api.get(
             `http://localhost:3000/api/watchdog_data?limit=1`
           );
           break;
 
         case 'rctemp':
         case 'humidity':
-          responseData = await axios.get(
+          responseData = await api.get(
             `http://localhost:3000/api/rivercity_data?limit=1`
           );
           break;
 
         case 'imFreezerOneTemp':
-          response = await axios.get(
+          response = await api.get(
             `http://localhost:3000/api/impriMed_data?deveui=0080E1150618C9DE&limit=1`
           );
           formattedData = response.data;
@@ -294,7 +295,7 @@ const checkThresholds = async () => {
           break;
 
         case 'imFreezerOneHum':
-          response = await axios.get(
+          response = await api.get(
             `http://localhost:3000/api/impriMed_data?deveui=0080E1150618C9DE&limit=1`
           );
           formattedData = response.data;
@@ -302,7 +303,7 @@ const checkThresholds = async () => {
           break;
 
         case 'imFreezerTwoTemp':
-          response = await axios.get(
+          response = await api.get(
             `http://localhost:3000/api/impriMed_data?deveui=0080E115054FC6DF&limit=1`
           );
           formattedData = response.data;
@@ -310,7 +311,7 @@ const checkThresholds = async () => {
           break;
 
         case 'imFreezerTwoHum':
-          response = await axios.get(
+          response = await api.get(
             `http://localhost:3000/api/impriMed_data?deveui=0080E115054FC6DF&limit=1`
           );
           formattedData = response.data;
@@ -318,7 +319,7 @@ const checkThresholds = async () => {
           break;
 
         case 'imFreezerThreeTemp':
-          response = await axios.get(
+          response = await api.get(
             `http://localhost:3000/api/impriMed_data?deveui=0080E1150618B549&limit=1`
           );
           formattedData = response.data;
@@ -326,7 +327,7 @@ const checkThresholds = async () => {
           break;
 
         case 'imFreezerThreeHum':
-          response = await axios.get(
+          response = await api.get(
             `http://localhost:3000/api/impriMed_data?deveui=0080E1150618B549&limit=1`
           );
           formattedData = response.data;
@@ -334,7 +335,7 @@ const checkThresholds = async () => {
           break;
 
         case 'imFridgeOneTemp':
-          response = await axios.get(
+          response = await api.get(
             `http://localhost:3000/api/impriMed_data?deveui=0080E1150619155F&limit=1`
           );
           formattedData = response.data;
@@ -342,7 +343,7 @@ const checkThresholds = async () => {
           break;
 
         case 'imFridgeOneHum':
-          response = await axios.get(
+          response = await api.get(
             `http://localhost:3000/api/impriMed_data?deveui=0080E1150619155F&limit=1`
           );
           formattedData = response.data;
@@ -350,7 +351,7 @@ const checkThresholds = async () => {
           break;
 
         case 'imFridgeTwoTemp':
-          response = await axios.get(
+          response = await api.get(
             `http://localhost:3000/api/impriMed_data?deveui=0080E115061924EA&limit=1`
           );
           formattedData = response.data;
@@ -358,7 +359,7 @@ const checkThresholds = async () => {
           break;
 
         case 'imFridgeTwoHum':
-          response = await axios.get(
+          response = await api.get(
             `http://localhost:3000/api/impriMed_data?deveui=0080E115061924EA&limit=1`
           );
           formattedData = response.data;
@@ -366,7 +367,7 @@ const checkThresholds = async () => {
           break;
 
         case 'imIncubatorOneTemp':
-          response = await axios.get(
+          response = await api.get(
             `http://localhost:3000/api/impriMed_data?deveui=0080E115054FF1DC&limit=1`
           );
           formattedData = response.data;
@@ -374,7 +375,7 @@ const checkThresholds = async () => {
           break;
 
         case 'imIncubatorOneHum':
-          response = await axios.get(
+          response = await api.get(
             `http://localhost:3000/api/impriMed_data?deveui=0080E115054FF1DC&limit=1`
           );
           formattedData = response.data;
@@ -382,7 +383,7 @@ const checkThresholds = async () => {
           break;
 
         case 'imIncubatorTwoTemp':
-          response = await axios.get(
+          response = await api.get(
             `http://localhost:3000/api/impriMed_data?deveui=0080E1150618B45F&limit=1`
           );
           formattedData = response.data;
@@ -390,7 +391,7 @@ const checkThresholds = async () => {
           break;
 
         case 'imIncubatorTwoHum':
-          response = await axios.get(
+          response = await api.get(
             `http://localhost:3000/api/impriMed_data?deveui=0080E1150618B45F&limit=1`
           );
           formattedData = response.data;
