@@ -4,7 +4,6 @@ dotenv.config();
 import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
 import moment from 'moment-timezone';
-import axios from 'axios';
 import api from '../api.js';
 
 console.log('Initializing script...');
