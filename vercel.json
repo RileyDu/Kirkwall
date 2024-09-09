@@ -15,7 +15,7 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
       "src": "/send-enquiry",
       "dest": "src/NewBackend/ContactForm/SendEmail.mjs"
