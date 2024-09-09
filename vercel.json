@@ -2,19 +2,27 @@
   "version": 2,
   "builds": [
     {
+      "src": "src/NewBackend/server.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": { "distDir": "build" }
     },
     {
-      "src": "src/Backend/ContactForm/SendEmail.mjs",
+      "src": "src/NewBackend/ContactForm/SendEmail.mjs",
       "use": "@vercel/node"
     }
   ],
-  "rewrites": [
+  "routes": [
     {
       "source": "/send-enquiry",
-      "destination": "src/Backend/ContactForm/SendEmail.mjs"
+      "destination": "src/NewBackend/ContactForm/SendEmail.mjs"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "src/NewBackend/server.js"
     },
     {
       "source": "/(.*)",
