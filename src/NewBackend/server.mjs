@@ -60,7 +60,7 @@ const sendEmailAlert = async (toEmails, subject, alertMessage) => {
 const sendAlertToDB = async (metric, message, timestamp) => {
   try {
     console.log(`Sending alert to database: ${message}`);
-    await api.post('http://localhost:3000/api/create_alert', {
+    await api.post('/api/create_alert', {
       metric: metric,
       message: message,
       timestamp: timestamp,
@@ -75,7 +75,7 @@ const sendAlertToDB = async (metric, message, timestamp) => {
 const getLocationforAlert = async metric => {
   try {
     console.log('Getting location data for alert message...');
-    const response = await api.get('http://localhost:3000/api/charts');
+    const response = await api.get('/api/charts');
     const charts = response.data;
     const location = charts.find(chart => chart.metric === metric)?.location;
     return location;
@@ -159,9 +159,9 @@ const checkThresholds = async () => {
   const debounceTime = 5 * 60 * 1000; // 5 minutes in milliseconds
 
   try {
-    const thresholds = await api.get('http://localhost:3000/api/thresholds');
+    const thresholds = await api.get('/api/thresholds');
     const latestThresholds = getLatestThresholds(thresholds.data);
-    const admins = await api.get('http://localhost:3000/api/admins');
+    const admins = await api.get('/api/admins');
     
 
     for (const threshold of latestThresholds) {
@@ -222,7 +222,7 @@ const checkThresholds = async () => {
 
           const timestampNow = new Date().toISOString();
           try {
-            await api.post('http://localhost:3000/api/create_threshold', {
+            await api.post('/api/create_threshold', {
               metric,
               high: high,
               low: low,
@@ -268,27 +268,27 @@ const checkThresholds = async () => {
         case 'soil_moisture':
         case 'leaf_wetness':
           responseData = await api.get(
-            `http://localhost:3000/api/weather_data?limit=1`
+            `/api/weather_data?limit=1`
           );
           break;
 
         case 'temp':
         case 'hum':
           responseData = await api.get(
-            `http://localhost:3000/api/watchdog_data?limit=1`
+            `/api/watchdog_data?limit=1`
           );
           break;
 
         case 'rctemp':
         case 'humidity':
           responseData = await api.get(
-            `http://localhost:3000/api/rivercity_data?limit=1`
+            `/api/rivercity_data?limit=1`
           );
           break;
 
         case 'imFreezerOneTemp':
           response = await api.get(
-            `http://localhost:3000/api/impriMed_data?deveui=0080E1150618C9DE&limit=1`
+            `/api/impriMed_data?deveui=0080E1150618C9DE&limit=1`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerOneTemp');
@@ -296,7 +296,7 @@ const checkThresholds = async () => {
 
         case 'imFreezerOneHum':
           response = await api.get(
-            `http://localhost:3000/api/impriMed_data?deveui=0080E1150618C9DE&limit=1`
+            `/api/impriMed_data?deveui=0080E1150618C9DE&limit=1`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerOneHum');
@@ -304,7 +304,7 @@ const checkThresholds = async () => {
 
         case 'imFreezerTwoTemp':
           response = await api.get(
-            `http://localhost:3000/api/impriMed_data?deveui=0080E115054FC6DF&limit=1`
+            `/api/impriMed_data?deveui=0080E115054FC6DF&limit=1`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerTwoTemp');
@@ -312,7 +312,7 @@ const checkThresholds = async () => {
 
         case 'imFreezerTwoHum':
           response = await api.get(
-            `http://localhost:3000/api/impriMed_data?deveui=0080E115054FC6DF&limit=1`
+            `/api/impriMed_data?deveui=0080E115054FC6DF&limit=1`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerTwoHum');
@@ -320,7 +320,7 @@ const checkThresholds = async () => {
 
         case 'imFreezerThreeTemp':
           response = await api.get(
-            `http://localhost:3000/api/impriMed_data?deveui=0080E1150618B549&limit=1`
+            `/api/impriMed_data?deveui=0080E1150618B549&limit=1`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerThreeTemp');
@@ -328,7 +328,7 @@ const checkThresholds = async () => {
 
         case 'imFreezerThreeHum':
           response = await api.get(
-            `http://localhost:3000/api/impriMed_data?deveui=0080E1150618B549&limit=1`
+            `/api/impriMed_data?deveui=0080E1150618B549&limit=1`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerThreeHum');
@@ -336,7 +336,7 @@ const checkThresholds = async () => {
 
         case 'imFridgeOneTemp':
           response = await api.get(
-            `http://localhost:3000/api/impriMed_data?deveui=0080E1150619155F&limit=1`
+            `/api/impriMed_data?deveui=0080E1150619155F&limit=1`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFridgeOneTemp');
@@ -344,7 +344,7 @@ const checkThresholds = async () => {
 
         case 'imFridgeOneHum':
           response = await api.get(
-            `http://localhost:3000/api/impriMed_data?deveui=0080E1150619155F&limit=1`
+            `api/impriMed_data?deveui=0080E1150619155F&limit=1`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFridgeOneHum');
@@ -352,7 +352,7 @@ const checkThresholds = async () => {
 
         case 'imFridgeTwoTemp':
           response = await api.get(
-            `http://localhost:3000/api/impriMed_data?deveui=0080E115061924EA&limit=1`
+            `api/impriMed_data?deveui=0080E115061924EA&limit=1`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFridgeTwoTemp');
@@ -360,7 +360,7 @@ const checkThresholds = async () => {
 
         case 'imFridgeTwoHum':
           response = await api.get(
-            `http://localhost:3000/api/impriMed_data?deveui=0080E115061924EA&limit=1`
+            `api/impriMed_data?deveui=0080E115061924EA&limit=1`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFridgeTwoHum');
@@ -368,7 +368,7 @@ const checkThresholds = async () => {
 
         case 'imIncubatorOneTemp':
           response = await api.get(
-            `http://localhost:3000/api/impriMed_data?deveui=0080E115054FF1DC&limit=1`
+            `/api/impriMed_data?deveui=0080E115054FF1DC&limit=1`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imIncubatorOneTemp');
@@ -376,7 +376,7 @@ const checkThresholds = async () => {
 
         case 'imIncubatorOneHum':
           response = await api.get(
-            `http://localhost:3000/api/impriMed_data?deveui=0080E115054FF1DC&limit=1`
+            `/api/impriMed_data?deveui=0080E115054FF1DC&limit=1`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imIncubatorOneHum');
@@ -384,7 +384,7 @@ const checkThresholds = async () => {
 
         case 'imIncubatorTwoTemp':
           response = await api.get(
-            `http://localhost:3000/api/impriMed_data?deveui=0080E1150618B45F&limit=1`
+            `/api/impriMed_data?deveui=0080E1150618B45F&limit=1`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imIncubatorTwoTemp');
@@ -392,7 +392,7 @@ const checkThresholds = async () => {
 
         case 'imIncubatorTwoHum':
           response = await api.get(
-            `http://localhost:3000/api/impriMed_data?deveui=0080E1150618B45F&limit=1`
+            `/api/impriMed_data?deveui=0080E1150618B45F&limit=1`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imIncubatorTwoHum');

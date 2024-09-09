@@ -180,7 +180,7 @@ export const WeatherDataProvider = ({ children }) => {
 
     try {
       const response = await api.get(
-        `http://localhost:3000/api/impriMed_data`,
+        `/api/impriMed_data`,
         {
           params: {
             limit: limit,
@@ -305,7 +305,7 @@ export const WeatherDataProvider = ({ children }) => {
   useEffect(() => {
     const fetchThresholds = async () => {
       try {
-        const result = await api.get('http://localhost:3000/api/thresholds');
+        const result = await api.get('/api/thresholds');
         if (Array.isArray(result.data)) {
           setThresholds(result.data);
         }
@@ -321,7 +321,7 @@ export const WeatherDataProvider = ({ children }) => {
   useEffect(() => {
     const fetchChartData = async () => {
       try {
-        const response = await api.get('http://localhost:3000/api/charts');
+        const response = await api.get('/api/charts');
         if (Array.isArray(response.data)) {
           setChartData(response.data);
         }
@@ -342,7 +342,7 @@ export const WeatherDataProvider = ({ children }) => {
         try {
           // Replace getWeatherData with axios call to the backend API
           const response = await api.get(
-            `http://localhost:3000/api/weather_data?limit=37`
+            `/api/weather_data?limit=37`
           );
 
           if (Array.isArray(response.data)) {
