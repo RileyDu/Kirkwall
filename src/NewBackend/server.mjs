@@ -88,22 +88,20 @@ const getLocationforAlert = async metric => {
 // Extract the current value of the metric from the response data
 const extractCurrentValue = (response, metric) => {
   if (Array.isArray(response)) {
+    // Directly return the first entry's metric value if the response is an array
     return response[0]?.[metric];
   }
 
   if (response && response.data) {
-    if (Array.isArray(response.data.weather_data)) {
-      return response.data.weather_data[0]?.[metric];
-    } else if (Array.isArray(response.data.watchdog_data)) {
-      return response.data.watchdog_data[0]?.[metric];
-    } else if (Array.isArray(response.data.rivercity_data)) {
-      return response.data.rivercity_data[0]?.[metric];
-    }
+    // If the response contains data (assuming it's not nested anymore)
+    return response.data[0]?.[metric];
   }
 
+  // Log the error if response structure doesn't match expected format
   console.error('Invalid response structure:', response);
   return null;
 };
+
 
 // Get the latest thresholds for each metric
 const getLatestThresholds = thresholds => {
@@ -258,19 +256,19 @@ const checkThresholds = async () => {
         case 'soil_moisture':
         case 'leaf_wetness':
           responseData = await axios.get(
-            `http://localhost:3000/api/weather_data?limit=1&type=${metric}`
+            `http://localhost:3000/api/weather_data?limit=1`
           );
           break;
         case 'temp':
         case 'hum':
           responseData = await axios.get(
-            `http://localhost:3000/api/watchdog_data?limit=1&type=${metric}`
+            `http://localhost:3000/api/watchdog_data?limit=1`
           );
           break;
         case 'rctemp':
         case 'humidity':
           responseData = await axios.get(
-            `http://localhost:3000/api/rivercity_data?limit=1&type=${metric}`
+            `http://localhost:3000/api/rivercity_data?limit=1`
           )
           break;
 
@@ -362,7 +360,8 @@ const checkThresholds = async () => {
           console.error('Invalid metric:', metric);
           continue;
       }
-
+      // console.log('Response data:', responseData);
+      
       const currentValue = extractCurrentValue(responseData, metric);
       const { label, addSpace } = getLabelForMetric(metric);
       const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
