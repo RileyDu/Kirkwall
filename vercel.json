@@ -26,7 +26,7 @@
     },
     {
       "source": "/(.*)",
-      "destination": "/"
+      "destination": "src/NewBackend/server.js"
     }
   ]
 }

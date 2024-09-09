@@ -3,9 +3,15 @@ const axios = require('axios');
 const { Client } = require('pg'); // PostgreSQL client
 const cors = require('cors'); // Import cors package
 require('dotenv').config(); // Load environment variables
-
-const app = express();
 const port = process.env.PORT || 3000;
+const app = express();
+
+
+if (process.env.NODE_ENV === 'production') {
+  console.log('Running in production');
+} else {
+  console.log('Running in development');
+}
 
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
