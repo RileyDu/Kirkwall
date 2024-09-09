@@ -7,7 +7,7 @@ import {
   getImpriMedData,
   getAllAdmins,
   createThreshold,
-} from './Graphql_helper.js';
+} from '../Backend/Graphql_helper.js';
 import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
 import moment from 'moment-timezone';
