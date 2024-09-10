@@ -23,7 +23,7 @@ import {
   FormLabel,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import api from '../../api.js';
+import api from '../services/api.js';
 import { FaChevronDown } from 'react-icons/fa';
 import { SettingsIcon } from '@chakra-ui/icons';
 import { useAuth } from '../AuthComponents/AuthContext.js';

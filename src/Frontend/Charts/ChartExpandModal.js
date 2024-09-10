@@ -40,7 +40,7 @@ import { useWeatherData } from '../WeatherDataContext.js';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 import { format } from 'date-fns';
 import axios from 'axios'; // Import Axios
-import api from '../../api.js';
+import api from '../services/api.js';
 
 
 

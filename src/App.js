@@ -9,7 +9,7 @@ import {
   IconButton
 } from '@chakra-ui/react';
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Route,
   Routes,
   useLocation,

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import api from '../../api.js';
+import api from '../services/api.js';
 import { Image } from 'cloudinary-react';
 import {
   Box,
@@ -216,7 +216,9 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
   useEffect(() => {
     const fetchAdmin = async () => {
       try {
-        const response = await api.get(`/api/admin/${userEmail}`);
+        const response = await api.get(`/api/admin_email`,{
+          email: userEmail
+        });
         const data = response.data;
 
         setAdminId(data.id);

@@ -35,7 +35,7 @@ import { FaChevronDown } from 'react-icons/fa';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { keyframes } from '@emotion/react';
 import axios from 'axios'; // Import Axios
-import api from '../../api.js';
+import api from '../services/api.js';
 
 import { motion, AnimatePresence } from 'framer-motion';
 const MotionBox = motion(Box);

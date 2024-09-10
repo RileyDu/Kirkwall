@@ -39,7 +39,7 @@ import { useAuth } from '../AuthComponents/AuthContext.js';
 import ImpriMiniMap from '../Maps/ImpriMiniMap.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import axios from 'axios';
-import api from '../../api.js';
+import api from '../services/api.js';
 
 
 const ChartWrapper = ({

@@ -19,8 +19,7 @@ import {
 import React, { useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useAuth } from '../AuthComponents/AuthContext.js';
-import axios from 'axios'; // Import Axios
-import api from '../../api.js';
+import api from '../services/api.js';
 import { FaFileUpload } from 'react-icons/fa';
 import { isDragActive } from 'framer-motion';
 

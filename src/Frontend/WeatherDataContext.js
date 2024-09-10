@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthComponents/AuthContext.js';
 import { CustomerSettings } from './Modular/CustomerSettings.js';
 import axios from 'axios';
-import api from '../api.js';
+import api from './services/api.js';
 const WeatherDataContext = createContext();
 
 

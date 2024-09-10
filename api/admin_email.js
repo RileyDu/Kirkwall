@@ -10,7 +10,7 @@ const client = new Client({
 client.connect();
 
 export default async function handler(req, res) {
-  const { email } = req.query;
+  const { email } = req.body;
   console.log('request received to get admin by email:', email);
   
   try {
