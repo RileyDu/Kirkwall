@@ -7,29 +7,16 @@
       "config": {
         "distDir": "build"
       }
-    },
-    {
-      "src": "src/NewBackend/api.mjs",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "src/NewBackend/ContactForm/SendEmail.mjs",
-      "use": "@vercel/node"
     }
   ],
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/src/NewBackend/api.mjs"
-    },
-    {
       "source": "/send-enquiry",
-      "destination": "/src/NewBackend/ContactForm/SendEmail.mjs"
+      "destination": "/api/ContactForm/SendEmail" 
     },
     {
       "source": "/(.*)",
-      "destination": "/"
-
+      "destination": "/" 
     }
   ]
 }
