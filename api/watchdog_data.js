@@ -11,7 +11,7 @@ client.connect();
 
 export default async function handler(req, res) {
   const { limit = 10, type = 'all' } = req.query;
-
+  console.log('request received to get watchdog data:', limit, type);
   let query = 'SELECT * FROM watchdog_data ORDER BY reading_time DESC LIMIT $1';
   
   if (type === 'temp') {

@@ -11,7 +11,8 @@ client.connect();
 
 export default async function handler(req, res) {
   const userMetrics = req.query.userMetrics; // Extract the userMetrics array from the query parameters
-
+  console.log('request received to get alerts per user metric:', userMetrics);
+  
   if (!Array.isArray(userMetrics)) {
     return res.status(400).json({ error: 'userMetrics should be an array of metrics' });
   }

@@ -12,6 +12,7 @@ client.connect();
 export default async function handler(req, res) {
   const { id } = req.query;
   const { firstname, lastname, email, phone, company, thresh_kill } = req.body;
+  console.log('request received to update admin:', id, firstname, lastname, email, phone, company, thresh_kill);
 
   const query = `
     UPDATE admin SET firstname = $1, lastname = $2, email = $3, phone = $4, company = $5, thresh_kill = $6

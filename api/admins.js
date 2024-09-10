@@ -10,6 +10,8 @@ const client = new Client({
 client.connect();
 
 export default async function handler(req, res) {
+  console.log('request received to get all admins');
+  
   try {
     const result = await client.query('SELECT * FROM admin');
     res.status(200).json(result.rows);

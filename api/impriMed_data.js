@@ -11,7 +11,7 @@ client.connect();
 
 export default async function handler(req, res) {
   const { deveui, limit = 10 } = req.query;
-  
+  console.log('request received to get ImpriMed data:', deveui, limit);
   const query = `
     SELECT rctemp, humidity, publishedat, deveui 
     FROM rivercity_data 

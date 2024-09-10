@@ -11,7 +11,7 @@ client.connect();
 
 export default async function handler(req, res) {
   const { id } = req.params;
-
+  console.log('request received to delete alert:', id);
   try {
     await client.query('DELETE FROM alerts WHERE id = $1', [id]);
     res.status(204).send();

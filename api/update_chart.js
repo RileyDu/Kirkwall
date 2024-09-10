@@ -12,7 +12,7 @@ client.connect();
 export default async function handler(req, res) {
   const { id } = req.query;
   const { metric, timeperiod, type, location, hidden } = req.body;
-
+  console.log('request received to update chart:', id, metric, timeperiod, type, location, hidden);
   const query = `
     UPDATE charts SET metric = $1, timeperiod = $2, type = $3, location = $4, hidden = $5
     WHERE id = $6

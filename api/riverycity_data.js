@@ -11,6 +11,7 @@ client.connect();
 
 export default async function handler(req, res) {
   const { limit = 10, type = 'all' } = req.query;
+  console.log('request received to get rivercity data:', limit, type);
   
   let query = 'SELECT * FROM rivercity_data WHERE deveui = $1 ORDER BY publishedat DESC LIMIT $2';
 

@@ -11,7 +11,7 @@ client.connect();
 
 export default async function handler(req, res) {
   const { metric, high, low, phone, email, timestamp, thresh_kill, timeframe } = req.body;
-
+  console.log('request received to create threshold:', metric, high, low, phone, email, timestamp, thresh_kill, timeframe);
   const query = `
     INSERT INTO thresholds (metric, high, low, phone, email, timestamp, thresh_kill, timeframe)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)

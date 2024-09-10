@@ -10,6 +10,7 @@ const client = new Client({
 client.connect();
 
 export default async function handler(req, res) {
+  console.log('request received to get alerts from last hour');
   const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
 
   const query = `

@@ -11,7 +11,7 @@ client.connect();
 
 export default async function handler(req, res) {
   const { metric, message, timestamp } = req.body;
-
+  console.log('request received to create alert:', metric, message, timestamp);
   const query = `
     INSERT INTO alerts (metric, message, timestamp)
     VALUES ($1, $2, $3)

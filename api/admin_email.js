@@ -11,7 +11,8 @@ client.connect();
 
 export default async function handler(req, res) {
   const { email } = req.query;
-
+  console.log('request received to get admin by email:', email);
+  
   try {
     const result = await client.query('SELECT * FROM admin WHERE email = $1', [email]);
     res.status(200).json(result.rows[0]);

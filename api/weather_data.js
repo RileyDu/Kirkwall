@@ -13,7 +13,7 @@ client.connect();
 
 export default async function handler(req, res) {
   const { limit = 10, type = 'all' } = req.query;
-
+  console.log('request received to get weather data:', limit, type);
   let query = 'SELECT * FROM weather_data WHERE stationid = $1 ORDER BY ts DESC LIMIT $2';
   
   if (type === 'temperature') {
