@@ -45,8 +45,8 @@ const Login = () => {
   const navigate = useNavigate();
   const showMobileLogo = useBreakpointValue({ base: true, md: false });
   const logoSrc = useBreakpointValue({
-    base: '/kirkwall_logo_1_white.png',
-    md: '/kirkwall_logo_1_white.png',
+    base: '/images/kirkwall_logo_1_white.png',
+    md: '/images/kirkwall_logo_1_white.png',
   });
 
   const validateEmail = email => {
