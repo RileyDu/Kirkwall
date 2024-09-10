@@ -175,7 +175,7 @@ const Sidebar = ({
         {isMinimized ? (
           <Box mb={'-4rem'} p="4" display="flex" justifyContent="center">
             <img
-              src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
+              src={`${process.env.PUBLIC_URL}/images/RookLogoWhite.png`}
               alt="kirkwall logo"
               style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
               onClick={() => navigate('/')}
@@ -185,7 +185,7 @@ const Sidebar = ({
           <motion.div>
             <Box ml={'2rem'}>
               <img
-                src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
+                src={`${process.env.PUBLIC_URL}/images/kirkwall_logo_1_white.png`}
                 alt="kirkwall logo"
                 style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
                 onClick={() => navigate('/')}
