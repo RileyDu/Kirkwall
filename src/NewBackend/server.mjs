@@ -1,9 +1,6 @@
 // checkThresholds.js
 import dotenv from 'dotenv';
 dotenv.config();
-import {
-  getLatestThreshold,
-} from '../Backend/Graphql_helper.js';
 import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
 import moment from 'moment-timezone';

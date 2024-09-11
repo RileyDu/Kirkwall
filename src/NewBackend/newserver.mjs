@@ -1,8 +1,11 @@
-const express = require('express');
-const axios = require('axios');
-const { Client } = require('pg'); // PostgreSQL client
-const cors = require('cors'); // Import cors package
-require('dotenv').config(); // Load environment variables
+import express from 'express';
+import pkg from 'pg';
+const { Client } = pkg; // ES module syntax
+import cors from 'cors'; // Import cors package
+import dotenv from 'dotenv';
+dotenv.config(); // Load environment variables
+import multer from 'multer';
+import sgMail from '@sendgrid/mail';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -336,6 +339,51 @@ app.put('/api/update_chart/:id', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while updating chart' });
   }
 });
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }
+});
+
+app.post('/send-enquiry', upload.array('attachments', 10), async (req, res) => {
+  const { fromEmail, title, description } = req.body;
+
+  if (!title || title.trim() === '') {
+      return res.status(400).send({ message: 'Title (subject) is required.' });
+  }
+
+  const attachments = req.files.map(file => ({
+      content: file.buffer.toString('base64'),
+      filename: file.originalname,
+      type: file.mimetype,
+      disposition: 'attachment',
+  }));
+
+  const msg = {
+      to: 'ujj.code@gmail.com',
+      from: {
+          name: 'Contact Form',
+          email: 'alerts@kirkwall.io'
+      },
+      subject: title,
+      text: description,
+      html: `<p>Problem Description: ${description}<br/>Contact customer at: ${fromEmail}</p>`,
+      attachments: attachments,
+  };
+
+  try {
+      await sgMail.send(msg);
+      console.log('Email sent successfully');
+      res.status(200).send({ message: 'Email sent successfully' });
+  } catch (error) {
+      console.error('Error sending email:', error);
+      if (error.response) {
+          console.error('Error response body:', error.response.body);
+      }
+      res.status(500).send({ message: 'Failed to send email' });
+  }
+});
+
 
 
 
