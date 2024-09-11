@@ -13,8 +13,8 @@
   ],
   "routes": [
     {
-      "source": "/(.*)",
-      "destination": "src/NewBackend/newserver.mjs"
+      "src": "/(.*)",
+      "dest": "src/NewBackend/newserver.mjs"
     }
   ]
 }
