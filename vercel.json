@@ -17,6 +17,18 @@
       "dest": "src/NewBackend/newserver.mjs"
     },
     {
+      "src": "/manifest.json",
+      "dest": "/build/manifest.json"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/build/favicon.ico"
+    },
+    {
+      "src": "/static/(.*)",
+      "dest": "/build/static/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
