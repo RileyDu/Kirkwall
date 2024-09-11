@@ -6,9 +6,15 @@ import dotenv from 'dotenv';
 dotenv.config(); // Load environment variables
 import multer from 'multer';
 import sgMail from '@sendgrid/mail';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+// Create the equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
@@ -25,7 +31,10 @@ client.connect()
 app.use(express.json());
 
 // Use CORS middleware
-app.use(cors()); // This will allow all origins to access the backend
+app.use(cors({
+  origin: process.env.FRONTEND_URL || '*'  // Use * for all origins or set a specific domain in production
+}));
+ // This will allow all origins to access the backend
 
 app.get('/api/weather_data', async (req, res) => {
   const { limit = 10, type = 'all' } = req.query;
@@ -384,10 +393,25 @@ app.post('/send-enquiry', upload.array('attachments', 10), async (req, res) => {
   }
 });
 
+// Serve the static files from the React app
+// app.use(express.static(join(__dirname, '../../build')));
 
-
-
-// Start the server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+// Catch-all route for other API requests
+app.get('/api/*', (req, res) => {
+  res.status(404).json({ error: 'API route not found' });
 });
+
+// All other requests are handled by CRA's index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../build', 'index.html'));
+});
+
+
+
+// // Start the server
+// app.listen(port, () => {
+//   console.log(`Server running on port ${port}`);
+// });
+
+// Export the app for Vercel
+export default app;
