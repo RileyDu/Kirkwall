@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthComponents/AuthContext.js';
 import { CustomerSettings } from './Modular/CustomerSettings.js';
 import axios from 'axios';
+import qs from 'qs';
 const WeatherDataContext = createContext();
 
 export const useWeatherData = () => {
@@ -437,7 +438,10 @@ export const WeatherDataProvider = ({ children }) => {
     try {
       const response = await axios.get('/api/alerts_per_user', {
         params: {
-          userMetrics, // Automatically serialized as query string
+          userMetrics: [...userMetrics],  // Ensure this is an array
+        },
+        paramsSerializer: params => {
+          return qs.stringify(params, { arrayFormat: 'repeat' });
         },
       });
 
