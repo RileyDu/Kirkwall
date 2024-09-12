@@ -6,12 +6,12 @@ import dotenv from 'dotenv';
 dotenv.config(); // Load environment variables
 import multer from 'multer';
 import sgMail from '@sendgrid/mail';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+// import { dirname, join } from 'path';
+// import { fileURLToPath } from 'url';
 
 // Create the equivalent of __dirname
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -31,10 +31,14 @@ client.connect()
 app.use(express.json());
 
 // Use CORS middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || '*'  // Use * for all origins or set a specific domain in production
-}));
+// app.use(cors({
+//   origin: process.env.FRONTEND_URL || '*'  // Use * for all origins or set a specific domain in production
+// }));
+app.use(cors());
  // This will allow all origins to access the backend
+
+ app.get("/", (req, res) => res.send("Express on Vercel"));
+
 
 app.get('/api/weather_data', async (req, res) => {
   const { limit = 10, type = 'all' } = req.query;
@@ -354,7 +358,7 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }
 });
 
-app.post('/send-enquiry', upload.array('attachments', 10), async (req, res) => {
+app.post('/api/send-enquiry', upload.array('attachments', 10), async (req, res) => {
   const { fromEmail, title, description } = req.body;
 
   if (!title || title.trim() === '') {
@@ -402,9 +406,9 @@ app.get('/api/*', (req, res) => {
 });
 
 // All other requests are handled by CRA's index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../build', 'index.html'));
-});
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../../build', 'index.html'));
+// });
 
 
 
