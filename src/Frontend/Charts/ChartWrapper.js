@@ -356,18 +356,29 @@ const ChartWrapper = ({
 
   const editChart = async (id, metric, timeperiod, type, location, hidden) => {
     try {
-      const result = await axios.put(`/api/update_chart/${id}`, {
-        metric,
-        timeperiod,
-        type,
-        location,
-        hidden,
-      });
+      console.log('Editing chart:', id, metric, timeperiod, type, location, hidden);
+      const result = await axios.put(
+        '/api/update_chart',
+        {
+          id,
+          metric,
+          timeperiod,
+          type,
+          location,
+          hidden,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
       console.log('Updated chart:', result);
     } catch (error) {
       console.error('Error updating chart:', error);
     }
   };
+  
 
   const handleChartEdit = () => {
     const id = chartDataForMetric?.id;

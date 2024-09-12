@@ -164,6 +164,7 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
     const chartDataForMetric = chartData.find(chart => chart.id === id);
   
     const updatedChartDetails = {
+      id: chartDataForMetric.id,
       metric: chartDataForMetric.metric,
       timeperiod: chartDataForMetric.timeperiod,
       type: chartDataForMetric.type,
@@ -172,9 +173,15 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
     };
   
     try {
+      console.log('Sending chart update:', updatedChartDetails);
+
       // Perform Axios PUT request to update the chart
-      const response = await axios.put(`/api/update_chart/${id}`, updatedChartDetails);
-  
+      const response = await axios.put(`/api/update_chart`, updatedChartDetails, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+        
       // Log the updated chart data returned from the server
       console.log('Updated chart:', response.data);
     } catch (error) {
