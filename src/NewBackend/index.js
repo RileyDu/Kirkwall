@@ -19,7 +19,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Middleware to parse incoming JSON
-app.use(express.json());
+// app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   console.log('Request Body:', req.body);  // Log the incoming request body
