@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config(); // Load environment variables
 import multer from 'multer';
 import sgMail from '@sendgrid/mail';
+import { checkThresholds } from './cron/checkThresholds.js'; // Import your cron logic
 
 
 const app = express();
@@ -464,6 +465,18 @@ app.post(
     }
   }
 );
+
+// New route for cron job
+app.get('/api/run-check-thresholds', async (req, res) => {
+  try {
+    await checkThresholds(); // Call your cron job logic
+    res.status(200).json({ message: 'Threshold check completed.' });
+  } catch (error) {
+    console.error('Error running threshold check:', error);
+    res.status(500).json({ error: 'Failed to run threshold check' });
+  }
+});
+
 
 // Serve the static files from the React app
 // app.use(express.static(join(__dirname, '../../build')));
