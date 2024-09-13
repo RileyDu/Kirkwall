@@ -15,14 +15,14 @@ const port = process.env.PORT || 5000;
 // Middleware to parse incoming JSON
 
 //FOR SOME REASONE THIS NEEDS TO BE COMMENTED OUT FOR LOCAL VERCEL DEV, BUT NEEDS TO EXIST FOR PROD
-app.use(express.json());  
+// app.use(express.json());  
 
 
 // app.use(express.urlencoded({ extended: true }));
-app.use((req, res, next) => {
-  console.log('Request Body:', req.body);  // Log the incoming request body
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log('Request Body:', req.body);  // Log the incoming request body
+//   next();
+// });
 
 
 // Use CORS middleware
@@ -39,7 +39,7 @@ const client = new Client({
 // Connect to PostgreSQL database
 client
   .connect()
-  .then(() => console.log('Connected to the PostgreSQL database'))
+  // .then(() => console.log('Connected to the PostgreSQL database'))
   .catch(err => console.error('Connection error', err.stack));
 
 // This will allow all origins to access the backend
