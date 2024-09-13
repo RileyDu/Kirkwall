@@ -6,14 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config(); // Load environment variables
 import multer from 'multer';
 import sgMail from '@sendgrid/mail';
-import rawBody from 'raw-body';
 
-// import { dirname, join } from 'path';
-// import { fileURLToPath } from 'url';
-
-// Create the equivalent of __dirname
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 5000;
