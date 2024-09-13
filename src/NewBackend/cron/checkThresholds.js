@@ -14,7 +14,6 @@ const checkThresholds = async () => {
   const authToken = process.env.TWILIO_AUTH_TOKEN;
   const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
 
-
   // Initialize the Twilio client
   const client = twilio(accountSid, authToken);
 
@@ -155,13 +154,13 @@ const checkThresholds = async () => {
 
   try {
     const admins = await axios.get(`${baseURL}/api/admins`);
-    console.log('Admins data:', admins.data);
+    // console.log('Admins data:', admins.data);
     const thresholds = await axios.get(`${baseURL}/api/thresholds`);
-    console.log('Thresholds data:', thresholds.data);
+    // console.log('Thresholds data:', thresholds.data);
     const latestThresholds = getLatestThresholds(thresholds.data);
 
     for (const threshold of latestThresholds) {
-        console.log('Processing threshold:', threshold);
+    //   console.log('Processing threshold:', threshold);
 
       const {
         id,
@@ -174,9 +173,10 @@ const checkThresholds = async () => {
         timeframe,
         timestamp,
       } = threshold;
-      
-      console.log(`Checking threshold for metric: ${metric}, high: ${high}, low: ${low}`);
 
+    //   console.log(
+    //     `Checking threshold for metric: ${metric}, high: ${high}, low: ${low}`
+    //   );
 
       // Split and trim emails and phone numbers
       const emails = email ? email.split(',').map(em => em.trim()) : [];
@@ -236,8 +236,8 @@ const checkThresholds = async () => {
               `New threshold entry created for ${metric} with thresh_kill off and no timeframe.`
             );
             console.log(
-                `Timestamp: ${timestampNow}, metric: ${metric}, high: ${high}, low: ${low}, phone: ${phone}, email: ${email}, thresh_kill: false, timeframe: null`
-              );
+              `Timestamp: ${timestampNow}, metric: ${metric}, high: ${high}, low: ${low}, phone: ${phone}, email: ${email}, thresh_kill: false, timeframe: null`
+            );
           } catch (error) {
             console.error('Error creating new threshold entry:', error);
           }
@@ -266,9 +266,7 @@ const checkThresholds = async () => {
         case 'rain_15_min_inches':
         case 'soil_moisture':
         case 'leaf_wetness':
-          responseData = await axios.get(
-            `${baseURL}/api/weather_data?limit=1`
-          );
+          responseData = await axios.get(`${baseURL}/api/weather_data?limit=1`);
           break;
 
         case 'temp':
@@ -432,27 +430,39 @@ const checkThresholds = async () => {
 
         lastAlertTimes[id] = now;
       };
-
-      if (high !== null && currentValue > high) {
-        console.log(
-          `${metric} High threshold exceeded: CURRENT = ${currentValue} // HIGH THRESHOLD = ${high}`
-        );
-        await sendAlert(
-          `Alert: The ${metric} value of ${formatValue(
-            currentValue
-          )} exceeds the high threshold of ${formatValue(high)}`
-        );
+      if (high !== null) {
+        if (currentValue > high) {
+          console.log(
+            `${metric} High threshold exceeded: CURRENT = ${currentValue} // HIGH THRESHOLD = ${high}`
+          );
+          await sendAlert(
+            `Alert: The ${metric} value of ${formatValue(
+              currentValue
+            )} exceeds the high threshold of ${formatValue(high)}`
+          );
+        } else {
+          console.log(
+            `${metric} High threshold NOT exceeded: CURRENT = ${currentValue} // HIGH THRESHOLD = ${high}`
+          );
+        }
       }
 
-      if (low !== null && currentValue < low) {
-        console.log(
-          `${metric} LOW threshold exceeded: CURRENT = ${currentValue} // LOW THRESHOLD = ${low}`
-        );
-        await sendAlert(
-          `Alert: The ${metric} value of ${formatValue(
-            currentValue
-          )} is below the low threshold of ${formatValue(low)}`
-        );
+      // Check if the current value is below the low threshold
+      if (low !== null) {
+        if (currentValue < low) {
+          console.log(
+            `${metric} LOW threshold exceeded: CURRENT = ${currentValue} // LOW THRESHOLD = ${low}`
+          );
+          await sendAlert(
+            `Alert: The ${metric} value of ${formatValue(
+              currentValue
+            )} is below the low threshold of ${formatValue(low)}`
+          );
+        } else {
+          console.log(
+            `${metric} LOW threshold NOT exceeded: CURRENT = ${currentValue} // LOW THRESHOLD = ${low}`
+          );
+        }
       }
     }
   } catch (error) {

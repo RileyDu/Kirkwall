@@ -134,7 +134,7 @@ app.get('/api/rivercity_data', async (req, res) => {
 app.get('/api/impriMed_data', async (req, res) => {
   const { deveui, limit = 10 } = req.query; // Get the device id (deveui) and limit from query parameters
 
-  console.log('Received deveui:', deveui, 'Limit:', limit); // Log deveui and limit
+  // console.log('Received deveui:', deveui, 'Limit:', limit); // Log deveui and limit
 
   try {
     const query = `
