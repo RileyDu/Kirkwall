@@ -19,18 +19,6 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.json());
 }
 
-
-// app.use(express.urlencoded({ extended: true }));
-// app.use((req, res, next) => {
-//   console.log('Request Body:', req.body);  // Log the incoming request body
-//   next();
-// });
-
-
-// Use CORS middleware
-// app.use(cors({
-//   origin: process.env.FRONTEND_URL || '*'  // Use * for all origins or set a specific domain in production
-// }));
 app.use(cors());
 
 const client = new Client({
