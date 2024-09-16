@@ -315,22 +315,22 @@ const ChartWrapper = ({
     }
   };
 
-  const showLoadingToast = () => {
-    toast({
-      title: 'Loading Data',
-      description: 'We are fetching the latest data for you.',
-      status: 'info',
-      duration: null, // Keeps the toast open until manually closed
-      isClosable: true,
-      size: 'lg',
-      position: 'top',
-    });
-  };
+  // const showLoadingToast = () => {
+  //   toast({
+  //     title: 'Loading Data',
+  //     description: 'We are fetching the latest data for you.',
+  //     status: 'info',
+  //     duration: null, // Keeps the toast open until manually closed
+  //     isClosable: true,
+  //     size: 'lg',
+  //     position: 'top',
+  //   });
+  // };
 
   const handleTimeButtonClick = async timePeriod => {
     if (timePeriod === currentTimePeriod) return; // Prevent fetching if the time period is already selected
 
-    showLoadingToast();
+    // showLoadingToast();
     setLoading(true);
 
     try {
