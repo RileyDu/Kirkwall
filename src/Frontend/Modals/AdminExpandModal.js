@@ -99,7 +99,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
       try {
         const response = await axios.get('/api/alerts_last_hour'); // Use Axios to call the new backend route
         const result = response.data;
-        console.log('result', result);
+        // console.log('result', result);
         if (result && result.length > 0) {
           // Filter alerts based on userConfig
           const userMetrics =
@@ -227,7 +227,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
         setThreshKill(data.thresh_kill);
         setUploadedImageUrl(data.profile_url);
 
-        console.log(data); // Logging the admin data
+        // console.log(data); // Logging the admin data
       } catch (error) {
         console.error('Error fetching admin by email:', error);
       }

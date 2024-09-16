@@ -761,82 +761,59 @@ export const WeatherDataProvider = ({ children }) => {
     'imIncubatorTwoHum',
   ];
 
-  const determineLimitBasedOnTimePeriod = timePeriod => {
-    // console.log('Determining limit for time period (weatherData):', timePeriod);
-    switch (timePeriod) {
-      case '1H':
-        return 13;
-      case '3H':
-        return 37;
-      case '6H':
-        return 73;
-      case '12H':
-        return 145;
-      case '1D':
-        return 289;
-      case '3D':
-        return 865;
-      case '1W':
-        return 2017;
-      default:
-        return 37;
-    }
-  };
+  const determineLimitBasedOnTimePeriod = (metric, timePeriod) => {
+    console.log(timePeriod, metric);
+    // Define the weather limits and the default limits
+    const weatherLimits = {
+      '1H': 13,
+      '3H': 37,
+      '6H': 73,
+      '12H': 145,
+      '1D': 289,
+      '3D': 865,
+      '1W': 2017,
+      default: 37,
+    };
+  
+    const defaultLimits = {
+      '1H': 7,
+      '3H': 19,
+      '6H': 37,
+      '12H': 73,
+      '1D': 145,
+      '3D': 217,
+      '1W': 1009,
+      default: 19,
+    };
+  
+    // Define all metric groups
+    const weatherMetrics = [
+      'temperature',
+      'percent_humidity',
+      'wind_speed',
+      'rain_15_min_inches',
+      'soil_moisture',
+      'leaf_wetness',
+    ];
 
-  const watchdogDetermineLimitBasedOnTimePeriod = timePeriod => {
-    // console.log(
-    //   'Determining limit for time period (watchdogData):',
-    //   timePeriod
-    // );
-    switch (timePeriod) {
-      case '1H':
-        return 7;
-      case '3H':
-        return 19;
-      case '6H':
-        return 37;
-      case '12H':
-        return 73;
-      case '1D':
-        return 145;
-      case '3D':
-        return 217;
-      case '1W':
-        return 1009;
-      default:
-        return 37;
+    // Determine which limits to use based on the metric
+    let limits;
+    if (weatherMetrics.includes(metric)) {
+      limits = weatherLimits;
+    } else {
+      limits = defaultLimits;
     }
+  
+    console.log(limits[timePeriod]);
+    // Return the appropriate limit based on the time period, or the default if time period is not found
+    return limits[timePeriod]
   };
-
-  const rivercityDetermineLimitBasedOnTimePeriod = timePeriod => {
-    // console.log(
-    //   'Determining limit for time period (rivercityData):',
-    //   timePeriod
-    // );
-    switch (timePeriod) {
-      case '1H':
-        return 7;
-      case '3H':
-        return 19;
-      case '6H':
-        return 37;
-      case '12H':
-        return 73;
-      case '1D':
-        return 145;
-      case '3D':
-        return 217;
-      case '1W':
-        return 1009;
-      default:
-        return 37;
-    }
-  };
+  
 
   const fetchSpecificData = async (metric, timePeriod) => {
     try {
       // Define the limit based on the time period
-      const limit = determineLimitBasedOnTimePeriod(timePeriod);
+      const limit = determineLimitBasedOnTimePeriod(metric, timePeriod);
   
       if (watchdogMetrics.includes(metric)) {
         // Fetch watchdog data using Axios
