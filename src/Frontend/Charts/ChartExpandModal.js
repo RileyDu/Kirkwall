@@ -41,8 +41,6 @@ import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 import { format } from 'date-fns';
 import axios from 'axios'; // Import Axios
 
-
-
 // This is the modal that appears when a chart is expanded
 // It is a child of the ChartWrapper component
 // It contains the chart, a mini dashboard, and a map, as well as the threshold settings & logs
@@ -216,14 +214,14 @@ const ChartExpandModal = ({
     const timestamp = new Date().toISOString();
     const phoneNumbersString = phoneNumbers.join(', '); // Join phone numbers into a single string
     const emailsString = emailsForThreshold.join(', '); // Join emails into a single string
-  
+
     // Use the newTimeframe if it's available, otherwise use the cleared timeframe when pause is off
     console.log('threshKill', threshKill);
     console.log('newTimeframe', newTimeframe);
     console.log('timeframe', timeframe);
     const timeOfPause = threshKill ? newTimeframe || timeframe : null; // Ensure `null` when threshKill is off
     console.log('timeOfPause', timeOfPause);
-  
+
     try {
       // Perform Axios POST request to create the threshold
       await axios.post('/api/create_threshold', {
@@ -236,7 +234,7 @@ const ChartExpandModal = ({
         thresh_kill: threshKill, // Send the correct boolean
         timeframe: timeOfPause, // Send `null` if `threshKill` is off
       });
-  
+
       console.log('Alerts Set or Cleared');
     } catch (error) {
       console.error('Error creating threshold:', error);
@@ -244,13 +242,12 @@ const ChartExpandModal = ({
       setIsThresholdModalOpen(false);
     }
   };
-  
 
   const submitNewThresholdAfterPause = async () => {
     const timestamp = new Date().toISOString();
     const phoneNumbersString = phoneNumbers.join(', ');
     const emailsString = emailsForThreshold.join(', ');
-  
+
     try {
       // Create a new threshold with `thresh_kill` set to false and `timeframe` set to null
       await axios.post('/api/create_threshold', {
@@ -281,7 +278,7 @@ const ChartExpandModal = ({
     setLowThreshold('');
     setPhoneNumbers([]);
     setEmailsForThreshold([]);
-  
+
     try {
       // Create a new threshold with empty values to clear the current threshold
       await axios.post('/api/create_threshold', {
@@ -305,9 +302,9 @@ const ChartExpandModal = ({
   // Clear alerts for the selected metric
   // This function is called when the trash icon is clicked on an alert
   // Toast notifications are used to show the status of the alert deletion
-  const clearAlerts = async (id) => {
+  const clearAlerts = async id => {
     const toastId = 'delete-alert-toast';
-  
+
     // Show loading toast notification
     toast({
       id: toastId,
@@ -317,14 +314,14 @@ const ChartExpandModal = ({
       duration: null,
       isClosable: true,
     });
-  
+
     try {
       // Perform Axios DELETE request to delete the alert
       await axios.delete(`/api/delete_alert/${id}`);
-  
+
       // Fetch alerts after deleting the alert
       await fetchAlertsThreshold();
-  
+
       // Update the toast to success
       toast.update(toastId, {
         title: 'Alert deleted.',
@@ -335,7 +332,7 @@ const ChartExpandModal = ({
       });
     } catch (error) {
       console.error('Error deleting alert:', error);
-  
+
       // Update the toast to error
       toast.update(toastId, {
         title: 'Error deleting alert.',
@@ -346,7 +343,6 @@ const ChartExpandModal = ({
       });
     }
   };
-  
 
   const groupedAlerts =
     Array.isArray(alertsThreshold) &&
@@ -481,59 +477,56 @@ const ChartExpandModal = ({
       console.error('Invalid timestamp or timeframe', { timestamp, timeframe });
       return null;
     }
-  
+
     // Handle timeframe if it's an object
     if (typeof timeframe === 'object') {
       // Assuming the object contains properties like { minutes: 1 }
       const { days = 0, hours = 0, minutes = 0, seconds = 0 } = timeframe;
       timeframe = `${hours}:${minutes}:${seconds}`;
     }
-  
+
     if (typeof timeframe !== 'string') {
       console.error('Invalid timeframe type, expected a string', { timeframe });
       return null;
     }
-  
+
     const timestampDate = new Date(timestamp);
     if (isNaN(timestampDate)) {
       console.error('Invalid timestamp format', { timestamp });
       return null;
     }
-  
+
     let days = 0;
     let hours = 0;
     let minutes = 0;
     let seconds = 0;
-  
+
     if (timeframe.includes('day')) {
       const dayMatch = timeframe.match(/(\d+) day/);
       if (dayMatch) {
         days = parseInt(dayMatch[1], 10);
       }
-  
+
       const timePart = timeframe.split(', ')[1];
       [hours, minutes, seconds] = timePart.split(':').map(Number);
     } else {
       [hours, minutes, seconds] = timeframe.split(':').map(Number);
     }
-  
+
     if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
       console.error('Invalid timeframe format', { timeframe });
       return null;
     }
-  
+
     const timeframeInMs =
       (days * 24 * 60 * 60 + hours * 60 * 60 + minutes * 60 + seconds) * 1000;
     const timeOfToggleDate = new Date(timestampDate.getTime() + timeframeInMs);
-  
+
     return {
       formatted: format(timeOfToggleDate, 'hh:mm a (MMM d)'),
       date: timeOfToggleDate,
     };
   };
-  
-  
-  
 
   return (
     <>
@@ -959,7 +952,7 @@ const ChartExpandModal = ({
                         handlePhoneNumberChange(e.target.value, index)
                       }
                       bg={'white'}
-                      border={'2px solid #fd9801'}
+                      border={'2px solid #3D5A80'}
                       color={'#212121'}
                       mr={2}
                     />
@@ -990,7 +983,7 @@ const ChartExpandModal = ({
                       value={email}
                       onChange={e => handleEmailChange(e.target.value, index)}
                       bg={'white'}
-                      border={'2px solid #fd9801'}
+                      border={'2px solid #3D5A80'}
                       color={'#212121'}
                       mr={2}
                     />
@@ -1019,7 +1012,7 @@ const ChartExpandModal = ({
                   value={highThreshold}
                   onChange={e => setHighThreshold(e.target.value)}
                   bg={'white'}
-                  border={'2px solid #fd9801'}
+                  border={'2px solid #3D5A80'}
                   color={'#212121'}
                 />
               </FormControl>
@@ -1030,7 +1023,7 @@ const ChartExpandModal = ({
                   value={lowThreshold}
                   onChange={e => setLowThreshold(e.target.value)}
                   bg={'white'}
-                  border={'2px solid #fd9801'}
+                  border={'2px solid #3D5A80'}
                   color={'#212121'}
                 />
               </FormControl>
@@ -1043,18 +1036,9 @@ const ChartExpandModal = ({
                 _hover={{ bg: 'red.500' }}
                 mr={3}
                 onClick={handleFormClear}
+                borderRadius={'full'}
               >
                 Clear Form
-              </Button>
-              <Button
-                variant="solid"
-                bg="orange.400"
-                color="white"
-                _hover={{ bg: 'orange.500' }}
-                mr={3}
-                onClick={handleFormSubmit}
-              >
-                Save
               </Button>
               <Button
                 variant="solid"
@@ -1062,8 +1046,13 @@ const ChartExpandModal = ({
                 color="white"
                 _hover={{ bg: 'gray.500' }}
                 onClick={handleCloseThresholdModal}
+                mr={3}
+                borderRadius={'full'}
               >
                 Cancel
+              </Button>
+              <Button variant="blue" color="black" onClick={handleFormSubmit}>
+                Save
               </Button>
             </ModalFooter>
           </ModalContent>

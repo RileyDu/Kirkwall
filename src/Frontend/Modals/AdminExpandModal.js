@@ -783,7 +783,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                       handlePhoneNumberChange(e.target.value, index)
                     }
                     bg={'white'}
-                    border={'2px solid #fd9801'}
+                    border={'2px solid #3D5A80'}
                     color={'#212121'}
                     mr={2}
                   />
@@ -815,7 +815,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                     value={email}
                     onChange={e => handleEmailChange(e.target.value, index)}
                     bg={'white'}
-                    border={'2px solid #fd9801'}
+                    border={'2px solid #3D5A80'}
                     color={'#212121'}
                     mr={2}
                   />
@@ -845,7 +845,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                 value={highThreshold}
                 onChange={e => setHighThreshold(e.target.value)}
                 bg={'white'}
-                border={'2px solid #fd9801'}
+                border={'2px solid #3D5A80'}
                 color={'#212121'}
               />
             </FormControl>
@@ -856,42 +856,38 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                 value={lowThreshold}
                 onChange={e => setLowThreshold(e.target.value)}
                 bg={'white'}
-                border={'2px solid #fd9801'}
+                border={'2px solid #3D5A80'}
                 color={'#212121'}
               />
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button
-              variant="solid"
-              bg="red.400"
-              color="white"
-              _hover={{ bg: 'red.500' }}
-              mr={3}
-              onClick={handleFormClear}
-            >
-              Clear Form
-            </Button>
-            <Button
-              variant="solid"
-              bg="orange.400"
-              color="white"
-              _hover={{ bg: 'orange.500' }}
-              mr={3}
-              onClick={handleFormSubmit}
-            >
-              Save
-            </Button>
-            <Button
-              variant="solid"
-              bg="gray.400"
-              color="white"
-              _hover={{ bg: 'gray.500' }}
-              onClick={handleCloseThresholdModal}
-            >
-              Cancel
-            </Button>
-          </ModalFooter>
+              <Button
+                variant="solid"
+                bg="red.400"
+                color="white"
+                _hover={{ bg: 'red.500' }}
+                mr={3}
+                onClick={handleFormClear}
+                borderRadius={'full'}
+              >
+                Clear Form
+              </Button>
+              <Button
+                variant="solid"
+                bg="gray.400"
+                color="white"
+                _hover={{ bg: 'gray.500' }}
+                onClick={handleCloseThresholdModal}
+                mr={3}
+                borderRadius={'full'}
+              >
+                Cancel
+              </Button>
+              <Button variant="blue" color="black" onClick={handleFormSubmit}>
+                Save
+              </Button>
+            </ModalFooter>
         </ModalContent>
       </Modal>
     </Box>

@@ -105,7 +105,7 @@ const AddInformationFormModal = ({
               value={localFirstName}
               onChange={(e) => setLocalFirstName(e.target.value)}
               bg={'white'}
-              border={'2px solid #fd9801'}
+              border={'2px solid #3D5A80'}
               color={'#212121'}
               
             />
@@ -117,7 +117,7 @@ const AddInformationFormModal = ({
               value={localLastName}
               onChange={(e) => setLocalLastName(e.target.value)}
               bg={'white'}
-              border={'2px solid #fd9801'}
+              border={'2px solid #3D5A80'}
               color={'#212121'}
             />
           </FormControl>
@@ -128,7 +128,7 @@ const AddInformationFormModal = ({
               value={localPhone}
               onChange={(e) => setLocalPhone(e.target.value)}
               bg={'white'}
-              border={'2px solid #fd9801'}
+              border={'2px solid #3D5A80'}
               color={'#212121'}
             />
           </FormControl>
@@ -140,7 +140,7 @@ const AddInformationFormModal = ({
               value={localEmail}
               onChange={(e) => setLocalEmail(e.target.value)}
               bg={'white'}
-              border={'2px solid #fd9801'}
+              border={'2px solid #3D5A80'}
               color={'#212121'}
             />
           </FormControl>
@@ -151,7 +151,7 @@ const AddInformationFormModal = ({
               value={localCompany}
               onChange={(e) => setLocalCompany(e.target.value)}
               bg={'white'}
-              border={'2px solid #fd9801'}
+              border={'2px solid #3D5A80'}
               color={'#212121'}
             />
           </FormControl>
@@ -164,18 +164,9 @@ const AddInformationFormModal = ({
             _hover={{ bg: 'red.500' }}
             mr={3}
             onClick={handleFormClear}
+            borderRadius='full'
           >
             Clear Form
-          </Button>
-          <Button
-            variant="solid"
-            bg="orange.400"
-            color="white"
-            _hover={{ bg: 'orange.500' }}
-            mr={3}
-            onClick={handleFormSubmit}
-          >
-            Save
           </Button>
           <Button
             variant="solid"
@@ -183,8 +174,17 @@ const AddInformationFormModal = ({
             color="white"
             _hover={{ bg: 'gray.500' }}
             onClick={onClose}
+            borderRadius='full'
+          mr={3}
           >
             Cancel
+          </Button>
+          <Button
+            variant="blue"
+            color="black"
+            onClick={handleFormSubmit}
+          >
+            Save
           </Button>
         </ModalFooter>
       </ModalContent>
