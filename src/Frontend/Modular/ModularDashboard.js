@@ -250,17 +250,13 @@ const handleMenuItemClick = async (metric) => {
                   color="white"
                   borderRadius="md"
                   border="2px solid"
-                  borderColor={colorMode === 'light' ? '#212121' : '#fd9801'}
+                  borderColor='#212121'
                 >
                   <PopoverArrow
                     borderTop={'2px solid'}
-                    borderTopColor={
-                      colorMode === 'light' ? '#212121' : '#fd9801'
-                    }
+                    borderTopColor='#212121'
                     borderLeft={'2px solid'}
-                    borderLeftColor={
-                      colorMode === 'light' ? '#212121' : '#fd9801'
-                    }
+                    borderLeftColor='#212121'
                   />
                   <PopoverBody>
                     <Flex justify="space-evenly">

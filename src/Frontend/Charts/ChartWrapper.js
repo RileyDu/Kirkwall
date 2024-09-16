@@ -64,6 +64,7 @@ const ChartWrapper = ({
   const [newTitle, setNewTitle] = useState(chartDataForMetric?.location);
   const [chartType, setChartType] = useState(chartDataForMetric?.type);
   const [chartID, setChartID] = useState(chartDataForMetric?.id);
+  const [isTitlePopoverOpen, setIsTitlePopoverOpen] = useState(false);
 
   // Function to handle chart type change and switch between bar and line chart
   // User can switch between bar and line chart by button click
@@ -190,6 +191,7 @@ const ChartWrapper = ({
 
   const handleTitleChange = e => setNewTitle(e.target.value);
   const handleTitleSubmit = () => {
+    setIsTitlePopoverOpen(false);
     setUserTitle(newTitle);
     handleChartEdit();
   };
@@ -437,9 +439,9 @@ const ChartWrapper = ({
                     bg={'#cee8ff'}
                     color={'black'}
                   >
-                    <Popover trigger="hover" placement="bottom">
+                    <Popover isOpen={isTitlePopoverOpen} onClose={() => setIsTitlePopoverOpen(false)} placement="bottom">
                       <PopoverTrigger>
-                        <Text fontSize={fontSize} cursor="pointer">
+                        <Text fontSize={fontSize} cursor="pointer" onClick={() => setIsTitlePopoverOpen(!isTitlePopoverOpen)}>
                           {newTitle || chartDataForMetric?.location}
                         </Text>
                       </PopoverTrigger>
