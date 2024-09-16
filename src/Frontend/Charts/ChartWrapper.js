@@ -471,7 +471,7 @@ const ChartWrapper = ({
                         </PopoverHeader>
                         <PopoverBody bg={'#cee8ff'}>
                           <Input
-                            value={newTitle}
+                            value={newTitle || chartDataForMetric?.location}
                             onChange={handleTitleChange}
                             sx={{
                               color: 'black',

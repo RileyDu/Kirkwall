@@ -47,7 +47,18 @@ const chartComponents = {
   // Add more chart types here as needed
 };
 
-const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour, runThresholdTour, setRunThresholdTour, setIsTourRunning, isTourRunning, activeChartID, setActiveChartID }) => {
+const ModularDashboard = ({
+  statusOfAlerts,
+  expandButtonRef,
+  runTour,
+  setRunTour,
+  runThresholdTour,
+  setRunThresholdTour,
+  setIsTourRunning,
+  isTourRunning,
+  activeChartID,
+  setActiveChartID,
+}) => {
   const [customerMetrics, setCustomerMetrics] = useState([]);
   const [customerName, setCustomerName] = useState('');
   const [metricSettings, setMetricSettings] = useState([]);
@@ -63,12 +74,16 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
   const { currentUser } = useAuth();
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
-  const { chartData, fetchChartData, setChartData, handleTimePeriodChange, loading } = useWeatherData();
-
-
+  const {
+    chartData,
+    fetchChartData,
+    setChartData,
+    handleTimePeriodChange,
+    loading,
+  } = useWeatherData();
 
   const sortChartDataPerCustomer = chartData => {
-    if (metricSettings.length > 0) {
+    if (chartData && metricSettings && metricSettings.length > 0) {
       const filteredData = chartData.filter(chart =>
         metricSettings.some(metric => metric.metric === chart.metric)
       );
@@ -92,7 +107,7 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
   }, [currentUser]);
 
   useEffect(() => {
-    if (customerMetrics.length > 0) {
+    if (customerMetrics && customerMetrics.length > 0) {
       const selectedMetrics = MetricSettings.filter(metric =>
         customerMetrics.includes(metric.metric)
       );
@@ -141,39 +156,51 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
     );
   }
 
-const handleMenuItemClick = async (metric) => {
-  // Toggle hidden state locally
-  setFilteredChartData((prevData) =>
-    prevData.map((chart) =>
-      chart.metric === metric ? { ...chart, hidden: !chart.hidden } : chart
-    )
-  );
-  console.log('Updated filteredChartData:', filteredChartData);
-
-  // Find chartData based on metric
-  const chartDataForMetric = chartData.find(chart => chart.metric === metric);
-  
-  if (chartDataForMetric) {
-    const updatedHiddenState = !chartDataForMetric.hidden;
-    
-    // Wait for the chart edit to complete before fetching new data
-    try {
-      await handleChartEdit(chartDataForMetric.id, updatedHiddenState);
-      console.log('Chart update successful, fetching new chart data...');
-      
-      // Fetch the updated chart data after the PUT request is successful
-      fetchChartData(setChartData);
-    } catch (error) {
-      console.error('Error updating chart:', error);
-    }
+  if (!chartData || metricSettings.length === 0 || filteredChartData.length === 0 || loading === true) {
+    return (
+      <Flex justify="center" align="center" height="100%">
+        <Box
+          as={FaChessRook}
+          animation={`${spin} infinite 2s linear`}
+          fontSize="6xl"
+          color={getLogoColor()}
+        />
+      </Flex>
+    );
   }
-};
 
+  const handleMenuItemClick = async metric => {
+    // Toggle hidden state locally
+    setFilteredChartData(prevData =>
+      prevData.map(chart =>
+        chart.metric === metric ? { ...chart, hidden: !chart.hidden } : chart
+      )
+    );
+    console.log('Updated filteredChartData:', filteredChartData);
+
+    // Find chartData based on metric
+    const chartDataForMetric = chartData.find(chart => chart.metric === metric);
+
+    if (chartDataForMetric) {
+      const updatedHiddenState = !chartDataForMetric.hidden;
+
+      // Wait for the chart edit to complete before fetching new data
+      try {
+        await handleChartEdit(chartDataForMetric.id, updatedHiddenState);
+        console.log('Chart update successful, fetching new chart data...');
+
+        // Fetch the updated chart data after the PUT request is successful
+        fetchChartData(setChartData);
+      } catch (error) {
+        console.error('Error updating chart:', error);
+      }
+    }
+  };
 
   const handleChartEdit = async (id, hidden) => {
     // Assuming you need to pass all the current metric settings to the backend
     const chartDataForMetric = chartData.find(chart => chart.id === id);
-  
+
     const updatedChartDetails = {
       id: chartDataForMetric.id,
       metric: chartDataForMetric.metric,
@@ -182,26 +209,29 @@ const handleMenuItemClick = async (metric) => {
       location: chartDataForMetric.location,
       hidden: hidden,
     };
-  
+
     try {
       console.log('Sending chart update:', updatedChartDetails);
 
       // Perform Axios PUT request to update the chart
-      const response = await axios.put(`/api/update_chart`, updatedChartDetails, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-        
+      const response = await axios.put(
+        `/api/update_chart`,
+        updatedChartDetails,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
       // Log the updated chart data returned from the server
       console.log('Updated chart:', response.data);
     } catch (error) {
       console.error('Error updating chart:', error);
     }
   };
-  
+
   return (
-    
     <Box
       bg={colorMode === 'light' ? '#FFFFFF' : 'gray.700'}
       color={colorMode === 'light' ? 'black' : 'white'}
@@ -250,13 +280,13 @@ const handleMenuItemClick = async (metric) => {
                   color="white"
                   borderRadius="md"
                   border="2px solid"
-                  borderColor='#212121'
+                  borderColor="#212121"
                 >
                   <PopoverArrow
                     borderTop={'2px solid'}
-                    borderTopColor='#212121'
+                    borderTopColor="#212121"
                     borderLeft={'2px solid'}
-                    borderLeftColor='#212121'
+                    borderLeftColor="#212121"
                   />
                   <PopoverBody>
                     <Flex justify="space-evenly">
@@ -346,9 +376,9 @@ const handleMenuItemClick = async (metric) => {
                     </Box>
                     <Checkbox
                       isChecked={
-                        !(filteredChartData?.find(
+                        !filteredChartData?.find(
                           chart => chart.metric === metric
-                        )?.hidden)
+                        )?.hidden
                       }
                       onChange={() => handleMenuItemClick(metric)}
                       colorScheme="green"
@@ -396,7 +426,7 @@ const handleMenuItemClick = async (metric) => {
                   {!isChartHidden && (
                     <MotionBox
                       layout // This will ensure smooth position transitions
-                      initial={{ opacity: 0, height: 'auto', scale: .5 }}
+                      initial={{ opacity: 0, height: 'auto', scale: 0.5 }}
                       animate={{ opacity: 1, height: 'auto', scale: 1 }}
                       exit={{ opacity: 0, height: 0, scale: 0 }}
                       transition={{ duration: 1 }}
@@ -424,7 +454,7 @@ const handleMenuItemClick = async (metric) => {
                           expandButtonRef={expandButtonRef}
                           runTour={runTour}
                           setRunTour={setRunTour}
-                          runThresholdTour={runThresholdTour} 
+                          runThresholdTour={runThresholdTour}
                           setRunThresholdTour={setRunThresholdTour}
                           isTourRunning={isTourRunning}
                           setIsTourRunning={setIsTourRunning}
