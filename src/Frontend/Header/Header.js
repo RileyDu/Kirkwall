@@ -246,7 +246,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                   <PopoverTrigger>
                     <Avatar
                       size="md"
-                      name="User Logo"
+                      name=""
                       src={
                         currentUser.email === 'pmo@grandfarm.com'
                           ? '/GrandFarmLogo.jpg'

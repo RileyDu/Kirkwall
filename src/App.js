@@ -93,8 +93,6 @@ const Layout = ({
   const [runTour, setRunTour] = useState(false);
 
 
-
-
   return (
     <Flex
       minH="100vh"
@@ -200,14 +198,8 @@ const MainApp = () => {
   const location = useLocation();
   const [showAlerts, setShowAlerts] = useState(false);
   const [runThresholdTour, setRunThresholdTour] = useState(false);
-  // const [isTourRunning, setIsTourRunning] = useState(false);
-  // const [activeChartID, setActiveChartID] = useState(null);
-
-
 
   const expandButtonRef = useRef(null);
-
-
   const startTourButtonRef = useRef(null); 
 
   const toggleAlerts = () => {
