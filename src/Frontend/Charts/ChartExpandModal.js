@@ -614,7 +614,7 @@ const ChartExpandModal = ({
               >
                 {/* // If the data is still loading, show a loading spinner */}
                 {loading ? (
-                  <CircularProgress isIndeterminate color="brand.800" />
+                  <CircularProgress isIndeterminate color="blue.400" />
                 ) : (
                   renderChart()
                 )}

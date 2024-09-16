@@ -390,29 +390,8 @@ const ChartWrapper = ({
     editChart(id, metric, timeperiod, type, location, hidden);
   };
 
-  // const [runTour, setRunTour] = useState(false);
   const [runModalTour, setRunModalTour] = useState(false);
 
-  //  const [runThresholdTour, setRunThresholdTour] = useState(false);
-
-  // const handleExpandChart = () => {
-  //   onOpen();
-  //   setRunThresholdTour(true); // Start the threshold tour
-  // };
-
-  // const [isTourRunning, setIsTourRunning] = useState(false);
-  // const [activeChartID, setActiveChartID] = useState(null);
-
-  // const handleJoyrideCallback = (data) => {
-  //   const { status } = data;
-  //   if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
-  //     setRunTour(false);
-  //   }
-  // };
-
-  // const startTour = () => {
-  //   setRunTour(true);
-  // };
 
   return (
     <>
@@ -486,7 +465,7 @@ const ChartWrapper = ({
                           fontWeight="bold"
                           color="white"
                         >
-                          EDIT TITLE{' '}
+                          EDIT TITLE
                         </PopoverHeader>
                         <PopoverBody bg={'#cee8ff'}>
                           <Input
