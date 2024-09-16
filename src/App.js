@@ -45,6 +45,7 @@ import OptionsModal from './Frontend/Modals/OptionsModal.js';
 import ModularDashboard from './Frontend/Modular/ModularDashboard.js';
 import FaqsModal from './Frontend/Modals/FaqsModal.js';
 import ModularSummary from './Frontend/Modular/ModularSummary.js';
+import RedirectBasedOnAuth from './Frontend/AuthComponents/RedirectBasedOnAuth.js';
 
 const Layout = ({
   children,
@@ -369,6 +370,7 @@ const MainApp = () => {
               </ProtectedRoute>
             }
           />
+            <Route path="*" element={<RedirectBasedOnAuth />} />
         </Routes>
       </Layout>
       <MobileMenu isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} />
