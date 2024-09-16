@@ -63,7 +63,7 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
   const { currentUser } = useAuth();
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
-  const { chartData, handleTimePeriodChange, loading } = useWeatherData();
+  const { chartData, fetchChartData, setChartData, handleTimePeriodChange, loading } = useWeatherData();
 
 
 
@@ -141,22 +141,33 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
     );
   }
 
-  const handleMenuItemClick = async metric => {
-    // Toggle hidden state locally
-    setFilteredChartData(prevData =>
-      prevData.map(chart =>
-        chart.metric === metric ? { ...chart, hidden: !chart.hidden } : chart
-      )
-    );
+const handleMenuItemClick = async (metric) => {
+  // Toggle hidden state locally
+  setFilteredChartData((prevData) =>
+    prevData.map((chart) =>
+      chart.metric === metric ? { ...chart, hidden: !chart.hidden } : chart
+    )
+  );
+  console.log('Updated filteredChartData:', filteredChartData);
 
-    const chartDataForMetric = chartData.find(chart => chart.metric === metric);
+  // Find chartData based on metric
+  const chartDataForMetric = chartData.find(chart => chart.metric === metric);
+  
+  if (chartDataForMetric) {
     const updatedHiddenState = !chartDataForMetric.hidden;
-
-    // Send update to backend
+    
+    // Wait for the chart edit to complete before fetching new data
     try {
       await handleChartEdit(chartDataForMetric.id, updatedHiddenState);
-    } catch (error) {}
-  };
+      console.log('Chart update successful, fetching new chart data...');
+      
+      // Fetch the updated chart data after the PUT request is successful
+      fetchChartData(setChartData);
+    } catch (error) {
+      console.error('Error updating chart:', error);
+    }
+  }
+};
 
 
   const handleChartEdit = async (id, hidden) => {
@@ -189,13 +200,7 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
     }
   };
   
-
-
-
-
   return (
-
-
     
     <Box
       bg={colorMode === 'light' ? '#FFFFFF' : 'gray.700'}
@@ -327,10 +332,11 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
               {customerMetrics.map((metric, index) => (
                 <MenuItem
                   key={metric}
-                  onClick={() => handleMenuItemClick(metric)}
+                  // onClick={() => handleMenuItemClick(metric)}
                   bg={index % 2 === 0 ? '#212121' : '#303030'} // Alternate between two colors
                   color="white"
                   border={'1px solid #212121'}
+                  cursor={'default'}
                 >
                   <Flex
                     alignItems="center"

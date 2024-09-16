@@ -317,19 +317,23 @@ export const WeatherDataProvider = ({ children }) => {
     fetchThresholds();
   }, []);
 
-  useEffect(() => {
-    const fetchChartData = async () => {
-      try {
-        const response = await axios.get('/api/charts');
-        if (Array.isArray(response.data)) {
-          setChartData(response.data);
-        }
-      } catch (error) {
-        console.error('Error fetching chart data:', error);
+  const fetchChartData = async (setChartData) => {
+    try {
+      const response = await axios.get('/api/charts');
+      if (Array.isArray(response.data)) {
+        setChartData(response.data);
       }
-    };
-    fetchChartData();
+    } catch (error) {
+      console.error('Error fetching chart data:', error);
+    }
+  };
+  
+  useEffect(() => {
+    // Call the exported function, passing in setChartData
+    fetchChartData(setChartData);
   }, []);
+
+
 
   useEffect(() => {
     if (
@@ -999,6 +1003,7 @@ export const WeatherDataProvider = ({ children }) => {
         fetchAlertsThreshold,
         chartData,
         setChartData,
+        fetchChartData,
         impriFreezerOneTempData,
         impriFreezerOneHumData,
         impriFreezerTwoTempData,
