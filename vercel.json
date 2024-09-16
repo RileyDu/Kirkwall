@@ -15,12 +15,12 @@
    ],
    "rewrites": [
       {
-         "source": "/(.*)",
-         "destination": "/"
-      },
-      {
          "source": "/api/(.*)",
          "destination": "src/NewBackend"
+      },
+      {
+         "source": "/(.*)",
+         "destination": "/"
       }
    ],
    "crons": [
