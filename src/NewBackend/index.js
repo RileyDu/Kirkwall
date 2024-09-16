@@ -44,22 +44,22 @@ app.get('/api/weather_data', async (req, res) => {
 
   if (type === 'temperature') {
     query =
-      'SELECT temperature, ts FROM weather_data WHERE stationid = $1 ORDER BY ts DESC LIMIT $2';
+      'SELECT temperature, message_timestamp, ts FROM weather_data WHERE stationid = $1 ORDER BY ts DESC LIMIT $2';
   } else if (type === 'rain_15_min_inches') {
     query =
-      'SELECT rain_15_min_inches, ts FROM weather_data WHERE stationid = $1 ORDER BY ts DESC LIMIT $2';
+      'SELECT rain_15_min_inches, message_timestamp, ts FROM weather_data WHERE stationid = $1 ORDER BY ts DESC LIMIT $2';
   } else if (type === 'percent_humidity') {
     query =
-      'SELECT percent_humidity, ts FROM weather_data WHERE stationid = $1 ORDER BY ts DESC LIMIT $2';
+      'SELECT percent_humidity, message_timestamp, ts FROM weather_data WHERE stationid = $1 ORDER BY ts DESC LIMIT $2';
   } else if (type === 'wind_speed') {
     query =
-      'SELECT wind_speed, wind_direction, ts FROM weather_data WHERE stationid = $1 ORDER BY ts DESC LIMIT $2';
+      'SELECT wind_speed, wind_direction, message_timestamp, ts FROM weather_data WHERE stationid = $1 ORDER BY ts DESC LIMIT $2';
   } else if (type === 'leaf_wetness') {
     query =
-      'SELECT leaf_wetness, ts FROM weather_data WHERE stationid = $1 ORDER BY ts DESC LIMIT $2';
+      'SELECT leaf_wetness, message_timestamp, ts FROM weather_data WHERE stationid = $1 ORDER BY ts DESC LIMIT $2';
   } else if (type === 'soil_moisture') {
     query =
-      'SELECT soil_moisture, ts FROM weather_data WHERE stationid = $1 ORDER BY ts DESC LIMIT $2';
+      'SELECT soil_moisture, message_timestamp, ts FROM weather_data WHERE stationid = $1 ORDER BY ts DESC LIMIT $2';
   }
 
   try {

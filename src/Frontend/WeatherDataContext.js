@@ -350,6 +350,7 @@ export const WeatherDataProvider = ({ children }) => {
 
           if (Array.isArray(response.data)) {
             setWeatherData(response.data); // Directly using the array returned by backend
+            console.log('Weather data:', response.data);
           } else {
             setWeatherData([]); // Fallback if data structure is unexpected
           }
@@ -862,6 +863,7 @@ export const WeatherDataProvider = ({ children }) => {
         switch (metric) {
           case 'temperature':
             setTempData(response.data);
+            console.log(response.data);
             break;
           case 'percent_humidity':
             setHumidityData(response.data);
