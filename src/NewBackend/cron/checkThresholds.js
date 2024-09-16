@@ -127,12 +127,12 @@ const checkThresholds = async () => {
       console.error('Timeframe is an object:', timeframe);
       timeframe = JSON.stringify(timeframe);
     }
-  
+
     console.log('Processing timeframe:', timeframe);
-  
+
     let days = 0;
     let timePart = timeframe;
-  
+
     // Handle the 'day' part if it exists
     if (timeframe.includes('day')) {
       const dayMatch = timeframe.match(/(\d+) day/);
@@ -141,10 +141,12 @@ const checkThresholds = async () => {
       }
       timePart = timeframe.split(', ')[1] || '0:00:00';
     }
-  
+
     // Split the timeframe into hours, minutes, and seconds
-    const [hours = 0, minutes = 0, seconds = 0] = timePart.split(':').map(Number);
-  
+    const [hours = 0, minutes = 0, seconds = 0] = timePart
+      .split(':')
+      .map(Number);
+
     return moment.duration({
       days,
       hours,
@@ -152,8 +154,6 @@ const checkThresholds = async () => {
       seconds,
     });
   };
-  
-  
 
   function formatDateTime(date) {
     const timezone = 'America/Chicago';
@@ -171,7 +171,7 @@ const checkThresholds = async () => {
     const latestThresholds = getLatestThresholds(thresholds.data);
 
     for (const threshold of latestThresholds) {
-    //   console.log('Processing threshold:', threshold);
+      //   console.log('Processing threshold:', threshold);
 
       const {
         id,
@@ -184,10 +184,8 @@ const checkThresholds = async () => {
         timeframe,
         timestamp,
       } = threshold;
-
-      console.log(
-        `Checking threshold for metric: ${metric}`
-      );
+      console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=');
+      console.log(`Checking threshold for metric: ${metric}`);
 
       // Split and trim emails and phone numbers
       const emails = email ? email.split(',').map(em => em.trim()) : [];
