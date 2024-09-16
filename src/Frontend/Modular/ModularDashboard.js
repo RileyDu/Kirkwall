@@ -171,15 +171,16 @@ const ModularDashboard = ({
 
   const handleMenuItemClick = async metric => {
     // Toggle hidden state locally
+    // console.log('filteredChartData before toggle:', filteredChartData);
     setFilteredChartData(prevData =>
       prevData.map(chart =>
         chart.metric === metric ? { ...chart, hidden: !chart.hidden } : chart
       )
     );
-    console.log('Updated filteredChartData:', filteredChartData);
+    // console.log('Updated filteredChartData:', filteredChartData);
 
     // Find chartData based on metric
-    const chartDataForMetric = chartData.find(chart => chart.metric === metric);
+    const chartDataForMetric = filteredChartData.find(chart => chart.metric === metric);
 
     if (chartDataForMetric) {
       const updatedHiddenState = !chartDataForMetric.hidden;
@@ -187,10 +188,10 @@ const ModularDashboard = ({
       // Wait for the chart edit to complete before fetching new data
       try {
         await handleChartEdit(chartDataForMetric.id, updatedHiddenState);
-        console.log('Chart update successful, fetching new chart data...');
+        console.log('Chart update successful');
 
         // Fetch the updated chart data after the PUT request is successful
-        fetchChartData(setChartData);
+        // fetchChartData(setChartData);
       } catch (error) {
         console.error('Error updating chart:', error);
       }
