@@ -1,22 +1,28 @@
 {
-  "version":2,
-  "builds":[
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-      "distDir": "build"
-      }
+   "version": 2,
+   "builds": [
+      {
+         "src": "package.json",
+         "use": "@vercel/static-build",
+         "config": {
+            "distDir": "build"
+         }
       },
-     {
-        "src":"src/NewBackend/index.js",
-        "use":"@vercel/node"
-     }
-  ],
-  "rewrites":[
-     {
-        "source":"/api/(.*)",
-        "destination":"src/NewBackend"
-     }
-  ]
+      {
+         "src": "src/NewBackend/index.js",
+         "use": "@vercel/node"
+      }
+   ],
+   "rewrites": [
+      {
+         "source": "/api/(.*)",
+         "destination": "src/NewBackend"
+      }
+   ],
+   "crons": [
+      {
+         "path": "/api/run-check-thresholds",
+         "schedule": "*/10 * * * *"
+      }
+   ]
 }
