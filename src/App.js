@@ -66,7 +66,7 @@ const Layout = ({
   const location = useLocation();
 
   const shouldShowSidebar =
-    location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !== '/landing';
+    location.pathname !== '/' && location.pathname !== '/signup' && location.pathname !== '/landing';
 
   const { colorMode } = useColorMode();
 
@@ -229,7 +229,7 @@ const MainApp = () => {
 
   return (
     <Box>
-      {location.pathname !== '/login' &&
+      {location.pathname !== '/' &&
         location.pathname !== '/signup' &&
         location.pathname !== '/landing' && (
           <Header
@@ -253,9 +253,9 @@ const MainApp = () => {
         <Routes>
           {/* <Route path="/landing" element={<LandingPage />} /> */}
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route
-            path="/"
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <ModularDashboard statusOfAlerts={showAlerts} expandButtonRef={expandButtonRef} runThresholdTour={runThresholdTour} setRunThresholdTour={setRunThresholdTour}

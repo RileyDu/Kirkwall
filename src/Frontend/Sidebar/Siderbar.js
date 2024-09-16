@@ -178,7 +178,7 @@ const Sidebar = ({
               src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
               alt="kirkwall logo"
               style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/dashboard')}
             />
           </Box>
         ) : (
@@ -188,7 +188,7 @@ const Sidebar = ({
                 src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
                 alt="kirkwall logo"
                 style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/dashboard')}
               />
             </Box>
           </motion.div>

@@ -137,7 +137,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
       case 'wdp':
         navigate('/watchdogprotect')
       default:
-        navigate('/');
+        navigate('/dashboard');
         break;
     }
   };
@@ -349,7 +349,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                     //   />
                     // }
                     {...buttonStyleProps}
-                    onClick={() => handleNavigation('/login')}
+                    onClick={() => handleNavigation('/')}
                   >
                     LOGOUT
                   </Button>
