@@ -115,7 +115,7 @@ const ChartWrapper = ({
   // Close button is rendered only on the home page and grandfarm, watchdogprotect, imprimed pages for now
   const renderCloseButton = () => {
     const routesWithCloseButton = [
-      '/',
+      '/dashboard',
       '/grandfarm',
       '/watchdogprotect',
       '/imprimed',
