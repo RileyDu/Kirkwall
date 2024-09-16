@@ -88,13 +88,13 @@ export default function WindSensors({ statusOfAlerts }) {
             p="4"
             textAlign="center"
             border={'2px'}
-            borderColor="#fd9801"
+            borderColor="#3D5A80"
             borderRadius="md"
             boxShadow="md"
             mb="4"
-            bg={colorMode === 'light' ? '#f9f9f9' : '#303030'}
+            bg={colorMode === 'light' ? '#e0e0e0' : 'gray.800'}
           >
-            <Box border={'4px'} borderColor="brand.800" borderRadius="lg" px={2} mb={4} bg={'brand.400'}  textAlign="center">
+            <Box border={'4px'} borderColor="#3D5A80" borderRadius="lg" px={2} mb={4} bg='#cee8ff'  textAlign="center">
             <Text fontSize="xxx-large" mb={'6'} mt={'6'} color={'#212121'}>
               Current Wind Speed and Direction: {latestWindSpeed} MPH {getCardinalDirection(latestWindDirection)}
             </Text>
