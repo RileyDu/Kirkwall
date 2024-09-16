@@ -124,7 +124,7 @@ const ChartWrapper = ({
   };
 
   const isDashboard = () => {
-    const routesWithTitle = ['/'];
+    const routesWithTitle = ['/dashboard'];
     return routesWithTitle.includes(location.pathname);
   };
 
