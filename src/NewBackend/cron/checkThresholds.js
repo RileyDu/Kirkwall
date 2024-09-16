@@ -121,11 +121,19 @@ const checkThresholds = async () => {
   // In-memory store for last alert times
   const lastAlertTimes = {};
 
-  // Function to parse timeframe
   const parseTimeframeToDuration = timeframe => {
+    // Check if timeframe is an object and convert it to a string if necessary
+    if (typeof timeframe === 'object') {
+      console.error('Timeframe is an object:', timeframe);
+      timeframe = JSON.stringify(timeframe);
+    }
+  
+    console.log('Processing timeframe:', timeframe);
+  
     let days = 0;
     let timePart = timeframe;
-
+  
+    // Handle the 'day' part if it exists
     if (timeframe.includes('day')) {
       const dayMatch = timeframe.match(/(\d+) day/);
       if (dayMatch) {
@@ -133,9 +141,10 @@ const checkThresholds = async () => {
       }
       timePart = timeframe.split(', ')[1] || '0:00:00';
     }
-
-    const [hours, minutes, seconds] = timePart.split(':').map(Number);
-
+  
+    // Split the timeframe into hours, minutes, and seconds
+    const [hours = 0, minutes = 0, seconds = 0] = timePart.split(':').map(Number);
+  
     return moment.duration({
       days,
       hours,
@@ -143,6 +152,8 @@ const checkThresholds = async () => {
       seconds,
     });
   };
+  
+  
 
   function formatDateTime(date) {
     const timezone = 'America/Chicago';
@@ -174,9 +185,9 @@ const checkThresholds = async () => {
         timestamp,
       } = threshold;
 
-    //   console.log(
-    //     `Checking threshold for metric: ${metric}, high: ${high}, low: ${low}`
-    //   );
+      console.log(
+        `Checking threshold for metric: ${metric}`
+      );
 
       // Split and trim emails and phone numbers
       const emails = email ? email.split(',').map(em => em.trim()) : [];
