@@ -468,23 +468,19 @@ app.get('/api/run-check-thresholds', async (req, res) => {
 });
 
 
-// Serve the static files from the React app
-// app.use(express.static(join(__dirname, '../../build')));
 
 // Catch-all route for other API requests
 app.get('/api/*', (req, res) => {
   res.status(404).json({ error: 'API route not found' });
 });
 
-// All other requests are handled by CRA's index.html
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../../build', 'index.html'));
-// });
+if (process.env.NODE_ENV === 'development') {
+  const port = process.env.PORT || 5000;
+  app.listen(port, () => {
+    console.log(`Server running locally on port ${port}`);
+  });
+}
 
-// // Start the server
-// app.listen(port, () => {
-//   console.log(`Server running on port ${port}`);
-// });
 
 // Export the app for Vercel
 export default app;

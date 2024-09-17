@@ -1,13 +1,13 @@
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 dotenv.config({ path: 'src/NewBackend/.env' });
-const twilio = require('twilio');
-const sgMail = require('@sendgrid/mail');
-const moment = require('moment-timezone');
-const axios = require('axios');
+import twilio from 'twilio';
+import sgMail from '@sendgrid/mail';
+import moment from 'moment-timezone';
+import axios from 'axios';
 const baseURL = process.env.BACKEND_URL || 'https://kirkwall-demo.vercel.app/'; // Set your backend URL
 
 // Initialize only when the function is called
-const checkThresholds = async () => {
+export const checkThresholds = async () => {
   console.log('Checking thresholds...');
 
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -511,4 +511,4 @@ const getLabelForMetric = metric => {
   return metricLabels[metric] || { label: '', addSpace: false };
 };
 
-module.exports = { checkThresholds };
+// module.exports = { checkThresholds };
