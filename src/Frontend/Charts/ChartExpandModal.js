@@ -856,6 +856,8 @@ const ChartExpandModal = ({
                                   setThreshKill(true);
                                   setNewTimeframe('99 days'); // Set timeframe to "indefinite"
                                   setUserHasChosenTimeframe(true); // Submit the new threshold state
+                                  setIsTimePickerOpen(false);
+                                  setTimeOfToggle('Indefinitely Paused')
                                 }}
                               >
                                 Pause Indefinitely
