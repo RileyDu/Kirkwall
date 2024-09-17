@@ -108,24 +108,32 @@ const ChartExpandModal = ({
 
   useEffect(() => {
     const latestThreshold = findLatestThreshold(metric);
-
-    if (latestThreshold?.timestamp && latestThreshold?.timeframe) {
+  
+    // Check if the timeframe is "99 days" and treat it as an indefinite pause
+    const isIndefinitePause = latestThreshold?.timeframe.days === 99;
+    console.log(isIndefinitePause)
+    console.log(latestThreshold?.timeframe)
+  
+    // If there's a timestamp and a timeframe and it's not an indefinite pause
+    if (latestThreshold?.timestamp && latestThreshold?.timeframe && !isIndefinitePause) {
       const { formatted, date } = calculateTimeOfToggle(
         latestThreshold?.timestamp,
         latestThreshold?.timeframe
       );
       setTimeOfToggle(formatted);
       setToggleTimeAsDate(date);
-    } else {
-      // console.error('Timestamp or timeframe missing from threshold data');
+    } else if (isIndefinitePause) {
+      setTimeOfToggle("Indefinitely Paused");
+      setToggleTimeAsDate(null); // Clear the date since it's paused indefinitely
     }
-
+  
+    // Set other threshold-related states
     setHighThreshold(latestThreshold.highThreshold);
     setLowThreshold(latestThreshold.lowThreshold);
     setThreshKill(latestThreshold.threshkill);
     setTimeframe(latestThreshold.timeframe);
     setTimestamp(latestThreshold.timestamp);
-
+  
     setPhoneNumbers(
       latestThreshold.phone?.split(',').map(phone => phone.trim()) || ['']
     );
@@ -133,6 +141,7 @@ const ChartExpandModal = ({
       latestThreshold.email?.split(',').map(email => email.trim()) || ['']
     );
   }, [metric, thresholds]);
+  
 
   // If the time of toggle is set, start polling for the threshold timeframe to be met and reverse thresh_kill
   useEffect(() => {
