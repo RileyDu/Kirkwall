@@ -212,6 +212,14 @@ export const checkThresholds = async () => {
 
       // Check individual threshold killswitch and timeframe
       if (thresh_kill && timeframe) {
+
+        if (typeof timeframe === 'object' && timeframe.days === 99) {
+          console.log(
+            `Skipping threshold check for ${metric} due to indefinite pause at sensor-level.`
+          );
+          continue; // Skip further processing for this metric
+        }
+
         const timePeriodDuration = parseTimeframeToDuration(timeframe);
         const pauseEndTime = moment(timestamp).add(timePeriodDuration);
 
