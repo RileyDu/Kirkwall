@@ -121,45 +121,45 @@ export const checkThresholds = async () => {
   // In-memory store for last alert times
   const lastAlertTimes = {};
 
-  const parseTimeframeToDuration = timeframe => {
-    // Check if the timeframe is an object with days equal to 99 (indefinite pause)
+  const parseTimeframeToDuration = (timeframe) => {
+    // If the timeframe is an object and represents an indefinite pause
     if (typeof timeframe === 'object' && timeframe.days === 99) {
       console.log('Timeframe is an indefinite pause: 99 days');
-      return null; // Return null or any appropriate value to represent indefinite pause
+      return null; // Return null to represent indefinite pause
     }
   
-    // If timeframe is an object but not {days: 99}, convert it to a string
+    // Check if timeframe is an object with specific hours, minutes, or seconds
     if (typeof timeframe === 'object') {
-      console.error('Timeframe is an object:', timeframe);
-      timeframe = JSON.stringify(timeframe);
+      const { days = 0, hours = 0, minutes = 0, seconds = 0 } = timeframe;
+      console.log('Processing timeframe object:', timeframe);
+      return moment.duration({ days, hours, minutes, seconds });
     }
   
-    console.log('Processing timeframe:', timeframe);
+    // Handle string-based timeframe, for example: "2 days, 03:00:00"
+    console.log('Processing string timeframe:', timeframe);
   
     let days = 0;
     let timePart = timeframe;
   
-    // Handle the 'day' part if it exists
+    // Extract days if the string includes a 'day' part
     if (timeframe.includes('day')) {
       const dayMatch = timeframe.match(/(\d+) day/);
       if (dayMatch) {
         days = parseInt(dayMatch[1], 10);
       }
+      // Split the timeframe into the day and time parts
       timePart = timeframe.split(', ')[1] || '0:00:00';
     }
   
-    // Split the timeframe into hours, minutes, and seconds
+    // Split the time part into hours, minutes, and seconds
     const [hours = 0, minutes = 0, seconds = 0] = timePart
       .split(':')
       .map(Number);
   
-    return moment.duration({
-      days,
-      hours,
-      minutes,
-      seconds,
-    });
+    // Return a moment duration object with the extracted values
+    return moment.duration({ days, hours, minutes, seconds });
   };
+  
   
 
   function formatDateTime(date) {
