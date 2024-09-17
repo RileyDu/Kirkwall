@@ -739,15 +739,6 @@ const ChartExpandModal = ({
                             </Text>
                           ) : null}
                         </HStack>
-                        {/* {timeOfToggle && (
-                          <Text
-                            color="white"
-                            fontSize={'sm'}
-                            whiteSpace={'nowrap'}
-                          >
-                            Back on @ {timeOfToggle}
-                          </Text>
-                        )} */}
                         <Box
                           fontSize={['xs', 'md']}
                           ml={8}
@@ -845,14 +836,27 @@ const ChartExpandModal = ({
                             </PopoverBody>
                             <PopoverFooter
                               display="flex"
-                              justifyContent="center"
+                              flexDirection="column"
+                              alignItems="center"
                             >
+                              <Button
+                                variant="blue"
+                                width="100%"
+                                mt={2}
+                                onClick={() => {
+                                  setThreshKill(true);
+                                  setTimeframe('indefinite'); // Set timeframe to "indefinite"
+                                  handleFormSubmit(); // Submit the new threshold state
+                                }}
+                              >
+                                Pause Indefinitely
+                              </Button>
                               <Button
                                 onClick={handleTimePickerSubmit}
                                 variant="blue"
                                 mt={2}
                               >
-                                Set Timeframe to Pause Alerts
+                                Pause Until Selected Timeframe
                               </Button>
                             </PopoverFooter>
                           </PopoverContent>
