@@ -439,7 +439,7 @@ export const checkThresholds = async () => {
       const sendAlert = async alertMessage => {
         const formattedDateTime = formatDateTime(now);
         const location = await getLocationforAlert(metric);
-        const message = `${alertMessage} at ${formattedDateTime} for ${location}.`;
+        const message = `${alertMessage} at ${formattedDateTime} CST for ${location}.`;
 
         const phoneNumbers = phone
           ? phone.split(',').map(num => num.trim())
