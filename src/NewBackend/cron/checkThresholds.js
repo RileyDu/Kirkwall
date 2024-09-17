@@ -184,8 +184,8 @@ const checkThresholds = async () => {
         timeframe,
         timestamp,
       } = threshold;
-      console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=');
-      console.log(`Checking threshold for metric: ${metric}`);
+      // console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=');
+      // console.log(`Checking threshold for metric: ${metric}`);
 
       // Split and trim emails and phone numbers
       const emails = email ? email.split(',').map(em => em.trim()) : [];
