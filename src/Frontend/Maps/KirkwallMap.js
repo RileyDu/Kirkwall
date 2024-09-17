@@ -96,7 +96,7 @@ const MapComponent = ({ statusOfAlerts }) => {
               onClick={() => setOpenInfoIndex(index)}
             >
               <Pin
-                background={'#fd9801'}
+                background={'#cee8ff'}
                 borderColor={'#212121'}
                 glyphColor={'#212121'}
               />
