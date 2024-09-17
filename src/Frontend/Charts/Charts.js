@@ -40,14 +40,21 @@ const processWeatherData = (data, key, colorMode) => {
   const reversedData = [...data].reverse();
 
   const chartData = {
-    labels: reversedData.map(item =>
-      new Date(
-        item.message_timestamp || item.reading_time || item.publishedat
-      ).toLocaleTimeString([], {
+    labels: reversedData.map(item => {
+      let date = new Date(item.message_timestamp || item.reading_time || item.publishedat);
+    
+      // If the date is from `reading_time` or `publishedat`, adjust it by 5 hours (assuming they are 5 hours behind)
+      if (item.reading_time || item.publishedat) {
+        date.setHours(date.getHours() + 5);
+      }
+    
+      // Return the adjusted time as a string
+      return date.toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',
-      })
-    ),
+      });
+    }),
+  
     datasets: [
       {
         label: key,
