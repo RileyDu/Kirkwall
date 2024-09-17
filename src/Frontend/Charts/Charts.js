@@ -40,14 +40,15 @@ const processWeatherData = (data, key, colorMode) => {
   const reversedData = [...data].reverse();
 
   const chartData = {
-    labels: reversedData.map(item =>
-      new Date(
-        item.message_timestamp || item.reading_time || item.publishedat
-      ).toLocaleTimeString([], {
+    labels: reversedData.map(item => {
+      const timestamp = item.message_timestamp || item.reading_time || item.publishedat;
+      // Convert to UTC if the timestamp does not contain a timezone
+      const date = timestamp.includes("Z") || timestamp.includes("+") ? new Date(timestamp) : new Date(`${timestamp}Z`);
+      return date.toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',
-      })
-    ),
+      });
+    }),
     datasets: [
       {
         label: key,
