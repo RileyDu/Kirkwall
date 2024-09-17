@@ -695,6 +695,7 @@ const ChartWrapper = ({
                     border={'2px solid #3D5A80'}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
+                    mb={[.5, 0]}
                   />
                 </Tooltip>
               </motion.div>
