@@ -44,7 +44,7 @@ const processWeatherData = (data, key, colorMode) => {
       const timestamp = item.message_timestamp || item.reading_time || item.publishedat;
     
       // Check if timestamp includes timezone info; if not, append "Z" to treat it as UTC
-      const adjustedTimestamp = timestamp.includes("Z") || timestamp.includes("+") ? timestamp : `${timestamp}Z`;
+      const adjustedTimestamp = timestamp.includes("Z") || timestamp.includes("+") ? timestamp : `${timestamp}+00:00`;
     
       // Convert the date to local time
       const date = new Date(adjustedTimestamp);
