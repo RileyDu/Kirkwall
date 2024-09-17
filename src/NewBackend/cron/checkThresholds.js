@@ -122,17 +122,23 @@ export const checkThresholds = async () => {
   const lastAlertTimes = {};
 
   const parseTimeframeToDuration = timeframe => {
-    // Check if timeframe is an object and convert it to a string if necessary
+    // Check if the timeframe is an object with days equal to 99 (indefinite pause)
+    if (typeof timeframe === 'object' && timeframe.days === 99) {
+      console.log('Timeframe is an indefinite pause: 99 days');
+      return null; // Return null or any appropriate value to represent indefinite pause
+    }
+  
+    // If timeframe is an object but not {days: 99}, convert it to a string
     if (typeof timeframe === 'object') {
       console.error('Timeframe is an object:', timeframe);
       timeframe = JSON.stringify(timeframe);
     }
-
+  
     console.log('Processing timeframe:', timeframe);
-
+  
     let days = 0;
     let timePart = timeframe;
-
+  
     // Handle the 'day' part if it exists
     if (timeframe.includes('day')) {
       const dayMatch = timeframe.match(/(\d+) day/);
@@ -141,12 +147,12 @@ export const checkThresholds = async () => {
       }
       timePart = timeframe.split(', ')[1] || '0:00:00';
     }
-
+  
     // Split the timeframe into hours, minutes, and seconds
     const [hours = 0, minutes = 0, seconds = 0] = timePart
       .split(':')
       .map(Number);
-
+  
     return moment.duration({
       days,
       hours,
@@ -154,6 +160,7 @@ export const checkThresholds = async () => {
       seconds,
     });
   };
+  
 
   function formatDateTime(date) {
     const timezone = 'America/Chicago';
