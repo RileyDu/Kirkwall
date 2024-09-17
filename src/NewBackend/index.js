@@ -15,9 +15,9 @@ const port = process.env.PORT || 5000;
 // Middleware to parse incoming JSON
 
 //FOR SOME REASONE THIS NEEDS TO BE COMMENTED OUT FOR LOCAL VERCEL DEV, BUT NEEDS TO EXIST FOR PROD
-if (process.env.NODE_ENV === 'production') {
+// if (process.env.NODE_ENV === 'production') {
   app.use(express.json());
-}
+// }
 
 app.use(cors());
 

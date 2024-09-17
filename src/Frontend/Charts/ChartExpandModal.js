@@ -845,8 +845,8 @@ const ChartExpandModal = ({
                                 mt={2}
                                 onClick={() => {
                                   setThreshKill(true);
-                                  setTimeframe('indefinite'); // Set timeframe to "indefinite"
-                                  handleFormSubmit(); // Submit the new threshold state
+                                  setNewTimeframe('99 days'); // Set timeframe to "indefinite"
+                                  setUserHasChosenTimeframe(true); // Submit the new threshold state
                                 }}
                               >
                                 Pause Indefinitely
