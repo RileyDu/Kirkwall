@@ -43,15 +43,18 @@ const processWeatherData = (data, key, colorMode) => {
     labels: reversedData.map(item => {
       const timestamp = item.message_timestamp || item.reading_time || item.publishedat;
     
-      // Normalize to UTC
-      const dateUTC = new Date(new Date(timestamp).toUTCString());
+      // Check if timestamp includes timezone info; if not, append "Z" to treat it as UTC
+      const adjustedTimestamp = timestamp.includes("Z") || timestamp.includes("+") ? timestamp : `${timestamp}Z`;
     
-      // Convert to local time string based on the user's local time zone
-      return dateUTC.toLocaleTimeString([], {
+      // Convert the date to local time
+      const date = new Date(adjustedTimestamp);
+    
+      return date.toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',
       });
     })
+    
     ,
     datasets: [
       {
