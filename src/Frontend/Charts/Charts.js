@@ -42,8 +42,11 @@ const processWeatherData = (data, key, colorMode) => {
   const chartData = {
     labels: reversedData.map(item => {
       const timestamp = item.message_timestamp || item.reading_time || item.publishedat;
-      // Convert to UTC if the timestamp does not contain a timezone
-      const date = timestamp.includes("Z") || timestamp.includes("+") ? new Date(timestamp) : new Date(`${timestamp}Z`);
+    
+      // Create date object (the default behavior of Date will handle different formats and time zones)
+      const date = new Date(timestamp);
+    
+      // Convert the date to a local time string based on the user's time zone
       return date.toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',
