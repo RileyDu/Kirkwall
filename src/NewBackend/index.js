@@ -191,7 +191,7 @@ app.post('/api/create_threshold', async (req, res) => {
 
 app.put('/api/update_threshold/:id', async (req, res) => {
   const { id } = req.params;
-  const { thresh_kill, timeframe } = req.body;
+  const { thresh_kill, timeframe } = req.query;
 
   const query = `
     UPDATE thresholds SET thresh_kill = $1, timeframe = $2 WHERE id = $3

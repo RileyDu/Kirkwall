@@ -22,7 +22,7 @@ export const checkThresholds = async () => {
 
   // Send an SMS alert to the specified phone numbers
   const sendSMSAlert = async (toNumbers, alertMessage, thresholdId) => {
-    const alertUrl = `https://kirkwall-demo.vercel.app/api/update_threshold/${thresholdId}?thresh_kill=true&timeframe=99%20days`;
+    const alertUrl = `https://kirkwall-demo.vercel.app/api/update_threshold/${thresholdId}?thresh_kill=true&timeframe=${encodeURIComponent('99 days')}`;
   
     const smsBody = `${alertMessage}. Click to disable: ${alertUrl}`;
   
@@ -43,7 +43,7 @@ export const checkThresholds = async () => {
 
   // Send an Email alert to the specified email addresses
   const sendEmailAlert = async (toEmails, subject, alertMessage, thresholdId) => {
-    const alertUrl = `https://kirkwall-demo.vercel.app/api/update_threshold/${thresholdId}?thresh_kill=true&timeframe=99%20days`;
+    const alertUrl = `https://kirkwall-demo.vercel.app/api/update_threshold/${thresholdId}?thresh_kill=true&timeframe=${encodeURIComponent('99 days')}`;
   
     for (const to of toEmails) {
       const msg = {
