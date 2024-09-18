@@ -199,7 +199,7 @@ app.get('/api/update_threshold/:id', async (req, res) => {
 
   try {
     const result = await client.query(query, [thresh_kill, timeframe, id]);
-    res.status(200).json(result.rows[0]);
+    res.status(200).json({ message: "You will now stop receiving alerts for this sensor. Please make sure you turn alerts back on when ready. Thanks!" });
   } catch (error) {
     console.error('Error updating threshold:', error);
     res.status(500).json({ error: 'An error occurred while updating threshold' });
