@@ -21,12 +21,16 @@ export const checkThresholds = async () => {
   sgMail.setApiKey(sendGridApiKey);
 
   // Send an SMS alert to the specified phone numbers
-  const sendSMSAlert = async (toNumbers, body) => {
+  const sendSMSAlert = async (toNumbers, alertMessage, thresholdId) => {
+    const alertUrl = `https://your-vercel-app.vercel.app/api/update_threshold/${thresholdId}?thresh_kill=true&timeframe=99%20days`;
+  
+    const smsBody = `${alertMessage}. Click to disable: ${alertUrl}`;
+  
     for (const to of toNumbers) {
       try {
-        console.log(`Sending SMS to ${to}: ${body}`);
+        console.log(`Sending SMS to ${to}: ${smsBody}`);
         await client.messages.create({
-          body: body,
+          body: smsBody,
           from: twilioPhoneNumber,
           to: to,
         });
@@ -35,9 +39,12 @@ export const checkThresholds = async () => {
       }
     }
   };
+  
 
   // Send an Email alert to the specified email addresses
-  const sendEmailAlert = async (toEmails, subject, alertMessage) => {
+  const sendEmailAlert = async (toEmails, subject, alertMessage, thresholdId) => {
+    const alertUrl = `https://your-vercel-app.vercel.app/api/update_threshold/${thresholdId}?thresh_kill=true&timeframe=99%20days`;
+  
     for (const to of toEmails) {
       const msg = {
         to: to,
@@ -46,9 +53,13 @@ export const checkThresholds = async () => {
         templateId: 'd-c08fa5ae191549b3aa405cfbc16cd1cd',
         dynamic_template_data: {
           alertmessage: alertMessage,
+          // Add a clickable link for disabling the threshold
+          disableLink: `<a href="${alertUrl}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;">
+                          Disable Threshold
+                        </a>`,
         },
       };
-
+  
       try {
         console.log(`Sending Email to ${to}: ${subject}`);
         await sgMail.send(msg);
@@ -57,6 +68,7 @@ export const checkThresholds = async () => {
       }
     }
   };
+  
 
   // Send an alert to the database
   const sendAlertToDB = async (metric, message, timestamp) => {
@@ -440,20 +452,20 @@ export const checkThresholds = async () => {
         const formattedDateTime = formatDateTime(now);
         const location = await getLocationforAlert(metric);
         const message = `${alertMessage} at ${formattedDateTime} CST for ${location}.`;
-
-        const phoneNumbers = phone
-          ? phone.split(',').map(num => num.trim())
-          : [];
+      
+        const phoneNumbers = phone ? phone.split(',').map(num => num.trim()) : [];
         const emails = email ? email.split(',').map(em => em.trim()) : [];
-
-        if (phoneNumbers.length > 0) await sendSMSAlert(phoneNumbers, message);
+      
+        if (phoneNumbers.length > 0)
+          await sendSMSAlert(phoneNumbers, message, id);  // Pass the threshold ID here
         if (emails.length > 0)
-          await sendEmailAlert(emails, 'Threshold Alert', message);
+          await sendEmailAlert(emails, 'Threshold Alert', message, id);  // Pass the threshold ID here
         if (phoneNumbers.length > 0 || emails.length > 0)
           await sendAlertToDB(metric, message, now);
-
+      
         lastAlertTimes[id] = now;
       };
+      
       if (high !== null) {
         if (currentValue > high) {
           console.log(
