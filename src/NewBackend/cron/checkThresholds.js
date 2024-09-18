@@ -24,7 +24,7 @@ export const checkThresholds = async () => {
   const sendSMSAlert = async (toNumbers, alertMessage, thresholdId) => {
     const alertUrl = `https://kirkwall-demo.vercel.app/api/update_threshold/${thresholdId}?thresh_kill=true&timeframe=${encodeURIComponent('99 days')}`;
   
-    const smsBody = `${alertMessage}. Click to disable: ${alertUrl}`;
+    const smsBody = `${alertMessage}.. Click to disable: ${alertUrl}`;
   
     for (const to of toNumbers) {
       try {
@@ -54,7 +54,7 @@ export const checkThresholds = async () => {
         dynamic_template_data: {
           alertmessage: alertMessage,
           // Add a clickable link for disabling the threshold
-          disableLink: `<a href="${alertUrl}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;">
+          disableLink: `<a href="${alertUrl}" style="background-color: #6170E3; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;">
                           Disable Threshold For Sensor
                         </a>`,
         },
