@@ -189,6 +189,24 @@ app.post('/api/create_threshold', async (req, res) => {
   }
 });
 
+app.put('/api/update_threshold/:id', async (req, res) => {
+  const { id } = req.params;
+  const { thresh_kill, timeframe } = req.body;
+
+  const query = `
+    UPDATE thresholds SET thresh_kill = $1, timeframe = $2 WHERE id = $3
+    RETURNING *`;
+
+  try {
+    const result = await client.query(query, [thresh_kill, timeframe, id]);
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error updating threshold:', error);
+    res.status(500).json({ error: 'An error occurred while updating threshold' });
+  }
+});
+
+
 app.get('/api/alerts', async (req, res) => {
   try {
     const result = await client.query(
