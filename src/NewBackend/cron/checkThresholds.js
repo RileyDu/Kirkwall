@@ -62,7 +62,7 @@ export const checkThresholds = async () => {
           disableLink: `<a href="${alertUrl}" style="background-color: #6170E3; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;">
                           Disable Threshold For Sensor
                         </a>`,
-          disableAll: `<a href="${disableAll}" style="background-color: #6170E3; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;">
+          disableAll: `<a href="${disableAll}" style="background-color: #6170E3; color: white; padding: 10px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;">
                           Disable All Thresholds
                         </a>`,
         },

@@ -47,6 +47,7 @@ import FaqsModal from './Frontend/Modals/FaqsModal.js';
 import ModularSummary from './Frontend/Modular/ModularSummary.js';
 import RedirectBasedOnAuth from './Frontend/AuthComponents/RedirectBasedOnAuth.js';
 import ThankYou from './Frontend/Alert/ThankYou.js';
+import ThankYouAdmin from './Frontend/Alert/ThankYouAdmin.js';
 
 const Layout = ({
   children,
@@ -334,6 +335,14 @@ const MainApp = () => {
             element={
               <ProtectedRoute>
                 <ThankYou />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/thankyouadmin"
+            element={
+              <ProtectedRoute>
+                <ThankYouAdmin />
               </ProtectedRoute>
             }
           />

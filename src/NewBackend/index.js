@@ -334,8 +334,8 @@ app.get('/api/update_admin_thresh/:phone', async (req, res) => {
 
   try {
     const result = await client.query(query, [thresh_kill, `%${phone}%`]);
-    res.status(200).json(result.rows[0]);
-    // res.redirect('/thankyou');
+    // res.status(200).json(result.rows[0]);
+    res.redirect('/thankyouadmin');
   } catch (error) {
     console.error('Error updating threshold:', error);
     res.status(500).json({ error: 'An error occurred while updating threshold' });
