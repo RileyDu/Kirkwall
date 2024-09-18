@@ -46,6 +46,7 @@ import ModularDashboard from './Frontend/Modular/ModularDashboard.js';
 import FaqsModal from './Frontend/Modals/FaqsModal.js';
 import ModularSummary from './Frontend/Modular/ModularSummary.js';
 import RedirectBasedOnAuth from './Frontend/AuthComponents/RedirectBasedOnAuth.js';
+import ThankYou from './Frontend/Alert/ThankYou.js';
 
 const Layout = ({
   children,
@@ -325,6 +326,14 @@ const MainApp = () => {
             element={
               <ProtectedRoute>
                 <RivercitySensors statusOfAlerts={showAlerts} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/thankyou"
+            element={
+              <ProtectedRoute>
+                <ThankYou />
               </ProtectedRoute>
             }
           />
