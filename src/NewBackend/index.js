@@ -189,7 +189,7 @@ app.post('/api/create_threshold', async (req, res) => {
   }
 });
 
-app.put('/api/update_threshold/:id', async (req, res) => {
+app.get('/api/update_threshold/:id', async (req, res) => {
   const { id } = req.params;
   const { thresh_kill, timeframe } = req.query;
 
