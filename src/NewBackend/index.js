@@ -324,6 +324,26 @@ app.get('/api/admin/:email', async (req, res) => {
   }
 });
 
+app.get('/api/update_admin_thresh/:phone', async (req, res) => {
+  const { phone } = req.params;
+  const { thresh_kill } = req.query;
+
+  const query = `
+    UPDATE admin SET thresh_kill = $1 WHERE phone LIKE $2
+    RETURNING *`;
+
+  try {
+    const result = await client.query(query, [thresh_kill, `%${phone}%`]);
+    res.status(200).json(result.rows[0]);
+    // res.redirect('/thankyou');
+  } catch (error) {
+    console.error('Error updating threshold:', error);
+    res.status(500).json({ error: 'An error occurred while updating threshold' });
+  }
+});
+
+
+
 app.put('/api/update_admin/:id', async (req, res) => {
   const { id } = req.params;
   const { firstname, lastname, email, phone, company, thresh_kill } = req.body;

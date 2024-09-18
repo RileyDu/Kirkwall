@@ -21,10 +21,11 @@ export const checkThresholds = async () => {
   sgMail.setApiKey(sendGridApiKey);
 
   // Send an SMS alert to the specified phone numbers
-  const sendSMSAlert = async (toNumbers, alertMessage, thresholdId) => {
+  const sendSMSAlert = async (toNumbers, alertMessage, thresholdId, adminPhone) => {
     const alertUrl = `https://kirkwall-demo.vercel.app/api/update_threshold/${thresholdId}?thresh_kill=true&timeframe=${encodeURIComponent('99 days')}`;
-  
-    const smsBody = `${alertMessage}.. Click to disable: ${alertUrl}`;
+    const disableAll = `https://kirkwall-demo.vercel.app/api/update_admin_thresh/${adminPhone}?thresh_kill=true`;
+
+    const smsBody = `${alertMessage}.. Click to disable this sensor: ${alertUrl}. Click to disable all sensors: ${disableAll}`;
   
     for (const to of toNumbers) {
       try {
@@ -42,8 +43,12 @@ export const checkThresholds = async () => {
   
 
   // Send an Email alert to the specified email addresses
-  const sendEmailAlert = async (toEmails, subject, alertMessage, thresholdId) => {
+  const sendEmailAlert = async (toEmails, subject, alertMessage, thresholdId, adminPhone) => {
     const alertUrl = `https://kirkwall-demo.vercel.app/api/update_threshold/${thresholdId}?thresh_kill=true&timeframe=${encodeURIComponent('99 days')}`;
+    const disableAll = `https://kirkwall-demo.vercel.app/api/update_admin_thresh/${adminPhone}?thresh_kill=true`;
+    console.log(adminPhone)
+    console.log(disableAll)
+    console.log(alertUrl)
   
     for (const to of toEmails) {
       const msg = {
@@ -56,6 +61,9 @@ export const checkThresholds = async () => {
           // Add a clickable link for disabling the threshold
           disableLink: `<a href="${alertUrl}" style="background-color: #6170E3; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;">
                           Disable Threshold For Sensor
+                        </a>`,
+          disableAll: `<a href="${disableAll}" style="background-color: #6170E3; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;">
+                          Disable All Thresholds
                         </a>`,
         },
       };
@@ -457,9 +465,9 @@ export const checkThresholds = async () => {
         const emails = email ? email.split(',').map(em => em.trim()) : [];
       
         if (phoneNumbers.length > 0)
-          await sendSMSAlert(phoneNumbers, message, id);  // Pass the threshold ID here
+          await sendSMSAlert(phoneNumbers, message, id, phoneNumbers);  // Pass the threshold ID here
         if (emails.length > 0)
-          await sendEmailAlert(emails, 'Threshold Alert', message, id);  // Pass the threshold ID here
+          await sendEmailAlert(emails, 'Threshold Alert', message, id, phoneNumbers);  // Pass the threshold ID here
         if (phoneNumbers.length > 0 || emails.length > 0)
           await sendAlertToDB(metric, message, now);
       
