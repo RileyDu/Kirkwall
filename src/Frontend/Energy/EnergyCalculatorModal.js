@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -6,8 +6,6 @@ import {
   FormLabel,
   Input,
   VStack,
-  RadioGroup,
-  Radio,
   HStack,
   Modal,
   ModalOverlay,
@@ -18,19 +16,18 @@ import {
   Text
 } from '@chakra-ui/react';
 
-const EnergyCalculatorModal = ({ isOpen, onClose, electricityRate, fetchElectricityRate, onCalculateCost, deviceName, setDeviceName }) => {
-  const [zipCode, setZipCode] = useState('');
+const EnergyCalculatorModal = ({ isOpen, onClose, electricityRate, fetchElectricityRate, onCalculateCost, deviceName, setDeviceName, zipCode, hoursPerDay, setHoursPerDay }) => {
+  const [localZipCode, setLocalZipCode] = useState('');
   const [inputMode, setInputMode] = useState('wattage'); // Toggle between 'wattage' and 'voltage-current'
   const [wattage, setWattage] = useState('');
   const [voltage, setVoltage] = useState('');
   const [current, setCurrent] = useState('');
-  const [hoursPerDay, setHoursPerDay] = useState('');
   const [error, setError] = useState(null);
   const [isDisabled, setIsDisabled] = useState(true); // State to control disabled inputs
 
   // Function to handle fetching electricity rate and enabling inputs
   const handleGetElectricityRate = () => {
-    fetchElectricityRate(zipCode);
+    fetchElectricityRate(localZipCode);
     setIsDisabled(false);
   };
 
@@ -73,8 +70,16 @@ const EnergyCalculatorModal = ({ isOpen, onClose, electricityRate, fetchElectric
     }); // Send calculated costs to parent component
   };
 
+  // Pre-fill zip code when modal opens
+  useEffect(() => {
+    if (zipCode) {
+      setLocalZipCode(zipCode);
+      setIsDisabled(false);
+    }
+  }, [zipCode]);
+
   // Handle user input changes
-  const handleZipCodeChange = e => setZipCode(e.target.value);
+  const handleZipCodeChange = e => setLocalZipCode(e.target.value);
   const handleDeviceNameChange = e => setDeviceName(e.target.value);
   const handleWattageChange = e => setWattage(e.target.value);
   const handleVoltageChange = e => setVoltage(e.target.value);
@@ -92,7 +97,7 @@ const EnergyCalculatorModal = ({ isOpen, onClose, electricityRate, fetchElectric
           <VStack spacing={4} align="stretch" w="100%" boxShadow="lg" borderRadius="md" bg="gray.800" color="white" mb={4}>
             <FormControl>
               <FormLabel>Zip Code</FormLabel>
-              <Input type="text" value={zipCode} onChange={handleZipCodeChange} placeholder="Enter zip code" />
+              <Input type="text" value={localZipCode} onChange={handleZipCodeChange} placeholder="Enter zip code" />
             </FormControl>
             <Button colorScheme="blue" onClick={handleGetElectricityRate}>Get Electricity Rate</Button>
 
@@ -108,12 +113,30 @@ const EnergyCalculatorModal = ({ isOpen, onClose, electricityRate, fetchElectric
             {/* Toggle between Wattage and Voltage/Current input modes */}
             <FormControl as="fieldset" isDisabled={isDisabled}>
               <FormLabel as="legend">Input Mode</FormLabel>
-              <RadioGroup onChange={handleInputModeChange} value={inputMode}>
-                <HStack spacing="24px">
-                  <Radio value="wattage">Wattage</Radio>
-                  <Radio value="voltage-current">Voltage/Current</Radio>
-                </HStack>
-              </RadioGroup>
+              <HStack spacing={0} width="100%">
+                <Button
+                  width="50%"
+                  borderRadius="0"
+                  borderLeftRadius="md"
+                  onClick={() => handleInputModeChange('wattage')}
+                  bg={inputMode === 'wattage' ? 'teal.500' : 'gray.600'}
+                  color={inputMode === 'wattage' ? 'white' : 'gray.200'}
+                  _hover={{ bg: inputMode === 'wattage' ? 'teal.600' : 'gray.500' }}
+                >
+                  Wattage
+                </Button>
+                <Button
+                  width="50%"
+                  borderRadius="0"
+                  borderRightRadius="md"
+                  onClick={() => handleInputModeChange('voltage-current')}
+                  bg={inputMode === 'voltage-current' ? 'teal.500' : 'gray.600'}
+                  color={inputMode === 'voltage-current' ? 'white' : 'gray.200'}
+                  _hover={{ bg: inputMode === 'voltage-current' ? 'teal.600' : 'gray.500' }}
+                >
+                  Voltage/Current
+                </Button>
+              </HStack>
             </FormControl>
 
             {/* Wattage Input */}
