@@ -351,7 +351,7 @@ const MainApp = () => {
             path="/energy"
             element={
               <ProtectedRoute>
-                <EnergyPage />
+                <EnergyPage statusOfAlerts={showAlerts} />
               </ProtectedRoute>
             }
           />

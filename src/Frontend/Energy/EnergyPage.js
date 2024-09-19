@@ -13,10 +13,12 @@ import {
   StatHelpText,
   useDisclosure,
 } from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
+
 import EnergyCalculatorModal from './EnergyCalculatorModal.js'; // Import the modal component
 import { useAuth } from '../AuthComponents/AuthContext.js';
 
-const EnergyPage = ({ userEmail }) => {
+const EnergyPage = ({ statusOfAlerts }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [electricityRate, setElectricityRate] = useState(null);
   const [costs, setCosts] = useState(null);
@@ -26,7 +28,7 @@ const EnergyPage = ({ userEmail }) => {
   const { currentUser } = useAuth();
 
   // Function to fetch electricity rate from OpenEI API based on zip code
-  const fetchElectricityRate = async (zipCode) => {
+  const fetchElectricityRate = async zipCode => {
     try {
       const response = await axios.get('https://api.openei.org/utility_rates', {
         params: {
@@ -70,7 +72,7 @@ const EnergyPage = ({ userEmail }) => {
   }, [currentUser]);
 
   // Function to receive calculated energy costs from the modal
-  const handleCalculateCost = (calculatedCosts) => {
+  const handleCalculateCost = calculatedCosts => {
     setCosts(calculatedCosts);
     onClose(); // Close the modal after calculation
   };
@@ -81,13 +83,23 @@ const EnergyPage = ({ userEmail }) => {
       display={'flex'}
       flexDirection={'column'}
       alignItems={'center'}
-      justifyContent={'center'}
+    //   justifyContent={'center'}
+    pt={statusOfAlerts ? '10px' : '74px'}
     >
-      <Heading mb={2}>Energy Cost Calculator</Heading>
-      <Button variant={'blue'} onClick={onOpen} mb={2}>
-        Open Calculator
-      </Button>
+      <Heading>
+        Energy Cost Calculator
+        <Button
+          variant={'blue'}
+          onClick={onOpen}
+          ml={2}
+          mb={2}
+          rightIcon={<AddIcon />}
+        >
+          Add Device
+        </Button>
+      </Heading>
       {error && <Text color="red.500">{error}</Text>}
+      <Box>USER PROFILE CARD HERE</Box>
       {costs && (
         <VStack
           spacing={4}
@@ -99,10 +111,13 @@ const EnergyPage = ({ userEmail }) => {
           borderRadius="md"
           bg="gray.800"
           color="white"
+          mt={4}
         >
           <Box>
             <Heading size="md">Costs for {deviceName}</Heading>
-            <Text>Rate for {deviceName}: ${electricityRate} per kWh</Text>
+            <Text>
+              Rate for {deviceName}: ${electricityRate} per kWh
+            </Text>
             <Text>Hours used per day: {hoursPerDay}</Text>
             <SimpleGrid columns={[1, null, 2]} spacing={4} mt={4}>
               <Stat bg="teal.500" p={4} borderRadius="md" boxShadow="md">
