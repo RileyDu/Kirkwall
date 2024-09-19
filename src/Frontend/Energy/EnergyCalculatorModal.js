@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -13,28 +13,29 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
-  Text
+  Text,
 } from '@chakra-ui/react';
 
-const EnergyCalculatorModal = ({ isOpen, onClose, electricityRate, fetchElectricityRate, onCalculateCost, deviceName, setDeviceName, zipCode, hoursPerDay, setHoursPerDay }) => {
-  const [localZipCode, setLocalZipCode] = useState('');
+const EnergyCalculatorModal = ({
+  isOpen,
+  onClose,
+  electricityRate,
+  onCalculateCost,
+  deviceName,
+  setDeviceName,
+  hoursPerDay,
+  setHoursPerDay,
+}) => {
   const [inputMode, setInputMode] = useState('wattage'); // Toggle between 'wattage' and 'voltage-current'
   const [wattage, setWattage] = useState('');
   const [voltage, setVoltage] = useState('');
   const [current, setCurrent] = useState('');
   const [error, setError] = useState(null);
-  const [isDisabled, setIsDisabled] = useState(true); // State to control disabled inputs
-
-  // Function to handle fetching electricity rate and enabling inputs
-  const handleGetElectricityRate = () => {
-    fetchElectricityRate(localZipCode);
-    setIsDisabled(false);
-  };
 
   // Function to calculate energy cost based on user inputs
   const calculateEnergyCost = () => {
     if (!electricityRate || !hoursPerDay) {
-      setError('Please enter all required fields and fetch the electricity rate.');
+      setError('Please enter all required fields.');
       return;
     }
 
@@ -70,22 +71,13 @@ const EnergyCalculatorModal = ({ isOpen, onClose, electricityRate, fetchElectric
     }); // Send calculated costs to parent component
   };
 
-  // Pre-fill zip code when modal opens
-  useEffect(() => {
-    if (zipCode) {
-      setLocalZipCode(zipCode);
-      setIsDisabled(false);
-    }
-  }, [zipCode]);
-
   // Handle user input changes
-  const handleZipCodeChange = e => setLocalZipCode(e.target.value);
-  const handleDeviceNameChange = e => setDeviceName(e.target.value);
-  const handleWattageChange = e => setWattage(e.target.value);
-  const handleVoltageChange = e => setVoltage(e.target.value);
-  const handleCurrentChange = e => setCurrent(e.target.value);
-  const handleHoursPerDayChange = e => setHoursPerDay(e.target.value);
-  const handleInputModeChange = value => setInputMode(value);
+  const handleDeviceNameChange = (e) => setDeviceName(e.target.value);
+  const handleWattageChange = (e) => setWattage(e.target.value);
+  const handleVoltageChange = (e) => setVoltage(e.target.value);
+  const handleCurrentChange = (e) => setCurrent(e.target.value);
+  const handleHoursPerDayChange = (e) => setHoursPerDay(e.target.value);
+  const handleInputModeChange = (value) => setInputMode(value);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -95,23 +87,17 @@ const EnergyCalculatorModal = ({ isOpen, onClose, electricityRate, fetchElectric
         <ModalCloseButton />
         <ModalBody>
           <VStack spacing={4} align="stretch" w="100%" boxShadow="lg" borderRadius="md" bg="gray.800" color="white" mb={4}>
-            <FormControl>
-              <FormLabel>Zip Code</FormLabel>
-              <Input type="text" value={localZipCode} onChange={handleZipCodeChange} placeholder="Enter zip code" />
-            </FormControl>
-            <Button colorScheme="blue" onClick={handleGetElectricityRate}>Get Electricity Rate</Button>
-
-            {electricityRate && (
+            {/* {electricityRate && (
               <Text textDecoration={'underline'}>Electricity Rate: ${electricityRate} per kWh</Text>
-            )}
+            )} */}
 
-            <FormControl isDisabled={isDisabled}>
+            <FormControl>
               <FormLabel>Device Name</FormLabel>
               <Input type="text" value={deviceName} onChange={handleDeviceNameChange} placeholder="e.g., Refrigerator" />
             </FormControl>
 
             {/* Toggle between Wattage and Voltage/Current input modes */}
-            <FormControl as="fieldset" isDisabled={isDisabled}>
+            <FormControl as="fieldset">
               <FormLabel as="legend">Input Mode</FormLabel>
               <HStack spacing={0} width="100%">
                 <Button
@@ -141,7 +127,7 @@ const EnergyCalculatorModal = ({ isOpen, onClose, electricityRate, fetchElectric
 
             {/* Wattage Input */}
             {inputMode === 'wattage' && (
-              <FormControl isDisabled={isDisabled}>
+              <FormControl>
                 <FormLabel>Device Wattage (W)</FormLabel>
                 <Input type="number" value={wattage} onChange={handleWattageChange} placeholder="e.g., 100" />
               </FormControl>
@@ -150,22 +136,24 @@ const EnergyCalculatorModal = ({ isOpen, onClose, electricityRate, fetchElectric
             {/* Voltage and Current Input */}
             {inputMode === 'voltage-current' && (
               <>
-                <FormControl isDisabled={isDisabled}>
+                <FormControl>
                   <FormLabel>Voltage (V)</FormLabel>
                   <Input type="number" value={voltage} onChange={handleVoltageChange} placeholder="e.g., 120" />
                 </FormControl>
-                <FormControl isDisabled={isDisabled}>
+                <FormControl>
                   <FormLabel>Current (A)</FormLabel>
                   <Input type="number" value={current} onChange={handleCurrentChange} placeholder="e.g., 2" />
                 </FormControl>
               </>
             )}
 
-            <FormControl isDisabled={isDisabled}>
+            <FormControl>
               <FormLabel>Hours of Use per Day</FormLabel>
               <Input type="number" value={hoursPerDay} onChange={handleHoursPerDayChange} placeholder="e.g., 5" />
             </FormControl>
-            <Button colorScheme="green" onClick={calculateEnergyCost} isDisabled={isDisabled}>Calculate Energy Cost</Button>
+            <Button colorScheme="green" onClick={calculateEnergyCost}>
+              Calculate Energy Cost
+            </Button>
 
             {error && <Text color="red.500">{error}</Text>}
           </VStack>

@@ -22,16 +22,11 @@ const EnergyPage = ({ userEmail }) => {
   const [costs, setCosts] = useState(null);
   const [error, setError] = useState(null);
   const [deviceName, setDeviceName] = useState('');
-  const [userZipCode, setUserZipCode] = useState('58102');
   const [hoursPerDay, setHoursPerDay] = useState('');
-
   const { currentUser } = useAuth();
 
   // Function to fetch electricity rate from OpenEI API based on zip code
-  const fetchElectricityRate = async zipCode => {
-    setError(null); // Reset error
-    setElectricityRate(null); // Reset rate
-    setCosts(null); // Reset energy cost
+  const fetchElectricityRate = async (zipCode) => {
     try {
       const response = await axios.get('https://api.openei.org/utility_rates', {
         params: {
@@ -44,12 +39,10 @@ const EnergyPage = ({ userEmail }) => {
         },
       });
       const data = response.data.items[0];
-      const electricity = getElectricityRate(data, 'kWh');
-      setElectricityRate(electricity);
+      const rate = getElectricityRate(data, 'kWh');
+      setElectricityRate(rate);
     } catch (error) {
-      setError(
-        'Failed to fetch electricity rate. Please check the zip code or try again later.'
-      );
+      setError('Failed to fetch electricity rate. Please try again later.');
       console.error('Error fetching electricity rate:', error);
     }
   };
@@ -68,25 +61,19 @@ const EnergyPage = ({ userEmail }) => {
     return 'N/A';
   };
 
+  // Fetch electricity rate based on user's zip code on component mount
+  useEffect(() => {
+    if (currentUser) {
+      const zipCode = currentUser.zipCode || '58102'; // Replace '58102' with a default or user-specific value
+      fetchElectricityRate(zipCode);
+    }
+  }, [currentUser]);
+
   // Function to receive calculated energy costs from the modal
-  const handleCalculateCost = calculatedCosts => {
+  const handleCalculateCost = (calculatedCosts) => {
     setCosts(calculatedCosts);
     onClose(); // Close the modal after calculation
   };
-
-  // useEffect to fetch electricity rate based on user email when component mounts
-  useEffect(() => {
-    if (
-      currentUser &&
-      currentUser.email === 'jerrycromarty@imprimedicine.com'
-    ) {
-      setUserZipCode('94043');
-      fetchElectricityRate(userZipCode);
-    } else {
-      setUserZipCode('58102');
-      fetchElectricityRate(userZipCode);
-    }
-  }, [currentUser]);
 
   return (
     <Box
@@ -115,7 +102,6 @@ const EnergyPage = ({ userEmail }) => {
         >
           <Box>
             <Heading size="md">Costs for {deviceName}</Heading>
-            <Text>Zip Code: {userZipCode}</Text>
             <Text>Rate for {deviceName}: ${electricityRate} per kWh</Text>
             <Text>Hours used per day: {hoursPerDay}</Text>
             <SimpleGrid columns={[1, null, 2]} spacing={4} mt={4}>
@@ -149,11 +135,9 @@ const EnergyPage = ({ userEmail }) => {
         isOpen={isOpen}
         onClose={onClose}
         electricityRate={electricityRate}
-        fetchElectricityRate={fetchElectricityRate}
         onCalculateCost={handleCalculateCost}
         deviceName={deviceName}
         setDeviceName={setDeviceName}
-        zipCode={userZipCode} // Pass user zip code to modal
         hoursPerDay={hoursPerDay}
         setHoursPerDay={setHoursPerDay}
       />
