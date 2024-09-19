@@ -21,6 +21,8 @@ import {
   FaBook,
   FaBookOpen,
 } from 'react-icons/fa';
+import { SlEnergy } from "react-icons/sl";
+
 import { GiGroundSprout } from 'react-icons/gi';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -107,6 +109,7 @@ const buttonConfig = {
     },
     { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' },
+    { icon: <SlEnergy size="30" />, label: 'Energy', route: '/energy' },
   ],
 };
 
