@@ -7,6 +7,8 @@ const EnergyPage = () => {
   const [energyRates, setEnergyRates] = useState(null);
   const [error, setError] = useState(null);
 
+  const apiKey = process.env.REACT_APP_OPEN_EI_API_KEY
+
   // Function to fetch energy rates from OpenEI API based on zip code
   const fetchEnergyRates = async () => {
     setError(null); // Reset error
@@ -16,7 +18,7 @@ const EnergyPage = () => {
         params: {
           version: 'latest', // Latest version of the API
           format: 'json', // Response format
-          api_key: 'awJvxc7wOdDTZRXnKWyRa8xj9akBrZB5rWGkxRDh', // Replace with your OpenEI API key
+          api_key: apiKey, // Replace with your OpenEI API key
           address: zipCode, // Address parameter to find rates by zip code
           limit: 5, // Limit results (adjust as needed)
           detail: 'full', // Fetch detailed information
