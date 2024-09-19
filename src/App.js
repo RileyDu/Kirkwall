@@ -48,6 +48,7 @@ import ModularSummary from './Frontend/Modular/ModularSummary.js';
 import RedirectBasedOnAuth from './Frontend/AuthComponents/RedirectBasedOnAuth.js';
 import ThankYou from './Frontend/Alert/ThankYou.js';
 import ThankYouAdmin from './Frontend/Alert/ThankYouAdmin.js';
+import EnergyPage from './Frontend/Energy/EnergyPage.js';
 
 const Layout = ({
   children,
@@ -343,6 +344,14 @@ const MainApp = () => {
             element={
               <ProtectedRoute>
                 <ThankYouAdmin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/energy"
+            element={
+              <ProtectedRoute>
+                <EnergyPage />
               </ProtectedRoute>
             }
           />
