@@ -25,7 +25,7 @@ export const checkThresholds = async () => {
     const alertUrl = `https://kirkwall-demo.vercel.app/api/update_threshold/${thresholdId}?thresh_kill=true&timeframe=${encodeURIComponent('99 days')}`;
     const disableAll = `https://kirkwall-demo.vercel.app/api/update_admin_thresh/${adminPhone}?thresh_kill=true`;
 
-    const smsBody = `${alertMessage}.. Click to disable this sensor: ${alertUrl}. Click to disable all sensors: ${disableAll}`;
+    const smsBody = `${alertMessage}.. Click to disable alerts for this sensor: ${alertUrl}.`;
   
     for (const to of toNumbers) {
       try {
