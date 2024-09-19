@@ -1,50 +1,43 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Box, Button, FormControl, FormLabel, Input, Heading, Text } from '@chakra-ui/react';
+import { Box, Button, Heading, Text, VStack, SimpleGrid, Stat, StatLabel, StatNumber, StatHelpText, useDisclosure } from '@chakra-ui/react';
+import EnergyCalculatorModal from './EnergyCalculatorModal.js'; // Import the modal component
 
 const EnergyPage = () => {
-  const [zipCode, setZipCode] = useState('');
-  const [energyRates, setEnergyRates] = useState(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [electricityRate, setElectricityRate] = useState(null);
+  const [costs, setCosts] = useState(null);
   const [error, setError] = useState(null);
+  const [deviceName, setDeviceName] = useState('');
 
-  const apiKey = process.env.REACT_APP_OPEN_EI_API_KEY
 
-  // Function to fetch energy rates from OpenEI API based on zip code
-  const fetchEnergyRates = async () => {
+  // Function to fetch electricity rate from OpenEI API based on zip code
+  const fetchElectricityRate = async (zipCode) => {
     setError(null); // Reset error
-    setEnergyRates(null); // Reset rates
+    setElectricityRate(null); // Reset rate
+    setCosts(null); // Reset energy cost
     try {
       const response = await axios.get('https://api.openei.org/utility_rates', {
         params: {
-          version: 'latest', // Latest version of the API
-          format: 'json', // Response format
-          api_key: apiKey, // Replace with your OpenEI API key
-          address: zipCode, // Address parameter to find rates by zip code
-          limit: 5, // Limit results (adjust as needed)
-          detail: 'full', // Fetch detailed information
+          version: 'latest',
+          format: 'json',
+          api_key: process.env.REACT_APP_OPEN_EI_API_KEY,
+          address: zipCode,
+          limit: 1,
+          detail: 'full',
         },
       });
-      console.log ('raw response:', response.data)
-      console.log('Energy rates response:', response.data.items[0]);
-      const data = response.data.items[0]; // Assume we get the first item
-      const rates = {
-        electricity: getRateByType(data, 'kWh'), // Get electricity rate
-        naturalGas: getRateByType(data, 'Natural Gas'), // Get natural gas rate
-        liquidPropane: getRateByType(data, 'Liquid Propane'), // Get liquid propane rate
-        gasPropane: getRateByType(data, 'Propane'), // Get gas propane rate
-      };
-      console.log('Energy rates after processing:', rates);
-      setEnergyRates(rates);
+      const data = response.data.items[0];
+      const electricity = getElectricityRate(data, 'kWh');
+      setElectricityRate(electricity);
     } catch (error) {
-      setError(
-        'Failed to fetch energy rates. Please check the zip code or try again later.'
-      );
-      console.error('Error fetching energy rates:', error);
+      setError('Failed to fetch electricity rate. Please check the zip code or try again later.');
+      console.error('Error fetching electricity rate:', error);
     }
   };
 
-  // Helper function to extract specific rate by type
-  const getRateByType = (data, type) => {
+  // Helper function to extract electricity rate by type
+  const getElectricityRate = (data, type) => {
     if (!data || !data.energyratestructure) return 'N/A';
     for (let i = 0; i < data.energyratestructure.length; i++) {
       const period = data.energyratestructure[i];
@@ -54,54 +47,61 @@ const EnergyPage = () => {
         }
       }
     }
-    return 'N/A'; // Return "N/A" if not found
+    return 'N/A';
   };
 
-  // Handle user input for zip code
-  const handleZipCodeChange = e => setZipCode(e.target.value);
+  // Function to receive calculated energy costs from the modal
+  const handleCalculateCost = (calculatedCosts) => {
+    setCosts(calculatedCosts);
+    onClose(); // Close the modal after calculation
+  };
 
   return (
-    <Box
-      minHeight={'100vh'}
-      display={'flex'}
-      flexDirection={'column'}
-      alignItems={'center'}
-      justifyContent={'center'}
-    >
-      <Heading>Energy Rates Calculator</Heading>
+    <Box minHeight={'100vh'} display={'flex'} flexDirection={'column'} alignItems={'center'} justifyContent={'center'}>
+      <Heading mb={2}>Energy Cost Calculator</Heading>
+      <VStack spacing={4} align="stretch" maxW="500px" w="100%" p={4} boxShadow="lg" borderRadius="md" bg="gray.800" color="white">
+        <Button colorScheme="blue" onClick={onOpen}>Open Calculator</Button>
+        {error && <Text color="red.500">{error}</Text>}
 
-    <Box display={'flex'} flexDirection={'column'} alignItems={'center'} justifyContent={'center'}>
-      <label>
-        Enter your zip code:
-        <input type="text" value={zipCode} onChange={handleZipCodeChange} />
-        <Button variant={'blue'} onClick={fetchEnergyRates}>Get Energy Rates</Button>
-      </label>
-      </Box>
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-
-      {/* Display energy rates if available */}
-      {energyRates && (
-        <Box 
-        display={'flex'}
-        flexDirection={'column'}
-        alignItems={'center'}
-        justifyContent={'center'}
-        p={8}
-        background={'gray.600'}
-        borderRadius={'lg'}
-        boxShadow={'lg'}
-        maxWidth={'600px'}
-        textAlign={'center'}
-        color={'white'}
-        >
-          <h2>Rates for Zip Code: {zipCode}</h2>
-          <Text>Electricity: ${energyRates.electricity} per kWh</Text>
-          <Text>Natural Gas: ${energyRates.naturalGas} per therm</Text>
-          <Text>Liquid Propane: ${energyRates.liquidPropane} per gallon</Text>
-          <Text>Gas Propane: ${energyRates.gasPropane} per gallon</Text>
+        {costs && (
+            <Box>
+          <Heading size="md">Costs for {deviceName}</Heading>
+          <SimpleGrid columns={[1, null, 2]} spacing={4} mt={4}>
+            <Stat bg="teal.500" p={4} borderRadius="md" boxShadow="md">
+              <StatLabel>Daily Cost</StatLabel>
+              <StatNumber>${costs.daily}</StatNumber>
+              <StatHelpText>per day</StatHelpText>
+            </Stat>
+            <Stat bg="blue.500" p={4} borderRadius="md" boxShadow="md">
+              <StatLabel>Weekly Cost</StatLabel>
+              <StatNumber>${costs.weekly}</StatNumber>
+              <StatHelpText>per week</StatHelpText>
+            </Stat>
+            <Stat bg="orange.500" p={4} borderRadius="md" boxShadow="md">
+              <StatLabel>Monthly Cost</StatLabel>
+              <StatNumber>${costs.monthly}</StatNumber>
+              <StatHelpText>per month</StatHelpText>
+            </Stat>
+            <Stat bg="red.500" p={4} borderRadius="md" boxShadow="md">
+              <StatLabel>Yearly Cost</StatLabel>
+              <StatNumber>${costs.yearly}</StatNumber>
+              <StatHelpText>per year</StatHelpText>
+            </Stat>
+          </SimpleGrid>
         </Box>
-      )}
+        )}
+      </VStack>
+
+      {/* Energy Calculator Modal */}
+      <EnergyCalculatorModal
+        isOpen={isOpen}
+        onClose={onClose}
+        electricityRate={electricityRate}
+        fetchElectricityRate={fetchElectricityRate}
+        onCalculateCost={handleCalculateCost}
+        deviceName={deviceName}
+        setDeviceName={setDeviceName}
+      />
     </Box>
   );
 };

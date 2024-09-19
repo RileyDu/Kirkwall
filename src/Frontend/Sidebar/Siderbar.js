@@ -21,7 +21,7 @@ import {
   FaBook,
   FaBookOpen,
 } from 'react-icons/fa';
-import { SlEnergy } from "react-icons/sl";
+import { MdElectricBolt } from "react-icons/md";
 
 import { GiGroundSprout } from 'react-icons/gi';
 import { motion } from 'framer-motion';
@@ -109,7 +109,7 @@ const buttonConfig = {
     },
     { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' },
-    { icon: <SlEnergy size="30" />, label: 'Energy', route: '/energy' },
+    { icon: <MdElectricBolt size="30"/>, label: 'Energy', route: '/energy' },
   ],
 };
 
