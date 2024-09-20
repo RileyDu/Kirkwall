@@ -24,6 +24,7 @@ import {
   PopoverArrow,
   PopoverCloseButton,
   Collapse,
+  Divider,
 } from '@chakra-ui/react';
 import { AddIcon, EditIcon } from '@chakra-ui/icons';
 import { FaTrash, FaChevronDown, FaChevronUp } from 'react-icons/fa';
@@ -200,6 +201,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
         flexDirection="column"
         alignItems="center"
         textAlign="center"
+        position="relative"
       >
         <Flex alignItems="center" mb={4}>
           <Icon as={MdLocationOn} w={8} h={8} color="teal.400" />
@@ -212,9 +214,9 @@ const EnergyPage = ({ statusOfAlerts }) => {
             onClose={onPopoverClose}
           >
             <PopoverTrigger>
-              <Button ml={2} onClick={onPopoverOpen} variant="blue">
-                <EditIcon size="lg" />
-              </Button>
+              {/* <Button ml={2}  variant="blue"> */}
+                <EditIcon size="lg" onClick={onPopoverOpen} position={"absolute"} top={1} right={1} cursor={"pointer"}  />
+              {/* </Button> */}
             </PopoverTrigger>
             <PopoverContent bg="gray.800" color="white">
               <PopoverArrow />
@@ -239,13 +241,13 @@ const EnergyPage = ({ statusOfAlerts }) => {
         <VStack spacing={3} width="100%">
           <HStack justify="space-between" w="100%" px={2}>
             <Box>
-              <Text fontWeight="bold" fontSize="lg" color="gray.300">
+              <Text fontWeight="bold" fontSize="lg" color="gray.300" textDecoration={"underline"}>
                 Zip Code
               </Text>
               <Text>{currentUser?.zipCode || '58102'}</Text>
             </Box>
             <Box>
-              <Text fontWeight="bold" fontSize="lg" color="gray.300">
+              <Text fontWeight="bold" fontSize="lg" color="gray.300" textDecoration={"underline"}>
                 Live Rate
               </Text>
               <Text>
@@ -253,8 +255,8 @@ const EnergyPage = ({ statusOfAlerts }) => {
               </Text>
             </Box>
             <Box>
-              <Text fontWeight="bold" fontSize="lg" color="gray.300">
-                Annual Energy Cost
+              <Text fontWeight="bold" fontSize="lg" color="gray.300" textDecoration={"underline"}>
+                Total Yearly Energy Cost
               </Text>
               <Text>{costs ? `$${costs.yearly}` : 'Not Calculated'}</Text>
             </Box>
@@ -268,6 +270,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
           <Flex
             key={device.id}
             p={4}
+            pb={statsVisible[device.id] ? 4 : 0}
             borderWidth="1px"
             borderRadius="md"
             boxShadow="md"
@@ -294,8 +297,9 @@ const EnergyPage = ({ statusOfAlerts }) => {
             <Box>
               <Text fontSize={'lg'}><strong>Hours used per day:</strong> {device.hours_per_day} hours</Text>
               <Text fontSize={'lg'}><strong>Wattage:</strong> {device.wattage} W</Text>
+              <Divider mt={2} mb={2} />
               <Text fontSize={'lg'}>
-              <strong>Annual Energy Cost:</strong> $
+              <strong>Yearly Energy Cost:</strong> $
                 {(
                   ((device.wattage * device.hours_per_day * electricityRate) /
                     1000) *
@@ -307,7 +311,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
               <Icon
                 as={statsVisible[device.id] ? FaChevronUp : FaChevronDown}
                 position="absolute"
-                bottom="0"
+                bottom="2"
                 right="0"
                 cursor="pointer"
                 onClick={() => toggleStatsVisibility(device.id)}
