@@ -164,6 +164,17 @@ const EnergyPage = ({ statusOfAlerts }) => {
     }
   };
 
+  const handleLocationChange = async event => {
+    try {
+      await axios.put(`/api/energy-info/${currentUser.email}`, {
+        location: location,
+      });
+    } catch (error) {
+      console.error('Error updating location:', error);
+    }
+    onPopoverClose();
+  };
+
   return (
     <Box
       minHeight="100vh"
@@ -172,18 +183,22 @@ const EnergyPage = ({ statusOfAlerts }) => {
       alignItems="center"
       pt={statusOfAlerts ? '10px' : '74px'}
     >
-      <Heading>
-        Energy Cost Calculator
-        <Button
-          variant="blue"
+      <Flex justifyContent="space-between" alignItems="center">
+        <Heading>Energy Cost Calculator</Heading>
+        <Icon
+          as={AddIcon}
           onClick={onOpen}
           ml={2}
-          mb={2}
-          rightIcon={<AddIcon />}
-        >
-          Add Device
-        </Button>
-      </Heading>
+          mt={2}
+          cursor="pointer"
+          bg={'#cee8ff'}
+          border={'3px solid #3D5A80'}
+          color={'black'}
+          boxSize="30px"
+          borderRadius="6px"
+          p={1}
+        />
+      </Flex>
       {error && <Text color="red.500">{error}</Text>}
 
       {/* User Profile Card */}
@@ -214,9 +229,14 @@ const EnergyPage = ({ statusOfAlerts }) => {
             onClose={onPopoverClose}
           >
             <PopoverTrigger>
-              {/* <Button ml={2}  variant="blue"> */}
-                <EditIcon size="lg" onClick={onPopoverOpen} position={"absolute"} top={1} right={1} cursor={"pointer"}  />
-              {/* </Button> */}
+              <EditIcon
+                size="lg"
+                onClick={onPopoverOpen}
+                position={'absolute'}
+                top={1}
+                right={1}
+                cursor={'pointer'}
+              />
             </PopoverTrigger>
             <PopoverContent bg="gray.800" color="white">
               <PopoverArrow />
@@ -231,7 +251,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
                 />
               </PopoverBody>
               <PopoverFooter>
-                <Button colorScheme="teal" onClick={onPopoverClose}>
+                <Button colorScheme="teal" onClick={handleLocationChange}>
                   Save
                 </Button>
               </PopoverFooter>
@@ -241,13 +261,23 @@ const EnergyPage = ({ statusOfAlerts }) => {
         <VStack spacing={3} width="100%">
           <HStack justify="space-between" w="100%" px={2}>
             <Box>
-              <Text fontWeight="bold" fontSize="lg" color="gray.300" textDecoration={"underline"}>
+              <Text
+                fontWeight="bold"
+                fontSize="lg"
+                color="gray.300"
+                textDecoration={'underline'}
+              >
                 Zip Code
               </Text>
               <Text>{currentUser?.zipCode || '58102'}</Text>
             </Box>
             <Box>
-              <Text fontWeight="bold" fontSize="lg" color="gray.300" textDecoration={"underline"}>
+              <Text
+                fontWeight="bold"
+                fontSize="lg"
+                color="gray.300"
+                textDecoration={'underline'}
+              >
                 Live Rate
               </Text>
               <Text>
@@ -255,7 +285,12 @@ const EnergyPage = ({ statusOfAlerts }) => {
               </Text>
             </Box>
             <Box>
-              <Text fontWeight="bold" fontSize="lg" color="gray.300" textDecoration={"underline"}>
+              <Text
+                fontWeight="bold"
+                fontSize="lg"
+                color="gray.300"
+                textDecoration={'underline'}
+              >
                 Total Yearly Energy Cost
               </Text>
               <Text>{costs ? `$${costs.yearly}` : 'Not Calculated'}</Text>
@@ -295,11 +330,16 @@ const EnergyPage = ({ statusOfAlerts }) => {
               />
             </Box>
             <Box>
-              <Text fontSize={'lg'}><strong>Hours used per day:</strong> {device.hours_per_day} hours</Text>
-              <Text fontSize={'lg'}><strong>Wattage:</strong> {device.wattage} W</Text>
+              <Text fontSize={'lg'}>
+                <strong>Hours used per day:</strong> {device.hours_per_day}{' '}
+                hours
+              </Text>
+              <Text fontSize={'lg'}>
+                <strong>Wattage:</strong> {device.wattage} W
+              </Text>
               <Divider mt={2} mb={2} />
               <Text fontSize={'lg'}>
-              <strong>Yearly Energy Cost:</strong> $
+                <strong>Yearly Energy Cost:</strong> $
                 {(
                   ((device.wattage * device.hours_per_day * electricityRate) /
                     1000) *
@@ -311,7 +351,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
               <Icon
                 as={statsVisible[device.id] ? FaChevronUp : FaChevronDown}
                 position="absolute"
-                bottom="2"
+                bottom="2.5"
                 right="0"
                 cursor="pointer"
                 onClick={() => toggleStatsVisibility(device.id)}

@@ -581,12 +581,12 @@ app.post('/api/energy-info', async (req, res) => {
 // Update the zip code and/or last live rate recorded for a user
 app.put('/api/energy-info/:email', async (req, res) => {
   const email = req.params.email;
-  const { zip_code } = req.body;
+  const { location } = req.body;
 
   try {
     const result = await client.query(
-      'UPDATE energy_info SET zip_code = $1, updated_at = NOW() WHERE email = $2 RETURNING *',
-      [zip_code, email]
+      'UPDATE energy_info SET location = $1, updated_at = NOW() WHERE email = $2 RETURNING *',
+      [location, email]
     );
     
     if (result.rows.length === 0) {
