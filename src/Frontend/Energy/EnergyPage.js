@@ -292,10 +292,10 @@ const EnergyPage = ({ statusOfAlerts }) => {
               />
             </Box>
             <Box>
-              <Text>Hours used per day: {device.hours_per_day}</Text>
-              <Text>Wattage: {device.wattage} W</Text>
-              <Text>
-                Annual Energy Cost: $
+              <Text fontSize={'lg'}><strong>Hours used per day:</strong> {device.hours_per_day} hours</Text>
+              <Text fontSize={'lg'}><strong>Wattage:</strong> {device.wattage} W</Text>
+              <Text fontSize={'lg'}>
+              <strong>Annual Energy Cost:</strong> $
                 {(
                   ((device.wattage * device.hours_per_day * electricityRate) /
                     1000) *

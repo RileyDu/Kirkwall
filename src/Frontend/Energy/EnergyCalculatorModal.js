@@ -114,6 +114,14 @@ const EnergyCalculatorModal = ({
       // Add new equipment
       handleAddEquipment(newEquipment);
     }
+    setUserSubmittedEquipment(false);
+    setDeviceName('');
+    setWattage('');
+    setVoltage('');
+    setCurrent('');
+    setPowerInWatts(null);
+    setInputMode('wattage');
+    setError(null);
   }, [userSubmittedEquipment]);
 
   // Handle user input changes
