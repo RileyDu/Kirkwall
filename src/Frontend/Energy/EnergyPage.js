@@ -245,7 +245,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
                 cursor={'pointer'}
               />
             </PopoverTrigger>
-            <PopoverContent bg="gray.800" color="white">
+            <PopoverContent bg="gray.800" color="white" borderRadius="md">
               <PopoverArrow />
               <PopoverCloseButton />
               <PopoverBody>
@@ -258,7 +258,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
                 />
               </PopoverBody>
               <PopoverFooter>
-                <Button colorScheme="teal" onClick={handleLocationChange}>
+                <Button colorScheme="teal" onClick={handleLocationChange} width={'100%'}>
                   Save
                 </Button>
               </PopoverFooter>
