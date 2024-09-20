@@ -23,9 +23,10 @@ import {
   PopoverFooter,
   PopoverArrow,
   PopoverCloseButton,
+  Collapse,
 } from '@chakra-ui/react';
-import { AddIcon, EditIcon, } from '@chakra-ui/icons';
-import { FaTrash } from 'react-icons/fa';
+import { AddIcon, EditIcon } from '@chakra-ui/icons';
+import { FaTrash, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { MdLocationOn } from 'react-icons/md';
 import EnergyCalculatorModal from './EnergyCalculatorModal.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
@@ -38,41 +39,52 @@ const EnergyPage = ({ statusOfAlerts }) => {
   const [location, setLocation] = useState('');
   const [deviceName, setDeviceName] = useState('');
   const [hoursPerDay, setHoursPerDay] = useState(0);
-  const [equipment, setEquipment] = useState([]); // Store equipment list
+  const [equipment, setEquipment] = useState([]);
   const { currentUser } = useAuth();
-  const { onOpen: onPopoverOpen, onClose: onPopoverClose, isOpen: isPopoverOpen } = useDisclosure();
+  const {
+    onOpen: onPopoverOpen,
+    onClose: onPopoverClose,
+    isOpen: isPopoverOpen,
+  } = useDisclosure();
+  const [statsVisible, setStatsVisible] = useState({});
+
+  const toggleStatsVisibility = deviceId => {
+    setStatsVisible(prevState => ({
+      ...prevState,
+      [deviceId]: !prevState[deviceId],
+    }));
+  };
+
+  const fetchData = async () => {
+    if (currentUser && currentUser.email) {
+      try {
+        const energyInfoResponse = await axios.get(
+          `/api/energy-info/${currentUser.email}`
+        );
+        setLocation(energyInfoResponse.data.location);
+        const equipmentResponse = await axios.get(
+          `/api/equipment/${currentUser.email}`
+        );
+        setEquipment(equipmentResponse.data);
+        await fetchElectricityRate(energyInfoResponse.data.zip_code);
+      } catch (error) {
+        setError('Error fetching user data. Please try again later.');
+        console.error('Error fetching user data:', error);
+      }
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (currentUser && currentUser.email) {
-        try {
-          // Fetch energy info
-          const energyInfoResponse = await axios.get(`/api/energy-info/${currentUser.email}`);
-          setLocation(energyInfoResponse.data.location);
-
-          // Fetch user equipment
-          const equipmentResponse = await axios.get(`/api/equipment/${currentUser.email}`);
-          setEquipment(equipmentResponse.data);
-
-          // Fetch electricity rate based on user's zip code
-          await fetchElectricityRate(energyInfoResponse.data.zip_code);
-        } catch (error) {
-          setError('Error fetching user data. Please try again later.');
-          console.error('Error fetching user data:', error);
-        }
-      }
-    };
-
     fetchData();
   }, [currentUser]);
 
   useEffect(() => {
     if (equipment.length && electricityRate) {
-      calculateCosts(); // Calculate costs when equipment or electricity rate changes
+      calculateCosts();
     }
   }, [equipment, electricityRate]);
 
-  const fetchElectricityRate = async (zipCode) => {
+  const fetchElectricityRate = async zipCode => {
     try {
       const response = await axios.get('https://api.openei.org/utility_rates', {
         params: {
@@ -112,15 +124,15 @@ const EnergyPage = ({ statusOfAlerts }) => {
     let totalMonthlyCost = 0;
     let totalYearlyCost = 0;
 
-    equipment.forEach((device) => {
+    equipment.forEach(device => {
       const powerInWatts = device.wattage;
-      const kWhPerDay = (powerInWatts * device.hours_per_day) / 1000; // Convert watts to kilowatt-hours
-      const costPerDay = kWhPerDay * electricityRate; // Daily cost
+      const kWhPerDay = (powerInWatts * device.hours_per_day) / 1000;
+      const costPerDay = kWhPerDay * electricityRate;
 
       totalDailyCost += costPerDay;
-      totalWeeklyCost += costPerDay * 7; // Weekly cost
-      totalMonthlyCost += costPerDay * 30; // Monthly cost (approximate)
-      totalYearlyCost += costPerDay * 365; // Yearly cost (approximate)
+      totalWeeklyCost += costPerDay * 7;
+      totalMonthlyCost += costPerDay * 30;
+      totalYearlyCost += costPerDay * 365;
     });
 
     setCosts({
@@ -131,45 +143,74 @@ const EnergyPage = ({ statusOfAlerts }) => {
     });
   };
 
-  // Function to handle adding new equipment
-  const handleAddEquipment = async (newEquipment) => {
+  const handleAddEquipment = async newEquipment => {
     try {
       const response = await axios.post('/api/equipment', newEquipment);
-      setEquipment([...equipment, response.data]); // Update state with new equipment
-      onClose(); // Close modal
+      setEquipment([...equipment, response.data]);
+      onClose();
     } catch (error) {
       setError('Error adding equipment. Please try again later.');
       console.error('Error adding equipment:', error);
     }
   };
 
-  const handleDeleteEquipment = async (equipmentId) => {
+  const handleDeleteEquipment = async equipmentId => {
     try {
       await axios.delete(`/api/equipment/${equipmentId}`);
-      setEquipment(equipment.filter((equipment) => equipment._id !== equipmentId));
+      setEquipment(equipment.filter(equipment => equipment.id !== equipmentId));
     } catch (error) {
       console.error('Error deleting equipment:', error);
     }
   };
 
   return (
-    <Box minHeight="100vh" display="flex" flexDirection="column" alignItems="center" pt={statusOfAlerts ? '10px' : '74px'}>
+    <Box
+      minHeight="100vh"
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      pt={statusOfAlerts ? '10px' : '74px'}
+    >
       <Heading>
         Energy Cost Calculator
-        <Button variant="blue" onClick={onOpen} ml={2} mb={2} rightIcon={<AddIcon />}>
+        <Button
+          variant="blue"
+          onClick={onOpen}
+          ml={2}
+          mb={2}
+          rightIcon={<AddIcon />}
+        >
           Add Device
         </Button>
       </Heading>
       {error && <Text color="red.500">{error}</Text>}
 
       {/* User Profile Card */}
-      <Box maxW="700px" w="100%" p={6} boxShadow="lg" borderRadius="md" bg="gray.900" color="white" mt={4} mb={6} display="flex" flexDirection="column" alignItems="center" textAlign="center">
+      <Box
+        maxW="700px"
+        w="100%"
+        p={6}
+        boxShadow="lg"
+        borderRadius="md"
+        bg="gray.900"
+        color="white"
+        mt={4}
+        mb={6}
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        textAlign="center"
+      >
         <Flex alignItems="center" mb={4}>
           <Icon as={MdLocationOn} w={8} h={8} color="teal.400" />
           <Heading size="lg" ml={2}>
             {location || 'Location'}
           </Heading>
-          <Popover isOpen={isPopoverOpen} onOpen={onPopoverOpen} onClose={onPopoverClose}>
+          <Popover
+            isOpen={isPopoverOpen}
+            onOpen={onPopoverOpen}
+            onClose={onPopoverClose}
+          >
             <PopoverTrigger>
               <Button ml={2} onClick={onPopoverOpen} variant="blue">
                 <EditIcon size="lg" />
@@ -179,7 +220,13 @@ const EnergyPage = ({ statusOfAlerts }) => {
               <PopoverArrow />
               <PopoverCloseButton />
               <PopoverBody>
-                <Input placeholder="Enter new location" value={location} onChange={(e) => setLocation(e.target.value)} bg="gray.700" borderColor="teal.400" />
+                <Input
+                  placeholder="Enter new location"
+                  value={location}
+                  onChange={e => setLocation(e.target.value)}
+                  bg="gray.700"
+                  borderColor="teal.400"
+                />
               </PopoverBody>
               <PopoverFooter>
                 <Button colorScheme="teal" onClick={onPopoverClose}>
@@ -201,7 +248,9 @@ const EnergyPage = ({ statusOfAlerts }) => {
               <Text fontWeight="bold" fontSize="lg" color="gray.300">
                 Live Rate
               </Text>
-              <Text>{electricityRate ? `$${electricityRate} per kWh` : 'Loading...'}</Text>
+              <Text>
+                {electricityRate ? `$${electricityRate} per kWh` : 'Loading...'}
+              </Text>
             </Box>
             <Box>
               <Text fontWeight="bold" fontSize="lg" color="gray.300">
@@ -213,40 +262,120 @@ const EnergyPage = ({ statusOfAlerts }) => {
         </VStack>
       </Box>
 
-      {/* Equipment Cards */}
-      <VStack spacing={4} align="stretch" maxW="500px" w="100%" p={4} boxShadow="lg" borderRadius="md" bg="gray.800" color="white" mt={4}>
-        {equipment.map((device) => (
-          <Box key={device.id} mb={4}>
-            <Heading size="md">{device.title}</Heading>
-            {/* <Text>Rate: ${electricityRate} per kWh</Text> */}
-            <Text>Hours used per day: {device.hours_per_day}</Text>
-            <Text>Wattage: {device.wattage} W</Text>
-            <FaTrash onClick={() => handleDeleteEquipment(device._id)}></FaTrash>
-            <SimpleGrid columns={[1, null, 2]} spacing={4} mt={4}>
-              <Stat bg="teal.500" p={4} borderRadius="md" boxShadow="md">
-                <StatLabel>Daily Cost</StatLabel>
-                <StatNumber>${(device.wattage * device.hours_per_day * electricityRate / 1000).toFixed(2)}</StatNumber>
-                <StatHelpText>per day</StatHelpText>
-              </Stat>
-              <Stat bg="blue.500" p={4} borderRadius="md" boxShadow="md">
-                <StatLabel>Weekly Cost</StatLabel>
-                <StatNumber>${(device.wattage * device.hours_per_day * electricityRate / 1000 * 7).toFixed(2)}</StatNumber>
-                <StatHelpText>per week</StatHelpText>
-              </Stat>
-              <Stat bg="orange.500" p={4} borderRadius="md" boxShadow="md">
-                <StatLabel>Monthly Cost</StatLabel>
-                <StatNumber>${(device.wattage * device.hours_per_day * electricityRate / 1000 * 30).toFixed(2)}</StatNumber>
-                <StatHelpText>per month</StatHelpText>
-              </Stat>
-              <Stat bg="red.500" p={4} borderRadius="md" boxShadow="md">
-                <StatLabel>Yearly Cost</StatLabel>
-                <StatNumber>${(device.wattage * device.hours_per_day * electricityRate / 1000 * 365).toFixed(2)}</StatNumber>
-                <StatHelpText>per year</StatHelpText>
-              </Stat>
-            </SimpleGrid>
-          </Box>
+      {/* Equipment Cards in Grid */}
+      <SimpleGrid columns={[1, null, 1]} spacing={4} maxW="800px" w="100%">
+        {equipment.map(device => (
+          <Flex
+            key={device.id}
+            p={4}
+            borderWidth="1px"
+            borderRadius="md"
+            boxShadow="md"
+            bg="gray.800"
+            color="white"
+            direction="column"
+            alignItems="stretch"
+            justify="space-between"
+            position="relative"
+          >
+            <Box mb={2} position="relative">
+              <Heading size="md" mb={2} textDecoration={'underline'}>
+                {device.title}
+              </Heading>
+              <Icon
+                as={FaTrash}
+                position="absolute"
+                top="0"
+                right="0"
+                cursor="pointer"
+                onClick={() => handleDeleteEquipment(device.id)}
+              />
+            </Box>
+            <Box>
+              <Text>Hours used per day: {device.hours_per_day}</Text>
+              <Text>Wattage: {device.wattage} W</Text>
+              <Text>
+                Annual Energy Cost: $
+                {(
+                  ((device.wattage * device.hours_per_day * electricityRate) /
+                    1000) *
+                  365
+                ).toFixed(2)}
+              </Text>
+            </Box>
+            <Flex justifyContent="flex-end" mt={2} position="relative">
+              <Icon
+                as={statsVisible[device.id] ? FaChevronUp : FaChevronDown}
+                position="absolute"
+                bottom="0"
+                right="0"
+                cursor="pointer"
+                onClick={() => toggleStatsVisibility(device.id)}
+                color="teal.400"
+              />
+            </Flex>
+            <Collapse in={statsVisible[device.id]} animateOpacity>
+              <SimpleGrid columns={2} spacing={4} mt={4}>
+                <Stat bg="teal.500" p={4} borderRadius="md" boxShadow="md">
+                  <StatLabel>Daily Cost</StatLabel>
+                  <StatNumber>
+                    $
+                    {(
+                      (device.wattage *
+                        device.hours_per_day *
+                        electricityRate) /
+                      1000
+                    ).toFixed(2)}
+                  </StatNumber>
+                  <StatHelpText>per day</StatHelpText>
+                </Stat>
+                <Stat bg="blue.500" p={4} borderRadius="md" boxShadow="md">
+                  <StatLabel>Weekly Cost</StatLabel>
+                  <StatNumber>
+                    $
+                    {(
+                      ((device.wattage *
+                        device.hours_per_day *
+                        electricityRate) /
+                        1000) *
+                      7
+                    ).toFixed(2)}
+                  </StatNumber>
+                  <StatHelpText>per week</StatHelpText>
+                </Stat>
+                <Stat bg="orange.500" p={4} borderRadius="md" boxShadow="md">
+                  <StatLabel>Monthly Cost</StatLabel>
+                  <StatNumber>
+                    $
+                    {(
+                      ((device.wattage *
+                        device.hours_per_day *
+                        electricityRate) /
+                        1000) *
+                      30
+                    ).toFixed(2)}
+                  </StatNumber>
+                  <StatHelpText>per month</StatHelpText>
+                </Stat>
+                <Stat bg="red.500" p={4} borderRadius="md" boxShadow="md">
+                  <StatLabel>Yearly Cost</StatLabel>
+                  <StatNumber>
+                    $
+                    {(
+                      ((device.wattage *
+                        device.hours_per_day *
+                        electricityRate) /
+                        1000) *
+                      365
+                    ).toFixed(2)}
+                  </StatNumber>
+                  <StatHelpText>per year</StatHelpText>
+                </Stat>
+              </SimpleGrid>
+            </Collapse>
+          </Flex>
         ))}
-      </VStack>
+      </SimpleGrid>
 
       {/* Energy Calculator Modal */}
       <EnergyCalculatorModal
@@ -257,7 +386,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
         setDeviceName={setDeviceName}
         hoursPerDay={hoursPerDay}
         setHoursPerDay={setHoursPerDay}
-        handleAddEquipment={handleAddEquipment} // Pass the function to add equipment
+        handleAddEquipment={handleAddEquipment}
         currentUser={currentUser}
         calculateCosts={calculateCosts}
       />
