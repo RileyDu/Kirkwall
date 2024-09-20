@@ -39,6 +39,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
   const [error, setError] = useState(null);
   const [location, setLocation] = useState('');
   const [deviceName, setDeviceName] = useState('');
+  const [zipFromDB, setZipFromDB] = useState('');
   const [hoursPerDay, setHoursPerDay] = useState(0);
   const [equipment, setEquipment] = useState([]);
   const { currentUser } = useAuth();
@@ -64,6 +65,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
           `/api/energy-info/${currentUser.email}`
         );
         setLocation(energyInfoResponse.data.location);
+        setZipFromDB(energyInfoResponse.data.zip_code);
         const equipmentResponse = await axios.get(
           `/api/equipment/${currentUser.email}`
         );
@@ -270,7 +272,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
               >
                 Zip Code
               </Text>
-              <Text>{currentUser?.zipCode || '58102'}</Text>
+              <Text>{zipFromDB || 'Zip Code N/A'}</Text>
             </Box>
             <Box>
               <Text
