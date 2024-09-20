@@ -498,7 +498,7 @@ app.post(
 app.get('/api/equipment/:email', async (req, res) => {
   const email = req.params.email;
   try {
-    const result = await db.query(
+    const result = await client.query(
       'SELECT * FROM user_equipment WHERE email = $1',
       [email]
     );
@@ -517,7 +517,7 @@ app.post('/api/equipment', async (req, res) => {
   const { email, title, wattage, hours_per_day } = req.body;
 
   try {
-    const result = await db.query(
+    const result = await client.query(
       'INSERT INTO user_equipment (email, title, wattage, hours_per_day) VALUES ($1, $2, $3, $4) RETURNING *',
       [email, title, wattage, hours_per_day]
     );
@@ -532,7 +532,7 @@ app.post('/api/equipment', async (req, res) => {
 app.get('/api/energy-info/:email', async (req, res) => {
   const email = req.params.email;
   try {
-    const result = await db.query(
+    const result = await client.query(
       'SELECT * FROM energy_info WHERE email = $1',
       [email]
     );
@@ -546,13 +546,34 @@ app.get('/api/energy-info/:email', async (req, res) => {
   }
 });
 
+// Add new energy info for a user
+app.post('/api/energy-info', async (req, res) => {
+  const { email, location, zip_code } = req.body;
+
+  try {
+    const result = await client.query(
+      'INSERT INTO energy_info (email, location, zip_code) VALUES ($1, $2, $3) RETURNING *',
+      [email, location, zip_code]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    if (error.code === '23505') {
+      // 23505 is the error code for unique constraint violation in PostgreSQL
+      return res.status(409).json({ message: 'User with this email already exists.' });
+    }
+    console.error('Error adding energy info:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
 // Update the zip code and/or last live rate recorded for a user
 app.put('/api/energy-info/:email', async (req, res) => {
   const email = req.params.email;
-  const { zip_code, last_live_rate } = req.body;
+  const { zip_code } = req.body;
 
   try {
-    const result = await db.query(
+    const result = await client.query(
       'UPDATE energy_info SET zip_code = $1, updated_at = NOW() WHERE email = $2 RETURNING *',
       [zip_code, email]
     );
@@ -560,15 +581,6 @@ app.put('/api/energy-info/:email', async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'No user found with this email.' });
     }
-    
-    // Updating last live rate if provided
-    if (last_live_rate !== undefined) {
-      await db.query(
-        'UPDATE energy_info SET last_live_rate = $1, updated_at = NOW() WHERE email = $2',
-        [last_live_rate, email]
-      );
-    }
-
     res.status(200).json(result.rows[0]);
   } catch (error) {
     console.error('Error updating energy info:', error);
