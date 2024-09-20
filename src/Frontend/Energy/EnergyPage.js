@@ -57,9 +57,10 @@ const EnergyPage = ({ statusOfAlerts }) => {
   };
 
   const fetchData = async () => {
+    let energyInfoResponse;
     if (currentUser && currentUser.email) {
       try {
-        const energyInfoResponse = await axios.get(
+        energyInfoResponse = await axios.get(
           `/api/energy-info/${currentUser.email}`
         );
         setLocation(energyInfoResponse.data.location);
@@ -67,11 +68,11 @@ const EnergyPage = ({ statusOfAlerts }) => {
           `/api/equipment/${currentUser.email}`
         );
         setEquipment(equipmentResponse.data);
-        await fetchElectricityRate(energyInfoResponse.data.zip_code);
-      } catch (error) {
-        setError('Error fetching user data. Please try again later.');
+    } catch (error) {
+        // setError('Error fetching user data. Please try again later.');
         console.error('Error fetching user data:', error);
-      }
+    }
+    await fetchElectricityRate(energyInfoResponse.data.zip_code);
     }
   };
 
