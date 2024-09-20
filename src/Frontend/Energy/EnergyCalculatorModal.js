@@ -37,46 +37,6 @@ const EnergyCalculatorModal = ({
   const [userSubmittedEquipment, setUserSubmittedEquipment] = useState(false);
   const [error, setError] = useState(null);
 
-  // Function to calculate energy cost and add equipment
-  //   const calculateEnergyCost = () => {
-  //     if (!electricityRate || !hoursPerDay) {
-  //       setError('Please enter all required fields.');
-  //       return;
-  //     }
-
-  //     // Calculate power in watts
-  //     if (inputMode === 'wattage') {
-  //       if (!wattage) {
-  //         setError('Please enter the wattage of the device.');
-  //         return;
-  //       }
-  //       setPowerInWatts(parseFloat(wattage));
-  //     } else {
-  //       if (!voltage || !current) {
-  //         setError('Please enter both voltage and current for the device.');
-  //         return;
-  //       }
-  //       setPowerInWatts(parseFloat(voltage) * parseFloat(current));
-  //     }
-
-  //     // Calculate energy cost
-  //     setError(null); // Reset error
-  //     const kWhPerDay = (powerInWatts * hoursPerDay) / 1000; // Convert watts to kilowatt-hours
-  //     const costPerDay = kWhPerDay * electricityRate; // Daily cost
-  //     const weeklyCost = costPerDay * 7; // Weekly cost
-  //     const monthlyCost = costPerDay * 30; // Monthly cost (approximate)
-  //     const yearlyCost = costPerDay * 365; // Yearly cost (approximate)
-
-  //     const calculatedCosts = {
-  //       daily: costPerDay.toFixed(2),
-  //       weekly: weeklyCost.toFixed(2),
-  //       monthly: monthlyCost.toFixed(2),
-  //       yearly: yearlyCost.toFixed(2),
-  //     };
-
-  //     onCalculateCost(calculatedCosts); // Send calculated costs to parent component
-  //   };
-
   const calculateWatts = () => {
     // Calculate power in watts
     if (inputMode === 'wattage') {
@@ -136,7 +96,7 @@ const EnergyCalculatorModal = ({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Energy Calculator</ModalHeader>
+        <ModalHeader>Add Device</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <VStack

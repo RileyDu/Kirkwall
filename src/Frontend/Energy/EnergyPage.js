@@ -49,12 +49,17 @@ const EnergyPage = ({ statusOfAlerts }) => {
     isOpen: isPopoverOpen,
   } = useDisclosure();
   const [statsVisible, setStatsVisible] = useState({});
+  const [credentialStatsVisible, setCredentialStatsVisible] = useState(false); // New state for credential card
 
   const toggleStatsVisibility = deviceId => {
     setStatsVisible(prevState => ({
       ...prevState,
       [deviceId]: !prevState[deviceId],
     }));
+  };
+
+  const toggleCredentialStatsVisibility = () => {
+    setCredentialStatsVisible(!credentialStatsVisible);
   };
 
   const fetchData = async () => {
@@ -70,11 +75,10 @@ const EnergyPage = ({ statusOfAlerts }) => {
           `/api/equipment/${currentUser.email}`
         );
         setEquipment(equipmentResponse.data);
-    } catch (error) {
-        // setError('Error fetching user data. Please try again later.');
+      } catch (error) {
         console.error('Error fetching user data:', error);
-    }
-    await fetchElectricityRate(energyInfoResponse.data.zip_code);
+      }
+      await fetchElectricityRate(energyInfoResponse.data.zip_code);
     }
   };
 
@@ -300,6 +304,41 @@ const EnergyPage = ({ statusOfAlerts }) => {
             </Box>
           </HStack>
         </VStack>
+        <Flex justifyContent="flex-end" mt={2} position="relative">
+          <Icon
+            as={credentialStatsVisible ? FaChevronUp : FaChevronDown}
+            position="absolute"
+            right="0"
+            cursor="pointer"
+            onClick={toggleCredentialStatsVisibility}
+            color='teal.400'
+          />
+        </Flex>
+        <Collapse in={credentialStatsVisible} animateOpacity>
+        {/* <Divider borderColor={'white'} /> */}
+          <SimpleGrid columns={4} spacing={4} mt={6}>
+            <Stat bg="teal.500" p={4} borderRadius="md" boxShadow="md">
+              <StatLabel>Total Daily Cost</StatLabel>
+              <StatNumber>${costs ? costs.daily : 'N/A'}</StatNumber>
+              {/* <StatHelpText>per day</StatHelpText> */}
+            </Stat>
+            <Stat bg="blue.500" p={4} borderRadius="md" boxShadow="md">
+              <StatLabel>Total Weekly Cost</StatLabel>
+              <StatNumber>${costs ? costs.weekly : 'N/A'}</StatNumber>
+              {/* <StatHelpText>per week</StatHelpText> */}
+            </Stat>
+            <Stat bg="orange.500" p={4} borderRadius="md" boxShadow="md">
+              <StatLabel>Total Monthly Cost</StatLabel>
+              <StatNumber>${costs ? costs.monthly : 'N/A'}</StatNumber>
+              {/* <StatHelpText>per month</StatHelpText> */}
+            </Stat>
+            <Stat bg="red.500" p={4} borderRadius="md" boxShadow="md">
+              <StatLabel>Total Yearly Cost</StatLabel>
+              <StatNumber>${costs ? costs.yearly : 'N/A'}</StatNumber>
+              {/* <StatHelpText>per year</StatHelpText> */}
+            </Stat>
+          </SimpleGrid>
+        </Collapse>
       </Box>
 
       {/* Equipment Cards in Grid */}
