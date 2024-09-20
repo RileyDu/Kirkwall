@@ -494,6 +494,90 @@ app.post(
   }
 );
 
+// Get all equipment for a user by email
+app.get('/api/equipment/:email', async (req, res) => {
+  const email = req.params.email;
+  try {
+    const result = await db.query(
+      'SELECT * FROM user_equipment WHERE email = $1',
+      [email]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'No equipment found for this user.' });
+    }
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching equipment:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// Add new equipment for a user
+app.post('/api/equipment', async (req, res) => {
+  const { email, title, wattage, hours_per_day } = req.body;
+
+  try {
+    const result = await db.query(
+      'INSERT INTO user_equipment (email, title, wattage, hours_per_day) VALUES ($1, $2, $3, $4) RETURNING *',
+      [email, title, wattage, hours_per_day]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error adding equipment:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// Get energy credentials for a user by email
+app.get('/api/energy-info/:email', async (req, res) => {
+  const email = req.params.email;
+  try {
+    const result = await db.query(
+      'SELECT * FROM energy_info WHERE email = $1',
+      [email]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'No energy info found for this user.' });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error fetching energy info:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// Update the zip code and/or last live rate recorded for a user
+app.put('/api/energy-info/:email', async (req, res) => {
+  const email = req.params.email;
+  const { zip_code, last_live_rate } = req.body;
+
+  try {
+    const result = await db.query(
+      'UPDATE energy_info SET zip_code = $1, updated_at = NOW() WHERE email = $2 RETURNING *',
+      [zip_code, email]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'No user found with this email.' });
+    }
+    
+    // Updating last live rate if provided
+    if (last_live_rate !== undefined) {
+      await db.query(
+        'UPDATE energy_info SET last_live_rate = $1, updated_at = NOW() WHERE email = $2',
+        [last_live_rate, email]
+      );
+    }
+
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error updating energy info:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
+
 // New route for cron job
 app.get('/api/run-check-thresholds', async (req, res) => {
   try {

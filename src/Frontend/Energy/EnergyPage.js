@@ -16,10 +16,16 @@ import {
   HStack,
   Flex,
   Icon,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
 } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, EditIcon } from '@chakra-ui/icons'; // Import EditIcon for the pencil
 import { MdLocationOn } from 'react-icons/md';
-
 import EnergyCalculatorModal from './EnergyCalculatorModal.js'; // Import the modal component
 import { useAuth } from '../AuthComponents/AuthContext.js';
 
@@ -32,6 +38,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
   const [hoursPerDay, setHoursPerDay] = useState('');
   const [location, setLocation] = useState('');
   const { currentUser } = useAuth();
+  const { onOpen: onPopoverOpen, onClose: onPopoverClose, isOpen: isPopoverOpen } = useDisclosure(); // Control popover state
 
   // Function to fetch electricity rate from OpenEI API based on zip code
   const fetchElectricityRate = async (zipCode) => {
@@ -112,20 +119,36 @@ const EnergyPage = ({ statusOfAlerts }) => {
         <Flex alignItems="center" mb={4}>
           <Icon as={MdLocationOn} w={8} h={8} color="teal.400" />
           <Heading size="lg" ml={2}>
-            {location}
+            {location || 'Location'}
           </Heading>
+          <Popover isOpen={isPopoverOpen} onOpen={onPopoverOpen} onClose={onPopoverClose} >
+            <PopoverTrigger>
+              <Button ml={2} onClick={onPopoverOpen} variant="blue">
+                <EditIcon size="lg" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent bg="gray.800" color="white">
+              <PopoverArrow />
+              <PopoverCloseButton />
+              {/* <PopoverHeader>Edit Location</PopoverHeader> */}
+              <PopoverBody>
+                <Input
+                  placeholder="Enter new location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  bg="gray.700"
+                  borderColor="teal.400"
+                />
+              </PopoverBody>
+              <PopoverFooter>
+                <Button colorScheme="teal" onClick={onPopoverClose}>
+                  Save
+                </Button>
+              </PopoverFooter>
+            </PopoverContent>
+          </Popover>
         </Flex>
         <VStack spacing={3} width="100%">
-          <Input
-            placeholder="Enter equipment location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            bg="gray.800"
-            border="none"
-            _focus={{ borderColor: 'teal.400' }}
-            _placeholder={{ color: 'gray.500' }}
-            color="white"
-          />
           <HStack justify="space-between" w="100%" px={2}>
             <Box>
               <Text fontWeight="bold" fontSize="lg" color="gray.300">
