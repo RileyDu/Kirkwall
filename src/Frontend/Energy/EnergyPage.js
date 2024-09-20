@@ -24,9 +24,9 @@ import {
   PopoverArrow,
   PopoverCloseButton,
 } from '@chakra-ui/react';
-import { AddIcon, EditIcon } from '@chakra-ui/icons'; // Import EditIcon for the pencil
+import { AddIcon, EditIcon } from '@chakra-ui/icons';
 import { MdLocationOn } from 'react-icons/md';
-import EnergyCalculatorModal from './EnergyCalculatorModal.js'; // Import the modal component
+import EnergyCalculatorModal from './EnergyCalculatorModal.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 
 const EnergyPage = ({ statusOfAlerts }) => {
@@ -34,11 +34,37 @@ const EnergyPage = ({ statusOfAlerts }) => {
   const [electricityRate, setElectricityRate] = useState(null);
   const [costs, setCosts] = useState(null);
   const [error, setError] = useState(null);
-  const [deviceName, setDeviceName] = useState('');
-  const [hoursPerDay, setHoursPerDay] = useState('');
   const [location, setLocation] = useState('');
+  const [deviceName, setDeviceName] = useState('');
+  const [hoursPerDay, setHoursPerDay] = useState(0);
+  const [equipment, setEquipment] = useState([]); // Store equipment list
   const { currentUser } = useAuth();
-  const { onOpen: onPopoverOpen, onClose: onPopoverClose, isOpen: isPopoverOpen } = useDisclosure(); // Control popover state
+  const { onOpen: onPopoverOpen, onClose: onPopoverClose, isOpen: isPopoverOpen } = useDisclosure();
+
+  // Fetch Energy Info and Equipment on Component Mount
+  useEffect(() => {
+    const fetchData = async () => {
+      if (currentUser && currentUser.email) {
+        try {
+          // Fetch energy info
+          const energyInfoResponse = await axios.get(`/api/energy-info/${currentUser.email}`);
+          setLocation(energyInfoResponse.data.location);
+
+          // Fetch user equipment
+          const equipmentResponse = await axios.get(`/api/equipment/${currentUser.email}`);
+          setEquipment(equipmentResponse.data);
+
+          // Fetch electricity rate based on user's zip code
+          fetchElectricityRate(energyInfoResponse.data.zip_code);
+        } catch (error) {
+          setError('Error fetching user data. Please try again later.');
+          console.error('Error fetching user data:', error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [currentUser]);
 
   // Function to fetch electricity rate from OpenEI API based on zip code
   const fetchElectricityRate = async (zipCode) => {
@@ -76,52 +102,52 @@ const EnergyPage = ({ statusOfAlerts }) => {
     return 'N/A';
   };
 
-  // Fetch electricity rate based on user's zip code on component mount
-  useEffect(() => {
-    if (currentUser) {
-      const zipCode = currentUser.zipCode || '58102'; // Replace '58102' with a default or user-specific value
-      fetchElectricityRate(zipCode);
+  // Function to handle adding new equipment
+// Function to handle adding new equipment
+const handleAddEquipment = async (newEquipment) => {
+    try {
+      // Validate and format data to avoid passing any circular references
+      const equipmentData = {
+        email: newEquipment.email,
+        title: newEquipment.title,
+        wattage: newEquipment.wattage,
+        hours_per_day: newEquipment.hours_per_day,
+      };
+  
+      const response = await axios.post('/api/equipment', equipmentData);
+      setEquipment([...equipment, response.data]); // Update state with new equipment
+      onClose(); // Close modal
+    } catch (error) {
+      setError('Error adding equipment. Please try again later.');
+      console.error('Error adding equipment:', error);
     }
-  }, [currentUser]);
-
-  // Function to receive calculated energy costs from the modal
-  const handleCalculateCost = (calculatedCosts) => {
-    setCosts(calculatedCosts);
-    onClose(); // Close the modal after calculation
   };
+  
+
+    // Function to receive calculated energy costs from the modal
+    const handleCalculateCost = (calculatedCosts) => {
+        setCosts(calculatedCosts);
+        onClose(); // Close the modal after calculation
+      };
 
   return (
-    <Box minHeight={'100vh'} display={'flex'} flexDirection={'column'} alignItems={'center'} pt={statusOfAlerts ? '10px' : '74px'}>
+    <Box minHeight="100vh" display="flex" flexDirection="column" alignItems="center" pt={statusOfAlerts ? '10px' : '74px'}>
       <Heading>
         Energy Cost Calculator
-        <Button variant={'blue'} onClick={onOpen} ml={2} mb={2} rightIcon={<AddIcon />}>
+        <Button variant="blue" onClick={onOpen} ml={2} mb={2} rightIcon={<AddIcon />}>
           Add Device
         </Button>
       </Heading>
       {error && <Text color="red.500">{error}</Text>}
 
       {/* User Profile Card */}
-      <Box
-        maxW="700px"
-        w="100%"
-        p={6}
-        boxShadow="lg"
-        borderRadius="md"
-        bg="gray.900"
-        color="white"
-        mt={4}
-        mb={6}
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        textAlign="center"
-      >
+      <Box maxW="700px" w="100%" p={6} boxShadow="lg" borderRadius="md" bg="gray.900" color="white" mt={4} mb={6} display="flex" flexDirection="column" alignItems="center" textAlign="center">
         <Flex alignItems="center" mb={4}>
           <Icon as={MdLocationOn} w={8} h={8} color="teal.400" />
           <Heading size="lg" ml={2}>
             {location || 'Location'}
           </Heading>
-          <Popover isOpen={isPopoverOpen} onOpen={onPopoverOpen} onClose={onPopoverClose} >
+          <Popover isOpen={isPopoverOpen} onOpen={onPopoverOpen} onClose={onPopoverClose}>
             <PopoverTrigger>
               <Button ml={2} onClick={onPopoverOpen} variant="blue">
                 <EditIcon size="lg" />
@@ -130,15 +156,8 @@ const EnergyPage = ({ statusOfAlerts }) => {
             <PopoverContent bg="gray.800" color="white">
               <PopoverArrow />
               <PopoverCloseButton />
-              {/* <PopoverHeader>Edit Location</PopoverHeader> */}
               <PopoverBody>
-                <Input
-                  placeholder="Enter new location"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  bg="gray.700"
-                  borderColor="teal.400"
-                />
+                <Input placeholder="Enter new location" value={location} onChange={(e) => setLocation(e.target.value)} bg="gray.700" borderColor="teal.400" />
               </PopoverBody>
               <PopoverFooter>
                 <Button colorScheme="teal" onClick={onPopoverClose}>
@@ -172,38 +191,40 @@ const EnergyPage = ({ statusOfAlerts }) => {
         </VStack>
       </Box>
 
-      {/* Display Calculated Costs for the Current Device */}
-      {costs && (
-        <VStack spacing={4} align="stretch" maxW="500px" w="100%" p={4} boxShadow="lg" borderRadius="md" bg="gray.800" color="white" mt={4}>
+      {/* Equipment Cards */}
+          <VStack spacing={4} align="stretch" maxW="500px" w="100%" p={4} boxShadow="lg" borderRadius="md" bg="gray.800" color="white" mt={4}>
+      {/* <VStack spacing={4} align="stretch" maxW="700px" w="100%"> */}
+        {equipment.map((device) => (
           <Box>
-            <Heading size="md">Costs for {deviceName}</Heading>
-            <Text>Rate for {deviceName}: ${electricityRate} per kWh</Text>
-            <Text>Hours used per day: {hoursPerDay}</Text>
+            <Heading size="md">{device.title}</Heading>
+            <Text>Rate: ${electricityRate} per kWh</Text>
+            <Text>Hours used per day: {device.hours_per_day}</Text>
             <SimpleGrid columns={[1, null, 2]} spacing={4} mt={4}>
               <Stat bg="teal.500" p={4} borderRadius="md" boxShadow="md">
                 <StatLabel>Daily Cost</StatLabel>
-                <StatNumber>${costs.daily}</StatNumber>
+                <StatNumber>${costs?.daily}</StatNumber>
                 <StatHelpText>per day</StatHelpText>
               </Stat>
               <Stat bg="blue.500" p={4} borderRadius="md" boxShadow="md">
                 <StatLabel>Weekly Cost</StatLabel>
-                <StatNumber>${costs.weekly}</StatNumber>
+                <StatNumber>${costs?.weekly}</StatNumber>
                 <StatHelpText>per week</StatHelpText>
               </Stat>
               <Stat bg="orange.500" p={4} borderRadius="md" boxShadow="md">
                 <StatLabel>Monthly Cost</StatLabel>
-                <StatNumber>${costs.monthly}</StatNumber>
+                <StatNumber>${costs?.monthly}</StatNumber>
                 <StatHelpText>per month</StatHelpText>
               </Stat>
               <Stat bg="red.500" p={4} borderRadius="md" boxShadow="md">
                 <StatLabel>Yearly Cost</StatLabel>
-                <StatNumber>${costs.yearly}</StatNumber>
+                <StatNumber>${costs?.yearly}</StatNumber>
                 <StatHelpText>per year</StatHelpText>
               </Stat>
             </SimpleGrid>
           </Box>
+        ))}
         </VStack>
-      )}
+      {/* </VStack> */}
 
       {/* Energy Calculator Modal */}
       <EnergyCalculatorModal
@@ -215,6 +236,8 @@ const EnergyPage = ({ statusOfAlerts }) => {
         setDeviceName={setDeviceName}
         hoursPerDay={hoursPerDay}
         setHoursPerDay={setHoursPerDay}
+        handleAddEquipment={handleAddEquipment} // Pass the function to add equipment
+        currentUser={currentUser}
       />
     </Box>
   );

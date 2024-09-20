@@ -25,14 +25,17 @@ const EnergyCalculatorModal = ({
   setDeviceName,
   hoursPerDay,
   setHoursPerDay,
+  handleAddEquipment, // Receive the function to add equipment
+  currentUser
 }) => {
   const [inputMode, setInputMode] = useState('wattage'); // Toggle between 'wattage' and 'voltage-current'
   const [wattage, setWattage] = useState('');
   const [voltage, setVoltage] = useState('');
   const [current, setCurrent] = useState('');
+  const [powerInWatts, setPowerInWatts] = useState(null);
   const [error, setError] = useState(null);
 
-  // Function to calculate energy cost based on user inputs
+  // Function to calculate energy cost and add equipment
   const calculateEnergyCost = () => {
     if (!electricityRate || !hoursPerDay) {
       setError('Please enter all required fields.');
@@ -40,19 +43,18 @@ const EnergyCalculatorModal = ({
     }
 
     // Calculate power in watts
-    let powerInWatts;
     if (inputMode === 'wattage') {
       if (!wattage) {
         setError('Please enter the wattage of the device.');
         return;
       }
-      powerInWatts = parseFloat(wattage);
+      setPowerInWatts(parseFloat(wattage));
     } else {
       if (!voltage || !current) {
         setError('Please enter both voltage and current for the device.');
         return;
       }
-      powerInWatts = parseFloat(voltage) * parseFloat(current);
+      setPowerInWatts(parseFloat(voltage) * parseFloat(current));
     }
 
     // Calculate energy cost
@@ -63,12 +65,30 @@ const EnergyCalculatorModal = ({
     const monthlyCost = costPerDay * 30; // Monthly cost (approximate)
     const yearlyCost = costPerDay * 365; // Yearly cost (approximate)
 
-    onCalculateCost({
+    const calculatedCosts = {
       daily: costPerDay.toFixed(2),
       weekly: weeklyCost.toFixed(2),
       monthly: monthlyCost.toFixed(2),
       yearly: yearlyCost.toFixed(2),
-    }); // Send calculated costs to parent component
+    };
+
+    onCalculateCost(calculatedCosts); // Send calculated costs to parent component
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    calculateEnergyCost();
+    // calculateEnergyCost();
+    const newEquipment = {
+        email: currentUser.email,
+        title: deviceName,
+        wattage: powerInWatts,
+        hours_per_day: hoursPerDay,
+      };
+  
+      // Add new equipment
+      handleAddEquipment(newEquipment);
+    onClose();
   };
 
   // Handle user input changes
@@ -87,10 +107,6 @@ const EnergyCalculatorModal = ({
         <ModalCloseButton />
         <ModalBody>
           <VStack spacing={4} align="stretch" w="100%" boxShadow="lg" borderRadius="md" bg="gray.800" color="white" mb={4}>
-            {/* {electricityRate && (
-              <Text textDecoration={'underline'}>Electricity Rate: ${electricityRate} per kWh</Text>
-            )} */}
-
             <FormControl>
               <FormLabel>Device Name</FormLabel>
               <Input type="text" value={deviceName} onChange={handleDeviceNameChange} placeholder="e.g., Refrigerator" />
@@ -151,8 +167,8 @@ const EnergyCalculatorModal = ({
               <FormLabel>Hours of Use per Day</FormLabel>
               <Input type="number" value={hoursPerDay} onChange={handleHoursPerDayChange} placeholder="e.g., 5" />
             </FormControl>
-            <Button colorScheme="green" onClick={calculateEnergyCost}>
-              Calculate Energy Cost
+            <Button colorScheme="green" onClick={handleFormSubmit}>
+              Add Equipment
             </Button>
 
             {error && <Text color="red.500">{error}</Text>}
