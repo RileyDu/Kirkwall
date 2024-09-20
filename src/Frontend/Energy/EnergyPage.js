@@ -24,7 +24,8 @@ import {
   PopoverArrow,
   PopoverCloseButton,
 } from '@chakra-ui/react';
-import { AddIcon, EditIcon } from '@chakra-ui/icons';
+import { AddIcon, EditIcon, } from '@chakra-ui/icons';
+import { FaTrash } from 'react-icons/fa';
 import { MdLocationOn } from 'react-icons/md';
 import EnergyCalculatorModal from './EnergyCalculatorModal.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
@@ -142,6 +143,15 @@ const EnergyPage = ({ statusOfAlerts }) => {
     }
   };
 
+  const handleDeleteEquipment = async (equipmentId) => {
+    try {
+      await axios.delete(`/api/equipment/${equipmentId}`);
+      setEquipment(equipment.filter((equipment) => equipment._id !== equipmentId));
+    } catch (error) {
+      console.error('Error deleting equipment:', error);
+    }
+  };
+
   return (
     <Box minHeight="100vh" display="flex" flexDirection="column" alignItems="center" pt={statusOfAlerts ? '10px' : '74px'}>
       <Heading>
@@ -208,9 +218,10 @@ const EnergyPage = ({ statusOfAlerts }) => {
         {equipment.map((device) => (
           <Box key={device.id} mb={4}>
             <Heading size="md">{device.title}</Heading>
-            <Text>Rate: ${electricityRate} per kWh</Text>
+            {/* <Text>Rate: ${electricityRate} per kWh</Text> */}
             <Text>Hours used per day: {device.hours_per_day}</Text>
             <Text>Wattage: {device.wattage} W</Text>
+            <FaTrash onClick={() => handleDeleteEquipment(device._id)}></FaTrash>
             <SimpleGrid columns={[1, null, 2]} spacing={4} mt={4}>
               <Stat bg="teal.500" p={4} borderRadius="md" boxShadow="md">
                 <StatLabel>Daily Cost</StatLabel>
