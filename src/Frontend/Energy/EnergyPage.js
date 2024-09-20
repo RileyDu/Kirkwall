@@ -41,7 +41,6 @@ const EnergyPage = ({ statusOfAlerts }) => {
   const { currentUser } = useAuth();
   const { onOpen: onPopoverOpen, onClose: onPopoverClose, isOpen: isPopoverOpen } = useDisclosure();
 
-  // Fetch Energy Info and Equipment on Component Mount
   useEffect(() => {
     const fetchData = async () => {
       if (currentUser && currentUser.email) {
@@ -55,7 +54,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
           setEquipment(equipmentResponse.data);
 
           // Fetch electricity rate based on user's zip code
-          fetchElectricityRate(energyInfoResponse.data.zip_code);
+          await fetchElectricityRate(energyInfoResponse.data.zip_code);
         } catch (error) {
           setError('Error fetching user data. Please try again later.');
           console.error('Error fetching user data:', error);
@@ -66,7 +65,12 @@ const EnergyPage = ({ statusOfAlerts }) => {
     fetchData();
   }, [currentUser]);
 
-  // Function to fetch electricity rate from OpenEI API based on zip code
+  useEffect(() => {
+    if (equipment.length && electricityRate) {
+      calculateCosts(); // Calculate costs when equipment or electricity rate changes
+    }
+  }, [equipment, electricityRate]);
+
   const fetchElectricityRate = async (zipCode) => {
     try {
       const response = await axios.get('https://api.openei.org/utility_rates', {
@@ -88,7 +92,6 @@ const EnergyPage = ({ statusOfAlerts }) => {
     }
   };
 
-  // Helper function to extract electricity rate by type
   const getElectricityRate = (data, type) => {
     if (!data || !data.energyratestructure) return 'N/A';
     for (let i = 0; i < data.energyratestructure.length; i++) {
@@ -102,19 +105,35 @@ const EnergyPage = ({ statusOfAlerts }) => {
     return 'N/A';
   };
 
+  const calculateCosts = () => {
+    let totalDailyCost = 0;
+    let totalWeeklyCost = 0;
+    let totalMonthlyCost = 0;
+    let totalYearlyCost = 0;
+
+    equipment.forEach((device) => {
+      const powerInWatts = device.wattage;
+      const kWhPerDay = (powerInWatts * device.hours_per_day) / 1000; // Convert watts to kilowatt-hours
+      const costPerDay = kWhPerDay * electricityRate; // Daily cost
+
+      totalDailyCost += costPerDay;
+      totalWeeklyCost += costPerDay * 7; // Weekly cost
+      totalMonthlyCost += costPerDay * 30; // Monthly cost (approximate)
+      totalYearlyCost += costPerDay * 365; // Yearly cost (approximate)
+    });
+
+    setCosts({
+      daily: totalDailyCost.toFixed(2),
+      weekly: totalWeeklyCost.toFixed(2),
+      monthly: totalMonthlyCost.toFixed(2),
+      yearly: totalYearlyCost.toFixed(2),
+    });
+  };
+
   // Function to handle adding new equipment
-// Function to handle adding new equipment
-const handleAddEquipment = async (newEquipment) => {
+  const handleAddEquipment = async (newEquipment) => {
     try {
-      // Validate and format data to avoid passing any circular references
-      const equipmentData = {
-        email: newEquipment.email,
-        title: newEquipment.title,
-        wattage: newEquipment.wattage,
-        hours_per_day: newEquipment.hours_per_day,
-      };
-  
-      const response = await axios.post('/api/equipment', equipmentData);
+      const response = await axios.post('/api/equipment', newEquipment);
       setEquipment([...equipment, response.data]); // Update state with new equipment
       onClose(); // Close modal
     } catch (error) {
@@ -122,13 +141,6 @@ const handleAddEquipment = async (newEquipment) => {
       console.error('Error adding equipment:', error);
     }
   };
-  
-
-    // Function to receive calculated energy costs from the modal
-    const handleCalculateCost = (calculatedCosts) => {
-        setCosts(calculatedCosts);
-        onClose(); // Close the modal after calculation
-      };
 
   return (
     <Box minHeight="100vh" display="flex" flexDirection="column" alignItems="center" pt={statusOfAlerts ? '10px' : '74px'}>
@@ -192,52 +204,50 @@ const handleAddEquipment = async (newEquipment) => {
       </Box>
 
       {/* Equipment Cards */}
-          <VStack spacing={4} align="stretch" maxW="500px" w="100%" p={4} boxShadow="lg" borderRadius="md" bg="gray.800" color="white" mt={4}>
-      {/* <VStack spacing={4} align="stretch" maxW="700px" w="100%"> */}
+      <VStack spacing={4} align="stretch" maxW="500px" w="100%" p={4} boxShadow="lg" borderRadius="md" bg="gray.800" color="white" mt={4}>
         {equipment.map((device) => (
-          <Box>
+          <Box key={device.id} mb={4}>
             <Heading size="md">{device.title}</Heading>
             <Text>Rate: ${electricityRate} per kWh</Text>
             <Text>Hours used per day: {device.hours_per_day}</Text>
             <SimpleGrid columns={[1, null, 2]} spacing={4} mt={4}>
               <Stat bg="teal.500" p={4} borderRadius="md" boxShadow="md">
                 <StatLabel>Daily Cost</StatLabel>
-                <StatNumber>${costs?.daily}</StatNumber>
+                <StatNumber>${(device.wattage * device.hours_per_day * electricityRate / 1000).toFixed(2)}</StatNumber>
                 <StatHelpText>per day</StatHelpText>
               </Stat>
               <Stat bg="blue.500" p={4} borderRadius="md" boxShadow="md">
                 <StatLabel>Weekly Cost</StatLabel>
-                <StatNumber>${costs?.weekly}</StatNumber>
+                <StatNumber>${(device.wattage * device.hours_per_day * electricityRate / 1000 * 7).toFixed(2)}</StatNumber>
                 <StatHelpText>per week</StatHelpText>
               </Stat>
               <Stat bg="orange.500" p={4} borderRadius="md" boxShadow="md">
                 <StatLabel>Monthly Cost</StatLabel>
-                <StatNumber>${costs?.monthly}</StatNumber>
+                <StatNumber>${(device.wattage * device.hours_per_day * electricityRate / 1000 * 30).toFixed(2)}</StatNumber>
                 <StatHelpText>per month</StatHelpText>
               </Stat>
               <Stat bg="red.500" p={4} borderRadius="md" boxShadow="md">
                 <StatLabel>Yearly Cost</StatLabel>
-                <StatNumber>${costs?.yearly}</StatNumber>
+                <StatNumber>${(device.wattage * device.hours_per_day * electricityRate / 1000 * 365).toFixed(2)}</StatNumber>
                 <StatHelpText>per year</StatHelpText>
               </Stat>
             </SimpleGrid>
           </Box>
         ))}
-        </VStack>
-      {/* </VStack> */}
+      </VStack>
 
       {/* Energy Calculator Modal */}
       <EnergyCalculatorModal
         isOpen={isOpen}
         onClose={onClose}
         electricityRate={electricityRate}
-        onCalculateCost={handleCalculateCost}
         deviceName={deviceName}
         setDeviceName={setDeviceName}
         hoursPerDay={hoursPerDay}
         setHoursPerDay={setHoursPerDay}
         handleAddEquipment={handleAddEquipment} // Pass the function to add equipment
         currentUser={currentUser}
+        calculateCosts={calculateCosts}
       />
     </Box>
   );
