@@ -223,7 +223,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
       >
         <Flex alignItems="center" mb={4}>
           <Icon as={MdLocationOn} w={8} h={8} color="teal.400" />
-          <Heading size="lg" ml={2}>
+          <Heading size="lg" ml={2} color={'white'}>
             {location || 'Location'}
           </Heading>
           <Popover
@@ -236,8 +236,8 @@ const EnergyPage = ({ statusOfAlerts }) => {
                 size="lg"
                 onClick={onPopoverOpen}
                 position={'absolute'}
-                top={1}
-                right={1}
+                top={2}
+                right={2}
                 cursor={'pointer'}
               />
             </PopoverTrigger>
@@ -294,7 +294,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
                 color="gray.300"
                 textDecoration={'underline'}
               >
-                Total Yearly Energy Cost
+                Annual Total
               </Text>
               <Text>{costs ? `$${costs.yearly}` : 'Not Calculated'}</Text>
             </Box>
@@ -320,7 +320,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
             position="relative"
           >
             <Box mb={2} position="relative">
-              <Heading size="md" mb={2} textDecoration={'underline'}>
+              <Heading size="md" mb={2} textDecoration={'underline'} color={'white'}>
                 {device.title}
               </Heading>
               <Icon
@@ -340,7 +340,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
               <Text fontSize={'lg'}>
                 <strong>Wattage:</strong> {device.wattage} W
               </Text>
-              <Divider mt={2} mb={2} />
+              <Divider mt={2} mb={2} borderColor={'white'} />
               <Text fontSize={'lg'}>
                 <strong>Yearly Energy Cost:</strong> $
                 {(
