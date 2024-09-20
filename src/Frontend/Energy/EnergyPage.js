@@ -210,6 +210,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
             <Heading size="md">{device.title}</Heading>
             <Text>Rate: ${electricityRate} per kWh</Text>
             <Text>Hours used per day: {device.hours_per_day}</Text>
+            <Text>Wattage: {device.wattage} W</Text>
             <SimpleGrid columns={[1, null, 2]} spacing={4} mt={4}>
               <Stat bg="teal.500" p={4} borderRadius="md" boxShadow="md">
                 <StatLabel>Daily Cost</StatLabel>

@@ -528,6 +528,17 @@ app.post('/api/equipment', async (req, res) => {
   }
 });
 
+app.delete('/api/equipment/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    const result = await client.query('DELETE FROM user_equipment WHERE id = $1', [id]);
+    res.status(200).json({ message: 'Equipment deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting equipment:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+})
+
 // Get energy credentials for a user by email
 app.get('/api/energy-info/:email', async (req, res) => {
   const email = req.params.email;
