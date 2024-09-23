@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Flex, Heading, Text, SimpleGrid } from '@chakra-ui/react';
-import { SummaryMetrics } from '../Modular/SummaryMetrics.js';
 import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import { WeeklyRecapHelper } from './WeeklyRecapHelper.js';
@@ -16,6 +15,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   const [isMonday, setIsMonday] = useState(false);
   const [recapData, setRecapData] = useState({});
   const [recentAlerts, setRecentAlerts] = useState([]);
+  const [alertCounts, setAlertCounts] = useState({});
 
   useEffect(() => {
     const today = new Date();
@@ -32,7 +32,18 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       axios
         .get('/api/alerts/recap')
         .then(response => {
-          setRecentAlerts(response.data);
+          // Filter alerts based on user metrics
+          const filteredAlerts = response.data.filter(alert =>
+            userMetrics.includes(alert.metric)
+          );
+          setRecentAlerts(filteredAlerts);
+
+          // Count alerts by metric
+          const alertCount = filteredAlerts.reduce((count, alert) => {
+            count[alert.metric] = (count[alert.metric] || 0) + 1;
+            return count;
+          }, {});
+          setAlertCounts(alertCount);
         })
         .catch(error => {
           console.error('Error fetching alerts:', error);
@@ -124,6 +135,9 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     <Text>
                       <strong>Avg:</strong> {recapData[metric]?.avg}
                       {addSpace ? ' ' : ''} {label}
+                    </Text>
+                    <Text>
+                      <strong>Alerts:</strong> {alertCounts[metric] || 0}
                     </Text>
                   </Box>
                 );
