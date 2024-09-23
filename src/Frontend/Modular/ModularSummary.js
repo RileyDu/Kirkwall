@@ -141,10 +141,6 @@ const ModularSummary = ({ statusOfAlerts }) => {
                 return (
                   <GridItem key={index}>
                     <MotionBox
-                      // initial={{ opacity: 0, scale: 0.5 }}
-                      // animate={{ opacity: 1, scale: 1 }}
-                      // transition={{ duration: 0.5 }}
-                      // bgGradient="linear(to-t, brand.500, brand.900)"
                       bg="#212121"
                       borderRadius="lg"
                       boxShadow="xl"
@@ -152,37 +148,6 @@ const ModularSummary = ({ statusOfAlerts }) => {
                       color="white"
                       _hover={{ boxShadow: '2xl', transform: 'scale(1.02)' }}
                     >
-                      {/* {isLargerThan768 && !isGrandFarm ? (
-                        <Stat>
-                          <Box>
-                            <StatLabel>
-                              {metric.label} for {metric.timeOfData}
-                            </StatLabel>
-                          </Box>
-                          <SimpleGrid columns={2} spacing={4}>
-                            <Box>
-                              <StatNumber>
-                                {formatValue(metric.current)} Current
-                              </StatNumber>
-                            </Box>
-                            <Box>
-                              <StatNumber>
-                                {formatValue(metric.high)} High
-                              </StatNumber>
-                            </Box>
-                            <Box>
-                              <StatNumber>
-                                {formatValue(metric.average)} Average
-                              </StatNumber>
-                            </Box>
-                            <Box>
-                              <StatNumber>
-                                {formatValue(metric.low)} Low
-                              </StatNumber>
-                            </Box>
-                          </SimpleGrid>
-                        </Stat>
-                      ) : ( */}
                         <Stat>
                           <Box>
                             <StatNumber fontSize={['lg', 'xl']} textDecoration="underline">
