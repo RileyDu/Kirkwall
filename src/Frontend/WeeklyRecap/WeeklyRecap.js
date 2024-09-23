@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Flex, Heading, Text } from '@chakra-ui/react';
+import { Box, Flex, Heading, Text, SimpleGrid } from '@chakra-ui/react';
 import { SummaryMetrics } from '../Modular/SummaryMetrics.js';
 import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
@@ -65,48 +65,62 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     };
 
     return (
-        <Box
-            minHeight="100vh"
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            pt={statusOfAlerts ? '10px' : '74px'}
-        >
-            <Flex justifyContent="space-between" alignItems="center">
-                <Heading>Weekly Recap</Heading>
-            </Flex>
-            {isMonday && (
-                <Box mt={4}>
-                    {Object.keys(recapData).length === 0 ? (
-                        <Text>Loading weekly recap data...</Text>
-                    ) : (
-                        Object.keys(recapData).map((metric) => {
-                            const { label, addSpace } = getLabelForMetric(metric);
-                            return (
-                                <Box key={metric} mb={4} p={4} borderWidth="1px" borderRadius="lg">
-                                    <Heading size="md">{metric}</Heading>
-                                    <Text>
-                                        High: {recapData[metric]?.high}
-                                        {addSpace ? ' ' : ''}
-                                        {label}
-                                    </Text>
-                                    <Text>
-                                        Low: {recapData[metric]?.low}
-                                        {addSpace ? ' ' : ''}
-                                        {label}
-                                    </Text>
-                                    <Text>
-                                        Avg: {recapData[metric]?.avg}
-                                        {addSpace ? ' ' : ''}
-                                        {label}
-                                    </Text>
-                                </Box>
-                            );
-                        })
-                    )}
-                </Box>
-            )}
+<Box
+      minHeight="100vh"
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      pt={statusOfAlerts ? "10px" : "74px"}
+      px={4} // Add padding on the x-axis for better responsiveness
+    >
+      <Flex justifyContent="space-between" alignItems="center" width="100%">
+        <Heading>Weekly Recap</Heading>
+      </Flex>
+
+      {isMonday && (
+        <Box mt={4} width="100%">
+          {Object.keys(recapData).length === 0 ? (
+            <Text>Loading weekly recap data...</Text>
+          ) : (
+            <SimpleGrid
+              columns={{ base: 1, sm: 2, md: 3, lg: 6 }} // Responsive columns
+              spacing={4} // Space between grid items
+            >
+              {Object.keys(recapData).map((metric) => {
+                const { label, addSpace } = getLabelForMetric(metric);
+                return (
+                  <Box
+                    key={metric}
+                    p={4}
+                    borderWidth="1px"
+                    borderRadius="lg"
+                    shadow="md"
+                    bg="white"
+                    _hover={{ shadow: "lg" }} // Optional: Add hover effect
+                  >
+                    <Heading size="md" mb={2}>
+                      {metric}
+                    </Heading>
+                    <Text>
+                      <strong>High:</strong> {recapData[metric]?.high}
+                      {addSpace ? " " : ""} {label}
+                    </Text>
+                    <Text>
+                      <strong>Low:</strong> {recapData[metric]?.low}
+                      {addSpace ? " " : ""} {label}
+                    </Text>
+                    <Text>
+                      <strong>Avg:</strong> {recapData[metric]?.avg}
+                      {addSpace ? " " : ""} {label}
+                    </Text>
+                  </Box>
+                );
+              })}
+            </SimpleGrid>
+          )}
         </Box>
+      )}
+    </Box>
     );
 };
 
