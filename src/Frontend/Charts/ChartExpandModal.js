@@ -111,8 +111,8 @@ const ChartExpandModal = ({
   
     // Check if the timeframe is "99 days" and treat it as an indefinite pause
     const isIndefinitePause = latestThreshold?.timeframe.days === 99;
-    console.log(isIndefinitePause)
-    console.log(latestThreshold?.timeframe)
+    // console.log(isIndefinitePause)
+    // console.log(latestThreshold?.timeframe)
   
     // If there's a timestamp and a timeframe and it's not an indefinite pause
     if (latestThreshold?.timestamp && latestThreshold?.timeframe && !isIndefinitePause) {
