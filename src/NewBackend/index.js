@@ -102,10 +102,10 @@ app.get('/api/rivercity_data', async (req, res) => {
   let query =
     'SELECT * FROM rivercity_data WHERE deveui = $1 ORDER BY publishedat DESC LIMIT $2';
 
-  if (type === 'temp') {
+  if (type === 'rctemp') {
     query =
       'SELECT rctemp, publishedat FROM rivercity_data WHERE deveui = $1 ORDER BY publishedat DESC LIMIT $2';
-  } else if (type === 'hum') {
+  } else if (type === 'humidity') {
     query =
       'SELECT humidity, publishedat FROM rivercity_data WHERE deveui = $1 ORDER BY publishedat DESC LIMIT $2';
   }

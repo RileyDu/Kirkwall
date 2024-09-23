@@ -88,15 +88,36 @@ export const WeeklyRecapHelper = async (userMetrics) => {
 
   // Calculate high, low, and average for a given dataset
   function calculateMetrics(data) {
-    if (!data || data.length === 0) return { high: null, low: null, avg: null };
+    if (!data || data.length === 0) {
+      return { high: null, low: null, avg: null };
+    }
   
-    const values = data.map((item) => item[Object.keys(item)[0]]);
-    const high = Math.max(...values).toFixed(2);
-    const low = Math.min(...values).toFixed(2);
-    const avg = (values.reduce((acc, value) => acc + value, 0) / values.length).toFixed(2);
+    // Extract values and ensure they are numbers
+    const values = data.map((item) => {
+      const value = parseFloat(item[Object.keys(item)[0]]);
+      return isNaN(value) ? null : value;
+    }).filter(value => value !== null); // Filter out any null values
+  
+    if (values.length === 0) {
+      // If there are no valid numeric values, return null for all metrics
+      return { high: null, low: null, avg: null };
+    }
+  
+    // Check for empty arrays or invalid data leading to Infinity
+    const high = values.length > 0 ? Math.max(...values) : null;
+    const low = values.length > 0 ? Math.min(...values) : null;
+    const avg = values.length > 0 ? (values.reduce((acc, value) => acc + value, 0) / values.length).toFixed(2) : null;
+  
+    // Handle cases where high, low, or avg is Infinity
+    if (high === Infinity || low === Infinity || avg === Infinity) {
+      console.error('Invalid data detected:', data);
+      return { high: 'Invalid data', low: 'Invalid data', avg: 'Invalid data' };
+    }
   
     return { high, low, avg };
   }
+  
+  
   
 
   // Rename key to metric for impriMed data
