@@ -219,6 +219,20 @@ app.get('/api/alerts', async (req, res) => {
   }
 });
 
+app.get('/api/alerts/recap', async (req, res) => {
+  try {
+    const result = await client.query(
+      `SELECT * FROM alerts 
+       WHERE timestamp >= NOW() - INTERVAL '7 days' 
+       ORDER BY timestamp DESC`
+    );
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching recent alerts:', error);
+    res.status(500).json({ error: 'An error occurred while fetching recent alerts' });
+  }
+});
+
 app.get('/api/alerts_per_user', async (req, res) => {
   const userMetrics = req.query.userMetrics; // Extract the userMetrics array from the query parameters
 
