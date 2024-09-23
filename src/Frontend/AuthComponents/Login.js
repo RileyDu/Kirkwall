@@ -88,7 +88,7 @@ const Login = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.log('User logged in successfully');
-        navigate('/');
+        navigate('/dashboard');
     } catch (error) {
       const errorCode = error.code;
       const errorMessage =

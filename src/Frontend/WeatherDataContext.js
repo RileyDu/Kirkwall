@@ -1,17 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import {
-  getWeatherData,
-  getWatchdogData,
-  getRivercityData,
-  getImpriMedData,
-  getAlerts,
-  getLatestThreshold,
-  getChartData,
-  getAlertsPerUserByMetric
-} from '../Backend/Graphql_helper.js';
 import { useAuth } from './AuthComponents/AuthContext.js';
 import { CustomerSettings } from './Modular/CustomerSettings.js';
-
+import axios from 'axios';
+import qs from 'qs';
 const WeatherDataContext = createContext();
 
 export const useWeatherData = () => {
@@ -22,29 +13,77 @@ export const WeatherDataProvider = ({ children }) => {
   const [weatherData, setWeatherData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTimePeriodTemp, setSelectedTimePeriodTemp] = useState('3H');
-  const [selectedTimePeriodHumidity, setSelectedTimePeriodHumidity] = useState('3H');
+  const [selectedTimePeriodHumidity, setSelectedTimePeriodHumidity] =
+    useState('3H');
   const [selectedTimePeriodWind, setSelectedTimePeriodWind] = useState('3H');
-  const [selectedTimePeriodRainfall, setSelectedTimePeriodRainfall] = useState('3H');
-  const [selectedTimePeriodSoilMoisture, setSelectedTimePeriodSoilMoisture] = useState('3H');
-  const [selectedTimePeriodLeafWetness, setSelectedTimePeriodLeafWetness] = useState('3H');
-  const [selectedTimePeriodWDTemp, setSelectedTimePeriodWDTemp] = useState('3H');
+  const [selectedTimePeriodRainfall, setSelectedTimePeriodRainfall] =
+    useState('3H');
+  const [selectedTimePeriodSoilMoisture, setSelectedTimePeriodSoilMoisture] =
+    useState('3H');
+  const [selectedTimePeriodLeafWetness, setSelectedTimePeriodLeafWetness] =
+    useState('3H');
+  const [selectedTimePeriodWDTemp, setSelectedTimePeriodWDTemp] =
+    useState('3H');
   const [selectedTimePeriodWDHum, setSelectedTimePeriodWDHum] = useState('3H');
-  const [selectedTimePeriodRCTemp, setSelectedTimePeriodRCTemp] = useState('3H');
+  const [selectedTimePeriodRCTemp, setSelectedTimePeriodRCTemp] =
+    useState('3H');
   const [selectedTimePeriodRCHum, setSelectedTimePeriodRCHum] = useState('3H');
-  const [selectedTimePeriodIMFreezerOneTemp, setSelectedTimePeriodIMFreezerOneTemp] = useState('3H');
-  const [selectedTimePeriodIMFreezerOneHum, setSelectedTimePeriodIMFreezerOneHum] = useState('3H');
-  const [selectedTimePeriodIMFreezerTwoTemp, setSelectedTimePeriodIMFreezerTwoTemp] = useState('3H');
-  const [selectedTimePeriodIMFreezerTwoHum, setSelectedTimePeriodIMFreezerTwoHum] = useState('3H');
-  const [selectedTimePeriodIMFreezerThreeTemp, setSelectedTimePeriodIMFreezerThreeTemp] = useState('3H');
-  const [selectedTimePeriodIMFreezerThreeHum, setSelectedTimePeriodIMFreezerThreeHum] = useState('3H');
-  const [selectedTimePeriodIMFridgeOneTemp, setSelectedTimePeriodIMFridgeOneTemp] = useState('3H');
-  const [selectedTimePeriodIMFridgeOneHum, setSelectedTimePeriodIMFridgeOneHum] = useState('3H');
-  const [selectedTimePeriodIMFridgeTwoTemp, setSelectedTimePeriodIMFridgeTwoTemp] = useState('3H');
-  const [selectedTimePeriodIMFridgeTwoHum, setSelectedTimePeriodIMFridgeTwoHum] = useState('3H');
-  const [selectedTimePeriodIMIncubatorOneTemp, setSelectedTimePeriodIMIncubatorOneTemp] = useState('3H');
-  const [selectedTimePeriodIMIncubatorOneHum, setSelectedTimePeriodIMIncubatorOneHum] = useState('3H');
-  const [selectedTimePeriodIMIncubatorTwoTemp, setSelectedTimePeriodIMIncubatorTwoTemp] = useState('3H');
-  const [selectedTimePeriodIMIncubatorTwoHum, setSelectedTimePeriodIMIncubatorTwoHum] = useState('3H');
+  const [
+    selectedTimePeriodIMFreezerOneTemp,
+    setSelectedTimePeriodIMFreezerOneTemp,
+  ] = useState('3H');
+  const [
+    selectedTimePeriodIMFreezerOneHum,
+    setSelectedTimePeriodIMFreezerOneHum,
+  ] = useState('3H');
+  const [
+    selectedTimePeriodIMFreezerTwoTemp,
+    setSelectedTimePeriodIMFreezerTwoTemp,
+  ] = useState('3H');
+  const [
+    selectedTimePeriodIMFreezerTwoHum,
+    setSelectedTimePeriodIMFreezerTwoHum,
+  ] = useState('3H');
+  const [
+    selectedTimePeriodIMFreezerThreeTemp,
+    setSelectedTimePeriodIMFreezerThreeTemp,
+  ] = useState('3H');
+  const [
+    selectedTimePeriodIMFreezerThreeHum,
+    setSelectedTimePeriodIMFreezerThreeHum,
+  ] = useState('3H');
+  const [
+    selectedTimePeriodIMFridgeOneTemp,
+    setSelectedTimePeriodIMFridgeOneTemp,
+  ] = useState('3H');
+  const [
+    selectedTimePeriodIMFridgeOneHum,
+    setSelectedTimePeriodIMFridgeOneHum,
+  ] = useState('3H');
+  const [
+    selectedTimePeriodIMFridgeTwoTemp,
+    setSelectedTimePeriodIMFridgeTwoTemp,
+  ] = useState('3H');
+  const [
+    selectedTimePeriodIMFridgeTwoHum,
+    setSelectedTimePeriodIMFridgeTwoHum,
+  ] = useState('3H');
+  const [
+    selectedTimePeriodIMIncubatorOneTemp,
+    setSelectedTimePeriodIMIncubatorOneTemp,
+  ] = useState('3H');
+  const [
+    selectedTimePeriodIMIncubatorOneHum,
+    setSelectedTimePeriodIMIncubatorOneHum,
+  ] = useState('3H');
+  const [
+    selectedTimePeriodIMIncubatorTwoTemp,
+    setSelectedTimePeriodIMIncubatorTwoTemp,
+  ] = useState('3H');
+  const [
+    selectedTimePeriodIMIncubatorTwoHum,
+    setSelectedTimePeriodIMIncubatorTwoHum,
+  ] = useState('3H');
   const [tempData, setTempData] = useState(null);
   const [humidityData, setHumidityData] = useState(null);
   const [windData, setWindData] = useState(null);
@@ -61,8 +100,10 @@ export const WeatherDataProvider = ({ children }) => {
   const [impriFreezerOneHumData, setImpriFreezerOneHumData] = useState(null); // NOT WORKING
   const [impriFreezerTwoHumData, setImpriFreezerTwoHumData] = useState(null);
   const [impriFreezerTwoTempData, setImpriFreezerTwoTempData] = useState(null);
-  const [impriFreezerThreeTempData, setImpriFreezerThreeTempData] = useState(null);
-  const [impriFreezerThreeHumData, setImpriFreezerThreeHumData] = useState(null);
+  const [impriFreezerThreeTempData, setImpriFreezerThreeTempData] =
+    useState(null);
+  const [impriFreezerThreeHumData, setImpriFreezerThreeHumData] =
+    useState(null);
   const [impriFridgeOneTempData, setImpriFridgeOneTempData] = useState(null);
   const [impriFridgeOneHumData, setImpriFridgeOneHumData] = useState(null);
   const [impriFridgeTwoTempData, setImpriFridgeTwoTempData] = useState(null);
@@ -100,44 +141,55 @@ export const WeatherDataProvider = ({ children }) => {
     imIncubatorOneHum: false,
     imIncubatorTwoTemp: false,
     imIncubatorTwoHum: false,
-
   });
 
   const { currentUser } = useAuth();
 
   // IMPRIMED DATA FEED LOGIC
   const devices = {
-    freezerOne: "deveui = '0080E1150618C9DE'",
-    freezerTwo: "deveui = '0080E115054FC6DF'",
-    freezerThree: "deveui = '0080E1150618B549'",
-    fridgeOne: "deveui = '0080E1150619155F'",
-    fridgeTwo: "deveui = '0080E115061924EA'",
-    incubatorOne: "deveui = '0080E115054FF1DC'",
-    incubatorTwo: "deveui = '0080E1150618B45F'",
+    freezerOne: '0080E1150618C9DE',
+    freezerTwo: '0080E115054FC6DF',
+    freezerThree: '0080E1150618B549',
+    fridgeOne: '0080E1150619155F',
+    fridgeTwo: '0080E115061924EA',
+    incubatorOne: '0080E115054FF1DC',
+    incubatorTwo: '0080E1150618B45F',
   };
 
   const deveuiPerMetric = {
-    imFreezerOneTemp: "deveui = '0080E1150618C9DE'",
-    imFreezerOneHum: "deveui = '0080E1150618C9DE'",
-    imFreezerTwoTemp: "deveui = '0080E115054FC6DF'",
-    imFreezerTwoHum: "deveui = '0080E115054FC6DF'",
-    imFreezerThreeTemp: "deveui = '0080E1150618B549'",
-    imFreezerThreeHum: "deveui = '0080E1150618B549'",
-    imFridgeOneTemp: "deveui = '0080E1150619155F'",
-    imFridgeOneHum: "deveui = '0080E1150619155F'",
-    imFridgeTwoTemp: "deveui = '0080E115061924EA'",
-    imFridgeTwoHum: "deveui = '0080E115061924EA'",
-    imIncubatorOneTemp: "deveui = '0080E115054FF1DC'",
-    imIncubatorOneHum: "deveui = '0080E115054FF1DC'",
-    imIncubatorTwoTemp: "deveui = '0080E1150618B45F'",
-    imIncubatorTwoHum: "deveui = '0080E1150618B45F'",
+    imFreezerOneTemp: '0080E1150618C9DE',
+    imFreezerOneHum: '0080E1150618C9DE',
+    imFreezerTwoTemp: '0080E115054FC6DF',
+    imFreezerTwoHum: '0080E115054FC6DF',
+    imFreezerThreeTemp: '0080E1150618B549',
+    imFreezerThreeHum: '0080E1150618B549',
+    imFridgeOneTemp: '0080E1150619155F',
+    imFridgeOneHum: '0080E1150619155F',
+    imFridgeTwoTemp: '0080E115061924EA',
+    imFridgeTwoHum: '0080E115061924EA',
+    imIncubatorOneTemp: '0080E115054FF1DC',
+    imIncubatorOneHum: '0080E115054FF1DC',
+    imIncubatorTwoTemp: '0080E1150618B45F',
+    imIncubatorTwoHum: '0080E1150618B45F',
   };
 
   const fetchDeviceData = async (deviceKey, setTempData, setHumData, limit) => {
+    const deveui = devices[deviceKey];
+    console.log('Fetching data for deveui:', deveui);
+
     try {
-      const response = await getImpriMedData(devices[deviceKey], limit); // Adjust the limit as needed
-      if (Array.isArray(response.data.rivercity_data) && response.data.rivercity_data.length > 0) {
-        const latestData = response.data.rivercity_data;
+      const response = await axios.get(
+        `/api/impriMed_data`,
+        {
+          params: {
+            limit: limit,
+            deveui: deveui, // This will properly attach the deveui as a query parameter
+          },
+        }
+      );
+      // console.log(response.data);
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        const latestData = response.data;
 
         // Determine the new keys based on the deviceKey
         let tempKey = 'rctemp';
@@ -179,19 +231,19 @@ export const WeatherDataProvider = ({ children }) => {
         // Map the data to new keys
         const tempDataArray = latestData.map(data => ({
           [tempKey]: data.rctemp,
-          publishedat: data.publishedat
+          publishedat: data.publishedat,
         }));
 
         const humDataArray = latestData.map(data => ({
           [humKey]: data.humidity,
-          publishedat: data.publishedat
+          publishedat: data.publishedat,
         }));
 
         // Set the entire array of temperature and humidity data
         setTempData(tempDataArray);
         setHumData(humDataArray);
-        // console.log(`Latest temperature data for ${deviceKey}:`, tempDataArray);
-        // console.log(`Latest humidity data for ${deviceKey}:`, humDataArray);
+        console.log(`Latest temperature data for ${deviceKey}:`, tempDataArray);
+        console.log(`Latest humidity data for ${deviceKey}:`, humDataArray);
       }
     } catch (error) {
       console.error(`Error fetching data for ${deviceKey}:`, error);
@@ -199,22 +251,49 @@ export const WeatherDataProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (currentUser && currentUser.email === 'jerrycromarty@imprimedicine.com') {
+    if (
+      currentUser &&
+      currentUser.email === 'jerrycromarty@imprimedicine.com'
+    ) {
       const fetchAllDeviceData = async () => {
         await Promise.all([
-        // fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData, 19),
-        fetchDeviceData('freezerTwo', setImpriFreezerTwoTempData, setImpriFreezerTwoHumData, 19),
-        fetchDeviceData('freezerThree', setImpriFreezerThreeTempData, setImpriFreezerThreeHumData, 19),
-        fetchDeviceData('fridgeOne', setImpriFridgeOneTempData, setImpriFridgeOneHumData, 19),
-        fetchDeviceData('fridgeTwo', setImpriFridgeTwoTempData, setImpriFridgeTwoHumData, 19),
-        // fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData, 19),
-        fetchDeviceData('incubatorTwo', setImpriIncubatorTwoTempData, setImpriIncubatorTwoHumData, 19),
+          // fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData, 19),
+          fetchDeviceData(
+            'freezerTwo',
+            setImpriFreezerTwoTempData,
+            setImpriFreezerTwoHumData,
+            19
+          ),
+          fetchDeviceData(
+            'freezerThree',
+            setImpriFreezerThreeTempData,
+            setImpriFreezerThreeHumData,
+            19
+          ),
+          fetchDeviceData(
+            'fridgeOne',
+            setImpriFridgeOneTempData,
+            setImpriFridgeOneHumData,
+            19
+          ),
+          fetchDeviceData(
+            'fridgeTwo',
+            setImpriFridgeTwoTempData,
+            setImpriFridgeTwoHumData,
+            19
+          ),
+          // fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData, 19),
+          fetchDeviceData(
+            'incubatorTwo',
+            setImpriIncubatorTwoTempData,
+            setImpriIncubatorTwoHumData,
+            19
+          ),
         ]);
         setLoading(false);
       };
 
       fetchAllDeviceData();
-
 
       const intervalId = setInterval(fetchAllDeviceData, 600000); // Fetch data every 10 minutes
 
@@ -225,9 +304,9 @@ export const WeatherDataProvider = ({ children }) => {
   useEffect(() => {
     const fetchThresholds = async () => {
       try {
-        const result = await getLatestThreshold();
-        if (Array.isArray(result.data.thresholds)) {
-          setThresholds(result.data.thresholds);
+        const result = await axios.get('/api/thresholds');
+        if (Array.isArray(result.data)) {
+          setThresholds(result.data);
         }
         // console.log('Thresholds from DB:', thresholds);
       } catch (error) {
@@ -238,30 +317,44 @@ export const WeatherDataProvider = ({ children }) => {
     fetchThresholds();
   }, []);
 
-  useEffect(() => {
-    const fetchChartData = async () => {
-      try {
-        const response = await getChartData();
-        if (Array.isArray(response.data.charts)) {
-          setChartData(response.data.charts);
-        }
-      } catch (error) {
-        console.error('Error fetching chart data:', error);
+  const fetchChartData = async (setChartData) => {
+    try {
+      const response = await axios.get('/api/charts');
+      if (Array.isArray(response.data)) {
+        setChartData(response.data);
       }
-    };
-    fetchChartData();
+    } catch (error) {
+      console.error('Error fetching chart data:', error);
+    }
+  };
+  
+  useEffect(() => {
+    // Call the exported function, passing in setChartData
+    fetchChartData(setChartData);
   }, []);
 
+
+
   useEffect(() => {
-    if (currentUser && (currentUser?.email === 'pmo@grandfarm.com' || currentUser?.email === 'test@kirkwall.io')) {
+    if (
+      currentUser &&
+      (currentUser?.email === 'pmo@grandfarm.com' ||
+        currentUser?.email === 'test@kirkwall.io')
+    ) {
       const fetchData = async () => {
         try {
-          const response = await getWeatherData('all', '37'); // default time period
-          if (Array.isArray(response.data.weather_data)) {
-            setWeatherData(response.data.weather_data);
+          // Replace getWeatherData with axios call to the backend API
+          const response = await axios.get(
+            `/api/weather_data?limit=37`
+          );
+
+          if (Array.isArray(response.data)) {
+            setWeatherData(response.data); // Directly using the array returned by backend
+            console.log('Weather data:', response.data);
           } else {
-            setWeatherData([]);
+            setWeatherData([]); // Fallback if data structure is unexpected
           }
+
           setLoading(false);
         } catch (error) {
           console.error('Error fetching weather data:', error);
@@ -270,47 +363,60 @@ export const WeatherDataProvider = ({ children }) => {
         }
       };
 
+      // Initial data fetch
       fetchData();
 
+      // Set up interval to fetch data every 30 seconds
       const intervalId = setInterval(fetchData, 30000);
 
+      // Clean up the interval on component unmount
       return () => clearInterval(intervalId);
     }
   }, [currentUser]);
 
   useEffect(() => {
-    if (currentUser && (currentUser?.email === 'test@kirkwall.io')) {
+    if (
+      currentUser &&
+      (currentUser?.email === 'test@kirkwall.io' ||
+        currentUser?.email === 'trey@watchdogprotect.com')
+    ) {
       const fetchData = async () => {
         try {
           if (currentUser.email === 'test@kirkwall.io') {
             const [watchdogResponse, rivercityResponse] = await Promise.all([
-              getWatchdogData('all', '19'),
-              getRivercityData('all', '19')
+              axios.get('/api/watchdog_data', {
+                params: { type: 'all', limit: '19' },
+              }),
+              axios.get('/api/rivercity_data', {
+                params: { type: 'all', limit: '19' },
+              }),
             ]);
-  
-            if (Array.isArray(watchdogResponse.data.watchdog_data)) {
-              setWatchdogData(watchdogResponse.data.watchdog_data);
+
+            if (Array.isArray(watchdogResponse.data)) {
+              setWatchdogData(watchdogResponse.data);
             } else {
               setWatchdogData([]);
             }
-  
-            if (Array.isArray(rivercityResponse.data.rivercity_data)) {
-              setRivercityData(rivercityResponse.data.rivercity_data);
+
+            if (Array.isArray(rivercityResponse.data)) {
+              setRivercityData(rivercityResponse.data);
             } else {
               setRivercityData([]);
             }
           } else if (currentUser.email === 'trey@watchdogprotect.com') {
-            const watchdogResponse = await getWatchdogData('all', '19');
-  
-            if (Array.isArray(watchdogResponse.data.watchdog_data)) {
-              setWatchdogData(watchdogResponse.data.watchdog_data);
+            const watchdogResponse = await axios.get('/api/watchdog_data', {
+              params: { type: 'all', limit: '19' },
+            });
+
+            if (Array.isArray(watchdogResponse.data)) {
+              setWatchdogData(watchdogResponse.data);
             } else {
               setWatchdogData([]);
             }
-  
-            setRivercityData([]);  // Clear rivercity data for this user
+
+            setRivercityData([]); // Clear rivercity data for this user
           }
-  
+
           setLoading(false);
         } catch (error) {
           console.error('Error fetching data:', error);
@@ -319,22 +425,33 @@ export const WeatherDataProvider = ({ children }) => {
           setLoading(false);
         }
       };
-  
+
       fetchData();
-  
+
       const intervalId = setInterval(fetchData, 30000);
-  
+
       return () => clearInterval(intervalId);
     }
   }, [currentUser]);
 
   const fetchAlertsThreshold = async () => {
-    const userMetrics = CustomerSettings.find ((customer) => customer.email === currentUser?.email)?.metric;
+    console.log('Received request for alerts per user');
+    const userMetrics = CustomerSettings.find(
+      customer => customer.email === currentUser?.email
+    )?.metric;
+
     try {
-      const response = await getAlertsPerUserByMetric(userMetrics);
-      // console.log('Alerts Threshold 0:', response.data.alerts);
-      if (Array.isArray(response.data.alerts)) {
-        const groupedAlerts = response.data.alerts.reduce((acc, alert) => {
+      const response = await axios.get('/api/alerts_per_user', {
+        params: {
+          userMetrics: [...userMetrics],  // Ensure this is an array
+        },
+        paramsSerializer: params => {
+          return qs.stringify(params, { arrayFormat: 'repeat' });
+        },
+      });
+
+      if (Array.isArray(response.data)) {
+        const groupedAlerts = response.data.reduce((acc, alert) => {
           const { metric } = alert;
           if (!acc[metric]) {
             acc[metric] = [];
@@ -342,27 +459,26 @@ export const WeatherDataProvider = ({ children }) => {
           acc[metric].push(alert);
           return acc;
         }, {});
-        setAlertsThreshold(response.data.alerts);
-        // console.log('Alerts Threshold 1st:', groupedAlerts);
+        setAlertsThreshold(response.data);
       } else {
         setAlertsThreshold({ 'not set': ['not set'] });
-        // console.log('Alerts Threshold 2nd:', { 'not set': ['not set'] });
       }
-      // console.log('Alerts Threshold 3rd:', alertsThreshold);
     } catch (error) {
-      console.error('Error fetching alerts', error);
+      console.error('Error fetching alerts per user:', error);
     }
   };
 
   useEffect(() => {
-    {currentUser && fetchAlertsThreshold()}
+    {
+      currentUser && fetchAlertsThreshold();
+    }
 
     const intervalId = setInterval(() => {
       fetchAlertsThreshold();
     }, 30000); // 30 seconds
 
     return () => clearInterval(intervalId); // Cleanup interval on component unmount
-  }, [getAlertsPerUserByMetric, currentUser]);
+  }, [currentUser]);
 
   useEffect(() => {
     if (Object.values(dataLoaded).some(loaded => loaded)) {
@@ -396,49 +512,85 @@ export const WeatherDataProvider = ({ children }) => {
         }
         if (dataLoaded.rivercityHum) {
           fetchSpecificData('humidity', selectedTimePeriodRCHum);
-        } if (dataLoaded.imFreezerOneTemp) {
-          fetchSpecificData('imFreezerOneTemp', selectedTimePeriodIMFreezerOneTemp);
+        }
+        if (dataLoaded.imFreezerOneTemp) {
+          fetchSpecificData(
+            'imFreezerOneTemp',
+            selectedTimePeriodIMFreezerOneTemp
+          );
         }
         if (dataLoaded.imFreezerOneHum) {
-          fetchSpecificData('imFreezerOneHum', selectedTimePeriodIMFreezerOneHum);
+          fetchSpecificData(
+            'imFreezerOneHum',
+            selectedTimePeriodIMFreezerOneHum
+          );
         }
         if (dataLoaded.imFreezerTwoTemp) {
-          fetchSpecificData('imFreezerTwoTemp', selectedTimePeriodIMFreezerTwoTemp);
+          fetchSpecificData(
+            'imFreezerTwoTemp',
+            selectedTimePeriodIMFreezerTwoTemp
+          );
         }
         if (dataLoaded.imFreezerTwoHum) {
-          fetchSpecificData('imFreezerTwoHum', selectedTimePeriodIMFreezerTwoHum);
+          fetchSpecificData(
+            'imFreezerTwoHum',
+            selectedTimePeriodIMFreezerTwoHum
+          );
         }
         if (dataLoaded.imFreezerThreeTemp) {
-          fetchSpecificData('imFreezerThreeTemp', selectedTimePeriodIMFreezerThreeTemp);
+          fetchSpecificData(
+            'imFreezerThreeTemp',
+            selectedTimePeriodIMFreezerThreeTemp
+          );
         }
         if (dataLoaded.imFreezerThreeHum) {
-          fetchSpecificData('imFreezerThreeHum', selectedTimePeriodIMFreezerThreeHum);
+          fetchSpecificData(
+            'imFreezerThreeHum',
+            selectedTimePeriodIMFreezerThreeHum
+          );
         }
         if (dataLoaded.imFridgeOneTemp) {
-          fetchSpecificData('imFridgeOneTemp', selectedTimePeriodIMFridgeOneTemp);
+          fetchSpecificData(
+            'imFridgeOneTemp',
+            selectedTimePeriodIMFridgeOneTemp
+          );
         }
         if (dataLoaded.imFridgeOneHum) {
           fetchSpecificData('imFridgeOneHum', selectedTimePeriodIMFridgeOneHum);
         }
         if (dataLoaded.imFridgeTwoTemp) {
-          fetchSpecificData('imFridgeTwoTemp', selectedTimePeriodIMFridgeTwoTemp);
+          fetchSpecificData(
+            'imFridgeTwoTemp',
+            selectedTimePeriodIMFridgeTwoTemp
+          );
         }
         if (dataLoaded.imFridgeTwoHum) {
           fetchSpecificData('imFridgeTwoHum', selectedTimePeriodIMFridgeTwoHum);
         }
         if (dataLoaded.imIncubatorOneTemp) {
-          fetchSpecificData('imIncubatorOneTemp', selectedTimePeriodIMIncubatorOneTemp);
+          fetchSpecificData(
+            'imIncubatorOneTemp',
+            selectedTimePeriodIMIncubatorOneTemp
+          );
         }
         if (dataLoaded.imIncubatorOneHum) {
-          fetchSpecificData('imIncubatorOneHum', selectedTimePeriodIMIncubatorOneHum);
+          fetchSpecificData(
+            'imIncubatorOneHum',
+            selectedTimePeriodIMIncubatorOneHum
+          );
         }
         if (dataLoaded.imIncubatorTwoTemp) {
-          fetchSpecificData('imIncubatorTwoTemp', selectedTimePeriodIMIncubatorTwoTemp);
+          fetchSpecificData(
+            'imIncubatorTwoTemp',
+            selectedTimePeriodIMIncubatorTwoTemp
+          );
         }
         if (dataLoaded.imIncubatorTwoHum) {
-          fetchSpecificData('imIncubatorTwoHum', selectedTimePeriodIMIncubatorTwoHum);
+          fetchSpecificData(
+            'imIncubatorTwoHum',
+            selectedTimePeriodIMIncubatorTwoHum
+          );
         }
-
       }, 30000);
       return () => clearInterval(intervalId);
     }
@@ -530,7 +682,10 @@ export const WeatherDataProvider = ({ children }) => {
         break;
       case 'imFreezerThreeTemp':
         setSelectedTimePeriodIMFreezerThreeTemp(timePeriod);
-        setDataLoaded(prevState => ({ ...prevState, imFreezerThreeTemp: true }));
+        setDataLoaded(prevState => ({
+          ...prevState,
+          imFreezerThreeTemp: true,
+        }));
         break;
       case 'imFreezerThreeHum':
         setSelectedTimePeriodIMFreezerThreeHum(timePeriod);
@@ -554,7 +709,10 @@ export const WeatherDataProvider = ({ children }) => {
         break;
       case 'imIncubatorOneTemp':
         setSelectedTimePeriodIMIncubatorOneTemp(timePeriod);
-        setDataLoaded(prevState => ({ ...prevState, imIncubatorOneTemp: true }));
+        setDataLoaded(prevState => ({
+          ...prevState,
+          imIncubatorOneTemp: true,
+        }));
         break;
       case 'imIncubatorOneHum':
         setSelectedTimePeriodIMIncubatorOneHum(timePeriod);
@@ -562,7 +720,10 @@ export const WeatherDataProvider = ({ children }) => {
         break;
       case 'imIncubatorTwoTemp':
         setSelectedTimePeriodIMIncubatorTwoTemp(timePeriod);
-        setDataLoaded(prevState => ({ ...prevState, imIncubatorTwoTemp: true }));
+        setDataLoaded(prevState => ({
+          ...prevState,
+          imIncubatorTwoTemp: true,
+        }));
         break;
       case 'imIncubatorTwoHum':
         setSelectedTimePeriodIMIncubatorTwoHum(timePeriod);
@@ -584,148 +745,157 @@ export const WeatherDataProvider = ({ children }) => {
   ];
   const watchdogMetrics = ['temp', 'hum'];
   const rivercityMetrics = ['rctemp', 'humidity'];
-  const impriMedMetrics = ['imFreezerOneTemp', 'imFreezerOneHum', 'imFreezerTwoTemp', 'imFreezerTwoHum', 'imFreezerThreeTemp', 'imFreezerThreeHum', 'imFridgeOneTemp', 'imFridgeOneHum', 'imFridgeTwoTemp', 'imFridgeTwoHum', 'imIncubatorOneTemp', 'imIncubatorOneHum', 'imIncubatorTwoTemp', 'imIncubatorTwoHum'];
+  const impriMedMetrics = [
+    'imFreezerOneTemp',
+    'imFreezerOneHum',
+    'imFreezerTwoTemp',
+    'imFreezerTwoHum',
+    'imFreezerThreeTemp',
+    'imFreezerThreeHum',
+    'imFridgeOneTemp',
+    'imFridgeOneHum',
+    'imFridgeTwoTemp',
+    'imFridgeTwoHum',
+    'imIncubatorOneTemp',
+    'imIncubatorOneHum',
+    'imIncubatorTwoTemp',
+    'imIncubatorTwoHum',
+  ];
 
-  const determineLimitBasedOnTimePeriod = timePeriod => {
-    // console.log('Determining limit for time period (weatherData):', timePeriod);
-    switch (timePeriod) {
-      case '1H':
-        return 13;
-      case '3H':
-        return 37;
-      case '6H':
-        return 73;
-      case '12H':
-        return 145;
-      case '1D':
-        return 289;
-      case '3D':
-        return 865;
-      case '1W':
-        return 2017;
-      default:
-        return 37;
-    }
-  };
+  const determineLimitBasedOnTimePeriod = (metric, timePeriod) => {
+    console.log(timePeriod, metric);
+    // Define the weather limits and the default limits
+    const weatherLimits = {
+      '1H': 13,
+      '3H': 37,
+      '6H': 73,
+      '12H': 145,
+      '1D': 289,
+      '3D': 865,
+      '1W': 2017,
+      default: 37,
+    };
+  
+    const defaultLimits = {
+      '1H': 7,
+      '3H': 19,
+      '6H': 37,
+      '12H': 73,
+      '1D': 145,
+      '3D': 217,
+      '1W': 1009,
+      default: 19,
+    };
+  
+    // Define all metric groups
+    const weatherMetrics = [
+      'temperature',
+      'percent_humidity',
+      'wind_speed',
+      'rain_15_min_inches',
+      'soil_moisture',
+      'leaf_wetness',
+    ];
 
-  const watchdogDetermineLimitBasedOnTimePeriod = timePeriod => {
-    // console.log(
-    //   'Determining limit for time period (watchdogData):',
-    //   timePeriod
-    // );
-    switch (timePeriod) {
-      case '1H':
-        return 7;
-      case '3H':
-        return 19;
-      case '6H':
-        return 37;
-      case '12H':
-        return 73;
-      case '1D':
-        return 145;
-      case '3D':
-        return 217;
-      case '1W':
-        return 1009;
-      default:
-        return 37;
+    // Determine which limits to use based on the metric
+    let limits;
+    if (weatherMetrics.includes(metric)) {
+      limits = weatherLimits;
+    } else {
+      limits = defaultLimits;
     }
+  
+    console.log(limits[timePeriod]);
+    // Return the appropriate limit based on the time period, or the default if time period is not found
+    return limits[timePeriod]
   };
-
-  const rivercityDetermineLimitBasedOnTimePeriod = timePeriod => {
-    // console.log(
-    //   'Determining limit for time period (rivercityData):',
-    //   timePeriod
-    // );
-    switch (timePeriod) {
-      case '1H':
-        return 7;
-      case '3H':
-        return 19;
-      case '6H':
-        return 37;
-      case '12H':
-        return 73;
-      case '1D':
-        return 145;
-      case '3D':
-        return 217;
-      case '1W':
-        return 1009;
-      default:
-        return 37;
-    }
-  };
+  
 
   const fetchSpecificData = async (metric, timePeriod) => {
     try {
+      // Define the limit based on the time period
+      const limit = determineLimitBasedOnTimePeriod(metric, timePeriod);
+  
       if (watchdogMetrics.includes(metric)) {
-        const response = await getWatchdogData(
-          metric,
-          watchdogDetermineLimitBasedOnTimePeriod(timePeriod)
-        );
+        // Fetch watchdog data using Axios
+        const response = await axios.get('/api/watchdog_data', {
+          params: {
+            type: metric, // type: 'temp' or 'hum'
+            limit: limit,
+          },
+        });
         switch (metric) {
           case 'temp':
-            setWatchdogTempData(response.data.watchdog_data);
+            setWatchdogTempData(response.data);
             break;
           case 'hum':
-            setWatchdogHumData(response.data.watchdog_data);
+            setWatchdogHumData(response.data);
             break;
           default:
             break;
         }
       } else if (rivercityMetrics.includes(metric)) {
-        const response = await getRivercityData(
-          metric,
-          rivercityDetermineLimitBasedOnTimePeriod(timePeriod)
-        );
+        // Fetch rivercity data using Axios
+        const response = await axios.get('/api/rivercity_data', {
+          params: {
+            type: metric, // type: 'rctemp' or 'humidity'
+            limit: limit,
+          },
+        });
         switch (metric) {
           case 'rctemp':
-            setRivercityTempData(response.data.rivercity_data);
+            setRivercityTempData(response.data);
             break;
           case 'humidity':
-            setRivercityHumData(response.data.rivercity_data);
+            setRivercityHumData(response.data);
             break;
           default:
             break;
         }
       } else if (weatherMetrics.includes(metric)) {
-        const response = await getWeatherData(
-          metric,
-          determineLimitBasedOnTimePeriod(timePeriod)
-        );
+        // Fetch weather data using Axios
+        const response = await axios.get('/api/weather_data', {
+          params: {
+            type: metric, // type: 'temperature', 'percent_humidity', 'wind_speed', etc.
+            limit: limit,
+          },
+        });
         switch (metric) {
           case 'temperature':
-            setTempData(response.data.weather_data);
-            // console.log('Temperature data:', response.data.weather_data);
+            setTempData(response.data);
+            console.log(response.data);
             break;
           case 'percent_humidity':
-            setHumidityData(response.data.weather_data);
-            // console.log('Humidity data:', response.data.weather_data);
+            setHumidityData(response.data);
             break;
           case 'wind_speed':
-            setWindData(response.data.weather_data);
-            // console.log('Wind data:', response.data.weather_data);
+            setWindData(response.data);
             break;
           case 'rain_15_min_inches':
-            setRainfallData(response.data.weather_data);
-            // console.log('Rainfall data:', response.data.weather_data);
+            setRainfallData(response.data);
             break;
           case 'soil_moisture':
-            setSoilMoistureData(response.data.weather_data);
-            // console.log('Soil moisture data:', response.data.weather_data);
+            setSoilMoistureData(response.data);
             break;
           case 'leaf_wetness':
-            setLeafWetnessData(response.data.weather_data);
-            // console.log('Leaf wetness data:', response.data.weather_data);
+            setLeafWetnessData(response.data);
             break;
           default:
             break;
         }
       } else if (impriMedMetrics.includes(metric)) {
+        // Fetch impriMed data using Axios
+        const deveui = deveuiPerMetric[metric];
+        const response = await axios.get('/api/impriMed_data', {
+          params: {
+            deveui: deveui,
+            limit: limit,
+          },
+        });
+  
+        const latestData = response.data;
         const renameKeyToMetric = (data, metric) => {
-          return data.map(d => {
+          return data.map((d) => {
             const value = metric.endsWith('Temp') ? d.rctemp : d.humidity;
             return {
               [metric]: value,
@@ -733,15 +903,7 @@ export const WeatherDataProvider = ({ children }) => {
             };
           });
         };
-        
-        // Usage example:
-        const deveui = deveuiPerMetric[metric];
-        const response = await getImpriMedData(
-          deveui,
-          rivercityDetermineLimitBasedOnTimePeriod(timePeriod)
-        );
-        const latestData = response.data.rivercity_data;
-        
+  
         switch (metric) {
           case 'imFreezerOneTemp':
             setImpriFreezerOneTempData(renameKeyToMetric(latestData, 'imFreezerOneTemp'));
@@ -787,7 +949,7 @@ export const WeatherDataProvider = ({ children }) => {
             break;
           default:
             break;
-        }        
+        }
       } else {
         console.warn(`Unknown metric: ${metric}`);
       }
@@ -795,7 +957,7 @@ export const WeatherDataProvider = ({ children }) => {
       console.error(`Error fetching ${metric} data:`, error);
     }
   };
-
+  
   return (
     <WeatherDataContext.Provider
       value={{
@@ -820,6 +982,7 @@ export const WeatherDataProvider = ({ children }) => {
         fetchAlertsThreshold,
         chartData,
         setChartData,
+        fetchChartData,
         impriFreezerOneTempData,
         impriFreezerOneHumData,
         impriFreezerTwoTempData,

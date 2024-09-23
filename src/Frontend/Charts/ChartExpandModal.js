@@ -36,10 +36,10 @@ import MiniDashboard from './ChartDashboard.js';
 import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { LineChart, BarChart } from '../Charts/Charts.js';
-import { createThreshold, deleteAlert } from '../../Backend/Graphql_helper.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 import { format } from 'date-fns';
+import axios from 'axios'; // Import Axios
 
 // This is the modal that appears when a chart is expanded
 // It is a child of the ChartWrapper component
@@ -108,24 +108,32 @@ const ChartExpandModal = ({
 
   useEffect(() => {
     const latestThreshold = findLatestThreshold(metric);
-
-    if (latestThreshold?.timestamp && latestThreshold?.timeframe) {
+  
+    // Check if the timeframe is "99 days" and treat it as an indefinite pause
+    const isIndefinitePause = latestThreshold?.timeframe.days === 99;
+    // console.log(isIndefinitePause)
+    // console.log(latestThreshold?.timeframe)
+  
+    // If there's a timestamp and a timeframe and it's not an indefinite pause
+    if (latestThreshold?.timestamp && latestThreshold?.timeframe && !isIndefinitePause) {
       const { formatted, date } = calculateTimeOfToggle(
         latestThreshold?.timestamp,
         latestThreshold?.timeframe
       );
       setTimeOfToggle(formatted);
       setToggleTimeAsDate(date);
-    } else {
-      // console.error('Timestamp or timeframe missing from threshold data');
+    } else if (isIndefinitePause) {
+      setTimeOfToggle("Indefinitely Paused");
+      setToggleTimeAsDate(null); // Clear the date since it's paused indefinitely
     }
-
+  
+    // Set other threshold-related states
     setHighThreshold(latestThreshold.highThreshold);
     setLowThreshold(latestThreshold.lowThreshold);
     setThreshKill(latestThreshold.threshkill);
     setTimeframe(latestThreshold.timeframe);
     setTimestamp(latestThreshold.timestamp);
-
+  
     setPhoneNumbers(
       latestThreshold.phone?.split(',').map(phone => phone.trim()) || ['']
     );
@@ -133,6 +141,7 @@ const ChartExpandModal = ({
       latestThreshold.email?.split(',').map(email => email.trim()) || ['']
     );
   }, [metric, thresholds]);
+  
 
   // If the time of toggle is set, start polling for the threshold timeframe to be met and reverse thresh_kill
   useEffect(() => {
@@ -223,16 +232,18 @@ const ChartExpandModal = ({
     console.log('timeOfPause', timeOfPause);
 
     try {
-      await createThreshold(
+      // Perform Axios POST request to create the threshold
+      await axios.post('/api/create_threshold', {
         metric,
-        parseFloat(highThreshold),
-        parseFloat(lowThreshold),
-        phoneNumbersString,
-        emailsString,
-        timestamp,
-        threshKill, // This will send the correct boolean
-        timeOfPause // This will be `null` when threshKill is off
-      );
+        high: parseFloat(highThreshold),
+        low: parseFloat(lowThreshold),
+        phone: phoneNumbersString,
+        email: emailsString,
+        timestamp: timestamp,
+        thresh_kill: threshKill, // Send the correct boolean
+        timeframe: timeOfPause, // Send `null` if `threshKill` is off
+      });
+
       console.log('Alerts Set or Cleared');
     } catch (error) {
       console.error('Error creating threshold:', error);
@@ -248,16 +259,16 @@ const ChartExpandModal = ({
 
     try {
       // Create a new threshold with `thresh_kill` set to false and `timeframe` set to null
-      await createThreshold(
+      await axios.post('/api/create_threshold', {
         metric,
-        parseFloat(highThreshold),
-        parseFloat(lowThreshold),
-        phoneNumbersString,
-        emailsString,
-        timestamp,
-        false, // Turn off thresh_kill
-        null // Clear the timeframe
-      );
+        high: parseFloat(highThreshold),
+        low: parseFloat(lowThreshold),
+        phone: phoneNumbersString,
+        email: emailsString,
+        timestamp: timestamp,
+        thresh_kill: false, // Turn off thresh_kill
+        timeframe: null, // Clear the timeframe
+      });
       console.log(
         'Threshold updated: thresh_kill turned off and timeframe cleared.'
       );
@@ -276,15 +287,19 @@ const ChartExpandModal = ({
     setLowThreshold('');
     setPhoneNumbers([]);
     setEmailsForThreshold([]);
+
     try {
-      await createThreshold(
+      // Create a new threshold with empty values to clear the current threshold
+      await axios.post('/api/create_threshold', {
         metric,
-        highThreshold,
-        lowThreshold,
-        '',
-        '',
-        timestamp
-      );
+        high: null, // Clear high threshold
+        low: null, // Clear low threshold
+        phone: '', // Clear phone numbers
+        email: '', // Clear emails
+        timestamp: timestamp,
+        thresh_kill: false, // Ensure thresh_kill is off
+        timeframe: null, // Clear timeframe
+      });
       console.log('Alerts Cleared');
     } catch (error) {
       console.error('Error clearing threshold:', error);
@@ -310,8 +325,11 @@ const ChartExpandModal = ({
     });
 
     try {
-      await deleteAlert(id);
-      await fetchAlertsThreshold(); // Fetch alerts after deleting
+      // Perform Axios DELETE request to delete the alert
+      await axios.delete(`/api/delete_alert/${id}`);
+
+      // Fetch alerts after deleting the alert
+      await fetchAlertsThreshold();
 
       // Update the toast to success
       toast.update(toastId, {
@@ -465,18 +483,28 @@ const ChartExpandModal = ({
 
   const calculateTimeOfToggle = (timestamp, timeframe) => {
     if (!timestamp || !timeframe) {
-      console.error('Invalid timestamp or timeframe');
+      console.error('Invalid timestamp or timeframe', { timestamp, timeframe });
+      return null;
+    }
+
+    // Handle timeframe if it's an object
+    if (typeof timeframe === 'object') {
+      // Assuming the object contains properties like { minutes: 1 }
+      const { days = 0, hours = 0, minutes = 0, seconds = 0 } = timeframe;
+      timeframe = `${hours}:${minutes}:${seconds}`;
+    }
+
+    if (typeof timeframe !== 'string') {
+      console.error('Invalid timeframe type, expected a string', { timeframe });
       return null;
     }
 
     const timestampDate = new Date(timestamp);
-
     if (isNaN(timestampDate)) {
-      console.error('Invalid timestamp format');
+      console.error('Invalid timestamp format', { timestamp });
       return null;
     }
 
-    // Check for the "day" part in the timeframe and parse it
     let days = 0;
     let hours = 0;
     let minutes = 0;
@@ -488,19 +516,17 @@ const ChartExpandModal = ({
         days = parseInt(dayMatch[1], 10);
       }
 
-      const timePart = timeframe.split(', ')[1]; // Get the "0:00:00" part
+      const timePart = timeframe.split(', ')[1];
       [hours, minutes, seconds] = timePart.split(':').map(Number);
     } else {
-      // Parse without days if "day" is not present
       [hours, minutes, seconds] = timeframe.split(':').map(Number);
     }
 
     if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
-      console.error('Invalid timeframe format');
+      console.error('Invalid timeframe format', { timeframe });
       return null;
     }
 
-    // Convert days, hours, minutes, and seconds to milliseconds
     const timeframeInMs =
       (days * 24 * 60 * 60 + hours * 60 * 60 + minutes * 60 + seconds) * 1000;
     const timeOfToggleDate = new Date(timestampDate.getTime() + timeframeInMs);
@@ -590,7 +616,7 @@ const ChartExpandModal = ({
               >
                 {/* // If the data is still loading, show a loading spinner */}
                 {loading ? (
-                  <CircularProgress isIndeterminate color="brand.800" />
+                  <CircularProgress isIndeterminate color="blue.400" />
                 ) : (
                   renderChart()
                 )}
@@ -722,15 +748,6 @@ const ChartExpandModal = ({
                             </Text>
                           ) : null}
                         </HStack>
-                        {/* {timeOfToggle && (
-                          <Text
-                            color="white"
-                            fontSize={'sm'}
-                            whiteSpace={'nowrap'}
-                          >
-                            Back on @ {timeOfToggle}
-                          </Text>
-                        )} */}
                         <Box
                           fontSize={['xs', 'md']}
                           ml={8}
@@ -828,14 +845,29 @@ const ChartExpandModal = ({
                             </PopoverBody>
                             <PopoverFooter
                               display="flex"
-                              justifyContent="center"
+                              flexDirection="column"
+                              alignItems="center"
                             >
+                              <Button
+                                variant="blue"
+                                width="100%"
+                                mt={2}
+                                onClick={() => {
+                                  setThreshKill(true);
+                                  setNewTimeframe('99 days'); // Set timeframe to "indefinite"
+                                  setUserHasChosenTimeframe(true); // Submit the new threshold state
+                                  setIsTimePickerOpen(false);
+                                  setTimeOfToggle('Indefinitely Paused')
+                                }}
+                              >
+                                Pause Indefinitely
+                              </Button>
                               <Button
                                 onClick={handleTimePickerSubmit}
                                 variant="blue"
                                 mt={2}
                               >
-                                Set Timeframe to Pause Alerts
+                                Pause Until Selected Timeframe
                               </Button>
                             </PopoverFooter>
                           </PopoverContent>
@@ -935,7 +967,7 @@ const ChartExpandModal = ({
                         handlePhoneNumberChange(e.target.value, index)
                       }
                       bg={'white'}
-                      border={'2px solid #fd9801'}
+                      border={'2px solid #3D5A80'}
                       color={'#212121'}
                       mr={2}
                     />
@@ -966,7 +998,7 @@ const ChartExpandModal = ({
                       value={email}
                       onChange={e => handleEmailChange(e.target.value, index)}
                       bg={'white'}
-                      border={'2px solid #fd9801'}
+                      border={'2px solid #3D5A80'}
                       color={'#212121'}
                       mr={2}
                     />
@@ -995,7 +1027,7 @@ const ChartExpandModal = ({
                   value={highThreshold}
                   onChange={e => setHighThreshold(e.target.value)}
                   bg={'white'}
-                  border={'2px solid #fd9801'}
+                  border={'2px solid #3D5A80'}
                   color={'#212121'}
                 />
               </FormControl>
@@ -1006,7 +1038,7 @@ const ChartExpandModal = ({
                   value={lowThreshold}
                   onChange={e => setLowThreshold(e.target.value)}
                   bg={'white'}
-                  border={'2px solid #fd9801'}
+                  border={'2px solid #3D5A80'}
                   color={'#212121'}
                 />
               </FormControl>
@@ -1019,18 +1051,9 @@ const ChartExpandModal = ({
                 _hover={{ bg: 'red.500' }}
                 mr={3}
                 onClick={handleFormClear}
+                borderRadius={'full'}
               >
                 Clear Form
-              </Button>
-              <Button
-                variant="solid"
-                bg="orange.400"
-                color="white"
-                _hover={{ bg: 'orange.500' }}
-                mr={3}
-                onClick={handleFormSubmit}
-              >
-                Save
               </Button>
               <Button
                 variant="solid"
@@ -1038,8 +1061,13 @@ const ChartExpandModal = ({
                 color="white"
                 _hover={{ bg: 'gray.500' }}
                 onClick={handleCloseThresholdModal}
+                mr={3}
+                borderRadius={'full'}
               >
                 Cancel
+              </Button>
+              <Button variant="blue" color="black" onClick={handleFormSubmit}>
+                Save
               </Button>
             </ModalFooter>
           </ModalContent>

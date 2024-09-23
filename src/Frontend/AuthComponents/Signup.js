@@ -88,7 +88,7 @@ const SignUp = () => {
               <Stack spacing="6">
                 <Button onClick={handleSignUp} color='#fd9801'>Sign Up</Button>
                 <Divider />
-                <Button onClick={() => navigate('/login')}>Login</Button>
+                <Button onClick={() => navigate('/')}>Login</Button>
               </Stack>
             </Stack>
           </Box>

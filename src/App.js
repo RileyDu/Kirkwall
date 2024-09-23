@@ -45,6 +45,10 @@ import OptionsModal from './Frontend/Modals/OptionsModal.js';
 import ModularDashboard from './Frontend/Modular/ModularDashboard.js';
 import FaqsModal from './Frontend/Modals/FaqsModal.js';
 import ModularSummary from './Frontend/Modular/ModularSummary.js';
+import RedirectBasedOnAuth from './Frontend/AuthComponents/RedirectBasedOnAuth.js';
+import ThankYou from './Frontend/Alert/ThankYou.js';
+import ThankYouAdmin from './Frontend/Alert/ThankYouAdmin.js';
+import EnergyPage from './Frontend/Energy/EnergyPage.js';
 
 const Layout = ({
   children,
@@ -66,7 +70,7 @@ const Layout = ({
   const location = useLocation();
 
   const shouldShowSidebar =
-    location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !== '/landing';
+    location.pathname !== '/' && location.pathname !== '/signup' && location.pathname !== '/landing';
 
   const { colorMode } = useColorMode();
 
@@ -91,8 +95,6 @@ const Layout = ({
   const handleCloseFaqsModal = () => setFaqsModalOpen(false);
 
   const [runTour, setRunTour] = useState(false);
-
-
 
 
   return (
@@ -200,14 +202,8 @@ const MainApp = () => {
   const location = useLocation();
   const [showAlerts, setShowAlerts] = useState(false);
   const [runThresholdTour, setRunThresholdTour] = useState(false);
-  // const [isTourRunning, setIsTourRunning] = useState(false);
-  // const [activeChartID, setActiveChartID] = useState(null);
-
-
 
   const expandButtonRef = useRef(null);
-
-
   const startTourButtonRef = useRef(null); 
 
   const toggleAlerts = () => {
@@ -237,7 +233,7 @@ const MainApp = () => {
 
   return (
     <Box>
-      {location.pathname !== '/login' &&
+      {location.pathname !== '/' &&
         location.pathname !== '/signup' &&
         location.pathname !== '/landing' && (
           <Header
@@ -261,9 +257,9 @@ const MainApp = () => {
         <Routes>
           {/* <Route path="/landing" element={<LandingPage />} /> */}
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route
-            path="/"
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <ModularDashboard statusOfAlerts={showAlerts} expandButtonRef={expandButtonRef} runThresholdTour={runThresholdTour} setRunThresholdTour={setRunThresholdTour}
@@ -336,6 +332,30 @@ const MainApp = () => {
             }
           />
           <Route
+            path="/thankyou"
+            element={
+              <ProtectedRoute>
+                <ThankYou />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/thankyouadmin"
+            element={
+              <ProtectedRoute>
+                <ThankYouAdmin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/energy"
+            element={
+              <ProtectedRoute>
+                <EnergyPage statusOfAlerts={showAlerts} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/map"
             element={
               <ProtectedRoute>
@@ -377,6 +397,7 @@ const MainApp = () => {
               </ProtectedRoute>
             }
           />
+            <Route path="*" element={<RedirectBasedOnAuth />} />
         </Routes>
       </Layout>
       <MobileMenu isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} />

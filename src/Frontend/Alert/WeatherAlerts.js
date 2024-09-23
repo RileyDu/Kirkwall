@@ -280,17 +280,17 @@ function WeatherAlerts({ isVisible }) {
           </ModalBody>
           <ModalFooter>
             <Button
-              variant={'sidebar'}
+              variant={'blue'}
               mr={3}
               onClick={handleChangeStateCode}
-              color={'white'}
+              color={'black'}
             >
               Save
             </Button>
             <Button
-              variant={'sidebar'}
+              variant={'blue'}
               onClick={() => setIsChangeStateCodeModalOpen(false)}
-              color={'white'}
+              color={'black'}
             >
               Cancel
             </Button>

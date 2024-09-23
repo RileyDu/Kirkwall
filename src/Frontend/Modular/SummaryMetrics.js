@@ -1,5 +1,8 @@
 import { useWeatherData } from '../WeatherDataContext.js';
 
+const isValidNumber = value => typeof value === 'number' && !isNaN(value);
+
+
 export const SummaryMetrics = () => {
   const {
     weatherData,
@@ -60,19 +63,35 @@ export const SummaryMetrics = () => {
 
   const calculateMetrics = (data, metric) => {
     if (!data || data.length === 0) return { average: 'N/A', current: 'N/A', high: 'N/A', low: 'N/A' };
-
-    
-    const sum = data.reduce((sum, item) => sum + item[metric], 0);
-    const average = (sum / data.length).toFixed(2);
-    
-    const current = data[0][metric].toFixed(2);
-    const high = Math.max(...data.map(item => item[metric])).toFixed(2);
-    const low = Math.min(...data.map(item => item[metric])).toFixed(2);
-
-    const timeOfData = (data && calculateTimePeriod(metric, data.length - 1))
-
+  
+    // Helper function to convert to number
+    const toNumber = value => {
+      const num = parseFloat(value);
+      return !isNaN(num) ? num : 'N/A';
+    };
+  
+    // Filter out invalid data and make sure all values are numbers
+    const validData = data.map(item => ({
+      ...item,
+      [metric]: toNumber(item[metric]),
+    })).filter(item => typeof item[metric] === 'number' && !isNaN(item[metric]));
+  
+    if (validData.length === 0) return { average: 'N/A', current: 'N/A', high: 'N/A', low: 'N/A' };
+  
+    const sum = validData.reduce((sum, item) => sum + item[metric], 0);
+    const average = (sum / validData.length).toFixed(2);
+  
+    const current = toNumber(validData[0][metric]) !== 'N/A' ? validData[0][metric].toFixed(2) : 'N/A';
+    const high = Math.max(...validData.map(item => item[metric])).toFixed(2);
+    const low = Math.min(...validData.map(item => item[metric])).toFixed(2);
+  
+    const timeOfData = calculateTimePeriod(metric, validData.length - 1);
+  
     return { average, current, high, low, timeOfData };
   };
+  
+  
+  
 
   return [
     {

@@ -35,19 +35,11 @@ import {
   Select,
   Switch,
 } from '@chakra-ui/react';
-import { FaBell, FaExpandAlt, FaQuestion } from 'react-icons/fa';
+import { FaBell } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useWeatherData } from '../WeatherDataContext.js';
 import AddInformationFormModal from './AddInformationFormModal.js';
-import {
-  getAdminByEmail,
-  updateProfileUrl,
-  createThreshold,
-  getThresholdsInTheLastHour,
-  updateAdmin,
-} from '../../Backend/Graphql_helper.js';
 import FaqsModal from './FaqsModal.js';
-import SetThresholdsModal from './SetThresholdsModal.js';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 const MotionTabPanel = motion(TabPanel);
 
@@ -65,6 +57,8 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
   const [threshKill, setThreshKill] = useState(false);
+  const [timeframe, setTimeframe] = useState('');
+  const [newTimeframe, setNewTimeframe] = useState('');
 
   const [uploadedImageUrl, setUploadedImageUrl] = useState('');
 
@@ -103,15 +97,18 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     const fetchAlertsLastHour = async () => {
       setLoadingAlerts(true);
       try {
-        const result = await getThresholdsInTheLastHour();
-        if (result && result.data && result.data.alerts) {
+        const response = await axios.get('/api/alerts_last_hour'); // Use Axios to call the new backend route
+        const result = response.data;
+        // console.log('result', result);
+        if (result && result.length > 0) {
           // Filter alerts based on userConfig
           const userMetrics =
             userConfig[userEmail]?.map(config => config.metric) || [];
-          const filteredAlerts = result.data.alerts.filter(alert =>
+          const filteredAlerts = result.filter(alert =>
             userMetrics.includes(alert.metric)
           );
           setAlertsLastHour(filteredAlerts);
+          console.log('filteredAlerts', filteredAlerts);
         } else {
           setAlertsLastHour([]);
         }
@@ -124,22 +121,28 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     };
 
     fetchAlertsLastHour();
-  }, [userEmail]);
+  }, []); // Make sure userConfig is a dependency as it's used here
 
+  // Send threshold data to the backend
   const handleFormSubmit = async () => {
     const timestamp = new Date().toISOString();
     const phoneNumbersString = phoneNumbers.join(', '); // Join phone numbers into a single string
     const emailsString = emailsForThreshold.join(', '); // Join emails into a single string
+
     try {
-      await createThreshold(
+      // Perform Axios POST request to create the threshold
+      await axios.post('/api/create_threshold', {
         metric,
-        parseFloat(highThreshold),
-        parseFloat(lowThreshold),
-        phoneNumbersString,
-        emailsString,
-        timestamp
-      );
-      console.log('Alerts Set');
+        high: parseFloat(highThreshold),
+        low: parseFloat(lowThreshold),
+        phone: phoneNumbersString,
+        email: emailsString,
+        timestamp: timestamp,
+        thresh_kill: threshKill, // Send the correct boolean
+        timeframe: null, // Send `null` if `threshKill` is off
+      });
+
+      console.log('Alerts Set or Cleared');
     } catch (error) {
       console.error('Error creating threshold:', error);
     } finally {
@@ -147,21 +150,27 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     }
   };
 
+  // Clear the threshold data and send it to the backend
   const handleFormClear = async () => {
     const timestamp = new Date().toISOString();
     setHighThreshold('');
     setLowThreshold('');
     setPhoneNumbers([]);
     setEmailsForThreshold([]);
+
     try {
-      await createThreshold(
+      // Create a new threshold with empty values to clear the current threshold
+      await axios.post('/api/create_threshold', {
         metric,
-        highThreshold,
-        lowThreshold,
-        phoneNumbers,
-        emailsForThreshold,
-        timestamp
-      );
+        high: null, // Clear high threshold
+        low: null, // Clear low threshold
+        phone: '', // Clear phone numbers
+        email: '', // Clear emails
+        timestamp: timestamp,
+        thresh_kill: false, // Ensure thresh_kill is off
+        timeframe: null, // Clear timeframe
+      });
+      console.log('Alerts Cleared');
     } catch (error) {
       console.error('Error clearing threshold:', error);
     } finally {
@@ -169,71 +178,63 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     }
   };
 
-  const uploadImage = event => {
+  const uploadImage = async event => {
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', 'v0b3yxc7');
 
-    axios
-      .post('https://api.cloudinary.com/v1_1/dklraztco/image/upload', formData)
-      .then(response => {
-        console.log(response);
-        const uploadedImageUrl = response.data.secure_url;
-        setUploadedImageUrl(uploadedImageUrl);
+    try {
+      // Upload image to Cloudinary
+      const cloudinaryResponse = await axios.post(
+        'https://api.cloudinary.com/v1_1/dklraztco/image/upload',
+        formData
+      );
+      const uploadedImageUrl = cloudinaryResponse.data.secure_url;
+      setUploadedImageUrl(uploadedImageUrl);
 
-        const userId = adminId;
-        updateProfileUrl(
-          userId,
-          firstName,
-          lastName,
-          email,
-          phone,
-          company,
-          threshKill,
-          uploadedImageUrl
-        )
-          .then(graphqlResponse => {
-            console.log('Profile URL updated:', graphqlResponse);
-            if (graphqlResponse.data) {
-              console.log(
-                'Updated Admin Data:',
-                graphqlResponse.data.update_admin
-              );
-            }
-            if (graphqlResponse.errors) {
-              console.error('Errors:', graphqlResponse.errors);
-            }
-          })
-          .catch(graphqlError => {
-            console.log('Error updating profile URL:', graphqlError);
-          });
-      })
-      .catch(err => {
-        console.log(err);
+      const userId = adminId;
+
+      // Send the updated profile URL and other admin data to the backend
+      const response = await axios.put(`/api/update_profile_url/${userId}`, {
+        firstname: firstName,
+        lastname: lastName,
+        email: email,
+        phone: phone,
+        company: company,
+        thresh_kill: threshKill,
+        profile_url: uploadedImageUrl,
       });
+
+      console.log('Profile URL updated:', response.data);
+    } catch (error) {
+      console.error('Error uploading image or updating profile URL:', error);
+    }
   };
 
   useEffect(() => {
     const fetchAdmin = async () => {
       try {
-        const data = await getAdminByEmail(userEmail);
-        setAdminId(data['data']['admin'][0]['id']);
-        setFirstName(data['data']['admin'][0]['firstname']);
-        setLastName(data['data']['admin'][0]['lastname']);
-        setPhone(data['data']['admin'][0]['phone']);
-        setEmail(data['data']['admin'][0]['email']);
-        setCompany(data['data']['admin'][0]['company']);
-        setThreshKill(data['data']['admin'][0]['thresh_kill']);
-        setUploadedImageUrl(data['data']['admin'][0]['profile_url']);
-        console.log(data);
+        const response = await axios.get(`/api/admin/${userEmail}`);
+        const data = response.data;
+
+        setAdminId(data.id);
+        setFirstName(data.firstname);
+        setLastName(data.lastname);
+        setPhone(data.phone);
+        setEmail(data.email);
+        setCompany(data.company);
+        setThreshKill(data.thresh_kill);
+        setUploadedImageUrl(data.profile_url);
+
+        // console.log(data); // Logging the admin data
       } catch (error) {
-        console.log(error);
+        console.error('Error fetching admin by email:', error);
       }
     };
 
     fetchAdmin();
-  }, []);
+  }, [userEmail]); // Add userEmail as a dependency so it updates when the email changes
 
   const findLatestThreshold = metric => {
     const threshold = thresholds.find(threshold => threshold.metric === metric);
@@ -249,12 +250,12 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     const latestThreshold = findLatestThreshold(metric);
     setHighThreshold(latestThreshold.highThreshold);
     setLowThreshold(latestThreshold.lowThreshold);
-  
+
     // Ensure phone numbers are set as an array
     const phoneNumbersArray = latestThreshold.phone
       ? latestThreshold.phone.split(',').map(phone => phone.trim()) // Split and trim each phone number
       : ['']; // Default to an array with an empty string if no phone numbers
-  
+
     setPhoneNumbers(phoneNumbersArray);
 
     // Ensure emails are set as an array
@@ -264,7 +265,6 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
 
     setEmailsForThreshold(emailsArray);
   }, [metric, thresholds]);
-  
 
   const iconSize = useBreakpointValue({ base: 'sm', md: 'md' });
   const handleOpenModal = () => setModalOpen(true);
@@ -372,15 +372,16 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
 
   // Group alerts by metric
 
-  const groupedAlerts = Array.isArray(alertsThreshold) && alertsThreshold?.reduce((acc, alert) => {
-    const { metric } = alert;
-          if (!acc[metric]) {
-            acc[metric] = [];
-          }
-          acc[metric].push(alert);
-          return acc;
-        }, {});
-
+  const groupedAlerts =
+    Array.isArray(alertsThreshold) &&
+    alertsThreshold?.reduce((acc, alert) => {
+      const { metric } = alert;
+      if (!acc[metric]) {
+        acc[metric] = [];
+      }
+      acc[metric].push(alert);
+      return acc;
+    }, {});
 
   // Function to toggle threshold kill for DB and local state
   const handleThreshKillToggle = async () => {
@@ -389,8 +390,16 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
 
     try {
       const id = adminId;
-      // Send the updated value to the database
-      await updateAdmin(id, firstName, lastName, email, phone, company, newThreshKill);
+      // Send the updated value to the database using Axios PUT request
+      await axios.put(`/api/update_admin/${id}`, {
+        firstname: firstName,
+        lastname: lastName,
+        email: email,
+        phone: phone,
+        company: company,
+        thresh_kill: newThreshKill, // Send the toggled thresh_kill value
+      });
+
       toast({
         title: 'Threshold alerts updated.',
         description: `Threshold alerts have been ${
@@ -402,6 +411,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
       });
     } catch (error) {
       console.error('Error updating threshold kill:', error);
+
       toast({
         title: 'Error',
         description: 'Failed to update threshold alerts.',
@@ -418,7 +428,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
   };
 
   // Remove a phone number input
-  const handleRemovePhoneNumber = (index) => {
+  const handleRemovePhoneNumber = index => {
     setPhoneNumbers(phoneNumbers.filter((_, i) => i !== index));
   };
 
@@ -435,7 +445,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
   };
 
   // Remove an email input
-  const handleRemoveEmail = (index) => {
+  const handleRemoveEmail = index => {
     setEmailsForThreshold(emailsForThreshold.filter((_, i) => i !== index));
   };
 
@@ -606,7 +616,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                           mb="1"
                           isChecked={threshKill}
                           onChange={handleThreshKillToggle}
-                          colorScheme={'orange'}
+                          colorScheme={'blue'}
                         />
                       </FormControl>
                       <MotionButton
@@ -769,11 +779,11 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                   <Input
                     type="text"
                     value={phoneNumber}
-                    onChange={(e) =>
+                    onChange={e =>
                       handlePhoneNumberChange(e.target.value, index)
                     }
                     bg={'white'}
-                    border={'2px solid #fd9801'}
+                    border={'2px solid #3D5A80'}
                     color={'#212121'}
                     mr={2}
                   />
@@ -803,9 +813,9 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                   <Input
                     type="text"
                     value={email}
-                    onChange={(e) => handleEmailChange(e.target.value, index)}
+                    onChange={e => handleEmailChange(e.target.value, index)}
                     bg={'white'}
-                    border={'2px solid #fd9801'}
+                    border={'2px solid #3D5A80'}
                     color={'#212121'}
                     mr={2}
                   />
@@ -835,7 +845,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                 value={highThreshold}
                 onChange={e => setHighThreshold(e.target.value)}
                 bg={'white'}
-                border={'2px solid #fd9801'}
+                border={'2px solid #3D5A80'}
                 color={'#212121'}
               />
             </FormControl>
@@ -846,42 +856,38 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                 value={lowThreshold}
                 onChange={e => setLowThreshold(e.target.value)}
                 bg={'white'}
-                border={'2px solid #fd9801'}
+                border={'2px solid #3D5A80'}
                 color={'#212121'}
               />
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button
-              variant="solid"
-              bg="red.400"
-              color="white"
-              _hover={{ bg: 'red.500' }}
-              mr={3}
-              onClick={handleFormClear}
-            >
-              Clear Form
-            </Button>
-            <Button
-              variant="solid"
-              bg="orange.400"
-              color="white"
-              _hover={{ bg: 'orange.500' }}
-              mr={3}
-              onClick={handleFormSubmit}
-            >
-              Save
-            </Button>
-            <Button
-              variant="solid"
-              bg="gray.400"
-              color="white"
-              _hover={{ bg: 'gray.500' }}
-              onClick={handleCloseThresholdModal}
-            >
-              Cancel
-            </Button>
-          </ModalFooter>
+              <Button
+                variant="solid"
+                bg="red.400"
+                color="white"
+                _hover={{ bg: 'red.500' }}
+                mr={3}
+                onClick={handleFormClear}
+                borderRadius={'full'}
+              >
+                Clear Form
+              </Button>
+              <Button
+                variant="solid"
+                bg="gray.400"
+                color="white"
+                _hover={{ bg: 'gray.500' }}
+                onClick={handleCloseThresholdModal}
+                mr={3}
+                borderRadius={'full'}
+              >
+                Cancel
+              </Button>
+              <Button variant="blue" color="black" onClick={handleFormSubmit}>
+                Save
+              </Button>
+            </ModalFooter>
         </ModalContent>
       </Modal>
     </Box>

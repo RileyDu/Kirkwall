@@ -55,7 +55,7 @@ const MiniMap = () => {
               position={{ lat: location.lat, lng: location.lng }}
               onClick={() => setOpenInfoIndex(index)}
             >
-              <Pin background={'#fd9801'} borderColor={'#212121'} glyphColor={'#212121'} />
+              <Pin background={'#cee8ff'} borderColor={'#212121'} glyphColor={'#212121'} />
               {openInfoIndex === index && (
                 <InfoWindow
                   position={{ lat: location.lat, lng: location.lng }}

@@ -34,7 +34,7 @@ import { FaChessRook } from 'react-icons/fa';
 import { FaChevronDown } from 'react-icons/fa';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { keyframes } from '@emotion/react';
-import { updateChart } from '../../Backend/Graphql_helper.js';
+import axios from 'axios'; // Import Axios
 
 import { motion, AnimatePresence } from 'framer-motion';
 const MotionBox = motion(Box);
@@ -47,7 +47,18 @@ const chartComponents = {
   // Add more chart types here as needed
 };
 
-const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour, runThresholdTour, setRunThresholdTour, setIsTourRunning, isTourRunning, activeChartID, setActiveChartID }) => {
+const ModularDashboard = ({
+  statusOfAlerts,
+  expandButtonRef,
+  runTour,
+  setRunTour,
+  runThresholdTour,
+  setRunThresholdTour,
+  setIsTourRunning,
+  isTourRunning,
+  activeChartID,
+  setActiveChartID,
+}) => {
   const [customerMetrics, setCustomerMetrics] = useState([]);
   const [customerName, setCustomerName] = useState('');
   const [metricSettings, setMetricSettings] = useState([]);
@@ -63,12 +74,16 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
   const { currentUser } = useAuth();
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
-  const { chartData, handleTimePeriodChange, loading } = useWeatherData();
-
-
+  const {
+    chartData,
+    fetchChartData,
+    setChartData,
+    handleTimePeriodChange,
+    loading,
+  } = useWeatherData();
 
   const sortChartDataPerCustomer = chartData => {
-    if (metricSettings.length > 0) {
+    if (chartData && metricSettings && metricSettings.length > 0) {
       const filteredData = chartData.filter(chart =>
         metricSettings.some(metric => metric.metric === chart.metric)
       );
@@ -92,7 +107,7 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
   }, [currentUser]);
 
   useEffect(() => {
-    if (customerMetrics.length > 0) {
+    if (customerMetrics && customerMetrics.length > 0) {
       const selectedMetrics = MetricSettings.filter(metric =>
         customerMetrics.includes(metric.metric)
       );
@@ -141,21 +156,46 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
     );
   }
 
+  if (!chartData || metricSettings.length === 0 || filteredChartData.length === 0 || loading === true) {
+    return (
+      <Flex justify="center" align="center" height="100%">
+        <Box
+          as={FaChessRook}
+          animation={`${spin} infinite 2s linear`}
+          fontSize="6xl"
+          color={getLogoColor()}
+        />
+      </Flex>
+    );
+  }
+
   const handleMenuItemClick = async metric => {
     // Toggle hidden state locally
+    // console.log('filteredChartData before toggle:', filteredChartData);
     setFilteredChartData(prevData =>
       prevData.map(chart =>
         chart.metric === metric ? { ...chart, hidden: !chart.hidden } : chart
       )
     );
+    // console.log('Updated filteredChartData:', filteredChartData);
 
-    const chartDataForMetric = chartData.find(chart => chart.metric === metric);
-    const updatedHiddenState = !chartDataForMetric.hidden;
+    // Find chartData based on metric
+    const chartDataForMetric = filteredChartData.find(chart => chart.metric === metric);
 
-    // Send update to backend
-    try {
-      await handleChartEdit(chartDataForMetric.id, updatedHiddenState);
-    } catch (error) {}
+    if (chartDataForMetric) {
+      const updatedHiddenState = !chartDataForMetric.hidden;
+
+      // Wait for the chart edit to complete before fetching new data
+      try {
+        await handleChartEdit(chartDataForMetric.id, updatedHiddenState);
+        console.log('Chart update successful');
+
+        // Fetch the updated chart data after the PUT request is successful
+        // fetchChartData(setChartData);
+      } catch (error) {
+        console.error('Error updating chart:', error);
+      }
+    }
   };
 
   const handleChartEdit = async (id, hidden) => {
@@ -172,27 +212,27 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
     };
 
     try {
-      const result = await updateChart(
-        updatedChartDetails.id,
-        updatedChartDetails.metric,
-        updatedChartDetails.timeperiod,
-        updatedChartDetails.type,
-        updatedChartDetails.location,
-        updatedChartDetails.hidden
+      console.log('Sending chart update:', updatedChartDetails);
+
+      // Perform Axios PUT request to update the chart
+      const response = await axios.put(
+        `/api/update_chart`,
+        updatedChartDetails,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
       );
-      console.log('Updated chart:', result);
+
+      // Log the updated chart data returned from the server
+      console.log('Updated chart:', response.data);
     } catch (error) {
       console.error('Error updating chart:', error);
     }
   };
 
-
-
-
   return (
-
-
-    
     <Box
       bg={colorMode === 'light' ? '#FFFFFF' : 'gray.700'}
       color={colorMode === 'light' ? 'black' : 'white'}
@@ -241,17 +281,13 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
                   color="white"
                   borderRadius="md"
                   border="2px solid"
-                  borderColor={colorMode === 'light' ? '#212121' : '#fd9801'}
+                  borderColor="#212121"
                 >
                   <PopoverArrow
                     borderTop={'2px solid'}
-                    borderTopColor={
-                      colorMode === 'light' ? '#212121' : '#fd9801'
-                    }
+                    borderTopColor="#212121"
                     borderLeft={'2px solid'}
-                    borderLeftColor={
-                      colorMode === 'light' ? '#212121' : '#fd9801'
-                    }
+                    borderLeftColor="#212121"
                   />
                   <PopoverBody>
                     <Flex justify="space-evenly">
@@ -323,10 +359,11 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
               {customerMetrics.map((metric, index) => (
                 <MenuItem
                   key={metric}
-                  onClick={() => handleMenuItemClick(metric)}
+                  // onClick={() => handleMenuItemClick(metric)}
                   bg={index % 2 === 0 ? '#212121' : '#303030'} // Alternate between two colors
                   color="white"
                   border={'1px solid #212121'}
+                  cursor={'default'}
                 >
                   <Flex
                     alignItems="center"
@@ -340,9 +377,9 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
                     </Box>
                     <Checkbox
                       isChecked={
-                        !(filteredChartData?.find(
+                        !filteredChartData?.find(
                           chart => chart.metric === metric
-                        )?.hidden)
+                        )?.hidden
                       }
                       onChange={() => handleMenuItemClick(metric)}
                       colorScheme="green"
@@ -390,7 +427,7 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
                   {!isChartHidden && (
                     <MotionBox
                       layout // This will ensure smooth position transitions
-                      initial={{ opacity: 0, height: 'auto', scale: .5 }}
+                      initial={{ opacity: 0, height: 'auto', scale: 0.5 }}
                       animate={{ opacity: 1, height: 'auto', scale: 1 }}
                       exit={{ opacity: 0, height: 0, scale: 0 }}
                       transition={{ duration: 1 }}
@@ -418,7 +455,7 @@ const ModularDashboard = ({ statusOfAlerts, expandButtonRef, runTour, setRunTour
                           expandButtonRef={expandButtonRef}
                           runTour={runTour}
                           setRunTour={setRunTour}
-                          runThresholdTour={runThresholdTour} 
+                          runThresholdTour={runThresholdTour}
                           setRunThresholdTour={setRunThresholdTour}
                           isTourRunning={isTourRunning}
                           setIsTourRunning={setIsTourRunning}

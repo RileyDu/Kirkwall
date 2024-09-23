@@ -1,24 +1,32 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "build" }
-    },
-    {
-      "src": "src/Backend/ContactForm/SendEmail.mjs",
-      "use": "@vercel/node"
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/send-enquiry",
-      "destination": "src/Backend/ContactForm/SendEmail.mjs"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/"
-    }
-  ]
+   "version": 2,
+   "builds": [
+      {
+         "src": "package.json",
+         "use": "@vercel/static-build",
+         "config": {
+            "distDir": "build"
+         }
+      },
+      {
+         "src": "src/NewBackend/index.js",
+         "use": "@vercel/node"
+      }
+   ],
+   "rewrites": [
+      {
+         "source": "/api/(.*)",
+         "destination": "src/NewBackend"
+      },
+      {
+         "source": "/(.*)",
+         "destination": "/"
+      }
+   ],
+   "crons": [
+      {
+         "path": "/api/run-check-thresholds",
+         "schedule": "*/10 * * * *"
+      }
+   ]
 }

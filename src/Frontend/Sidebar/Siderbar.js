@@ -21,6 +21,8 @@ import {
   FaBook,
   FaBookOpen,
 } from 'react-icons/fa';
+import { MdElectricBolt } from 'react-icons/md';
+
 import { GiGroundSprout } from 'react-icons/gi';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -75,10 +77,12 @@ const buttonConfig = {
     { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
     // { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/grandfarm/map' },
+    { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
   ],
   'jerrycromarty@imprimedicine.com': [
     { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' },
+    { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
   ],
   'russell@rjenergysolutions.com': [
     {
@@ -88,6 +92,7 @@ const buttonConfig = {
     },
     { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' },
+    { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
   ],
   'trey@watchdogprotect.com': [
     { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
@@ -97,6 +102,7 @@ const buttonConfig = {
       label: 'Map',
       route: '/watchdogprotect/map',
     },
+    { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
   ],
   default: [
     { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
@@ -107,6 +113,7 @@ const buttonConfig = {
     },
     { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' },
+    { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
   ],
 };
 
@@ -178,7 +185,7 @@ const Sidebar = ({
               src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
               alt="kirkwall logo"
               style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/dashboard')}
             />
           </Box>
         ) : (
@@ -188,7 +195,7 @@ const Sidebar = ({
                 src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
                 alt="kirkwall logo"
                 style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/dashboard')}
               />
             </Box>
           </motion.div>
@@ -240,7 +247,6 @@ const SidebarContent = ({ buttons, navigate }) => (
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         _hover={{ bg: '#3D5A80', color: 'white' }}
-
       >
         {btn.label}
       </MotionButton>

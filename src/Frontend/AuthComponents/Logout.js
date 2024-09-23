@@ -21,14 +21,14 @@ const Logout = ({ onLogout }) => {
       await signOut(auth);
       console.log('User logged out successfully');
       setLoading(true);
-      navigate('/login');
+      navigate('/');
       if (onLogout) onLogout();
     } catch (error) {
       console.error('Error logging out:', error);
     }
   };
 
-  if (!user || location.pathname === '/login') return null;
+  if (!user || location.pathname === '/') return null;
 
   return (
     <Button onClick={handleLogout} size={'lg'} w="100%" fontSize="x-large" borderRadius={'full'} variant={'blue'}>
