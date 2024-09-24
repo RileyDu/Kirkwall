@@ -25,10 +25,15 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       setIsMonday(true);
       console.log('Today is Monday! Fetching weekly recap data...');
 
-      // Fetch the data and set it in the state
-      WeeklyRecapHelper(userMetrics).then(data => {
-        setRecapData(data);
+      axios.get('api/weekly-recap?user_email=' + userEmail).then(response => {
+        setRecapData(response.data);
       });
+
+      // Fetch the data and set it in the state
+      // WeeklyRecapHelper(userMetrics).then(data => {
+      //   setRecapData(data);
+      // });
+      
       axios
         .get('/api/alerts/recap')
         .then(response => {
@@ -113,7 +118,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                 const { label, addSpace } = getLabelForMetric(metric);
                 return (
                   <Box
-                    key={metric}
+                    key={recapData[metric]?.metric}
                     p={4}
                     borderWidth="1px"
                     borderRadius="lg"
@@ -123,7 +128,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     color={'black'}
                   >
                     <Heading size="md" mb={2} color={'black'} fontWeight="bold" textDecoration="underline">
-                      {metric}
+                    {recapData[metric]?.metric}
                     </Heading>
                     <Text>
                       <strong>High:</strong> {recapData[metric]?.high}
@@ -138,7 +143,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                       {addSpace ? ' ' : ''}{label}
                     </Text>
                     <Text>
-                      <strong>Alerts:</strong> {alertCounts[metric] || 0}
+                      <strong>Alerts:</strong> {recapData[metric]?.alert_count}
                     </Text>
                   </Box>
                 );

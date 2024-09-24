@@ -651,7 +651,7 @@ app.get('/api/weekly-recap', async (req, res) => {
       queryParams.push(week_start_date);
     } else {
       // If no week is specified, get the most recent week's data
-      query += ` ORDER BY week_start_date DESC LIMIT 1`;
+      query += ` ORDER BY week_start_date DESC`;
     }
 
     const result = await client.query(query, queryParams);
@@ -660,7 +660,7 @@ app.get('/api/weekly-recap', async (req, res) => {
       return res.status(404).json({ error: 'No weekly recap data found for the specified criteria' });
     }
 
-    res.status(200).json(result.rows[0]);
+    res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching weekly recap data:', error);
     res.status(500).json({ error: 'An error occurred while fetching weekly recap data' });
