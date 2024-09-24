@@ -127,15 +127,15 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     </Heading>
                     <Text>
                       <strong>High:</strong> {recapData[metric]?.high}
-                      {addSpace ? ' ' : ''} {label}
+                      {addSpace ? ' ' : ''}{label}
                     </Text>
                     <Text>
                       <strong>Low:</strong> {recapData[metric]?.low}
-                      {addSpace ? ' ' : ''} {label}
+                      {addSpace ? ' ' : ''}{label}
                     </Text>
                     <Text>
                       <strong>Avg:</strong> {recapData[metric]?.avg}
-                      {addSpace ? ' ' : ''} {label}
+                      {addSpace ? ' ' : ''}{label}
                     </Text>
                     <Text>
                       <strong>Alerts:</strong> {alertCounts[metric] || 0}

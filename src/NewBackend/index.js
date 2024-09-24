@@ -542,6 +542,7 @@ app.post('/api/equipment', async (req, res) => {
   }
 });
 
+// Delete an equipment
 app.delete('/api/equipment/:id', async (req, res) => {
   const id = req.params.id;
   try {
@@ -592,7 +593,7 @@ app.post('/api/energy-info', async (req, res) => {
 });
 
 
-// Update the zip code and/or last live rate recorded for a user
+// Update the location via user
 app.put('/api/energy-info/:email', async (req, res) => {
   const email = req.params.email;
   const { location } = req.body;
@@ -613,9 +614,61 @@ app.put('/api/energy-info/:email', async (req, res) => {
   }
 });
 
+// POST route for adding weekly recap data
+app.post('/api/weekly-recap', async (req, res) => {
+  const { user_email, metric, week_start_date, high, low, avg, alert_count } = req.body;
+
+  try {
+    // Insert the new weekly recap data into the database
+    const result = await client.query(
+      `INSERT INTO Weekly_Recap (user_email, metric, week_start_date, high, low, avg, alert_count, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW()) 
+       RETURNING *`,
+      [user_email, metric, week_start_date, high, low, avg, alert_count]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error inserting weekly recap data:', error);
+    res.status(500).json({ error: 'An error occurred while inserting weekly recap data' });
+  }
+});
+
+// GET route for getting weekly recap data
+app.get('/api/weekly-recap', async (req, res) => {
+  const { user_email, week_start_date } = req.query;
+
+  if (!user_email) {
+    return res.status(400).json({ error: 'user_email is required' });
+  }
+
+  try {
+    let query = `SELECT * FROM Weekly_Recap WHERE user_email = $1`;
+    let queryParams = [user_email];
+
+    // If a specific week is requested, add it to the query
+    if (week_start_date) {
+      query += ` AND week_start_date = $2`;
+      queryParams.push(week_start_date);
+    } else {
+      // If no week is specified, get the most recent week's data
+      query += ` ORDER BY week_start_date DESC LIMIT 1`;
+    }
+
+    const result = await client.query(query, queryParams);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No weekly recap data found for the specified criteria' });
+    }
+
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error fetching weekly recap data:', error);
+    res.status(500).json({ error: 'An error occurred while fetching weekly recap data' });
+  }
+});
 
 
-// New route for cron job
+// Cron Job route that runs every 10 minutes to check live values against user thresholds
 app.get('/api/run-check-thresholds', async (req, res) => {
   try {
     await checkThresholds(); // Call your cron job logic
