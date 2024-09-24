@@ -12,8 +12,8 @@ export const WeeklyRecapHelper = async (userMetrics) => {
   const watchdogMetrics = ['temp', 'hum'];
   const rivercityMetrics = ['rctemp', 'humidity'];
   const impriMedMetrics = [
-    'imFreezerOneTemp',
-    'imFreezerOneHum',
+    // 'imFreezerOneTemp',
+    // 'imFreezerOneHum',
     'imFreezerTwoTemp',
     'imFreezerTwoHum',
     'imFreezerThreeTemp',
@@ -22,17 +22,27 @@ export const WeeklyRecapHelper = async (userMetrics) => {
     'imFridgeOneHum',
     'imFridgeTwoTemp',
     'imFridgeTwoHum',
-    'imIncubatorOneTemp',
-    'imIncubatorOneHum',
+    // 'imIncubatorOneTemp',
+    // 'imIncubatorOneHum',
     'imIncubatorTwoTemp',
     'imIncubatorTwoHum',
   ];
 
-  // Define a dictionary for deveui mappings (example, replace with actual data)
   const deveuiPerMetric = {
-    imFreezerOneTemp: '1234',
-    imFreezerOneHum: '1234',
-    // Add other mappings here
+    imFreezerOneTemp: '0080E1150618C9DE',
+    imFreezerOneHum: '0080E1150618C9DE',
+    imFreezerTwoTemp: '0080E115054FC6DF',
+    imFreezerTwoHum: '0080E115054FC6DF',
+    imFreezerThreeTemp: '0080E1150618B549',
+    imFreezerThreeHum: '0080E1150618B549',
+    imFridgeOneTemp: '0080E1150619155F',
+    imFridgeOneHum: '0080E1150619155F',
+    imFridgeTwoTemp: '0080E115061924EA',
+    imFridgeTwoHum: '0080E115061924EA',
+    imIncubatorOneTemp: '0080E115054FF1DC',
+    imIncubatorOneHum: '0080E115054FF1DC',
+    imIncubatorTwoTemp: '0080E1150618B45F',
+    imIncubatorTwoHum: '0080E1150618B45F',
   };
 
   // Combine all available metrics for filtering

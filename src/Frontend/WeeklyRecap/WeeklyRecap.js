@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Flex, Heading, Text, SimpleGrid } from '@chakra-ui/react';
+import { Box, Flex, Heading, Text, SimpleGrid, Divider } from '@chakra-ui/react';
 import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import { WeeklyRecapHelper } from './WeeklyRecapHelper.js';
@@ -20,7 +20,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   useEffect(() => {
     const today = new Date();
     const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    if (dayOfWeek === 1) {
+    if (dayOfWeek === 2) {
       // 1 represents Monday
       setIsMonday(true);
       console.log('Today is Monday! Fetching weekly recap data...');
@@ -120,8 +120,9 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     shadow="md"
                     bg="white"
                     _hover={{ shadow: 'lg' }} // Optional: Add hover effect
+                    color={'black'}
                   >
-                    <Heading size="md" mb={2}>
+                    <Heading size="md" mb={2} color={'black'} fontWeight="bold" textDecoration="underline">
                       {metric}
                     </Heading>
                     <Text>
@@ -148,12 +149,15 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       )}
       {/* Display recent alerts */}
       {recentAlerts.length > 0 && (
-        <Box mt={4} p={4} borderWidth="1px" borderRadius="lg">
-          <Heading size="md">Recent Alerts</Heading>
+        <Box mt={4} p={4} borderWidth="1px" borderRadius="lg" shadow="md" bg="white" color={'black'}>
+          <Heading size="md" color={'black'} fontWeight={'bold'} textDecoration={'underline'}>This Week's Alerts</Heading>
           {recentAlerts.map(alert => (
+            <>
             <Text key={alert.id}>
-              {alert.message} (at {new Date(alert.timestamp).toLocaleString()})
+              {alert.message}
             </Text>
+            <Divider />
+            </>
           ))}
         </Box>
       )}
