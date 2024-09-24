@@ -2,8 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { Box, Flex, Heading, Text, SimpleGrid, Divider } from '@chakra-ui/react';
 import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
-import { WeeklyRecapHelper } from './WeeklyRecapHelper.js';
 import axios from 'axios';
+import { WeeklyRecapHelper } from './WeeklyRecapHelper.js';
+
+// Utility function to format date as MM/DD/YY
+const formatDate = (date) => {
+  const month = date.getMonth() + 1; // getMonth() returns 0-11, so add 1
+  const day = date.getDate();
+  const year = date.getFullYear().toString().slice(-2); // Get last two digits of the year
+
+  // Return formatted date as MM/DD/YY
+  return `${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
+};
+
+// Utility function to calculate end date as Sunday of the week
+const getEndDate = (startDate) => {
+  const endDate = new Date(startDate);
+  endDate.setDate(startDate.getDate() + 6); // Monday + 6 = Sunday
+  return endDate;
+};
+
 
 const WeeklyRecap = ({ statusOfAlerts }) => {
   const { currentUser } = useAuth();
@@ -16,24 +34,33 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   const [recapData, setRecapData] = useState({});
   const [recentAlerts, setRecentAlerts] = useState([]);
   const [alertCounts, setAlertCounts] = useState({});
+  const [weekStartDate, setWeekStartDate] = useState('');
+  const [weekEndDate, setWeekEndDate] = useState('');
 
   useEffect(() => {
     const today = new Date();
     const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    if (dayOfWeek === 2) {
-      // 1 represents Monday
+    if (dayOfWeek === 2) { // 2 represents Monday
       setIsMonday(true);
+
+      // Set the week start date to the date in your recap data or a default value
+      const startDate = new Date('2024-09-16T05:00:00.000Z'); // Replace with dynamic date if needed
+      const formattedStartDate = formatDate(startDate);
+      const formattedEndDate = formatDate(getEndDate(startDate));
+      
+      setWeekStartDate(formattedStartDate);
+      setWeekEndDate(formattedEndDate);
+      
       console.log('Today is Monday! Fetching weekly recap data...');
 
-      axios.get('api/weekly-recap?user_email=' + userEmail).then(response => {
-        setRecapData(response.data);
+      // axios.get('api/weekly-recap?user_email=' + userEmail).then(response => {
+      //   setRecapData(response.data);
+      // });
+
+      WeeklyRecapHelper(userMetrics).then(data => {
+        setRecapData(data);
       });
 
-      // Fetch the data and set it in the state
-      // WeeklyRecapHelper(userMetrics).then(data => {
-      //   setRecapData(data);
-      // });
-      
       axios
         .get('/api/alerts/recap')
         .then(response => {
@@ -56,7 +83,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     } else {
       setIsMonday(false);
     }
-  }, [userMetrics]);
+  }, [userMetrics, userEmail]);
 
   const getLabelForMetric = metric => {
     const metricLabels = {
@@ -102,7 +129,9 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       px={4} // Add padding on the x-axis for better responsiveness
     >
       <Flex justifyContent="space-between" alignItems="center" width="100%">
-        <Heading>Weekly Recap</Heading>
+        <Heading>
+          Recap for {weekStartDate} - {weekEndDate}
+        </Heading>
       </Flex>
 
       {isMonday && (
@@ -115,7 +144,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
               spacing={4} // Space between grid items
             >
               {Object.keys(recapData).map(metric => {
-                const { label, addSpace } = getLabelForMetric(metric);
+                const { label, addSpace } = getLabelForMetric(recapData[metric]?.metric);
                 return (
                   <Box
                     key={recapData[metric]?.metric}
@@ -128,7 +157,8 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     color={'black'}
                   >
                     <Heading size="md" mb={2} color={'black'} fontWeight="bold" textDecoration="underline">
-                    {recapData[metric]?.metric}
+                    {/* {recapData[metric]?.metric} */}
+                    {metric}
                     </Heading>
                     <Text>
                       <strong>High:</strong> {recapData[metric]?.high}
@@ -143,7 +173,8 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                       {addSpace ? ' ' : ''}{label}
                     </Text>
                     <Text>
-                      <strong>Alerts:</strong> {recapData[metric]?.alert_count}
+                      {/* <strong>Alerts:</strong> {recapData[metric]?.alert_count} */}
+                      <strong>Alerts:</strong> {alertCounts[metric] || 0}
                     </Text>
                   </Box>
                 );
