@@ -668,6 +668,22 @@ app.get('/api/weekly-recap', async (req, res) => {
   }
 });
 
+app.delete('/api/weekly-recap/:id', async (req, res) => {
+  const id = req.params.id;
+
+  if (!id) {
+    return res.status(400).json({ error: 'id is required' });
+  }
+
+  try {
+    await client.query('DELETE FROM Weekly_Recap WHERE id = $1', [id]);
+    res.status(200).json({ message: 'Weekly recap data deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting weekly recap data:', error);
+    res.status(500).json({ error: 'An error occurred while deleting weekly recap data' });
+  }
+});
+
 
 // Cron Job route that runs every 10 minutes to check live values against user thresholds
 app.get('/api/run-check-thresholds', async (req, res) => {

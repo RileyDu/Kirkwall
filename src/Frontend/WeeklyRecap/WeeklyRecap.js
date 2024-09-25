@@ -4,6 +4,7 @@ import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import axios from 'axios';
 import { WeeklyRecapHelper } from './WeeklyRecapHelper.js';
+import { FaTrash } from 'react-icons/fa';
 
 // Utility function to format date as MM/DD/YY
 const formatDate = (date) => {
@@ -119,6 +120,14 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     return metricLabels[metric] || { label: '', addSpace: false };
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`/api/weekly-recap/${id}`);
+    } catch (error) {
+      console.error('Error deleting alert:', error);
+    }
+  };
+
   return (
     <Box
       minHeight="100vh"
@@ -147,7 +156,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                 const { label, addSpace } = getLabelForMetric(recapData[metric]?.metric);
                 return (
                   <Box
-                    key={recapData[metric]?.metric}
+                    key={recapData[metric]?.id}
                     p={4}
                     borderWidth="1px"
                     borderRadius="lg"
@@ -159,6 +168,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     <Heading size="md" mb={2} color={'black'} fontWeight="bold" textDecoration="underline">
                     {recapData[metric]?.metric}
                     {/* {metric} */}
+                    <FaTrash onClick={() => handleDelete(recapData[metric]?.id)} cursor={'pointer'} />
                     </Heading>
                     <Text>
                       <strong>High:</strong> {recapData[metric]?.high}
