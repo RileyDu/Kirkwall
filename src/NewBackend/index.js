@@ -679,6 +679,17 @@ app.get('/api/run-check-thresholds', async (req, res) => {
   }
 });
 
+// Cron Job route that runs every monday to generate weekly recap
+app.get('/api/run-weekly-recap', async (req, res) => {
+  try {
+    await generateWeeklyRecap(); // Call the new weekly recap cron job logic
+    res.status(200).json({ message: 'Weekly recap generation completed.' });
+  } catch (error) {
+    console.error('Error generating weekly recap:', error);
+    res.status(500).json({ error: 'Failed to generate weekly recap' });
+  }
+});
+
 
 
 // Catch-all route for other API requests
