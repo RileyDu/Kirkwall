@@ -1,14 +1,15 @@
 // File: api/cron-weekly-recap.js
 import axios from 'axios';
 import moment from 'moment-timezone';
-import { CustomerSettings } from '../path/to/customers.js'; // Import the CustomerSettings file
+import { CustomerSettings } from '../../Frontend/Modular/CustomerSettings.js';
 import dotenv from 'dotenv';
-dotenv.config({ path: 'src/NewBackend/.env' });
+dotenv.config();
 
-const baseURL = process.env.BACKEND_URL || 'https://kirkwall-demo.vercel.app/';
+const baseURL = process.env.BACKEND_URL || 'https://kirkwall-demo.vercel.app';
 
 export const generateWeeklyRecap = async () => {
   console.log('Generating weekly recap data...');
+  console.log('Using baseURL:', baseURL);
 
   // Loop through each customer from CustomerSettings
   for (const customer of CustomerSettings) {
@@ -65,22 +66,6 @@ const calculateWeeklyRecap = async (userMetrics) => {
     'imIncubatorTwoHum',
   ];
 
-  const deveuiPerMetric = {
-    imFreezerOneTemp: '0080E1150618C9DE',
-    imFreezerOneHum: '0080E1150618C9DE',
-    imFreezerTwoTemp: '0080E115054FC6DF',
-    imFreezerTwoHum: '0080E115054FC6DF',
-    imFreezerThreeTemp: '0080E1150618B549',
-    imFreezerThreeHum: '0080E1150618B549',
-    imFridgeOneTemp: '0080E1150619155F',
-    imFridgeOneHum: '0080E1150619155F',
-    imFridgeTwoTemp: '0080E115061924EA',
-    imFridgeTwoHum: '0080E115061924EA',
-    imIncubatorOneTemp: '0080E115054FF1DC',
-    imIncubatorOneHum: '0080E115054FF1DC',
-    imIncubatorTwoTemp: '0080E1150618B45F',
-    imIncubatorTwoHum: '0080E1150618B45F',
-  };
 
   const allMetrics = [
     ...weatherMetrics,
@@ -101,6 +86,25 @@ const calculateWeeklyRecap = async (userMetrics) => {
 
 // Fetch specific data based on the metric type
 const fetchSpecificData = async (metric) => {
+
+
+  const deveuiPerMetric = {
+    imFreezerOneTemp: '0080E1150618C9DE',
+    imFreezerOneHum: '0080E1150618C9DE',
+    imFreezerTwoTemp: '0080E115054FC6DF',
+    imFreezerTwoHum: '0080E115054FC6DF',
+    imFreezerThreeTemp: '0080E1150618B549',
+    imFreezerThreeHum: '0080E1150618B549',
+    imFridgeOneTemp: '0080E1150619155F',
+    imFridgeOneHum: '0080E1150619155F',
+    imFridgeTwoTemp: '0080E115061924EA',
+    imFridgeTwoHum: '0080E115061924EA',
+    imIncubatorOneTemp: '0080E115054FF1DC',
+    imIncubatorOneHum: '0080E115054FF1DC',
+    imIncubatorTwoTemp: '0080E1150618B45F',
+    imIncubatorTwoHum: '0080E1150618B45F',
+  };
+
   try {
     let response;
     if (metric.includes('temp') || metric.includes('hum')) {

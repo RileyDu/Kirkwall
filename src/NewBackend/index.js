@@ -7,6 +7,7 @@ dotenv.config(); // Load environment variables
 import multer from 'multer';
 import sgMail from '@sendgrid/mail';
 import { checkThresholds } from './cron/checkThresholds.js'; // Import your cron logic
+import { generateWeeklyRecap } from './cron/cronWeeklyRecap.js';
 
 
 const app = express();
