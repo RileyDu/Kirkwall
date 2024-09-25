@@ -40,7 +40,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   useEffect(() => {
     const today = new Date();
     const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    if (dayOfWeek === 2) { // 2 represents Monday
+    if (dayOfWeek === 3) { // 2 represents Monday
       setIsMonday(true);
 
       // Set the week start date to the date in your recap data or a default value
@@ -53,13 +53,13 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       
       console.log('Today is Monday! Fetching weekly recap data...');
 
-      // axios.get('api/weekly-recap?user_email=' + userEmail).then(response => {
-      //   setRecapData(response.data);
-      // });
-
-      WeeklyRecapHelper(userMetrics).then(data => {
-        setRecapData(data);
+      axios.get('api/weekly-recap?user_email=' + userEmail).then(response => {
+        setRecapData(response.data);
       });
+
+      // WeeklyRecapHelper(userMetrics).then(data => {
+      //   setRecapData(data);
+      // });
 
       axios
         .get('/api/alerts/recap')
@@ -157,8 +157,8 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     color={'black'}
                   >
                     <Heading size="md" mb={2} color={'black'} fontWeight="bold" textDecoration="underline">
-                    {/* {recapData[metric]?.metric} */}
-                    {metric}
+                    {recapData[metric]?.metric}
+                    {/* {metric} */}
                     </Heading>
                     <Text>
                       <strong>High:</strong> {recapData[metric]?.high}
@@ -173,8 +173,8 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                       {addSpace ? ' ' : ''}{label}
                     </Text>
                     <Text>
-                      {/* <strong>Alerts:</strong> {recapData[metric]?.alert_count} */}
-                      <strong>Alerts:</strong> {alertCounts[metric] || 0}
+                      <strong>Alerts:</strong> {recapData[metric]?.alert_count}
+                      {/* <strong>Alerts:</strong> {alertCounts[metric] || 0} */}
                     </Text>
                   </Box>
                 );
