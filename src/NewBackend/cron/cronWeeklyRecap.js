@@ -30,16 +30,21 @@ export const generateWeeklyRecap = async () => {
           avg: recapData[metric].avg,
           alert_count: recapData[metric].alert_count,
         });
-        console.log(`Weekly recap data inserted for ${email}, metric: ${metric}`);
+        console.log(
+          `Weekly recap data inserted for ${email}, metric: ${metric}`
+        );
       } catch (error) {
-        console.error(`Error inserting weekly recap for ${metric} - ${email}:`, error);
+        console.error(
+          `Error inserting weekly recap for ${metric} - ${email}:`,
+          error
+        );
       }
     }
   }
 };
 
 // Helper function to calculate weekly recap data
-const calculateWeeklyRecap = async (userMetrics) => {
+const calculateWeeklyRecap = async userMetrics => {
   const weatherMetrics = [
     'temperature',
     'percent_humidity',
@@ -49,6 +54,7 @@ const calculateWeeklyRecap = async (userMetrics) => {
     'leaf_wetness',
   ];
   const watchdogMetrics = ['temp', 'hum'];
+  const rivercityMetrics = ['rctemp', 'humidity'];
   const impriMedMetrics = [
     'imFreezerOneTemp',
     'imFreezerOneHum',
@@ -66,14 +72,16 @@ const calculateWeeklyRecap = async (userMetrics) => {
     'imIncubatorTwoHum',
   ];
 
-
   const allMetrics = [
     ...weatherMetrics,
     ...watchdogMetrics,
+    ...rivercityMetrics,
     ...impriMedMetrics,
   ];
 
-  const userAssignedMetrics = allMetrics.filter((metric) => userMetrics.includes(metric));
+  const userAssignedMetrics = allMetrics.filter(metric =>
+    userMetrics.includes(metric)
+  );
   const metricData = {};
 
   for (const metric of userAssignedMetrics) {
@@ -85,9 +93,7 @@ const calculateWeeklyRecap = async (userMetrics) => {
 };
 
 // Fetch specific data based on the metric type
-const fetchSpecificData = async (metric) => {
-
-
+const fetchSpecificData = async metric => {
   const deveuiPerMetric = {
     imFreezerOneTemp: '0080E1150618C9DE',
     imFreezerOneHum: '0080E1150618C9DE',
@@ -107,14 +113,28 @@ const fetchSpecificData = async (metric) => {
 
   try {
     let response;
-    if (metric.includes('temp') || metric.includes('hum')) {
-      response = await axios.get(`${baseURL}/api/watchdog_data`, { params: { type: metric, limit: 1009 } });
-    } else if (metric.startsWith('imFreezer') || metric.startsWith('imFridge') || metric.startsWith('imIncubator')) {
+    if (metric === 'temp' || metric === 'hum') {
+      response = await axios.get(`${baseURL}/api/watchdog_data`, {
+        params: { type: metric, limit: 1009 },
+      });
+    } else if (
+      metric.startsWith('imFreezer') ||
+      metric.startsWith('imFridge') ||
+      metric.startsWith('imIncubator')
+    ) {
       const deveui = deveuiPerMetric[metric];
-      response = await axios.get(`${baseURL}/api/impriMed_data`, { params: { deveui: deveui, limit: 1009 } });
+      response = await axios.get(`${baseURL}/api/impriMed_data`, {
+        params: { deveui: deveui, limit: 1009 },
+      });
       response.data = renameKeyToMetric(response.data, metric);
+    } else if (metric === 'rctemp' || metric === 'humidity') {
+      response = await axios.get(`${baseURL}/api/rivercity_data`, {
+        params: { type: metric, limit: 1009 },
+      });
     } else {
-      response = await axios.get(`${baseURL}/api/weather_data`, { params: { type: metric, limit: 2017 } });
+      response = await axios.get(`${baseURL}/api/weather_data`, {
+        params: { type: metric, limit: 2017 },
+      });
     }
     return response?.data || [];
   } catch (error) {
@@ -124,12 +144,14 @@ const fetchSpecificData = async (metric) => {
 };
 
 // Calculate high, low, and average for a given dataset
-const calculateMetrics = (data) => {
+const calculateMetrics = data => {
   if (!data || data.length === 0) {
     return { high: null, low: null, avg: null };
   }
 
-  const values = data.map((item) => parseFloat(item[Object.keys(item)[0]])).filter(value => !isNaN(value));
+  const values = data
+    .map(item => parseFloat(item[Object.keys(item)[0]]))
+    .filter(value => !isNaN(value));
 
   if (values.length === 0) {
     return { high: null, low: null, avg: null };
@@ -137,15 +159,38 @@ const calculateMetrics = (data) => {
 
   const high = Math.max(...values);
   const low = Math.min(...values);
-  const avg = (values.reduce((acc, value) => acc + value, 0) / values.length).toFixed(2);
+  const avg = (
+    values.reduce((acc, value) => acc + value, 0) / values.length
+  ).toFixed(2);
 
   return { high, low, avg };
 };
 
 // Rename key to metric for impriMed data
 const renameKeyToMetric = (data, metric) => {
-  return data.map((d) => {
+  return data.map(d => {
     const value = metric.endsWith('Temp') ? d.rctemp : d.humidity;
     return { [metric]: value, publishedat: d.publishedat };
   });
 };
+
+
+// axios
+//         .get('/api/alerts/recap')
+//         .then(response => {
+//           // Filter alerts based on user metrics
+//           const filteredAlerts = response.data.filter(alert =>
+//             userMetrics.includes(alert.metric)
+//           );
+//           setRecentAlerts(filteredAlerts);
+
+//           // Count alerts by metric
+//           const alertCount = filteredAlerts.reduce((count, alert) => {
+//             count[alert.metric] = (count[alert.metric] || 0) + 1;
+//             return count;
+//           }, {});
+//           setAlertCounts(alertCount);
+//         })
+//         .catch(error => {
+//           console.error('Error fetching alerts:', error);
+//         });
