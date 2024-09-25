@@ -257,7 +257,7 @@ export const WeatherDataProvider = ({ children }) => {
     ) {
       const fetchAllDeviceData = async () => {
         await Promise.all([
-          // fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData, 19),
+          fetchDeviceData('freezerOne', setImpriFreezerOneTempData, setImpriFreezerOneHumData, 19),
           fetchDeviceData(
             'freezerTwo',
             setImpriFreezerTwoTempData,
@@ -282,7 +282,7 @@ export const WeatherDataProvider = ({ children }) => {
             setImpriFridgeTwoHumData,
             19
           ),
-          // fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData, 19),
+          fetchDeviceData('incubatorOne', setImpriIncubatorOneTempData, setImpriIncubatorOneHumData, 19),
           fetchDeviceData(
             'incubatorTwo',
             setImpriIncubatorTwoTempData,
