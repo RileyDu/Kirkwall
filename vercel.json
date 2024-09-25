@@ -27,6 +27,10 @@
       {
          "path": "/api/run-check-thresholds",
          "schedule": "*/10 * * * *"
+      },
+      {
+         "path": "/api/run-weekly-recap",
+         "schedule": "1 0 * * 1"
       }
    ]
 }
