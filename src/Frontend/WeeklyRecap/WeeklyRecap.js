@@ -3,17 +3,23 @@ import { Box, Flex, Heading, Text, SimpleGrid, Divider } from '@chakra-ui/react'
 import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import axios from 'axios';
-import { WeeklyRecapHelper } from './WeeklyRecapHelper.js';
 import { FaTrash } from 'react-icons/fa';
 
-// Utility function to format date as MM/DD/YY
-const formatDate = (date) => {
-  const month = date.getMonth() + 1; // getMonth() returns 0-11, so add 1
-  const day = date.getDate();
-  const year = date.getFullYear().toString().slice(-2); // Get last two digits of the year
+// Utility function to format date as YYYY-MM-DD
+const formatDateISO = (date) => {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
-  // Return formatted date as MM/DD/YY
-  return `${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
+// Utility function to calculate the start of the week (Monday)
+const getStartOfWeek = (date) => {
+  const day = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const difference = (day === 0 ? -6 : 1) - day; // Adjust to get Monday
+  const startOfWeek = new Date(date);
+  startOfWeek.setDate(date.getDate() + difference);
+  return startOfWeek;
 };
 
 // Utility function to calculate end date as Sunday of the week
@@ -23,7 +29,6 @@ const getEndDate = (startDate) => {
   return endDate;
 };
 
-
 const WeeklyRecap = ({ statusOfAlerts }) => {
   const { currentUser } = useAuth();
   const userEmail = currentUser?.email;
@@ -31,7 +36,6 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     CustomerSettings.find(customer => customer.email === userEmail)?.metric ||
     [];
 
-  const [isMonday, setIsMonday] = useState(false);
   const [recapData, setRecapData] = useState({});
   const [recentAlerts, setRecentAlerts] = useState([]);
   const [alertCounts, setAlertCounts] = useState({});
@@ -40,51 +44,39 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
 
   useEffect(() => {
     const today = new Date();
-    const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    if (dayOfWeek === 3) { // 2 represents Monday
-      setIsMonday(true);
+    const startOfWeek = getStartOfWeek(today);
+    const formattedStartOfWeek = formatDateISO(startOfWeek);
+    const formattedEndDate = formatDateISO(getEndDate(startOfWeek));
 
-      // Set the week start date to the date in your recap data or a default value
-      const startDate = new Date('2024-09-16T05:00:00.000Z'); // Replace with dynamic date if needed
-      const formattedStartDate = formatDate(startDate);
-      const formattedEndDate = formatDate(getEndDate(startDate));
-      
-      setWeekStartDate(formattedStartDate);
-      setWeekEndDate(formattedEndDate);
-      
-      console.log('Today is Monday! Fetching weekly recap data...');
+    setWeekStartDate(formattedStartOfWeek);
+    setWeekEndDate(formattedEndDate);
 
-      axios.get('api/weekly-recap?user_email=' + userEmail).then(response => {
-        setRecapData(response.data);
-      });
+    const fetchWeeklyRecapData = async () => {
+      try {
+        const recapResponse = await axios.get('api/weekly-recap?user_email=' + userEmail);
+        setRecapData(recapResponse.data);
 
-      // WeeklyRecapHelper(userMetrics).then(data => {
-      //   setRecapData(data);
-      // });
+        const alertResponse = await axios.get(`/api/alerts/recap?start_date=${formattedStartOfWeek}`);
+        const filteredAlerts = alertResponse.data.filter(alert => userMetrics.includes(alert.metric));
+        
+        setRecentAlerts(filteredAlerts);
 
-      axios
-        .get('/api/alerts/recap')
-        .then(response => {
-          // Filter alerts based on user metrics
-          const filteredAlerts = response.data.filter(alert =>
-            userMetrics.includes(alert.metric)
-          );
-          setRecentAlerts(filteredAlerts);
+        // Count alerts by metric
+        const alertCount = filteredAlerts.reduce((count, alert) => {
+          count[alert.metric] = (count[alert.metric] || 0) + 1;
+          return count;
+        }, {});
+        setAlertCounts(alertCount);
+        
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-          // Count alerts by metric
-          const alertCount = filteredAlerts.reduce((count, alert) => {
-            count[alert.metric] = (count[alert.metric] || 0) + 1;
-            return count;
-          }, {});
-          setAlertCounts(alertCount);
-        })
-        .catch(error => {
-          console.error('Error fetching alerts:', error);
-        });
-    } else {
-      setIsMonday(false);
+    if (userEmail && userMetrics.length > 0) {
+      fetchWeeklyRecapData();
     }
-  }, [userMetrics, userEmail]);
+  }, [userEmail, userMetrics]);
 
   const getLabelForMetric = metric => {
     const metricLabels = {
@@ -123,6 +115,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`/api/weekly-recap/${id}`);
+      setRecentAlerts(recentAlerts.filter(alert => alert.id !== id));
     } catch (error) {
       console.error('Error deleting alert:', error);
     }
@@ -143,7 +136,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
         </Heading>
       </Flex>
 
-      {isMonday && (
+      {recapData && (
         <Box mt={4} width="100%">
           {Object.keys(recapData).length === 0 ? (
             <Text>Loading weekly recap data...</Text>
@@ -166,9 +159,8 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     color={'black'}
                   >
                     <Heading size="md" mb={2} color={'black'} fontWeight="bold" textDecoration="underline">
-                    {recapData[metric]?.metric}
-                    {/* {metric} */}
-                    <FaTrash onClick={() => handleDelete(recapData[metric]?.id)} cursor={'pointer'} />
+                      {recapData[metric]?.metric}
+                      <FaTrash onClick={() => handleDelete(recapData[metric]?.id)} cursor={'pointer'} />
                     </Heading>
                     <Text>
                       <strong>High:</strong> {recapData[metric]?.high}
@@ -183,8 +175,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                       {addSpace ? ' ' : ''}{label}
                     </Text>
                     <Text>
-                      <strong>Alerts:</strong> {recapData[metric]?.alert_count}
-                      {/* <strong>Alerts:</strong> {alertCounts[metric] || 0} */}
+                      <strong>Alerts:</strong> {alertCounts[recapData[metric]?.metric] || 0}
                     </Text>
                   </Box>
                 );
@@ -193,16 +184,17 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
           )}
         </Box>
       )}
+
       {/* Display recent alerts */}
       {recentAlerts.length > 0 && (
         <Box mt={4} p={4} borderWidth="1px" borderRadius="lg" shadow="md" bg="white" color={'black'}>
           <Heading size="md" color={'black'} fontWeight={'bold'} textDecoration={'underline'}>This Week's Alerts</Heading>
           {recentAlerts.map(alert => (
             <>
-            <Text key={alert.id}>
-              {alert.message}
-            </Text>
-            <Divider />
+              <Text key={alert.id}>
+                {alert.message}
+              </Text>
+              <Divider />
             </>
           ))}
         </Box>

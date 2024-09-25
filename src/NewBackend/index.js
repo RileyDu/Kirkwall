@@ -221,11 +221,24 @@ app.get('/api/alerts', async (req, res) => {
 });
 
 app.get('/api/alerts/recap', async (req, res) => {
+  const { start_date } = req.query; // Get the start date from query params
+
+  if (!start_date) {
+    return res.status(400).json({ error: 'Start date is required' });
+  }
+
   try {
+    // Calculate the end date as 7 days after the start date
+    const end_date = new Date(start_date);
+    end_date.setDate(end_date.getDate() + 7); // Adds 7 days to the start date
+    const formattedEndDate = end_date.toISOString(); // Convert end date to ISO format
+
     const result = await client.query(
       `SELECT * FROM alerts 
-       WHERE timestamp >= NOW() - INTERVAL '7 days' 
-       ORDER BY timestamp DESC`
+       WHERE timestamp >= $1 
+       AND timestamp < $2 
+       ORDER BY timestamp DESC`, 
+      [start_date, formattedEndDate]
     );
     res.status(200).json(result.rows);
   } catch (error) {
@@ -233,6 +246,7 @@ app.get('/api/alerts/recap', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching recent alerts' });
   }
 });
+
 
 app.get('/api/alerts_per_user', async (req, res) => {
   const userMetrics = req.query.userMetrics; // Extract the userMetrics array from the query parameters
