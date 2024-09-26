@@ -7,24 +7,17 @@ import {
   SimpleGrid,
   Divider,
   Select,
-  Collapse,
-  IconButton,
   StatNumber,
   StatLabel,
   Stat,
-  Icon,
-  Grid,
+  Collapse,
+  IconButton
 } from '@chakra-ui/react';
 import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import axios from 'axios';
-import {
-  FaTrash,
-  FaChevronDown,
-  FaChevronUp,
-  FaChartBar,
-} from 'react-icons/fa';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 // Utility function to format date as MM/DD/YY
 const formatDateMMDDYY = date => {
@@ -63,6 +56,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   const [weekStartDate, setWeekStartDate] = useState('');
   const [weekEndDate, setWeekEndDate] = useState('');
   const [availableWeeks, setAvailableWeeks] = useState([]); // To store available weeks
+  const [selectedSensor, setSelectedSensor] = useState(''); // State for selected sensor
   const [expandAlerts, setExpandAlerts] = useState(false);
 
   // Fetch available weeks for dropdown on component mount
@@ -111,6 +105,11 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
           return count;
         }, {});
         setAlertCounts(alertCount);
+
+        // Set initial selected sensor to the first metric in the list
+        if (recapResponse.data && Object.keys(recapResponse.data).length > 0) {
+          setSelectedSensor(Object.keys(recapResponse.data)[0]);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -128,12 +127,16 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     setWeekEndDate(selectedWeekEndDate);
   };
 
+  const handleSensorChange = e => {
+    setSelectedSensor(e.target.value);
+  };
+
   const getLabelForMetric = metric => {
     const metricLabels = {
       temperature: { label: '°F', addSpace: false },
       temp: { label: '°F', addSpace: false },
       rctemp: { label: '°F', addSpace: false },
-
+  
       imFreezerOneTemp: { label: '°C', addSpace: false },
       imFreezerTwoTemp: { label: '°C', addSpace: false },
       imFreezerThreeTemp: { label: '°C', addSpace: false },
@@ -141,7 +144,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       imFridgeTwoTemp: { label: '°C', addSpace: false },
       imIncubatorOneTemp: { label: '°C', addSpace: false },
       imIncubatorTwoTemp: { label: '°C', addSpace: false },
-
+  
       imFreezerOneHum: { label: '%', addSpace: false },
       imFreezerTwoHum: { label: '%', addSpace: false },
       imFreezerThreeHum: { label: '%', addSpace: false },
@@ -149,26 +152,17 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       imFridgeTwoHum: { label: '%', addSpace: false },
       imIncubatorOneHum: { label: '%', addSpace: false },
       imIncubatorTwoHum: { label: '%', addSpace: false },
-
+  
       hum: { label: '%', addSpace: false },
       percent_humidity: { label: '%', addSpace: false },
       humidity: { label: '%', addSpace: false },
       rain_15_min_inches: { label: 'inches', addSpace: true },
       wind_speed: { label: 'MPH', addSpace: true },
-      soil_moisture: { label: 'centibar', addSpace: true },
+      soil_moisture: { label: 'centibars', addSpace: true },
       leaf_wetness: { label: 'out of 15', addSpace: true },
     };
-
+  
     return metricLabels[metric] || { label: '', addSpace: false };
-  };
-
-  const handleDelete = async id => {
-    try {
-      await axios.delete(`/api/weekly-recap/${id}`);
-      setRecentAlerts(recentAlerts.filter(alert => alert.id !== id));
-    } catch (error) {
-      console.error('Error deleting alert:', error);
-    }
   };
 
   const metricToName = {
@@ -197,6 +191,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     imIncubatorTwoTemp: 'Incubator #2 Temp',
     imIncubatorTwoHum: 'Incubator #2 Humidity',
   };
+
 
   return (
     <Box
@@ -236,119 +231,94 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
         </Flex>
       )}
 
-      {recapData && (
+      {recapData && selectedSensor && (
         <Box mt={4} width="100%">
-          {Object.keys(recapData).length === 0 ? (
-            <Text fontSize="lg" color="gray.600">
-              Loading weekly recap data...
-            </Text>
-          ) : (
-            <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 6 }} spacing={6}>
-              <AnimatePresence>
-                {Object.keys(recapData).map((metric, index) => {
-                  const metricName =
-                    metricToName[recapData[metric]?.metric] ||
-                    recapData[metric]?.metric; // Use friendly name or fallback to raw name
+          <Flex justifyContent="space-between" alignItems="center" mb={6}>
+            <Heading size="lg">Select a Sensor</Heading>
+            <Select
+              value={selectedSensor}
+              onChange={handleSensorChange}
+              maxWidth="300px"
+              borderRadius="full"
+              shadow="sm"
+              _hover={{ shadow: 'md' }}
+              _focus={{ borderColor: 'teal.500' }}
+            >
+              {Object.keys(recapData).map(sensor => (
+                <option key={sensor} value={sensor}>
+                  {metricToName[recapData[sensor]?.metric] || sensor}
+                </option>
+              ))}
+            </Select>
+          </Flex>
 
-                  const { label, addSpace } = getLabelForMetric(
-                    recapData[metric]?.metric
-                  );
-                  return (
-                    <motion.div
-                      key={recapData[metric]?.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 20 }}
-                      transition={{ duration: 0.3, delay: index * 0.1 }} // Stagger animation by 0.1s
-                    >
-                      <Box
-                        p={6}
-                        borderWidth="1px"
-                        borderRadius="lg"
-                        shadow="lg"
-                        bg="radial-gradient(circle, rgba(49,126,182,1) 0%, rgba(18,53,94,1) 90%)"
-                        _hover={{
-                          shadow: '2xl',
-                          transform: 'scale(1.05)',
-                          bg: 'rgba(18,53,94,1)',
-                        }}
-                        color="black"
-                        transition="all 0.3s ease"
-                      >
-                        <Flex
-                          justifyContent="space-between"
-                          alignItems="center"
-                          mb={4}
-                        >
-                          <Heading
-                            size="md"
-                            color="white"
-                            fontWeight="bold"
-                            textDecoration="underline"
-                          >
-                            {metricName}
-                          </Heading>
-                          <Icon
-                            as={FaChartBar} // Replace with an appropriate icon for your metric
-                            color="white"
-                            boxSize={6}
-                          />
-                        </Flex>
-                        <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                          <Stat>
-                            <StatLabel fontSize="sm" color="#cee8ff">
-                              High
-                            </StatLabel>
-                            <StatNumber fontSize="lg" color="white">
-                              {recapData[metric]?.high}
-                              {addSpace ? ' ' : ''}
-                              {label}
-                            </StatNumber>
-                          </Stat>
-                          <Stat>
-                            <StatLabel fontSize="sm" color="#cee8ff">
-                              Avg
-                            </StatLabel>
-                            <StatNumber fontSize="lg" color="white">
-                              {recapData[metric]?.avg}
-                              {addSpace ? ' ' : ''}
-                              {label}
-                            </StatNumber>
-                          </Stat>
-                          <Stat>
-                            <StatLabel fontSize="sm" color="#cee8ff">
-                              Low
-                            </StatLabel>
-                            <StatNumber fontSize="lg" color="white">
-                              {recapData[metric]?.low}
-                              {addSpace ? ' ' : ''}
-                              {label}
-                            </StatNumber>
-                          </Stat>
-                          <Box>
-                            <Text fontSize="sm" color="#cee8ff">
-                              Alerts
-                            </Text>
-                            <Text
-                              fontSize="lg"
-                              color="white"
-                              fontWeight={'bold'}
-                            >
-                              {alertCounts[recapData[metric]?.metric] || 0}
-                            </Text>
-                          </Box>
-                        </Grid>
-                      </Box>
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
-            </SimpleGrid>
-          )}
+          <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={6}>
+            {['high', 'avg', 'low'].map((type, index) => {
+              const { label, addSpace } = getLabelForMetric(
+                recapData[selectedSensor]?.metric
+              );
+              return (
+                <motion.div
+                  key={type}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <Box
+                    p={6}
+                    borderWidth="1px"
+                    borderRadius="lg"
+                    shadow="lg"
+                    bg="teal.500"
+                    color="white"
+                    transition="all 0.3s ease"
+                  >
+                    <Stat>
+                      <StatLabel fontSize="md" color="#cee8ff">
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </StatLabel>
+                      <StatNumber fontSize="2xl" color="white">
+                        {recapData[selectedSensor]?.[type]}
+                        {addSpace ? ' ' : ''}
+                        {label}
+                      </StatNumber>
+                    </Stat>
+                  </Box>
+                </motion.div>
+              );
+            })}
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.3, delay: 0.3 }}
+            >
+              <Box
+                p={6}
+                borderWidth="1px"
+                borderRadius="lg"
+                shadow="lg"
+                bg="teal.500"
+                color="white"
+                transition="all 0.3s ease"
+              >
+                <Stat>
+                  <StatLabel fontSize="md" color="#cee8ff">
+                    Alerts
+                  </StatLabel>
+                  <StatNumber fontSize="2xl" color="white">
+                    {alertCounts[recapData[selectedSensor]?.metric] || 0}
+                  </StatNumber>
+                </Stat>
+              </Box>
+            </motion.div>
+          </SimpleGrid>
         </Box>
       )}
 
-      {recentAlerts.length > 0 && (
+{recentAlerts.length > 0 && (
         <Box
           justifyContent={'center'}
           alignItems={'center'}
