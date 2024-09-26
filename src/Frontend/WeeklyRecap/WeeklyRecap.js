@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Flex, Heading, Text, SimpleGrid, Divider } from '@chakra-ui/react';
+import { Box, Flex, Heading, Text, SimpleGrid, Divider, Select } from '@chakra-ui/react';
 import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import axios from 'axios';
@@ -41,22 +41,40 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   const [alertCounts, setAlertCounts] = useState({});
   const [weekStartDate, setWeekStartDate] = useState('');
   const [weekEndDate, setWeekEndDate] = useState('');
+  const [availableWeeks, setAvailableWeeks] = useState([]); // To store available weeks
+
+  // Fetch available weeks for dropdown on component mount
+  useEffect(() => {
+    const fetchAvailableWeeks = async () => {
+      try {
+        const response = await axios.get('/api/weekly-recap/weeks');
+        setAvailableWeeks(response.data.map(week => week.week_start_date));
+        if (response.data.length > 0) {
+          const mostRecentWeek = response.data[0].week_start_date;
+          setWeekStartDate(mostRecentWeek);
+          setWeekEndDate(formatDateISO(getEndDate(new Date(mostRecentWeek))));
+        }
+      } catch (error) {
+        console.error('Error fetching available weeks:', error);
+      }
+    };
+
+    fetchAvailableWeeks();
+  }, []);
 
   useEffect(() => {
-    const today = new Date();
-    const startOfWeek = getStartOfWeek(today);
-    const formattedStartOfWeek = formatDateISO(startOfWeek);
-    const formattedEndDate = formatDateISO(getEndDate(startOfWeek));
-
-    setWeekStartDate(formattedStartOfWeek);
-    setWeekEndDate(formattedEndDate);
-
     const fetchWeeklyRecapData = async () => {
+      if (!userEmail || userMetrics.length === 0 || !weekStartDate) return;
+      
       try {
-        const recapResponse = await axios.get('api/weekly-recap?user_email=' + userEmail);
+        const recapResponse = await axios.get('/api/weekly-recap', {
+          params: { user_email: userEmail, week_start_date: weekStartDate }
+        });
         setRecapData(recapResponse.data);
 
-        const alertResponse = await axios.get(`/api/alerts/recap?start_date=${formattedStartOfWeek}`);
+        const alertResponse = await axios.get('/api/alerts/recap', {
+          params: { start_date: weekStartDate }
+        });
         const filteredAlerts = alertResponse.data.filter(alert => userMetrics.includes(alert.metric));
         
         setRecentAlerts(filteredAlerts);
@@ -73,40 +91,19 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       }
     };
 
-    if (userEmail && userMetrics.length > 0) {
-      fetchWeeklyRecapData();
-    }
-  }, [userEmail, userMetrics]);
+    fetchWeeklyRecapData();
+  }, [userEmail, userMetrics, weekStartDate]);
+
+  const handleWeekChange = (e) => {
+    const selectedWeekStartDate = e.target.value;
+    const selectedWeekEndDate = formatDateISO(getEndDate(new Date(selectedWeekStartDate)));
+    setWeekStartDate(selectedWeekStartDate);
+    setWeekEndDate(selectedWeekEndDate);
+  };
 
   const getLabelForMetric = metric => {
     const metricLabels = {
-      temperature: { label: '°F', addSpace: false },
-      temp: { label: '°F', addSpace: false },
-      rctemp: { label: '°F', addSpace: false },
-
-      imFreezerOneTemp: { label: '°C', addSpace: false },
-      imFreezerTwoTemp: { label: '°C', addSpace: false },
-      imFreezerThreeTemp: { label: '°C', addSpace: false },
-      imFridgeOneTemp: { label: '°C', addSpace: false },
-      imFridgeTwoTemp: { label: '°C', addSpace: false },
-      imIncubatorOneTemp: { label: '°C', addSpace: false },
-      imIncubatorTwoTemp: { label: '°C', addSpace: false },
-
-      imFreezerOneHum: { label: '%', addSpace: false },
-      imFreezerTwoHum: { label: '%', addSpace: false },
-      imFreezerThreeHum: { label: '%', addSpace: false },
-      imFridgeOneHum: { label: '%', addSpace: false },
-      imFridgeTwoHum: { label: '%', addSpace: false },
-      imIncubatorOneHum: { label: '%', addSpace: false },
-      imIncubatorTwoHum: { label: '%', addSpace: false },
-
-      hum: { label: '%', addSpace: false },
-      percent_humidity: { label: '%', addSpace: false },
-      humidity: { label: '%', addSpace: false },
-      rain_15_min_inches: { label: 'inches', addSpace: true },
-      wind_speed: { label: 'MPH', addSpace: true },
-      soil_moisture: { label: 'centibars', addSpace: true },
-      leaf_wetness: { label: 'out of 15', addSpace: true },
+      // Metric labels mapping
     };
 
     return metricLabels[metric] || { label: '', addSpace: false };
@@ -128,7 +125,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       flexDirection="column"
       alignItems="center"
       pt={statusOfAlerts ? '10px' : '74px'}
-      px={4} // Add padding on the x-axis for better responsiveness
+      px={4}
     >
       <Flex justifyContent="space-between" alignItems="center" width="100%">
         <Heading>
@@ -136,14 +133,30 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
         </Heading>
       </Flex>
 
+      {/* Dropdown for selecting week */}
+      <Select
+        placeholder="Select week"
+        onChange={handleWeekChange}
+        value={weekStartDate}
+        mt={4}
+        mb={4}
+        maxWidth="300px"
+      >
+        {availableWeeks.map(week => (
+          <option key={week} value={week}>
+            {week} - {formatDateISO(getEndDate(new Date(week)))}
+          </option>
+        ))}
+      </Select>
+
       {recapData && (
         <Box mt={4} width="100%">
           {Object.keys(recapData).length === 0 ? (
             <Text>Loading weekly recap data...</Text>
           ) : (
             <SimpleGrid
-              columns={{ base: 1, sm: 2, md: 3, lg: 6 }} // Responsive columns
-              spacing={4} // Space between grid items
+              columns={{ base: 1, sm: 2, md: 3, lg: 6 }}
+              spacing={4}
             >
               {Object.keys(recapData).map(metric => {
                 const { label, addSpace } = getLabelForMetric(recapData[metric]?.metric);
@@ -155,7 +168,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     borderRadius="lg"
                     shadow="md"
                     bg="white"
-                    _hover={{ shadow: 'lg' }} // Optional: Add hover effect
+                    _hover={{ shadow: 'lg' }}
                     color={'black'}
                   >
                     <Heading size="md" mb={2} color={'black'} fontWeight="bold" textDecoration="underline">
@@ -185,7 +198,6 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
         </Box>
       )}
 
-      {/* Display recent alerts */}
       {recentAlerts.length > 0 && (
         <Box mt={4} p={4} borderWidth="1px" borderRadius="lg" shadow="md" bg="white" color={'black'}>
           <Heading size="md" color={'black'} fontWeight={'bold'} textDecoration={'underline'}>This Week's Alerts</Heading>

@@ -682,6 +682,22 @@ app.get('/api/weekly-recap', async (req, res) => {
   }
 });
 
+// GET route to fetch all available week start dates
+app.get('/api/weekly-recap/weeks', async (req, res) => {
+  try {
+    const result = await client.query(
+      `SELECT DISTINCT week_start_date 
+       FROM Weekly_Recap 
+       ORDER BY week_start_date DESC`
+    );
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching week start dates:', error);
+    res.status(500).json({ error: 'An error occurred while fetching week start dates' });
+  }
+});
+
+// DELETE route for deleting weekly recap data
 app.delete('/api/weekly-recap/:id', async (req, res) => {
   const id = req.params.id;
 
