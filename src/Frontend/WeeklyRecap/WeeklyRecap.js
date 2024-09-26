@@ -13,11 +13,17 @@ import {
   StatLabel,
   Stat,
   Icon,
+  Grid,
 } from '@chakra-ui/react';
 import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import axios from 'axios';
-import { FaTrash, FaChevronDown, FaChevronUp, FaChartBar } from 'react-icons/fa';
+import {
+  FaTrash,
+  FaChevronDown,
+  FaChevronUp,
+  FaChartBar,
+} from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Utility function to format date as MM/DD/YY
@@ -149,7 +155,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       humidity: { label: '%', addSpace: false },
       rain_15_min_inches: { label: 'inches', addSpace: true },
       wind_speed: { label: 'MPH', addSpace: true },
-      soil_moisture: { label: 'centibars', addSpace: true },
+      soil_moisture: { label: 'centibar', addSpace: true },
       leaf_wetness: { label: 'out of 15', addSpace: true },
     };
 
@@ -194,184 +200,214 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
 
   return (
     <Box
-    minHeight="100vh"
-    display="flex"
-    flexDirection="column"
-    alignItems="center"
-    pt={statusOfAlerts ? '10px' : '74px'}
-    px={4}
-  >
-    {weekStartDate && (
-      <Flex justifyContent="space-between" alignItems="center" width="100%">
-        <Heading size="2xl" fontWeight="bold">
-          Recap for {formatDateMMDDYY(new Date(weekStartDate))} -{' '}
-          {formatDateMMDDYY(new Date(weekEndDate))}
-        </Heading>
-      </Flex>
-    )}
-    {/* Dropdown for selecting week */}
-    <Select
-      onChange={handleWeekChange}
-      value={weekStartDate}
-      mt={4}
-      mb={4}
-      maxWidth="300px"
-      borderRadius="full"
-      shadow="sm"
-      _hover={{ shadow: 'md' }}
-      _focus={{ borderColor: 'teal.500' }}
+      minHeight="100vh"
+      display="flex"
+      flexDirection="column"
+      pt={statusOfAlerts ? '10px' : '74px'}
+      px={4}
     >
-      {availableWeeks.map(week => (
-        <option key={week} value={week}>
-          {formatDateMMDDYY(new Date(week))} -{' '}
-          {formatDateMMDDYY(getEndDate(new Date(week)))}
-        </option>
-      ))}
-    </Select>
-  
-    {recapData && (
-      <Box mt={4} width="100%">
-        {Object.keys(recapData).length === 0 ? (
-          <Text fontSize="lg" color="gray.600">
-            Loading weekly recap data...
-          </Text>
-        ) : (
-          <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 6 }} spacing={6}>
-            <AnimatePresence>
-              {Object.keys(recapData).map((metric, index) => {
-                const metricName =
-                  metricToName[recapData[metric]?.metric] ||
-                  recapData[metric]?.metric; // Use friendly name or fallback to raw name
-  
-                const { label, addSpace } = getLabelForMetric(
-                  recapData[metric]?.metric
-                );
-                return (
-                  <motion.div
-                    key={recapData[metric]?.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 20 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }} // Stagger animation by 0.1s
-                  >
-                    <Box
-                      p={6}
-                      borderWidth="1px"
-                      borderRadius="lg"
-                      shadow="lg"
-                      bgGradient="linear(to-r, teal.100, teal.50)"
-                      _hover={{
-                        shadow: '2xl',
-                        transform: 'scale(1.05)',
-                        bgGradient: 'linear(to-r, teal.200, teal.100)',
-                      }}
-                      color="gray.800"
-                      transition="all 0.3s ease"
-                    >
-                      <Flex justifyContent="space-between" alignItems="center">
-                        <Heading
-                          size="md"
-                          mb={2}
-                          color="teal.600"
-                          fontWeight="bold"
-                          textDecoration="underline"
-                        >
-                          {metricName}
-                        </Heading>
-                        <Icon
-                          as={FaChartBar} // Replace with an appropriate icon for your metric
-                          color="teal.500"
-                          boxSize={6}
-                        />
-                      </Flex>
-                      <Stat>
-                        <StatLabel fontSize="sm">High</StatLabel>
-                        <StatNumber fontSize="lg" color="teal.700">
-                          {recapData[metric]?.high}
-                          {addSpace ? ' ' : ''}
-                          {label}
-                        </StatNumber>
-                      </Stat>
-                      <Stat>
-                        <StatLabel fontSize="sm">Low</StatLabel>
-                        <StatNumber fontSize="lg" color="teal.700">
-                          {recapData[metric]?.low}
-                          {addSpace ? ' ' : ''}
-                          {label}
-                        </StatNumber>
-                      </Stat>
-                      <Stat>
-                        <StatLabel fontSize="sm">Avg</StatLabel>
-                        <StatNumber fontSize="lg" color="teal.700">
-                          {recapData[metric]?.avg}
-                          {addSpace ? ' ' : ''}
-                          {label}
-                        </StatNumber>
-                      </Stat>
-                      <Text fontSize="lg">
-                        <strong>Alerts:</strong>{' '}
-                        {alertCounts[recapData[metric]?.metric] || 0}
-                      </Text>
-                    </Box>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-          </SimpleGrid>
-        )}
-      </Box>
-    )}
-  
-    {recentAlerts.length > 0 && (
-      <Box
-        mt={6}
-        p={6}
-        borderWidth="1px"
-        borderRadius="lg"
-        shadow="lg"
-        bg="white"
-        color="black"
-        maxWidth="900px"
-        textAlign="left"
-        position="relative"
-      >
-        <Heading
-          size="md"
-          color="teal.600"
-          fontWeight="bold"
+      {weekStartDate && (
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          width="100%"
           mb={4}
-          textDecoration="underline"
         >
-          This Week's Alerts
-        </Heading>
-  
-        {/* Collapse Component for Alerts */}
-        <Collapse startingHeight={200} in={expandAlerts}>
-          {recentAlerts.map(alert => (
-            <Box key={alert.id} mb={2}>
-              <Text fontSize="md" color="gray.800">
-                {alert.message}
-              </Text>
-              <Divider mb={2} />
-            </Box>
-          ))}
-        </Collapse>
-  
-        {/* Chevron Icon for Expanding/Collapsing */}
-        <Flex justifyContent="center" mt={2}>
-          <IconButton
-            onClick={() => setExpandAlerts(!expandAlerts)}
-            icon={expandAlerts ? <FaChevronUp /> : <FaChevronDown />}
-            aria-label="Expand Alerts"
-            variant="blue"
+          <Heading size="2xl" fontWeight="bold">
+            Recap for {formatDateMMDDYY(new Date(weekStartDate))} -{' '}
+            {formatDateMMDDYY(new Date(weekEndDate))}
+          </Heading>
+          <Select
+            onChange={handleWeekChange}
+            value={weekStartDate}
+            maxWidth="300px"
             borderRadius="full"
-            size="sm"
-          />
+            shadow="sm"
+            _hover={{ shadow: 'md' }}
+            _focus={{ borderColor: 'teal.500' }}
+          >
+            {availableWeeks.map(week => (
+              <option key={week} value={week}>
+                {formatDateMMDDYY(new Date(week))} -{' '}
+                {formatDateMMDDYY(getEndDate(new Date(week)))}
+              </option>
+            ))}
+          </Select>
         </Flex>
-      </Box>
-    )}
-  </Box>
-  
+      )}
+
+      {recapData && (
+        <Box mt={4} width="100%">
+          {Object.keys(recapData).length === 0 ? (
+            <Text fontSize="lg" color="gray.600">
+              Loading weekly recap data...
+            </Text>
+          ) : (
+            <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 6 }} spacing={6}>
+              <AnimatePresence>
+                {Object.keys(recapData).map((metric, index) => {
+                  const metricName =
+                    metricToName[recapData[metric]?.metric] ||
+                    recapData[metric]?.metric; // Use friendly name or fallback to raw name
+
+                  const { label, addSpace } = getLabelForMetric(
+                    recapData[metric]?.metric
+                  );
+                  return (
+                    <motion.div
+                      key={recapData[metric]?.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 20 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }} // Stagger animation by 0.1s
+                    >
+                      <Box
+                        p={6}
+                        borderWidth="1px"
+                        borderRadius="lg"
+                        shadow="lg"
+                        bg="radial-gradient(circle, rgba(49,126,182,1) 0%, rgba(18,53,94,1) 90%)"
+                        _hover={{
+                          shadow: '2xl',
+                          transform: 'scale(1.05)',
+                          bg: 'rgba(18,53,94,1)',
+                        }}
+                        color="black"
+                        transition="all 0.3s ease"
+                      >
+                        <Flex
+                          justifyContent="space-between"
+                          alignItems="center"
+                          mb={4}
+                        >
+                          <Heading
+                            size="md"
+                            color="white"
+                            fontWeight="bold"
+                            textDecoration="underline"
+                          >
+                            {metricName}
+                          </Heading>
+                          <Icon
+                            as={FaChartBar} // Replace with an appropriate icon for your metric
+                            color="white"
+                            boxSize={6}
+                          />
+                        </Flex>
+                        <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                          <Stat>
+                            <StatLabel fontSize="sm" color="#cee8ff">
+                              High
+                            </StatLabel>
+                            <StatNumber fontSize="lg" color="white">
+                              {recapData[metric]?.high}
+                              {addSpace ? ' ' : ''}
+                              {label}
+                            </StatNumber>
+                          </Stat>
+                          <Stat>
+                            <StatLabel fontSize="sm" color="#cee8ff">
+                              Avg
+                            </StatLabel>
+                            <StatNumber fontSize="lg" color="white">
+                              {recapData[metric]?.avg}
+                              {addSpace ? ' ' : ''}
+                              {label}
+                            </StatNumber>
+                          </Stat>
+                          <Stat>
+                            <StatLabel fontSize="sm" color="#cee8ff">
+                              Low
+                            </StatLabel>
+                            <StatNumber fontSize="lg" color="white">
+                              {recapData[metric]?.low}
+                              {addSpace ? ' ' : ''}
+                              {label}
+                            </StatNumber>
+                          </Stat>
+                          <Box>
+                            <Text fontSize="sm" color="#cee8ff">
+                              Alerts
+                            </Text>
+                            <Text
+                              fontSize="lg"
+                              color="white"
+                              fontWeight={'bold'}
+                            >
+                              {alertCounts[recapData[metric]?.metric] || 0}
+                            </Text>
+                          </Box>
+                        </Grid>
+                      </Box>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </SimpleGrid>
+          )}
+        </Box>
+      )}
+
+      {recentAlerts.length > 0 && (
+        <Box
+          justifyContent={'center'}
+          alignItems={'center'}
+          display={'flex'}
+          width="100%"
+          mt={6}
+        >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2 }}>
+          <Box
+            mt={6}
+            p={6}
+            borderWidth="1px"
+            borderRadius="lg"
+            shadow="lg"
+            bgGradient="linear(to-r, teal.500, blue.500)"
+            color="white"
+            maxWidth="900px"
+            textAlign="left"
+            position="relative"
+          >
+            <Heading
+              size="md"
+              fontWeight="bold"
+              mb={4}
+              textDecoration="underline"
+              color={'white'}
+            >
+              This Week's Alerts
+            </Heading>
+
+            {/* Collapse Component for Alerts */}
+            <Collapse startingHeight={200} in={expandAlerts}>
+              {recentAlerts.map(alert => (
+                <Box key={alert.id} mb={2}>
+                  <Text fontSize="md" color="white">
+                    {alert.message}
+                  </Text>
+                  <Divider mb={2} mt={2} borderColor="whiteAlpha.600" />
+                </Box>
+              ))}
+            </Collapse>
+
+            {/* Chevron Icon for Expanding/Collapsing */}
+            <Flex justifyContent="center" mt={2}>
+              <IconButton
+                onClick={() => setExpandAlerts(!expandAlerts)}
+                icon={expandAlerts ? <FaChevronUp /> : <FaChevronDown />}
+                aria-label="Expand Alerts"
+                borderRadius="full"
+                size="sm"
+                colorScheme="teal"
+                variant="outline"
+              />
+            </Flex>
+          </Box>
+        </motion.div>
+        </Box>
+      )}
+    </Box>
   );
 };
 
