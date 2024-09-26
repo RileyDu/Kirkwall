@@ -5,12 +5,12 @@ import { useAuth } from '../AuthComponents/AuthContext.js';
 import axios from 'axios';
 import { FaTrash } from 'react-icons/fa';
 
-// Utility function to format date as YYYY-MM-DD
-const formatDateISO = (date) => {
-  const year = date.getFullYear();
+// Utility function to format date as MM/DD/YY
+const formatDateMMDDYY = (date) => {
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const day = date.getDate().toString().padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  const year = date.getFullYear().toString().slice(-2); // Get last two digits of the year
+  return `${month}/${day}/${year}`;
 };
 
 // Utility function to calculate the start of the week (Monday)
@@ -52,7 +52,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
         if (response.data.length > 0) {
           const mostRecentWeek = response.data[0].week_start_date;
           setWeekStartDate(mostRecentWeek);
-          setWeekEndDate(formatDateISO(getEndDate(new Date(mostRecentWeek))));
+          setWeekEndDate(formatDateMMDDYY(getEndDate(new Date(mostRecentWeek))));
         }
       } catch (error) {
         console.error('Error fetching available weeks:', error);
@@ -96,7 +96,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
 
   const handleWeekChange = (e) => {
     const selectedWeekStartDate = e.target.value;
-    const selectedWeekEndDate = formatDateISO(getEndDate(new Date(selectedWeekStartDate)));
+    const selectedWeekEndDate = formatDateMMDDYY(getEndDate(new Date(selectedWeekStartDate)));
     setWeekStartDate(selectedWeekStartDate);
     setWeekEndDate(selectedWeekEndDate);
   };
@@ -129,13 +129,13 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     >
       <Flex justifyContent="space-between" alignItems="center" width="100%">
         <Heading>
-          Recap for {weekStartDate} - {weekEndDate}
+          Recap for {formatDateMMDDYY(new Date(weekStartDate))} - {formatDateMMDDYY(new Date(weekEndDate))}
         </Heading>
       </Flex>
 
       {/* Dropdown for selecting week */}
       <Select
-        placeholder="Select week"
+        // placeholder="Select week"
         onChange={handleWeekChange}
         value={weekStartDate}
         mt={4}
@@ -144,7 +144,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       >
         {availableWeeks.map(week => (
           <option key={week} value={week}>
-            {week} - {formatDateISO(getEndDate(new Date(week)))}
+            {formatDateMMDDYY(new Date(week))} - {formatDateMMDDYY(getEndDate(new Date(week)))}
           </option>
         ))}
       </Select>
@@ -173,7 +173,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                   >
                     <Heading size="md" mb={2} color={'black'} fontWeight="bold" textDecoration="underline">
                       {recapData[metric]?.metric}
-                      <FaTrash onClick={() => handleDelete(recapData[metric]?.id)} cursor={'pointer'} />
+                      {/* <FaTrash onClick={() => handleDelete(recapData[metric]?.id)} cursor={'pointer'} /> */}
                     </Heading>
                     <Text>
                       <strong>High:</strong> {recapData[metric]?.high}
