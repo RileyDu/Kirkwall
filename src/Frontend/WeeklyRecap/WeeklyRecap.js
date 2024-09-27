@@ -6,23 +6,32 @@ import {
   Text,
   SimpleGrid,
   Divider,
-  Select,
   StatNumber,
   StatLabel,
   Stat,
-  Collapse,
-  IconButton,
   Button,
   StatHelpText,
-  Input,
   useToast,
   Badge,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
 } from '@chakra-ui/react';
 import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { ChevronDownIcon } from '@chakra-ui/icons';
+import ChatbotModal from './WeeklyRecapAiModal.js';
 
 // Utility functions here (formatDateMMDDYY, getStartOfWeek, getEndDate, getLabelForMetric, metricToName)
 const metricToName = {
@@ -116,6 +125,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   const [selectedSensor, setSelectedSensor] = useState(''); // State for selected sensor
   const [expandAlerts, setExpandAlerts] = useState(false);
   const [hasCopied, setHasCopied] = useState(false);
+  const [showChatbot, setShowChatbot] = useState(false);
   const toast = useToast(); // For showing copy notifications
 
   // Fetch available weeks for dropdown on component mount
@@ -219,51 +229,86 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
           alignItems="center"
           width="100%"
           mb={4}
+          px={1}
         >
           <Heading size="lg" fontWeight="bold">
             Recap for {formatDateMMDDYY(new Date(weekStartDate))} -{' '}
             {formatDateMMDDYY(new Date(weekEndDate))}{' '}
           </Heading>
           <Box display="flex" gap={4}>
-            <Select
-              value={selectedSensor}
-              onChange={handleSensorChange}
-              maxWidth="200px"
-              borderRadius="md"
-              shadow="sm"
-              bg="gray.700"
-              color="white"
-              _hover={{ shadow: 'md' }}
-              _focus={{ borderColor: 'teal.500' }}
-            >
-              {Object.keys(recapData).map(sensor => (
-                <option key={sensor} value={sensor}>
-                  {metricToName[recapData[sensor]?.metric] || sensor}
-                </option>
-              ))}
-            </Select>
-            <Select
-              onChange={handleWeekChange}
-              value={weekStartDate}
-              maxWidth="200px"
-              borderRadius="md"
-              shadow="sm"
-              bg="gray.700"
-              color="white"
-              _hover={{ shadow: 'md' }}
-              _focus={{ borderColor: 'teal.500' }}
-            >
-              {availableWeeks.map(week => (
-                <option key={week} value={week}>
-                  {formatDateMMDDYY(new Date(week))} -{' '}
-                  {formatDateMMDDYY(getEndDate(new Date(week)))}
-                </option>
-              ))}
-            </Select>
+            <Menu>
+              <MenuButton
+                as={Button}
+                rightIcon={<ChevronDownIcon />}
+                maxWidth="200px"
+                borderRadius="md"
+                shadow="sm"
+                bg="gray.800"
+                color="white"
+                _hover={{ shadow: 'md' }}
+                _focus={{ borderColor: 'teal.500' }}
+                // border={'2px solid whiteAlpha.200'}
+              >
+                {metricToName[recapData[selectedSensor]?.metric] ||
+                  selectedSensor ||
+                  'Select Sensor'}
+              </MenuButton>
+              <MenuList bg="gray.700" color="white">
+                {Object.keys(recapData).map(sensor => (
+                  <MenuItem
+                    key={sensor}
+                    onClick={() =>
+                      handleSensorChange({ target: { value: sensor } })
+                    }
+                    _hover={{ bg: 'gray.600' }}
+                    _focus={{ bg: '#3D5A80' }}
+                  >
+                    {metricToName[recapData[sensor]?.metric] || sensor}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Menu>
+
+            <Menu>
+              <MenuButton
+                as={Button}
+                rightIcon={<ChevronDownIcon />}
+                maxWidth="200px"
+                borderRadius="md"
+                shadow="sm"
+                bg="gray.800"
+                color="white"
+                _hover={{ shadow: 'md' }}
+                _focus={{ borderColor: 'teal.500' }}
+                // border={'2px solid whiteAlpha.200'}
+              >
+                {weekStartDate
+                  ? `${formatDateMMDDYY(
+                      new Date(weekStartDate)
+                    )} - ${formatDateMMDDYY(
+                      getEndDate(new Date(weekStartDate))
+                    )}`
+                  : 'Select Week'}
+              </MenuButton>
+              <MenuList bg="gray.700" color="white">
+                {availableWeeks.map(week => (
+                  <MenuItem
+                    key={week}
+                    onClick={() =>
+                      handleWeekChange({ target: { value: week } })
+                    }
+                    _hover={{ bg: 'gray.600' }}
+                    _focus={{ bg: '#3D5A80' }}
+                  >
+                    {formatDateMMDDYY(new Date(week))} -{' '}
+                    {formatDateMMDDYY(getEndDate(new Date(week)))}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Menu>
           </Box>
         </Flex>
       )}
-
       {recapData && selectedSensor && (
         <Box
           p={6}
@@ -302,18 +347,17 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                         <StatLabel fontSize="lg" color="gray.400">
                           {type.charAt(0).toUpperCase() + type.slice(1)}
                         </StatLabel>
-                        <StatNumber fontSize="4xl" color="white">
+                        <StatNumber fontSize="4xl" color="white" mb={1}>
                           {recapData[selectedSensor]?.[type]}
                           {addSpace ? ' ' : ''}
                           {label}
                         </StatNumber>
-                        <StatHelpText color="green">
-                          {/* {recapData[selectedSensor]?.[`${type}Change`]}% */}
+                        {/* <StatHelpText color="green">
                           100% ▲
                         </StatHelpText>
                         <StatHelpText color="gray.400" fontSize={'md'}>
                           vs last week
-                        </StatHelpText>
+                        </StatHelpText> */}
                       </Stat>
                     </Box>
                   </motion.div>
@@ -340,13 +384,13 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     <StatLabel fontSize="lg" color="gray.400">
                       Alerts
                     </StatLabel>
-                    <StatNumber fontSize="4xl" color="white">
+                    <StatNumber fontSize="4xl" color="white" mb={1}>
                       {alertCounts[recapData[selectedSensor]?.metric] || 0}
                     </StatNumber>
-                    <StatHelpText color="red">100% ▼</StatHelpText>
+                    {/* <StatHelpText color="red">100% ▼</StatHelpText>
                     <StatHelpText color="gray.400" fontSize={'md'}>
                       vs last week
-                    </StatHelpText>
+                    </StatHelpText> */}
                   </Stat>
                 </Box>
               </motion.div>
@@ -374,8 +418,6 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     maxWidth="100%"
                     textAlign="left"
                     position="relative"
-                    // height="auto"
-
                     maxHeight="335px"
                   >
                     <Heading
@@ -445,7 +487,11 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     <Button variant="blue" onClick={copyToClipboard}>
                       Copy to Clipboard
                     </Button>
-                    <Button variant={'blue'} isDisabled={!hasCopied}>
+                    <Button
+                      variant={'blue'}
+                      isDisabled={!hasCopied}
+                      onClick={() => setShowChatbot(true)}
+                    >
                       Analyze Recap
                     </Button>
                     {!hasCopied && (
@@ -459,6 +505,12 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
             )}
           </Box>
         </Box>
+      )}
+      {showChatbot && (
+        <ChatbotModal
+          showChatbot={showChatbot}
+          onClose={() => setShowChatbot(false)}
+        />
       )}
     </Box>
   );
