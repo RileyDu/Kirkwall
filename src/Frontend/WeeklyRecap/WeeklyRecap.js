@@ -17,6 +17,7 @@ import {
   MenuList,
   MenuItem,
   useMediaQuery,
+  StatHelpText
 } from '@chakra-ui/react';
 import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
@@ -200,37 +201,40 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       recentAlerts: recentAlerts,
     };
     const textToCopy = JSON.stringify(combinedData, null, 2);
-  
+
     // Check if clipboard API is supported
     if (navigator.clipboard && navigator.clipboard.writeText) {
       // Use the clipboard API
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        toast({
-          title: 'Copied to clipboard!',
-          description:
-            'The weekly recap data and alerts have been copied to your clipboard.',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
+      navigator.clipboard
+        .writeText(textToCopy)
+        .then(() => {
+          toast({
+            title: 'Copied to clipboard!',
+            description:
+              'The weekly recap data and alerts have been copied to your clipboard.',
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+          });
+        })
+        .catch(err => {
+          // Fallback to manual copy if an error occurs
+          fallbackCopyTextToClipboard(textToCopy);
         });
-      }).catch(err => {
-        // Fallback to manual copy if an error occurs
-        fallbackCopyTextToClipboard(textToCopy);
-      });
     } else {
       // Fallback to manual copy for older browsers or unsupported environments
       fallbackCopyTextToClipboard(textToCopy);
     }
   };
-  
+
   // Fallback function for copying text
-  const fallbackCopyTextToClipboard = (text) => {
-    const textArea = document.createElement("textarea");
+  const fallbackCopyTextToClipboard = text => {
+    const textArea = document.createElement('textarea');
     textArea.value = text;
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
-    
+
     try {
       const successful = document.execCommand('copy');
       if (successful) {
@@ -254,7 +258,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
         isClosable: true,
       });
     }
-  
+
     document.body.removeChild(textArea);
   };
 
@@ -268,17 +272,17 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     >
       {weekStartDate && (
         <Flex
-        flexDirection={isLargerThan768 ? 'row' : 'column'}
-        justifyContent="space-between"
-        alignItems={'center'}
-        width="100%"
-        mb={4}
-        px={1}
-      >
-        <Heading size="lg" fontWeight="bold" mb={!isLargerThan768 ? 4 : 0}>
-          Recap for {formatDateMMDDYY(new Date(weekStartDate))} -{' '}
-          {formatDateMMDDYY(new Date(weekEndDate))}{' '}
-        </Heading>
+          flexDirection={isLargerThan768 ? 'row' : 'column'}
+          justifyContent="space-between"
+          alignItems={'center'}
+          width="100%"
+          mb={4}
+          px={1}
+        >
+          <Heading size="lg" fontWeight="bold" mb={!isLargerThan768 ? 4 : 0}>
+            Recap for {formatDateMMDDYY(new Date(weekStartDate))} -{' '}
+            {formatDateMMDDYY(new Date(weekEndDate))}{' '}
+          </Heading>
           <Box display="flex" gap={4}>
             <Menu>
               <MenuButton
@@ -407,7 +411,6 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                   </motion.div>
                 );
               })}
-
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -473,7 +476,6 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     >
                       Alerts for Selected Week
                     </Heading>
-                    {/* <Collapse startingHeight={200} in={expandAlerts}> */}
                     <Box overflowY={'scroll'} maxHeight="250px">
                       {recentAlerts.map(alert => (
                         <Box key={alert.id} mb={2}>
