@@ -7,6 +7,7 @@ dotenv.config(); // Load environment variables
 import multer from 'multer';
 import sgMail from '@sendgrid/mail';
 import { checkThresholds } from './cron/checkThresholds.js'; // Import your cron logic
+import { generateWeeklyRecap } from './cron/cronWeeklyRecap.js';
 
 
 const app = express();
@@ -102,10 +103,10 @@ app.get('/api/rivercity_data', async (req, res) => {
   let query =
     'SELECT * FROM rivercity_data WHERE deveui = $1 ORDER BY publishedat DESC LIMIT $2';
 
-  if (type === 'temp') {
+  if (type === 'rctemp') {
     query =
       'SELECT rctemp, publishedat FROM rivercity_data WHERE deveui = $1 ORDER BY publishedat DESC LIMIT $2';
-  } else if (type === 'hum') {
+  } else if (type === 'humidity') {
     query =
       'SELECT humidity, publishedat FROM rivercity_data WHERE deveui = $1 ORDER BY publishedat DESC LIMIT $2';
   }
@@ -218,6 +219,34 @@ app.get('/api/alerts', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching alerts' });
   }
 });
+
+app.get('/api/alerts/recap', async (req, res) => {
+  const { start_date } = req.query; // Get the start date from query params
+
+  if (!start_date) {
+    return res.status(400).json({ error: 'Start date is required' });
+  }
+
+  try {
+    // Calculate the end date as 7 days after the start date
+    const end_date = new Date(start_date);
+    end_date.setDate(end_date.getDate() + 7); // Adds 7 days to the start date
+    const formattedEndDate = end_date.toISOString(); // Convert end date to ISO format
+
+    const result = await client.query(
+      `SELECT * FROM alerts 
+       WHERE timestamp >= $1 
+       AND timestamp < $2 
+       ORDER BY timestamp DESC`, 
+      [start_date, formattedEndDate]
+    );
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching recent alerts:', error);
+    res.status(500).json({ error: 'An error occurred while fetching recent alerts' });
+  }
+});
+
 
 app.get('/api/alerts_per_user', async (req, res) => {
   const userMetrics = req.query.userMetrics; // Extract the userMetrics array from the query parameters
@@ -528,6 +557,7 @@ app.post('/api/equipment', async (req, res) => {
   }
 });
 
+// Delete an equipment
 app.delete('/api/equipment/:id', async (req, res) => {
   const id = req.params.id;
   try {
@@ -578,7 +608,7 @@ app.post('/api/energy-info', async (req, res) => {
 });
 
 
-// Update the zip code and/or last live rate recorded for a user
+// Update the location via user
 app.put('/api/energy-info/:email', async (req, res) => {
   const email = req.params.email;
   const { location } = req.body;
@@ -599,9 +629,93 @@ app.put('/api/energy-info/:email', async (req, res) => {
   }
 });
 
+// POST route for adding weekly recap data
+app.post('/api/weekly-recap', async (req, res) => {
+  const { user_email, metric, week_start_date, high, low, avg, alert_count } = req.body;
+
+  try {
+    // Insert the new weekly recap data into the database
+    const result = await client.query(
+      `INSERT INTO Weekly_Recap (user_email, metric, week_start_date, high, low, avg, alert_count, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW()) 
+       RETURNING *`,
+      [user_email, metric, week_start_date, high, low, avg, alert_count]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error inserting weekly recap data:', error);
+    res.status(500).json({ error: 'An error occurred while inserting weekly recap data' });
+  }
+});
+
+// GET route for getting weekly recap data
+app.get('/api/weekly-recap', async (req, res) => {
+  const { user_email, week_start_date } = req.query;
+
+  if (!user_email) {
+    return res.status(400).json({ error: 'user_email is required' });
+  }
+
+  try {
+    let query = `SELECT * FROM Weekly_Recap WHERE user_email = $1`;
+    let queryParams = [user_email];
+
+    // If a specific week is requested, add it to the query
+    if (week_start_date) {
+      query += ` AND week_start_date = $2`;
+      queryParams.push(week_start_date);
+    } else {
+      // If no week is specified, get the most recent week's data
+      query += ` ORDER BY week_start_date DESC`;
+    }
+
+    const result = await client.query(query, queryParams);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No weekly recap data found for the specified criteria' });
+    }
+
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching weekly recap data:', error);
+    res.status(500).json({ error: 'An error occurred while fetching weekly recap data' });
+  }
+});
+
+// GET route to fetch all available week start dates
+app.get('/api/weekly-recap/weeks', async (req, res) => {
+  try {
+    const result = await client.query(
+      `SELECT DISTINCT week_start_date 
+       FROM Weekly_Recap 
+       ORDER BY week_start_date DESC`
+    );
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching week start dates:', error);
+    res.status(500).json({ error: 'An error occurred while fetching week start dates' });
+  }
+});
+
+// DELETE route for deleting weekly recap data
+app.delete('/api/weekly-recap/:id', async (req, res) => {
+  const id = req.params.id;
+
+  if (!id) {
+    return res.status(400).json({ error: 'id is required' });
+  }
+
+  try {
+    await client.query('DELETE FROM Weekly_Recap WHERE id = $1', [id]);
+    res.status(200).json({ message: 'Weekly recap data deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting weekly recap data:', error);
+    res.status(500).json({ error: 'An error occurred while deleting weekly recap data' });
+  }
+});
 
 
-// New route for cron job
+// Cron Job route that runs every 10 minutes to check live values against user thresholds
 app.get('/api/run-check-thresholds', async (req, res) => {
   try {
     await checkThresholds(); // Call your cron job logic
@@ -609,6 +723,17 @@ app.get('/api/run-check-thresholds', async (req, res) => {
   } catch (error) {
     console.error('Error running threshold check:', error);
     res.status(500).json({ error: 'Failed to run threshold check' });
+  }
+});
+
+// Cron Job route that runs every monday to generate weekly recap
+app.get('/api/run-weekly-recap', async (req, res) => {
+  try {
+    await generateWeeklyRecap(); // Call the new weekly recap cron job logic
+    res.status(200).json({ message: 'Weekly recap generation completed.' });
+  } catch (error) {
+    console.error('Error generating weekly recap:', error);
+    res.status(500).json({ error: 'Failed to generate weekly recap' });
   }
 });
 

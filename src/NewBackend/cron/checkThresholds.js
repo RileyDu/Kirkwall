@@ -1,10 +1,13 @@
 import dotenv from 'dotenv';
-dotenv.config({ path: 'src/NewBackend/.env' });
+dotenv.config();
 import twilio from 'twilio';
 import sgMail from '@sendgrid/mail';
 import moment from 'moment-timezone';
 import axios from 'axios';
 const baseURL = process.env.BACKEND_URL || 'https://kirkwall-demo.vercel.app/'; // Set your backend URL
+
+console.log('BACKEND_URL from .env:', process.env.BACKEND_URL);
+
 
 // Initialize only when the function is called
 export const checkThresholds = async () => {

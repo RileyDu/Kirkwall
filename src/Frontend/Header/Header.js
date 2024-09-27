@@ -34,6 +34,7 @@ import {
   FaGlobe,
   FaSnowflake,
   FaBookOpen,
+  FaCalendarWeek,
 } from 'react-icons/fa';
 import { GiGroundSprout } from 'react-icons/gi';
 import { FiAlertTriangle } from 'react-icons/fi';
@@ -77,6 +78,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
       // { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/grandfarm/map' },
       { icon: <MdElectricBolt size="30"/>, label: 'Energy', route: '/energy' },
+      { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
+
 
   
     ],
@@ -84,6 +87,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
       { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' },
       { icon: <MdElectricBolt size="30"/>, label: 'Energy', route: '/energy' },
+      { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
+
 
     ],
     'russell@rjenergysolutions.com': [
@@ -91,6 +96,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
       { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' },
       // { icon: <MdElectricBolt size="30"/>, label: 'Energy', route: '/energy' },
+      // { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
+
 
     ],
     'trey@watchdogprotect.com': [
@@ -98,6 +105,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/watchdogprotect/map' },
     { icon: <MdElectricBolt size="30"/>, label: 'Energy', route: '/energy' },
+    { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
+
 
   ],
     'default': [
@@ -106,7 +115,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
       { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' },
       { icon: <MdElectricBolt size="30"/>, label: 'Energy', route: '/energy' },
-
+      { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
     ]
   };
 

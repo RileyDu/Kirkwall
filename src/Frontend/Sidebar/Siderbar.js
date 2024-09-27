@@ -20,6 +20,7 @@ import {
   FaChevronLeft,
   FaBook,
   FaBookOpen,
+  FaCalendarWeek,
 } from 'react-icons/fa';
 import { MdElectricBolt } from 'react-icons/md';
 
@@ -78,11 +79,15 @@ const buttonConfig = {
     // { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/grandfarm/map' },
     { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
+    { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
+
   ],
   'jerrycromarty@imprimedicine.com': [
     { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' },
     { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
+    { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
+
   ],
   'russell@rjenergysolutions.com': [
     {
@@ -93,6 +98,8 @@ const buttonConfig = {
     { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' },
     { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
+    { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
+
   ],
   'trey@watchdogprotect.com': [
     { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
@@ -103,6 +110,11 @@ const buttonConfig = {
       route: '/watchdogprotect/map',
     },
     { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
+    {
+      icon: <FaCalendarWeek size="30" />,
+      label: 'Weekly Recap',
+      route: '/weeklyrecap',
+    },
   ],
   default: [
     { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
@@ -114,6 +126,11 @@ const buttonConfig = {
     { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' },
     { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
+    {
+      icon: <FaCalendarWeek size="30" />,
+      label: 'Weekly Recap',
+      route: '/weeklyrecap',
+    },
   ],
 };
 

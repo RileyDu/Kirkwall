@@ -6,7 +6,7 @@ import {
   useMediaQuery,
   Flex,
   useColorMode,
-  IconButton
+  IconButton,
 } from '@chakra-ui/react';
 import {
   BrowserRouter as Router,
@@ -49,6 +49,7 @@ import RedirectBasedOnAuth from './Frontend/AuthComponents/RedirectBasedOnAuth.j
 import ThankYou from './Frontend/Alert/ThankYou.js';
 import ThankYouAdmin from './Frontend/Alert/ThankYouAdmin.js';
 import EnergyPage from './Frontend/Energy/EnergyPage.js';
+import WeeklyRecap from './Frontend/WeeklyRecap/WeeklyRecap.js';
 
 const Layout = ({
   children,
@@ -70,7 +71,9 @@ const Layout = ({
   const location = useLocation();
 
   const shouldShowSidebar =
-    location.pathname !== '/' && location.pathname !== '/signup' && location.pathname !== '/landing';
+    location.pathname !== '/' &&
+    location.pathname !== '/signup' &&
+    location.pathname !== '/landing';
 
   const { colorMode } = useColorMode();
 
@@ -78,7 +81,7 @@ const Layout = ({
 
   const [isOptionsModalOpen, setOptionsModalOpen] = useState(false); // State for OptionsModal
   const [isFaqsModalOpen, setFaqsModalOpen] = useState(false);
-  const [isHelpModalOpen, setHelpModalOpen] = useState(false); 
+  const [isHelpModalOpen, setHelpModalOpen] = useState(false);
 
   const handleOpenOptionsModal = () => setOptionsModalOpen(true);
   const handleCloseOptionsModal = () => setOptionsModalOpen(false);
@@ -95,7 +98,6 @@ const Layout = ({
   const handleCloseFaqsModal = () => setFaqsModalOpen(false);
 
   const [runTour, setRunTour] = useState(false);
-
 
   return (
     <Flex
@@ -130,48 +132,45 @@ const Layout = ({
 
       {shouldShowSidebar && (
         <>
-      <MotionIconButton
-        icon={<FaQuestion />}
-        variant="outline"
-        color="#212121"
-        height={10}
-        width={10}
-        bg={'#cee8ff'}
-        _hover={{ bg: '#3D5A80', color: 'white' }}
-        border={'2px solid #3D5A80'}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        ml={2}
-        onClick={handleOpenOptionsModal}
-        position="fixed"
-        bottom="20px"
-        left="20px"
-        zIndex="1000"
-      />
+          <MotionIconButton
+            icon={<FaQuestion />}
+            variant="outline"
+            color="#212121"
+            height={10}
+            width={10}
+            bg={'#cee8ff'}
+            _hover={{ bg: '#3D5A80', color: 'white' }}
+            border={'2px solid #3D5A80'}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            ml={2}
+            onClick={handleOpenOptionsModal}
+            position="fixed"
+            bottom="20px"
+            left="20px"
+            zIndex="1000"
+          />
 
-      <OptionsModal
-        isOpen={isOptionsModalOpen}
-        onClose={handleCloseOptionsModal}
-        expandButtonRef={expandButtonRef}
-        onContactUsClick={handleOpenHelpModal}
-        onHelpClick={() => {
-          handleCloseOptionsModal();
-          setRunTour(true);
-        }}
-        onFaqsClick={handleOpenFaqsModal}
-        startTourButtonRef={startTourButtonRef} 
-        runThresholdTour={runThresholdTour}
-        setRunThresholdTour={setRunThresholdTour}
-        // setIsTourRunning={setIsTourRunning}
-        // isTourRunning={isTourRunning}
-        // activeChartID={activeChartID}
-        // setActiveChartID={setActiveChartID}        
-        />
-      </>
+          <OptionsModal
+            isOpen={isOptionsModalOpen}
+            onClose={handleCloseOptionsModal}
+            expandButtonRef={expandButtonRef}
+            onContactUsClick={handleOpenHelpModal}
+            onHelpClick={() => {
+              handleCloseOptionsModal();
+              setRunTour(true);
+            }}
+            onFaqsClick={handleOpenFaqsModal}
+            startTourButtonRef={startTourButtonRef}
+            runThresholdTour={runThresholdTour}
+            setRunThresholdTour={setRunThresholdTour}
+            // setIsTourRunning={setIsTourRunning}
+            // isTourRunning={isTourRunning}
+            // activeChartID={activeChartID}
+            // setActiveChartID={setActiveChartID}
+          />
+        </>
       )}
-
-
-
 
       <HelpModal
         isOpen={isHelpModalOpen}
@@ -186,13 +185,9 @@ const Layout = ({
         isOpen={isFaqsModalOpen}
         onClose={handleCloseFaqsModal} // Close the FaqsModal
       />
-
     </Flex>
   );
 };
-
-
-
 
 const MainApp = () => {
   const [loading, setLoading] = useState(false);
@@ -204,7 +199,7 @@ const MainApp = () => {
   const [runThresholdTour, setRunThresholdTour] = useState(false);
 
   const expandButtonRef = useRef(null);
-  const startTourButtonRef = useRef(null); 
+  const startTourButtonRef = useRef(null);
 
   const toggleAlerts = () => {
     setShowAlerts(!showAlerts);
@@ -212,12 +207,11 @@ const MainApp = () => {
   const toggleSidebar = () => setIsMinimized(!isMinimized);
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
-
   const spin = keyframes`
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 `;
-  
+
   if (loading) {
     return (
       <Flex justify="center" align="center" height="100vh" width="100vw">
@@ -262,8 +256,12 @@ const MainApp = () => {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <ModularDashboard statusOfAlerts={showAlerts} expandButtonRef={expandButtonRef} runThresholdTour={runThresholdTour} setRunThresholdTour={setRunThresholdTour}
-         />
+                <ModularDashboard
+                  statusOfAlerts={showAlerts}
+                  expandButtonRef={expandButtonRef}
+                  runThresholdTour={runThresholdTour}
+                  setRunThresholdTour={setRunThresholdTour}
+                />
               </ProtectedRoute>
             }
           />
@@ -273,7 +271,7 @@ const MainApp = () => {
               <ProtectedRoute>
                 <ModularSummary statusOfAlerts={showAlerts} />
               </ProtectedRoute>
-            } 
+            }
           />
           <Route
             path="/TempSensors"
@@ -356,6 +354,14 @@ const MainApp = () => {
             }
           />
           <Route
+            path="/weeklyrecap"
+            element={
+              <ProtectedRoute>
+                <WeeklyRecap statusOfAlerts={showAlerts} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/map"
             element={
               <ProtectedRoute>
@@ -397,7 +403,7 @@ const MainApp = () => {
               </ProtectedRoute>
             }
           />
-            <Route path="*" element={<RedirectBasedOnAuth />} />
+          <Route path="*" element={<RedirectBasedOnAuth />} />
         </Routes>
       </Layout>
       <MobileMenu isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} />
@@ -406,7 +412,6 @@ const MainApp = () => {
 };
 
 const App = () => {
-
   return (
     <ChakraProvider theme={customTheme}>
       <Router>
