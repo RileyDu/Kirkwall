@@ -18,12 +18,12 @@ const ChatbotModal = ({ showChatbot, onClose }) => {
 
   return (
     <>
-      <Button onClick={onOpen}>Open Chatbot</Button>
+      {/* <Button onClick={onOpen}>Open Chatbot</Button> */}
       <Modal isOpen={isOpen} onClose={() => { handleClose(); onClose(); }} size="3xl" isCentered>
         <ModalOverlay />
-        <ModalContent borderRadius="md" boxShadow="xl">
-          <ModalHeader>AI Recap</ModalHeader>
-          <ModalCloseButton />
+        <ModalContent boxShadow="xl">
+          <ModalHeader borderTopRadius={"md"} bg={"gray.600"} color={"white"}>AI Recap</ModalHeader>
+          <ModalCloseButton size={"lg"} mt={1} />
           <ModalBody padding="0">
             <Box
               as="iframe"
@@ -31,7 +31,7 @@ const ChatbotModal = ({ showChatbot, onClose }) => {
               height="800px"
               width="100%"
               border="none"
-              borderRadius="md"
+              borderBottomRadius="md"
               overflow="hidden"
               boxShadow="md"
             />
