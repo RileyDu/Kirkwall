@@ -22,7 +22,7 @@ const ChatbotModal = ({ showChatbot, onClose }) => {
       <Modal isOpen={isOpen} onClose={() => { handleClose(); onClose(); }} size="3xl" isCentered>
         <ModalOverlay />
         <ModalContent borderRadius="md" boxShadow="xl">
-          <ModalHeader>Kirkwall Weekly Recap Analyzer</ModalHeader>
+          <ModalHeader>AI Recap</ModalHeader>
           <ModalCloseButton />
           <ModalBody padding="0">
             <Box

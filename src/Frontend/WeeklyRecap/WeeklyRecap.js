@@ -10,26 +10,18 @@ import {
   StatLabel,
   Stat,
   Button,
-  StatHelpText,
   useToast,
   Badge,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import ChatbotModal from './WeeklyRecapAiModal.js';
 
@@ -111,6 +103,7 @@ const getLabelForMetric = metric => {
 
 const WeeklyRecap = ({ statusOfAlerts }) => {
   const { currentUser } = useAuth();
+  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const userEmail = currentUser?.email;
   const userMetrics =
     CustomerSettings.find(customer => customer.email === userEmail)?.metric ||
@@ -123,7 +116,6 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   const [weekEndDate, setWeekEndDate] = useState('');
   const [availableWeeks, setAvailableWeeks] = useState([]); // To store available weeks
   const [selectedSensor, setSelectedSensor] = useState(''); // State for selected sensor
-  const [expandAlerts, setExpandAlerts] = useState(false);
   const [hasCopied, setHasCopied] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
   const toast = useToast(); // For showing copy notifications
@@ -203,16 +195,26 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
 
   const copyToClipboard = () => {
     setHasCopied(true);
-    const textToCopy = JSON.stringify(recapData, null, 2);
+    const combinedData = {
+      recapData: recapData,
+      recentAlerts: recentAlerts,
+    };
+    const textToCopy = JSON.stringify(combinedData, null, 2);
+
+    // Copy to clipboard
     navigator.clipboard.writeText(textToCopy).then(() => {
       toast({
         title: 'Copied to clipboard!',
-        description: 'The weekly recap data has been copied to your clipboard.',
+        description:
+          'The weekly recap data and alerts have been copied to your clipboard.',
         status: 'success',
         duration: 3000,
         isClosable: true,
       });
     });
+
+    // Insert into text field
+    // document.getElementById('yourTextFieldId').value = textToCopy;
   };
 
   return (
@@ -221,20 +223,21 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       display="flex"
       flexDirection="column"
       pt={statusOfAlerts ? '10px' : '74px'}
-      px={12}
+      px={isLargerThan768 ? 12 : 4}
     >
       {weekStartDate && (
         <Flex
-          justifyContent="space-between"
-          alignItems="center"
-          width="100%"
-          mb={4}
-          px={1}
-        >
-          <Heading size="lg" fontWeight="bold">
-            Recap for {formatDateMMDDYY(new Date(weekStartDate))} -{' '}
-            {formatDateMMDDYY(new Date(weekEndDate))}{' '}
-          </Heading>
+        flexDirection={isLargerThan768 ? 'row' : 'column'}
+        justifyContent="space-between"
+        alignItems={'center'}
+        width="100%"
+        mb={4}
+        px={1}
+      >
+        <Heading size="lg" fontWeight="bold" mb={!isLargerThan768 ? 4 : 0}>
+          Recap for {formatDateMMDDYY(new Date(weekStartDate))} -{' '}
+          {formatDateMMDDYY(new Date(weekEndDate))}{' '}
+        </Heading>
           <Box display="flex" gap={4}>
             <Menu>
               <MenuButton
@@ -440,19 +443,6 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                         </Box>
                       ))}
                     </Box>
-                    {/* </Collapse> */}
-                    {/* <Flex justifyContent="center" mt={2}>
-                      <IconButton
-                        onClick={() => setExpandAlerts(!expandAlerts)}
-                        icon={
-                          expandAlerts ? <FaChevronUp /> : <FaChevronDown />
-                        }
-                        aria-label="Expand Alerts"
-                        borderRadius="full"
-                        size="sm"
-                        variant="blue"
-                      />
-                    </Flex> */}
                   </Box>
                 </motion.div>
                 <motion.div
@@ -465,8 +455,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     borderRadius={'xl'}
                     p={6}
                     alignSelf="flex-start"
-                    height={'auto'} // Set max height for the scroll box
-                    // overflowY="auto" // Enable vertical scroll
+                    height={'auto'}
                   >
                     <Heading fontSize="lg" mb={2}>
                       Recap Data
@@ -482,21 +471,34 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                       <Text fontSize="xs" color="white">
                         {JSON.stringify(recapData, null, 2)}
                       </Text>
-                      <Text>ALERTS HERE!!!!!</Text>
+                      <Text fontSize="xs" color="white">
+                        {JSON.stringify(recentAlerts, null, 2)}
+                      </Text>
                     </Box>
-                    <Button variant="blue" onClick={copyToClipboard}>
+                    <Button
+                      variant="blue"
+                      onClick={copyToClipboard}
+                      width={isLargerThan768 ? 'auto' : '100%'}
+                    >
                       Copy to Clipboard
                     </Button>
                     <Button
                       variant={'blue'}
                       isDisabled={!hasCopied}
                       onClick={() => setShowChatbot(true)}
+                      width={isLargerThan768 ? 'auto' : '100%'}
+                      mt={isLargerThan768 ? 0 : 4}
                     >
                       Analyze Recap
                     </Button>
                     {!hasCopied && (
-                      <Badge ml={12} colorScheme="green" fontSize={'sm'}>
-                        Please copy to clipboard to access AI Anyltics
+                      <Badge
+                        ml={isLargerThan768 ? 12 : 0}
+                        colorScheme="green"
+                        fontSize={'sm'}
+                        mt={isLargerThan768 ? 0 : 4}
+                      >
+                        Please copy to clipboard to access AI Analytics
                       </Badge>
                     )}
                   </Box>
