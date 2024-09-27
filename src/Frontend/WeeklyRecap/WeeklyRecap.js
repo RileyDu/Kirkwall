@@ -200,21 +200,62 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       recentAlerts: recentAlerts,
     };
     const textToCopy = JSON.stringify(combinedData, null, 2);
-
-    // Copy to clipboard
-    navigator.clipboard.writeText(textToCopy).then(() => {
+  
+    // Check if clipboard API is supported
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      // Use the clipboard API
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        toast({
+          title: 'Copied to clipboard!',
+          description:
+            'The weekly recap data and alerts have been copied to your clipboard.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      }).catch(err => {
+        // Fallback to manual copy if an error occurs
+        fallbackCopyTextToClipboard(textToCopy);
+      });
+    } else {
+      // Fallback to manual copy for older browsers or unsupported environments
+      fallbackCopyTextToClipboard(textToCopy);
+    }
+  };
+  
+  // Fallback function for copying text
+  const fallbackCopyTextToClipboard = (text) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+      const successful = document.execCommand('copy');
+      if (successful) {
+        toast({
+          title: 'Copied to clipboard!',
+          description:
+            'The weekly recap data and alerts have been copied to your clipboard.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        throw new Error('Copy command was unsuccessful');
+      }
+    } catch (err) {
       toast({
-        title: 'Copied to clipboard!',
-        description:
-          'The weekly recap data and alerts have been copied to your clipboard.',
-        status: 'success',
+        title: 'Failed to copy',
+        description: 'Unable to copy the data to your clipboard.',
+        status: 'error',
         duration: 3000,
         isClosable: true,
       });
-    });
-
-    // Insert into text field
-    // document.getElementById('yourTextFieldId').value = textToCopy;
+    }
+  
+    document.body.removeChild(textArea);
   };
 
   return (
