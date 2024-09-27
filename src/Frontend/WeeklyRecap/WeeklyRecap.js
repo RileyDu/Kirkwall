@@ -400,12 +400,12 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                           {addSpace ? ' ' : ''}
                           {label}
                         </StatNumber>
-                        {/* <StatHelpText color="green">
+                        <StatHelpText color="green">
                           100% ▲
                         </StatHelpText>
                         <StatHelpText color="gray.400" fontSize={'md'}>
                           vs last week
-                        </StatHelpText> */}
+                        </StatHelpText>
                       </Stat>
                     </Box>
                   </motion.div>
@@ -434,10 +434,10 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     <StatNumber fontSize="4xl" color="white" mb={1}>
                       {alertCounts[recapData[selectedSensor]?.metric] || 0}
                     </StatNumber>
-                    {/* <StatHelpText color="red">100% ▼</StatHelpText>
+                    <StatHelpText color="red">100% ▼</StatHelpText>
                     <StatHelpText color="gray.400" fontSize={'md'}>
                       vs last week
-                    </StatHelpText> */}
+                    </StatHelpText>
                   </Stat>
                 </Box>
               </motion.div>
@@ -494,13 +494,14 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                   transition={{ duration: 2 }}
                 >
                   <Box
-                    bg={'gray.600'}
+                    bg={'gray.700'}
                     borderRadius={'xl'}
+                    borderWidth={'1px'}
                     p={6}
                     alignSelf="flex-start"
                     height={'auto'}
                   >
-                    <Heading fontSize="lg" mb={2}>
+                    <Heading fontSize="lg" mb={2} color={'white'}>
                       Recap Data
                     </Heading>
                     <Box
