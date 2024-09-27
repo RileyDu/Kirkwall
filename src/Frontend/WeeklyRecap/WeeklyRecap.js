@@ -11,7 +11,10 @@ import {
   StatLabel,
   Stat,
   Collapse,
-  IconButton
+  IconButton,
+  Button,
+  StatHelpText,
+  Input,
 } from '@chakra-ui/react';
 import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
@@ -136,7 +139,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       temperature: { label: '°F', addSpace: false },
       temp: { label: '°F', addSpace: false },
       rctemp: { label: '°F', addSpace: false },
-  
+
       imFreezerOneTemp: { label: '°C', addSpace: false },
       imFreezerTwoTemp: { label: '°C', addSpace: false },
       imFreezerThreeTemp: { label: '°C', addSpace: false },
@@ -144,7 +147,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       imFridgeTwoTemp: { label: '°C', addSpace: false },
       imIncubatorOneTemp: { label: '°C', addSpace: false },
       imIncubatorTwoTemp: { label: '°C', addSpace: false },
-  
+
       imFreezerOneHum: { label: '%', addSpace: false },
       imFreezerTwoHum: { label: '%', addSpace: false },
       imFreezerThreeHum: { label: '%', addSpace: false },
@@ -152,7 +155,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       imFridgeTwoHum: { label: '%', addSpace: false },
       imIncubatorOneHum: { label: '%', addSpace: false },
       imIncubatorTwoHum: { label: '%', addSpace: false },
-  
+
       hum: { label: '%', addSpace: false },
       percent_humidity: { label: '%', addSpace: false },
       humidity: { label: '%', addSpace: false },
@@ -161,7 +164,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       soil_moisture: { label: 'centibars', addSpace: true },
       leaf_wetness: { label: 'out of 15', addSpace: true },
     };
-  
+
     return metricLabels[metric] || { label: '', addSpace: false };
   };
 
@@ -192,14 +195,13 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     imIncubatorTwoHum: 'Incubator #2 Humidity',
   };
 
-
   return (
     <Box
       minHeight="100vh"
       display="flex"
       flexDirection="column"
       pt={statusOfAlerts ? '10px' : '74px'}
-      px={4}
+      px={12}
     >
       {weekStartDate && (
         <Flex
@@ -208,39 +210,19 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
           width="100%"
           mb={4}
         >
-          <Heading size="2xl" fontWeight="bold">
+          <Heading size="lg" fontWeight="bold">
             Recap for {formatDateMMDDYY(new Date(weekStartDate))} -{' '}
-            {formatDateMMDDYY(new Date(weekEndDate))}
+            {formatDateMMDDYY(new Date(weekEndDate))}{' '}
           </Heading>
-          <Select
-            onChange={handleWeekChange}
-            value={weekStartDate}
-            maxWidth="300px"
-            borderRadius="full"
-            shadow="sm"
-            _hover={{ shadow: 'md' }}
-            _focus={{ borderColor: 'teal.500' }}
-          >
-            {availableWeeks.map(week => (
-              <option key={week} value={week}>
-                {formatDateMMDDYY(new Date(week))} -{' '}
-                {formatDateMMDDYY(getEndDate(new Date(week)))}
-              </option>
-            ))}
-          </Select>
-        </Flex>
-      )}
-
-      {recapData && selectedSensor && (
-        <Box mt={4} width="100%">
-          <Flex justifyContent="space-between" alignItems="center" mb={6}>
-            <Heading size="lg">Select a Sensor</Heading>
+          <Box display="flex" gap={4}>
             <Select
               value={selectedSensor}
               onChange={handleSensorChange}
-              maxWidth="300px"
-              borderRadius="full"
+              maxWidth="200px"
+              borderRadius="md"
               shadow="sm"
+              bg="gray.700"
+              color="white"
               _hover={{ shadow: 'md' }}
               _focus={{ borderColor: 'teal.500' }}
             >
@@ -250,131 +232,199 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                 </option>
               ))}
             </Select>
-          </Flex>
+            <Select
+              onChange={handleWeekChange}
+              value={weekStartDate}
+              maxWidth="200px"
+              borderRadius="md"
+              shadow="sm"
+              bg="gray.700"
+              color="white"
+              _hover={{ shadow: 'md' }}
+              _focus={{ borderColor: 'teal.500' }}
+            >
+              {availableWeeks.map(week => (
+                <option key={week} value={week}>
+                  {formatDateMMDDYY(new Date(week))} -{' '}
+                  {formatDateMMDDYY(getEndDate(new Date(week)))}
+                </option>
+              ))}
+            </Select>
+          </Box>
+        </Flex>
+      )}
 
-          <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={6}>
-            {['high', 'avg', 'low'].map((type, index) => {
-              const { label, addSpace } = getLabelForMetric(
-                recapData[selectedSensor]?.metric
-              );
-              return (
+      {recapData && selectedSensor && (
+        <Box
+          p={6}
+          borderWidth="1px"
+          borderRadius="xl"
+          shadow="lg"
+          bg="gray.900"
+          color="white"
+          // mt={4}
+        >
+          {/* Box for both rows of cards */}
+          <Box width="100%">
+            <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={6} mb={6}>
+              {['high', 'avg', 'low'].map((type, index) => {
+                const { label, addSpace } = getLabelForMetric(
+                  recapData[selectedSensor]?.metric
+                );
+                return (
+                  <motion.div
+                    key={type}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                  >
+                    <Box
+                      p={6}
+                      borderWidth="1px"
+                      borderRadius="xl"
+                      shadow="lg"
+                      bg="gray.800"
+                      color="white"
+                      transition="all 0.3s ease"
+                      textAlign={'center'}
+                    >
+                      <Stat>
+                        <StatLabel fontSize="lg" color="gray.400">
+                          {type.charAt(0).toUpperCase() + type.slice(1)}
+                        </StatLabel>
+                        <StatNumber fontSize="4xl" color="white">
+                          {recapData[selectedSensor]?.[type]}
+                          {addSpace ? ' ' : ''}
+                          {label}
+                        </StatNumber>
+                        <StatHelpText color="green" >
+                          {/* {recapData[selectedSensor]?.[`${type}Change`]}% */}
+                          100% ▲
+                        </StatHelpText>
+                        <StatHelpText color="gray.400" fontSize={'md'}>
+                          vs last week
+                        </StatHelpText>
+                      </Stat>
+                    </Box>
+                  </motion.div>
+                );
+              })}
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.3, delay: 0.3 }}
+              >
+                <Box
+                  p={6}
+                  borderWidth="1px"
+                  borderRadius="xl"
+                  shadow="lg"
+                  bg="gray.800"
+                  color="white"
+                  transition="all 0.3s ease"
+                  textAlign={'center'}
+                >
+                  <Stat>
+                    <StatLabel fontSize="lg" color="gray.400">
+                      Alerts
+                    </StatLabel>
+                    <StatNumber fontSize="4xl" color="white">
+                      {alertCounts[recapData[selectedSensor]?.metric] || 0}
+                    </StatNumber>
+                    <StatHelpText color="red" >
+                      100% ▼ 
+                    </StatHelpText>
+                    <StatHelpText color="gray.400" fontSize={'md'}>vs last week</StatHelpText>
+                  </Stat>
+                </Box>
+              </motion.div>
+            </SimpleGrid>
+
+            {/* Second row of cards */}
+            {recentAlerts.length > 0 && (
+              <SimpleGrid
+                columns={{ base: 1, sm: 1, md: 2 }}
+                spacing={6}
+                // mt={6}
+                width="100%"
+              >
                 <motion.div
-                  key={type}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 2 }}
                 >
                   <Box
                     p={6}
                     borderWidth="1px"
-                    borderRadius="lg"
+                    borderRadius="xl"
                     shadow="lg"
-                    bg="teal.500"
+                    bg="gray.700"
                     color="white"
-                    transition="all 0.3s ease"
+                    maxWidth="100%"
+                    textAlign="left"
+                    position="relative"
+                    height="auto"
                   >
-                    <Stat>
-                      <StatLabel fontSize="md" color="#cee8ff">
-                        {type.charAt(0).toUpperCase() + type.slice(1)}
-                      </StatLabel>
-                      <StatNumber fontSize="2xl" color="white">
-                        {recapData[selectedSensor]?.[type]}
-                        {addSpace ? ' ' : ''}
-                        {label}
-                      </StatNumber>
-                    </Stat>
+                    <Heading
+                      size="md"
+                      fontWeight="bold"
+                      mb={4}
+                      textDecoration="underline"
+                      color={'white'}
+                    >
+                      Alerts for Selected Week
+                    </Heading>
+                    <Collapse startingHeight={200} in={expandAlerts}>
+                      {recentAlerts.map(alert => (
+                        <Box key={alert.id} mb={2}>
+                          <Text fontSize="sm" color="white">
+                            {alert.message}
+                          </Text>
+                          <Divider mb={2} mt={2} borderColor="whiteAlpha.600" />
+                        </Box>
+                      ))}
+                    </Collapse>
+                    <Flex justifyContent="center" mt={2}>
+                      <IconButton
+                        onClick={() => setExpandAlerts(!expandAlerts)}
+                        icon={
+                          expandAlerts ? <FaChevronUp /> : <FaChevronDown />
+                        }
+                        aria-label="Expand Alerts"
+                        borderRadius="full"
+                        size="sm"
+                        variant="blue"
+                      />
+                    </Flex>
                   </Box>
                 </motion.div>
-              );
-            })}
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.3, delay: 0.3 }}
-            >
-              <Box
-                p={6}
-                borderWidth="1px"
-                borderRadius="lg"
-                shadow="lg"
-                bg="teal.500"
-                color="white"
-                transition="all 0.3s ease"
-              >
-                <Stat>
-                  <StatLabel fontSize="md" color="#cee8ff">
-                    Alerts
-                  </StatLabel>
-                  <StatNumber fontSize="2xl" color="white">
-                    {alertCounts[recapData[selectedSensor]?.metric] || 0}
-                  </StatNumber>
-                </Stat>
-              </Box>
-            </motion.div>
-          </SimpleGrid>
-        </Box>
-      )}
-
-{recentAlerts.length > 0 && (
-        <Box
-          justifyContent={'center'}
-          alignItems={'center'}
-          display={'flex'}
-          width="100%"
-          mt={6}
-        >
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2 }}>
-          <Box
-            mt={6}
-            p={6}
-            borderWidth="1px"
-            borderRadius="lg"
-            shadow="lg"
-            bgGradient="linear(to-r, teal.500, blue.500)"
-            color="white"
-            maxWidth="900px"
-            textAlign="left"
-            position="relative"
-          >
-            <Heading
-              size="md"
-              fontWeight="bold"
-              mb={4}
-              textDecoration="underline"
-              color={'white'}
-            >
-              This Week's Alerts
-            </Heading>
-
-            {/* Collapse Component for Alerts */}
-            <Collapse startingHeight={200} in={expandAlerts}>
-              {recentAlerts.map(alert => (
-                <Box key={alert.id} mb={2}>
-                  <Text fontSize="md" color="white">
-                    {alert.message}
-                  </Text>
-                  <Divider mb={2} mt={2} borderColor="whiteAlpha.600" />
-                </Box>
-              ))}
-            </Collapse>
-
-            {/* Chevron Icon for Expanding/Collapsing */}
-            <Flex justifyContent="center" mt={2}>
-              <IconButton
-                onClick={() => setExpandAlerts(!expandAlerts)}
-                icon={expandAlerts ? <FaChevronUp /> : <FaChevronDown />}
-                aria-label="Expand Alerts"
-                borderRadius="full"
-                size="sm"
-                colorScheme="teal"
-                variant="outline"
-              />
-            </Flex>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 2 }}
+                >
+                  <Box
+                    bg={'gray.600'}
+                    borderRadius={'xl'}
+                    p={6}
+                    alignSelf="flex-start"
+                  >
+                    <Heading fontSize="lg" mb={2}>
+                      AI Analysis
+                    </Heading>
+                    <Box><Text>{recapData}</Text></Box>
+                    <Button variant="blue" mr={4}>
+                      Analyze Week
+                    </Button>
+                    <Button variant="blue">Show Graph</Button>
+                  </Box>
+                </motion.div>
+              </SimpleGrid>
+            )}
           </Box>
-        </motion.div>
         </Box>
       )}
     </Box>
