@@ -15,12 +15,42 @@ import {
   Button,
   StatHelpText,
   Input,
+  useToast,
+  Badge,
 } from '@chakra-ui/react';
 import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+
+// Utility functions here (formatDateMMDDYY, getStartOfWeek, getEndDate, getLabelForMetric, metricToName)
+const metricToName = {
+  temperature: 'Temperature',
+  percent_humidity: 'Humidity',
+  wind_speed: 'Wind',
+  soil_moisture: 'Soil Moisture',
+  leaf_wetness: 'Leaf Wetness',
+  rain_15_min_inches: 'Rainfall',
+  temp: 'Temperature (Watchdog)',
+  hum: 'Humidity (Watchdog)',
+  rctemp: 'Temperature (Rivercity)',
+  humidity: 'Humidity (Rivercity)',
+  imFreezerOneTemp: 'Freezer #1 Temp',
+  imFreezerOneHum: 'Freezer #1 Humidity',
+  imFreezerTwoTemp: 'Freezer #2 Temp',
+  imFreezerTwoHum: 'Freezer #2 Humidity',
+  imFreezerThreeTemp: 'Freezer #3 Temp',
+  imFreezerThreeHum: 'Freezer #3 Humidity',
+  imFridgeOneTemp: 'Fridge #1 Temp',
+  imFridgeOneHum: 'Fridge #1 Humidity',
+  imFridgeTwoTemp: 'Fridge #2 Temp',
+  imFridgeTwoHum: 'Fridge #2 Humidity',
+  imIncubatorOneTemp: 'Incubator #1 Temp',
+  imIncubatorOneHum: 'Incubator #1 Humidity',
+  imIncubatorTwoTemp: 'Incubator #2 Temp',
+  imIncubatorTwoHum: 'Incubator #2 Humidity',
+};
 
 // Utility function to format date as MM/DD/YY
 const formatDateMMDDYY = date => {
@@ -30,20 +60,44 @@ const formatDateMMDDYY = date => {
   return `${month}/${day}/${year}`;
 };
 
-// Utility function to calculate the start of the week (Monday)
-const getStartOfWeek = date => {
-  const day = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  const difference = (day === 0 ? -6 : 1) - day; // Adjust to get Monday
-  const startOfWeek = new Date(date);
-  startOfWeek.setDate(date.getDate() + difference);
-  return startOfWeek;
-};
-
-// Utility function to calculate end date as Sunday of the week
 const getEndDate = startDate => {
   const endDate = new Date(startDate);
   endDate.setDate(startDate.getDate() + 6); // Monday + 6 = Sunday
   return endDate;
+};
+
+const getLabelForMetric = metric => {
+  const metricLabels = {
+    temperature: { label: '°F', addSpace: false },
+    temp: { label: '°F', addSpace: false },
+    rctemp: { label: '°F', addSpace: false },
+
+    imFreezerOneTemp: { label: '°C', addSpace: false },
+    imFreezerTwoTemp: { label: '°C', addSpace: false },
+    imFreezerThreeTemp: { label: '°C', addSpace: false },
+    imFridgeOneTemp: { label: '°C', addSpace: false },
+    imFridgeTwoTemp: { label: '°C', addSpace: false },
+    imIncubatorOneTemp: { label: '°C', addSpace: false },
+    imIncubatorTwoTemp: { label: '°C', addSpace: false },
+
+    imFreezerOneHum: { label: '%', addSpace: false },
+    imFreezerTwoHum: { label: '%', addSpace: false },
+    imFreezerThreeHum: { label: '%', addSpace: false },
+    imFridgeOneHum: { label: '%', addSpace: false },
+    imFridgeTwoHum: { label: '%', addSpace: false },
+    imIncubatorOneHum: { label: '%', addSpace: false },
+    imIncubatorTwoHum: { label: '%', addSpace: false },
+
+    hum: { label: '%', addSpace: false },
+    percent_humidity: { label: '%', addSpace: false },
+    humidity: { label: '%', addSpace: false },
+    rain_15_min_inches: { label: 'inches', addSpace: true },
+    wind_speed: { label: 'MPH', addSpace: true },
+    soil_moisture: { label: 'centibars', addSpace: true },
+    leaf_wetness: { label: 'out of 15', addSpace: true },
+  };
+
+  return metricLabels[metric] || { label: '', addSpace: false };
 };
 
 const WeeklyRecap = ({ statusOfAlerts }) => {
@@ -61,6 +115,8 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   const [availableWeeks, setAvailableWeeks] = useState([]); // To store available weeks
   const [selectedSensor, setSelectedSensor] = useState(''); // State for selected sensor
   const [expandAlerts, setExpandAlerts] = useState(false);
+  const [hasCopied, setHasCopied] = useState(false);
+  const toast = useToast(); // For showing copy notifications
 
   // Fetch available weeks for dropdown on component mount
   useEffect(() => {
@@ -128,71 +184,25 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     );
     setWeekStartDate(selectedWeekStartDate);
     setWeekEndDate(selectedWeekEndDate);
+    setHasCopied(false);
   };
 
   const handleSensorChange = e => {
     setSelectedSensor(e.target.value);
   };
 
-  const getLabelForMetric = metric => {
-    const metricLabels = {
-      temperature: { label: '°F', addSpace: false },
-      temp: { label: '°F', addSpace: false },
-      rctemp: { label: '°F', addSpace: false },
-
-      imFreezerOneTemp: { label: '°C', addSpace: false },
-      imFreezerTwoTemp: { label: '°C', addSpace: false },
-      imFreezerThreeTemp: { label: '°C', addSpace: false },
-      imFridgeOneTemp: { label: '°C', addSpace: false },
-      imFridgeTwoTemp: { label: '°C', addSpace: false },
-      imIncubatorOneTemp: { label: '°C', addSpace: false },
-      imIncubatorTwoTemp: { label: '°C', addSpace: false },
-
-      imFreezerOneHum: { label: '%', addSpace: false },
-      imFreezerTwoHum: { label: '%', addSpace: false },
-      imFreezerThreeHum: { label: '%', addSpace: false },
-      imFridgeOneHum: { label: '%', addSpace: false },
-      imFridgeTwoHum: { label: '%', addSpace: false },
-      imIncubatorOneHum: { label: '%', addSpace: false },
-      imIncubatorTwoHum: { label: '%', addSpace: false },
-
-      hum: { label: '%', addSpace: false },
-      percent_humidity: { label: '%', addSpace: false },
-      humidity: { label: '%', addSpace: false },
-      rain_15_min_inches: { label: 'inches', addSpace: true },
-      wind_speed: { label: 'MPH', addSpace: true },
-      soil_moisture: { label: 'centibars', addSpace: true },
-      leaf_wetness: { label: 'out of 15', addSpace: true },
-    };
-
-    return metricLabels[metric] || { label: '', addSpace: false };
-  };
-
-  const metricToName = {
-    temperature: 'Temperature',
-    percent_humidity: 'Humidity',
-    wind_speed: 'Wind',
-    soil_moisture: 'Soil Moisture',
-    leaf_wetness: 'Leaf Wetness',
-    rain_15_min_inches: 'Rainfall',
-    temp: 'Temperature (Watchdog)',
-    hum: 'Humidity (Watchdog)',
-    rctemp: 'Temperature (Rivercity)',
-    humidity: 'Humidity (Rivercity)',
-    imFreezerOneTemp: 'Freezer #1 Temp',
-    imFreezerOneHum: 'Freezer #1 Humidity',
-    imFreezerTwoTemp: 'Freezer #2 Temp',
-    imFreezerTwoHum: 'Freezer #2 Humidity',
-    imFreezerThreeTemp: 'Freezer #3 Temp',
-    imFreezerThreeHum: 'Freezer #3 Humidity',
-    imFridgeOneTemp: 'Fridge #1 Temp',
-    imFridgeOneHum: 'Fridge #1 Humidity',
-    imFridgeTwoTemp: 'Fridge #2 Temp',
-    imFridgeTwoHum: 'Fridge #2 Humidity',
-    imIncubatorOneTemp: 'Incubator #1 Temp',
-    imIncubatorOneHum: 'Incubator #1 Humidity',
-    imIncubatorTwoTemp: 'Incubator #2 Temp',
-    imIncubatorTwoHum: 'Incubator #2 Humidity',
+  const copyToClipboard = () => {
+    setHasCopied(true);
+    const textToCopy = JSON.stringify(recapData, null, 2);
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      toast({
+        title: 'Copied to clipboard!',
+        description: 'The weekly recap data has been copied to your clipboard.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    });
   };
 
   return (
@@ -262,7 +272,6 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
           shadow="lg"
           bg="gray.900"
           color="white"
-          // mt={4}
         >
           {/* Box for both rows of cards */}
           <Box width="100%">
@@ -298,7 +307,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                           {addSpace ? ' ' : ''}
                           {label}
                         </StatNumber>
-                        <StatHelpText color="green" >
+                        <StatHelpText color="green">
                           {/* {recapData[selectedSensor]?.[`${type}Change`]}% */}
                           100% ▲
                         </StatHelpText>
@@ -334,10 +343,10 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     <StatNumber fontSize="4xl" color="white">
                       {alertCounts[recapData[selectedSensor]?.metric] || 0}
                     </StatNumber>
-                    <StatHelpText color="red" >
-                      100% ▼ 
+                    <StatHelpText color="red">100% ▼</StatHelpText>
+                    <StatHelpText color="gray.400" fontSize={'md'}>
+                      vs last week
                     </StatHelpText>
-                    <StatHelpText color="gray.400" fontSize={'md'}>vs last week</StatHelpText>
                   </Stat>
                 </Box>
               </motion.div>
@@ -348,7 +357,6 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
               <SimpleGrid
                 columns={{ base: 1, sm: 1, md: 2 }}
                 spacing={6}
-                // mt={6}
                 width="100%"
               >
                 <motion.div
@@ -366,7 +374,9 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     maxWidth="100%"
                     textAlign="left"
                     position="relative"
-                    height="auto"
+                    // height="auto"
+
+                    maxHeight="335px"
                   >
                     <Heading
                       size="md"
@@ -377,7 +387,8 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     >
                       Alerts for Selected Week
                     </Heading>
-                    <Collapse startingHeight={200} in={expandAlerts}>
+                    {/* <Collapse startingHeight={200} in={expandAlerts}> */}
+                    <Box overflowY={'scroll'} maxHeight="250px">
                       {recentAlerts.map(alert => (
                         <Box key={alert.id} mb={2}>
                           <Text fontSize="sm" color="white">
@@ -386,8 +397,9 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                           <Divider mb={2} mt={2} borderColor="whiteAlpha.600" />
                         </Box>
                       ))}
-                    </Collapse>
-                    <Flex justifyContent="center" mt={2}>
+                    </Box>
+                    {/* </Collapse> */}
+                    {/* <Flex justifyContent="center" mt={2}>
                       <IconButton
                         onClick={() => setExpandAlerts(!expandAlerts)}
                         icon={
@@ -398,7 +410,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                         size="sm"
                         variant="blue"
                       />
-                    </Flex>
+                    </Flex> */}
                   </Box>
                 </motion.div>
                 <motion.div
@@ -411,15 +423,36 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     borderRadius={'xl'}
                     p={6}
                     alignSelf="flex-start"
+                    height={'auto'} // Set max height for the scroll box
+                    // overflowY="auto" // Enable vertical scroll
                   >
                     <Heading fontSize="lg" mb={2}>
-                      AI Analysis
+                      Recap Data
                     </Heading>
-                    <Box><Text>{recapData}</Text></Box>
-                    <Button variant="blue" mr={4}>
-                      Analyze Week
+                    <Box
+                      p={4}
+                      bg="gray.700"
+                      borderRadius="md"
+                      maxHeight="200px"
+                      overflowY="scroll"
+                      mb={4}
+                    >
+                      <Text fontSize="xs" color="white">
+                        {JSON.stringify(recapData, null, 2)}
+                      </Text>
+                      <Text>ALERTS HERE!!!!!</Text>
+                    </Box>
+                    <Button variant="blue" onClick={copyToClipboard}>
+                      Copy to Clipboard
                     </Button>
-                    <Button variant="blue">Show Graph</Button>
+                    <Button variant={'blue'} isDisabled={!hasCopied}>
+                      Analyze Recap
+                    </Button>
+                    {!hasCopied && (
+                      <Badge ml={12} colorScheme="green" fontSize={'sm'}>
+                        Please copy to clipboard to access AI Anyltics
+                      </Badge>
+                    )}
                   </Box>
                 </motion.div>
               </SimpleGrid>
