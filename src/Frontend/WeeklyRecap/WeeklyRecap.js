@@ -11,7 +11,6 @@ import {
   Stat,
   Button,
   useToast,
-  Badge,
   Menu,
   MenuButton,
   MenuList,
@@ -40,6 +39,23 @@ const adjustWeekStartDate = date => {
   }
 
   return currentDate.toISOString().split('T')[0]; // Return adjusted date in YYYY-MM-DD format
+};
+
+const calculateDifferential = (current, previous) => {
+  if (previous === undefined || current === undefined) return null; // Safety check for undefined data
+
+  console.log(current, previous);
+
+  const difference = current - previous;
+  const percentage = ((difference / previous) * 100).toFixed(2);
+
+  if (difference > 0) {
+    return { value: `${percentage}% ▲`, color: 'green' };
+  } else if (difference < 0) {
+    return { value: `${percentage}% ▼`, color: 'red' };
+  } else {
+    return { value: 'No change', color: 'gray' };
+  }
 };
 
 // Utility functions here (formatDateMMDDYY, getStartOfWeek, getEndDate, getLabelForMetric, metricToName)
@@ -127,6 +143,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     [];
 
   const [recapData, setRecapData] = useState({});
+  const [previousRecapData, setPreviousRecapData] = useState({});
   const [recentAlerts, setRecentAlerts] = useState([]);
   const [alertCounts, setAlertCounts] = useState({});
   const [weekStartDate, setWeekStartDate] = useState('');
@@ -246,6 +263,29 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     fetchSensorData();
   }, [selectedSensor, weekStartDate, weekEndDate]);
 
+  useEffect(() => {
+    const fetchPreviousWeekData = async () => {
+      if (!userEmail || !userMetrics.length || !weekStartDate) return;
+
+      const previousWeekStartDate = new Date(weekStartDate);
+      previousWeekStartDate.setDate(previousWeekStartDate.getDate() - 7); // Move back one week
+
+      try {
+        const previousRecapResponse = await axios.get('/api/weekly-recap', {
+          params: {
+            user_email: userEmail,
+            week_start_date: previousWeekStartDate.toISOString().split('T')[0],
+          },
+        });
+        setPreviousRecapData(previousRecapResponse.data);
+      } catch (error) {
+        console.error('Error fetching previous week data:', error);
+      }
+    };
+
+    fetchPreviousWeekData();
+  }, [userEmail, userMetrics, weekStartDate]);
+
   const handleWeekChange = e => {
     const selectedWeekStartDate = e.target.value;
     const selectedWeekEndDate = formatDateMMDDYY(
@@ -327,6 +367,16 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
 
     document.body.removeChild(textArea);
   };
+
+  const currentAlertCount = alertCounts[recapData[selectedSensor]?.metric] || 0;
+  const previousAlertCount =
+    alertCounts[previousRecapData[selectedSensor]?.metric] || 0;
+  const alertDifferential = calculateDifferential(
+    currentAlertCount,
+    previousAlertCount
+  );
+
+
 
   return (
     <Box
@@ -429,7 +479,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
           </Box>
         </Flex>
       )}
-      
+
       {recapData && selectedSensor && (
         <Box
           p={6}
@@ -445,6 +495,16 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
               {['high', 'avg', 'low'].map((type, index) => {
                 const { label, addSpace } = getLabelForMetric(
                   recapData[selectedSensor]?.metric
+                );
+
+                // Get the current and previous week's values
+                const currentValue = recapData[selectedSensor]?.[type];
+                const previousValue = previousRecapData[selectedSensor]?.[type];
+
+                // Calculate the differential
+                const differential = calculateDifferential(
+                  currentValue,
+                  previousValue
                 );
                 return (
                   <motion.div
@@ -473,12 +533,16 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                           {addSpace ? ' ' : ''}
                           {label}
                         </StatNumber>
-                        {/* <StatHelpText color="green">
-                          100% ▲
-                        </StatHelpText>
-                        <StatHelpText color="gray.400" fontSize={'md'}>
-                          vs last week
-                        </StatHelpText> */}
+                        {differential && (
+                          <>
+                            <StatHelpText color={differential.color}>
+                              {differential.value}
+                            </StatHelpText>
+                            <StatHelpText color="gray.400" fontSize={'md'}>
+                              vs previous week
+                            </StatHelpText>
+                          </>
+                        )}
                       </Stat>
                     </Box>
                   </motion.div>
@@ -507,10 +571,16 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     <StatNumber fontSize="4xl" color="white" mb={1}>
                       {alertCounts[recapData[selectedSensor]?.metric] || 0}
                     </StatNumber>
-                    {/* <StatHelpText color="red">100% ▼</StatHelpText>
-                    <StatHelpText color="gray.400" fontSize={'md'}>
-                      vs last week
-                    </StatHelpText> */}
+                    {alertDifferential && (
+                      <>
+                      <StatHelpText color={alertDifferential.color}>
+                        {alertDifferential.value}
+                      </StatHelpText>
+                      <StatHelpText color="gray.400" fontSize={'md'}>
+                        vs previous week
+                      </StatHelpText>
+                      </>
+                    )}
                   </Stat>
                 </Box>
               </motion.div>
@@ -521,14 +591,14 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 2 }}
               >
-            <RecapChartWrapper>
-              <LineChart
-                data={sensorData}
-                metric={recapData[selectedSensor]?.metric}
-              />
-            </RecapChartWrapper>
-            </motion.div>
-          )}
+                <RecapChartWrapper>
+                  <LineChart
+                    data={sensorData}
+                    metric={recapData[selectedSensor]?.metric}
+                  />
+                </RecapChartWrapper>
+              </motion.div>
+            )}
 
             {/* Second row of cards */}
             {recentAlerts && (
@@ -604,13 +674,25 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     height="335px"
                     position={'relative'}
                   >
-                    <Heading size={'md'} mb={2} color={'white'} textDecoration={'underline'}>
+                    <Heading
+                      size={'md'}
+                      mb={2}
+                      color={'white'}
+                      textDecoration={'underline'}
+                    >
                       AI Analysis
                     </Heading>
-                    <Box p={4} bg="gray.700" borderRadius="md" mb={4} color="white" fontSize={'lg'}>
+                    <Box
+                      p={4}
+                      bg="gray.700"
+                      borderRadius="md"
+                      mb={4}
+                      color="white"
+                      fontSize={'lg'}
+                    >
                       If you would like to analyze this data, please click the
                       button below. It will copy the data into your clipboard.
-                      Then a chatbot will be launched to analyze the data. 
+                      Then a chatbot will be launched to analyze the data.
                       Please paste the data into the chatbot to analyze it.
                     </Box>
                     <Button
@@ -619,9 +701,9 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                       width={'99%'}
                       mt={isLargerThan768 ? 0 : 4}
                       size={isLargerThan768 ? 'lg' : 'md'}
-                      position="absolute" 
-                      bottom="4"           
-                      left="1"            
+                      position="absolute"
+                      bottom="4"
+                      left="1"
                     >
                       Analyze Recap
                     </Button>
@@ -630,7 +712,6 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
               </SimpleGrid>
             )}
           </Box>
-
         </Box>
       )}
       {showChatbot && (
