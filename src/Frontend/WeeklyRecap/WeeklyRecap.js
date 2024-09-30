@@ -344,9 +344,10 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
           mb={4}
           px={1}
         >
-          <Heading size="lg" fontWeight="bold" mb={!isLargerThan768 ? 4 : 0}>
-            Recap for {formatDateMMDDYY(new Date(weekStartDate))} -{' '}
-            {formatDateMMDDYY(new Date(weekEndDate))}{' '}
+          <Heading size={isLargerThan768 ? 'lg' : 'md'} fontWeight="bold" mb={!isLargerThan768 ? 4 : 0}>
+            Recap for {metricToName[recapData[selectedSensor]?.metric] ||
+            selectedSensor} ({formatDateMMDDYY(new Date(weekStartDate))} -{' '}
+            {formatDateMMDDYY(new Date(weekEndDate))})
           </Heading>
           <Box display="flex" gap={4}>
             <Menu>
@@ -539,7 +540,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                       textDecoration="underline"
                       color={'white'}
                     >
-                      Alerts for Selected Week
+                      All Alerts for Selected Week
                     </Heading>
                     <Box overflowY={'scroll'} maxHeight="250px">
                       {recentAlerts.length > 0 ? (
