@@ -26,7 +26,7 @@ import { motion } from 'framer-motion';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import ChatbotModal from './WeeklyRecapAiModal.js';
 import { LineChart } from '../Charts/Charts.js';
-import ChartWrapper from '../Charts/ChartWrapper.js';
+import RecapChartWrapper from './RecapChartWrapper.js';
 
 // Helper function to adjust dates
 const adjustWeekStartDate = date => {
@@ -641,12 +641,12 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
         />
       )}
       {sensorData && sensorData.length > 0 && recapData && (
-        // <ChartWrapper>
+        <RecapChartWrapper>
         <LineChart
           data={sensorData}
           metric={recapData[selectedSensor]?.metric}
         />
-        // </ChartWrapper>
+        </RecapChartWrapper>
       )}
     </Box>
   );
