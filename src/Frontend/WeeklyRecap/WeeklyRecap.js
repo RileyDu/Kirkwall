@@ -336,6 +336,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     onClick={() =>
                       handleSensorChange({ target: { value: sensor } })
                     }
+                    bg={'gray.700'}
                     _hover={{ bg: 'gray.600' }}
                     _focus={{ bg: '#3D5A80' }}
                   >
@@ -373,6 +374,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     onClick={() =>
                       handleWeekChange({ target: { value: week } })
                     }
+                    bg={'gray.700'}
                     _hover={{ bg: 'gray.600' }}
                     _focus={{ bg: '#3D5A80' }}
                   >
