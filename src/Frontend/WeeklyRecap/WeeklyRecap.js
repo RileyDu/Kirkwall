@@ -221,29 +221,29 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     fetchWeeklyRecapData();
   }, [userEmail, userMetrics, weekStartDate]);
 
-  // useEffect(() => {
-  //   const fetchSensorData = async () => {
-  //     if (!selectedSensor || !weekStartDate || !weekEndDate) return;
+  useEffect(() => {
+    const fetchSensorData = async () => {
+      if (!selectedSensor || !weekStartDate || !weekEndDate) return;
 
-  //     try {
-  //       const response = await axios.get('/api/sensor_data', {
-  //         params: {
-  //           sensor: recapData[selectedSensor]?.metric, // Send as a string, not an array
-  //           start_date: new Date(weekStartDate).toISOString().split('T')[0], // Format as YYYY-MM-DD
-  //           end_date: new Date(weekEndDate).toISOString().split('T')[0], // Format as YYYY-MM-DD
-  //         },
-  //       });
+      try {
+        const response = await axios.get('/api/sensor_data', {
+          params: {
+            sensor: recapData[selectedSensor]?.metric, // Send as a string, not an array
+            start_date: new Date(weekStartDate).toISOString().split('T')[0], // Format as YYYY-MM-DD
+            end_date: new Date(weekEndDate).toISOString().split('T')[0], // Format as YYYY-MM-DD
+          },
+        });
 
-  //       setSensorData(response.data);
-  //       console.log('Fetched sensor data for graph:', response.data);
-  //       // Set state to handle the graph data
-  //     } catch (error) {
-  //       console.error('Error fetching sensor data:', error);
-  //     }
-  //   };
+        setSensorData(response.data);
+        console.log('Fetched sensor data for graph:', response.data);
+        // Set state to handle the graph data
+      } catch (error) {
+        console.error('Error fetching sensor data:', error);
+      }
+    };
 
-  //   fetchSensorData();
-  // }, [selectedSensor, weekStartDate, weekEndDate]);
+    fetchSensorData();
+  }, [selectedSensor, weekStartDate, weekEndDate]);
 
   const handleWeekChange = e => {
     const selectedWeekStartDate = e.target.value;
@@ -639,12 +639,12 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
           onClose={() => setShowChatbot(false)}
         />
       )}
-      {/* {sensorData && sensorData.length > 0 && recapData && (
+      {sensorData && sensorData.length > 0 && recapData && (
         <LineChart
           data={sensorData}
           metric={recapData[selectedSensor]?.metric}
         />
-      )} */}
+      )}
     </Box>
   );
 };

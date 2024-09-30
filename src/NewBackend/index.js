@@ -9,7 +9,6 @@ import sgMail from '@sendgrid/mail';
 import { checkThresholds } from './cron/checkThresholds.js'; // Import your cron logic
 import { generateWeeklyRecap } from './cron/cronWeeklyRecap.js';
 
-
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -17,7 +16,7 @@ const port = process.env.PORT || 5000;
 
 //FOR SOME REASONE THIS NEEDS TO BE COMMENTED OUT FOR LOCAL VERCEL DEV, BUT NEEDS TO EXIST FOR PROD
 // if (process.env.NODE_ENV === 'production') {
-  app.use(express.json());
+app.use(express.json());
 // }
 
 app.use(cors());
@@ -203,10 +202,11 @@ app.get('/api/update_threshold/:id', async (req, res) => {
     res.redirect('/thankyou');
   } catch (error) {
     console.error('Error updating threshold:', error);
-    res.status(500).json({ error: 'An error occurred while updating threshold' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while updating threshold' });
   }
 });
-
 
 app.get('/api/alerts', async (req, res) => {
   try {
@@ -237,16 +237,17 @@ app.get('/api/alerts/recap', async (req, res) => {
       `SELECT * FROM alerts 
        WHERE timestamp >= $1 
        AND timestamp < $2 
-       ORDER BY timestamp DESC`, 
+       ORDER BY timestamp DESC`,
       [start_date, formattedEndDate]
     );
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching recent alerts:', error);
-    res.status(500).json({ error: 'An error occurred while fetching recent alerts' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while fetching recent alerts' });
   }
 });
-
 
 app.get('/api/alerts_per_user', async (req, res) => {
   const userMetrics = req.query.userMetrics; // Extract the userMetrics array from the query parameters
@@ -367,11 +368,11 @@ app.get('/api/update_admin_thresh/:phone', async (req, res) => {
     res.redirect('/thankyouadmin');
   } catch (error) {
     console.error('Error updating threshold:', error);
-    res.status(500).json({ error: 'An error occurred while updating threshold' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while updating threshold' });
   }
 });
-
-
 
 app.put('/api/update_admin/:id', async (req, res) => {
   const { id } = req.params;
@@ -474,7 +475,6 @@ app.put('/api/update_chart', async (req, res) => {
   }
 });
 
-
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
@@ -532,7 +532,9 @@ app.get('/api/equipment/:email', async (req, res) => {
       [email]
     );
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'No equipment found for this user.' });
+      return res
+        .status(404)
+        .json({ message: 'No equipment found for this user.' });
     }
     res.status(200).json(result.rows);
   } catch (error) {
@@ -561,13 +563,16 @@ app.post('/api/equipment', async (req, res) => {
 app.delete('/api/equipment/:id', async (req, res) => {
   const id = req.params.id;
   try {
-    const result = await client.query('DELETE FROM user_equipment WHERE id = $1', [id]);
+    const result = await client.query(
+      'DELETE FROM user_equipment WHERE id = $1',
+      [id]
+    );
     res.status(200).json({ message: 'Equipment deleted successfully' });
   } catch (error) {
     console.error('Error deleting equipment:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
-})
+});
 
 // Get energy credentials for a user by email
 app.get('/api/energy-info/:email', async (req, res) => {
@@ -578,7 +583,9 @@ app.get('/api/energy-info/:email', async (req, res) => {
       [email]
     );
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'No energy info found for this user.' });
+      return res
+        .status(404)
+        .json({ message: 'No energy info found for this user.' });
     }
     res.status(200).json(result.rows[0]);
   } catch (error) {
@@ -600,13 +607,14 @@ app.post('/api/energy-info', async (req, res) => {
   } catch (error) {
     if (error.code === '23505') {
       // 23505 is the error code for unique constraint violation in PostgreSQL
-      return res.status(409).json({ message: 'User with this email already exists.' });
+      return res
+        .status(409)
+        .json({ message: 'User with this email already exists.' });
     }
     console.error('Error adding energy info:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
-
 
 // Update the location via user
 app.put('/api/energy-info/:email', async (req, res) => {
@@ -618,9 +626,11 @@ app.put('/api/energy-info/:email', async (req, res) => {
       'UPDATE energy_info SET location = $1, updated_at = NOW() WHERE email = $2 RETURNING *',
       [location, email]
     );
-    
+
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'No user found with this email.' });
+      return res
+        .status(404)
+        .json({ message: 'No user found with this email.' });
     }
     res.status(200).json(result.rows[0]);
   } catch (error) {
@@ -631,7 +641,8 @@ app.put('/api/energy-info/:email', async (req, res) => {
 
 // POST route for adding weekly recap data
 app.post('/api/weekly-recap', async (req, res) => {
-  const { user_email, metric, week_start_date, high, low, avg, alert_count } = req.body;
+  const { user_email, metric, week_start_date, high, low, avg, alert_count } =
+    req.body;
 
   try {
     // Insert the new weekly recap data into the database
@@ -644,7 +655,9 @@ app.post('/api/weekly-recap', async (req, res) => {
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error('Error inserting weekly recap data:', error);
-    res.status(500).json({ error: 'An error occurred while inserting weekly recap data' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while inserting weekly recap data' });
   }
 });
 
@@ -672,13 +685,19 @@ app.get('/api/weekly-recap', async (req, res) => {
     const result = await client.query(query, queryParams);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'No weekly recap data found for the specified criteria' });
+      return res
+        .status(404)
+        .json({
+          error: 'No weekly recap data found for the specified criteria',
+        });
     }
 
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching weekly recap data:', error);
-    res.status(500).json({ error: 'An error occurred while fetching weekly recap data' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while fetching weekly recap data' });
   }
 });
 
@@ -693,7 +712,9 @@ app.get('/api/weekly-recap/weeks', async (req, res) => {
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching week start dates:', error);
-    res.status(500).json({ error: 'An error occurred while fetching week start dates' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while fetching week start dates' });
   }
 });
 
@@ -710,7 +731,9 @@ app.delete('/api/weekly-recap/:id', async (req, res) => {
     res.status(200).json({ message: 'Weekly recap data deleted successfully' });
   } catch (error) {
     console.error('Error deleting weekly recap data:', error);
-    res.status(500).json({ error: 'An error occurred while deleting weekly recap data' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while deleting weekly recap data' });
   }
 });
 
@@ -721,10 +744,28 @@ app.get('/api/sensor_data', async (req, res) => {
     return res.status(400).json({ error: 'Missing required query parameters' });
   }
 
-  // No need to convert dates to UNIX timestamps since message_timestamp is an ISO string
-  const params = [start_date, end_date];
+  // Define the deveui mapping object
+  const deveuiPerMetric = {
+    rctemp: '0080E115054FF0B7',
+    humidity: '0080E115054FF0B7',
+    imFreezerOneTemp: '0080E1150618C9DE',
+    imFreezerOneHum: '0080E1150618C9DE',
+    imFreezerTwoTemp: '0080E115054FC6DF',
+    imFreezerTwoHum: '0080E115054FC6DF',
+    imFreezerThreeTemp: '0080E1150618B549',
+    imFreezerThreeHum: '0080E1150618B549',
+    imFridgeOneTemp: '0080E1150619155F',
+    imFridgeOneHum: '0080E1150619155F',
+    imFridgeTwoTemp: '0080E115061924EA',
+    imFridgeTwoHum: '0080E115061924EA',
+    imIncubatorOneTemp: '0080E115054FF1DC',
+    imIncubatorOneHum: '0080E115054FF1DC',
+    imIncubatorTwoTemp: '0080E1150618B45F',
+    imIncubatorTwoHum: '0080E1150618B45F',
+  };
 
   let query = '';
+  let params = [];
 
   // Build the query based on the selected sensor
   if (sensor === 'temperature') {
@@ -733,48 +774,128 @@ app.get('/api/sensor_data', async (req, res) => {
       FROM weather_data 
       WHERE message_timestamp BETWEEN $1 AND $2 
       ORDER BY message_timestamp ASC`;
+    params = [start_date, end_date];
   } else if (sensor === 'percent_humidity') {
     query = `
       SELECT percent_humidity, message_timestamp 
       FROM weather_data 
       WHERE message_timestamp BETWEEN $1 AND $2 
       ORDER BY message_timestamp ASC`;
+    params = [start_date, end_date];
   } else if (sensor === 'wind_speed') {
     query = `
       SELECT wind_speed, message_timestamp 
       FROM weather_data 
       WHERE message_timestamp BETWEEN $1 AND $2 
       ORDER BY message_timestamp ASC`;
+    params = [start_date, end_date];
   } else if (sensor === 'rain_15_min_inches') {
     query = `
       SELECT rain_15_min_inches, message_timestamp 
       FROM weather_data 
       WHERE message_timestamp BETWEEN $1 AND $2 
       ORDER BY message_timestamp ASC`;
+    params = [start_date, end_date];
   } else if (sensor === 'soil_moisture') {
     query = `
       SELECT soil_moisture, message_timestamp 
       FROM weather_data 
       WHERE message_timestamp BETWEEN $1 AND $2 
       ORDER BY message_timestamp ASC`;
+    params = [start_date, end_date];
   } else if (sensor === 'leaf_wetness') {
     query = `
       SELECT leaf_wetness, message_timestamp 
       FROM weather_data 
       WHERE message_timestamp BETWEEN $1 AND $2 
       ORDER BY message_timestamp ASC`;
+    params = [start_date, end_date];
+  } else if (sensor === 'temp') {
+    query = `
+      SELECT temp, reading_time 
+      FROM watchdog_data 
+      WHERE reading_time BETWEEN $1 AND $2 
+      ORDER BY reading_time ASC`;
+    params = [start_date, end_date];
+  } else if (sensor === 'hum') {
+    query = `
+      SELECT hum, reading_time
+      FROM watchdog_data 
+      WHERE reading_time BETWEEN $1 AND $2 
+      ORDER BY reading_time ASC`;
+    params = [start_date, end_date];
+  } else if (deveuiPerMetric[sensor]) {
+    // Use the deveui from the mapping object
+    query = `
+      SELECT rctemp, humidity, publishedat 
+      FROM rivercity_data 
+      WHERE deveui = $1 AND publishedat BETWEEN $2 AND $3 
+      ORDER BY publishedat ASC`;
+    params = [deveuiPerMetric[sensor], start_date, end_date];
   } else {
     return res.status(400).json({ error: 'Invalid sensor selected' });
   }
 
   try {
     const result = await client.query(query, params);
-    res.status(200).json(result.rows);
+
+    // Map through the result to rename keys dynamically
+    const renamedData = result.rows.map(row => {
+      const newRow = { ...row };
+
+      if (sensor === 'imFreezerOneTemp') {
+        newRow.imFreezerOneTemp = newRow.rctemp;
+        delete newRow.rctemp;
+      } else if (sensor === 'imFreezerOneHum') {
+        newRow.imFreezerOneHum = newRow.humidity;
+        delete newRow.humidity;
+      } else if (sensor === 'imFreezerTwoTemp') {
+        newRow.imFreezerTwoTemp = newRow.rctemp;
+        delete newRow.rctemp;
+      } else if (sensor === 'imFreezerTwoHum') {
+        newRow.imFreezerTwoHum = newRow.humidity;
+        delete newRow.humidity;
+      } else if (sensor === 'imFreezerThreeTemp') {
+        newRow.imFreezerThreeTemp = newRow.rctemp;
+        delete newRow.rctemp;
+      } else if (sensor === 'imFreezerThreeHum') {
+        newRow.imFreezerThreeHum = newRow.humidity;
+        delete newRow.humidity;
+      } else if (sensor === 'imFridgeOneTemp') {
+        newRow.imFridgeOneTemp = newRow.rctemp;
+        delete newRow.rctemp;
+      } else if (sensor === 'imFridgeOneHum') {
+        newRow.imFridgeOneHum = newRow.humidity;
+        delete newRow.humidity;
+      } else if (sensor === 'imFridgeTwoTemp') {
+        newRow.imFridgeTwoTemp = newRow.rctemp;
+        delete newRow.rctemp;
+      } else if (sensor === 'imFridgeTwoHum') {
+        newRow.imFridgeTwoHum = newRow.humidity;
+        delete newRow.humidity;
+      } else if (sensor === 'imIncubatorOneTemp') {
+        newRow.imIncubatorOneTemp = newRow.rctemp;
+        delete newRow.rctemp;
+      } else if (sensor === 'imIncubatorOneHum') {
+        newRow.imIncubatorOneHum = newRow.humidity;
+        delete newRow.humidity;
+      } else if (sensor === 'imIncubatorTwoTemp') {
+        newRow.imIncubatorTwoTemp = newRow.rctemp;
+        delete newRow.rctemp;
+      } else if (sensor === 'imIncubatorTwoHum') {
+        newRow.imIncubatorTwoHum = newRow.humidity;
+        delete newRow.humidity;
+      }
+      return newRow;
+    });
+
+    res.status(200).json(renamedData);
   } catch (error) {
     console.error('Error fetching sensor data:', error);
     res.status(500).json({ error: 'An error occurred while fetching sensor data' });
   }
 });
+
 
 
 
@@ -801,8 +922,6 @@ app.get('/api/run-weekly-recap', async (req, res) => {
   }
 });
 
-
-
 // Catch-all route for other API requests
 app.get('/api/*', (req, res) => {
   res.status(404).json({ error: 'API route not found' });
@@ -814,7 +933,6 @@ if (process.env.NODE_ENV === 'development') {
     console.log(`Server running locally on port ${port}`);
   });
 }
-
 
 // Export the app for Vercel
 export default app;
