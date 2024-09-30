@@ -17,7 +17,7 @@ import {
   MenuList,
   MenuItem,
   useMediaQuery,
-  StatHelpText
+  StatHelpText,
 } from '@chakra-ui/react';
 import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
@@ -25,19 +25,20 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import ChatbotModal from './WeeklyRecapAiModal.js';
+import { LineChart } from '../Charts/Charts.js';
 
 // Helper function to adjust dates
-const adjustWeekStartDate = (date) => {
-  const targetDate = "2024-09-16"; // The date format to compare
+const adjustWeekStartDate = date => {
+  const targetDate = '2024-09-16'; // The date format to compare
   const currentDate = new Date(date);
-  const formattedCurrentDate = currentDate.toISOString().split("T")[0]; // Get YYYY-MM-DD format
+  const formattedCurrentDate = currentDate.toISOString().split('T')[0]; // Get YYYY-MM-DD format
 
   // If the date does not match the target, subtract 6 days
   if (formattedCurrentDate !== targetDate) {
     currentDate.setDate(currentDate.getDate() - 6);
   }
 
-  return currentDate.toISOString().split("T")[0]; // Return adjusted date in YYYY-MM-DD format
+  return currentDate.toISOString().split('T')[0]; // Return adjusted date in YYYY-MM-DD format
 };
 
 // Utility functions here (formatDateMMDDYY, getStartOfWeek, getEndDate, getLabelForMetric, metricToName)
@@ -131,6 +132,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   const [weekEndDate, setWeekEndDate] = useState('');
   const [availableWeeks, setAvailableWeeks] = useState([]); // To store available weeks
   const [selectedSensor, setSelectedSensor] = useState(''); // State for selected sensor
+  const [sensorData, setSensorData] = useState({});
   const [hasCopied, setHasCopied] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
   const toast = useToast(); // For showing copy notifications
@@ -139,25 +141,27 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   useEffect(() => {
     const fetchAvailableWeeks = async () => {
       try {
-        const response = await axios.get("/api/weekly-recap/weeks");
-        const adjustedWeeks = response.data.map((week) => ({
+        const response = await axios.get('/api/weekly-recap/weeks');
+        const adjustedWeeks = response.data.map(week => ({
           ...week,
           week_start_date: adjustWeekStartDate(week.week_start_date),
         }));
-  
-        setAvailableWeeks(adjustedWeeks.map((week) => week.week_start_date));
-        console.log("Available weeks:", adjustedWeeks);
-  
+
+        setAvailableWeeks(adjustedWeeks.map(week => week.week_start_date));
+        console.log('Available weeks:', adjustedWeeks);
+
         if (adjustedWeeks.length > 0) {
           const mostRecentWeek = adjustedWeeks[0].week_start_date;
           setWeekStartDate(mostRecentWeek);
-          setWeekEndDate(formatDateMMDDYY(getEndDate(new Date(mostRecentWeek))));
+          setWeekEndDate(
+            formatDateMMDDYY(getEndDate(new Date(mostRecentWeek)))
+          );
         }
       } catch (error) {
-        console.error("Error fetching available weeks:", error);
+        console.error('Error fetching available weeks:', error);
       }
     };
-  
+
     fetchAvailableWeeks();
   }, []);
 
@@ -168,7 +172,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       let adjustedWeekStartDate = weekStartDate;
 
       // Check if weekStartDate doesn't match "2024-09-16"
-      if (weekStartDate !== "2024-09-16") {
+      if (weekStartDate !== '2024-09-16') {
         const date = new Date(weekStartDate);
         date.setDate(date.getDate() + 6); // Add 6 days to the weekStartDate
         adjustedWeekStartDate = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
@@ -176,7 +180,10 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
 
       try {
         const recapResponse = await axios.get('/api/weekly-recap', {
-          params: { user_email: userEmail, week_start_date: adjustedWeekStartDate },
+          params: {
+            user_email: userEmail,
+            week_start_date: adjustedWeekStartDate,
+          },
         });
         setRecapData(recapResponse.data);
 
@@ -198,7 +205,10 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
 
         // Set initial selected sensor only on initial page load
         if (!hasMounted.current) {
-          if (recapResponse.data && Object.keys(recapResponse.data).length > 0) {
+          if (
+            recapResponse.data &&
+            Object.keys(recapResponse.data).length > 0
+          ) {
             setSelectedSensor(Object.keys(recapResponse.data)[0]);
           }
           hasMounted.current = true; // Mark that the component has mounted
@@ -210,7 +220,30 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
 
     fetchWeeklyRecapData();
   }, [userEmail, userMetrics, weekStartDate]);
-  
+
+  useEffect(() => {
+    const fetchSensorData = async () => {
+      if (!selectedSensor || !weekStartDate || !weekEndDate) return;
+
+      try {
+        const response = await axios.get('/api/sensor_data', {
+          params: {
+            sensor: recapData[selectedSensor]?.metric, // Send as a string, not an array
+            start_date: new Date(weekStartDate).toISOString().split('T')[0], // Format as YYYY-MM-DD
+            end_date: new Date(weekEndDate).toISOString().split('T')[0], // Format as YYYY-MM-DD
+          },
+        });
+
+        setSensorData(response.data);
+        console.log('Fetched sensor data for graph:', response.data);
+        // Set state to handle the graph data
+      } catch (error) {
+        console.error('Error fetching sensor data:', error);
+      }
+    };
+
+    fetchSensorData();
+  }, [selectedSensor, weekStartDate, weekEndDate]);
 
   const handleWeekChange = e => {
     const selectedWeekStartDate = e.target.value;
@@ -316,36 +349,38 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
             {formatDateMMDDYY(new Date(weekEndDate))}{' '}
           </Heading>
           <Box display="flex" gap={4}>
-          <Menu>
-  <MenuButton
-    as={Button}
-    rightIcon={<ChevronDownIcon />}
-    maxWidth="200px"
-    borderRadius="md"
-    shadow="sm"
-    bg="gray.800"
-    color="white"
-    _hover={{ shadow: 'md' }}
-    _focus={{ borderColor: 'teal.500' }}
-  >
-    {metricToName[recapData[selectedSensor]?.metric] || selectedSensor || 'Select Sensor'}
-  </MenuButton>
-  <MenuList bg="gray.700" color="white">
-    {Object.keys(recapData).map(sensor => (
-      <MenuItem
-        key={sensor}
-        onClick={() => handleSensorChange({ target: { value: sensor } })}
-        bg={sensor === selectedSensor ? 'gray.900' : 'gray.700'}
-        _hover={{ bg: 'gray.600' }}
-        _focus={{ bg: '#3D5A80' }}
-      >
-        {metricToName[recapData[sensor]?.metric] || sensor}
-      </MenuItem>
-    ))}
-  </MenuList>
-</Menu>
-
-
+            <Menu>
+              <MenuButton
+                as={Button}
+                rightIcon={<ChevronDownIcon />}
+                maxWidth="200px"
+                borderRadius="md"
+                shadow="sm"
+                bg="gray.800"
+                color="white"
+                _hover={{ shadow: 'md' }}
+                _focus={{ borderColor: 'teal.500' }}
+              >
+                {metricToName[recapData[selectedSensor]?.metric] ||
+                  selectedSensor ||
+                  'Select Sensor'}
+              </MenuButton>
+              <MenuList bg="gray.700" color="white">
+                {Object.keys(recapData).map(sensor => (
+                  <MenuItem
+                    key={sensor}
+                    onClick={() =>
+                      handleSensorChange({ target: { value: sensor } })
+                    }
+                    bg={sensor === selectedSensor ? 'gray.900' : 'gray.700'}
+                    _hover={{ bg: 'gray.600' }}
+                    _focus={{ bg: '#3D5A80' }}
+                  >
+                    {metricToName[recapData[sensor]?.metric] || sensor}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Menu>
             <Menu>
               <MenuButton
                 as={Button}
@@ -586,6 +621,12 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
         <ChatbotModal
           showChatbot={showChatbot}
           onClose={() => setShowChatbot(false)}
+        />
+      )}
+      {sensorData && sensorData.length > 0 && recapData && (
+        <LineChart
+          data={sensorData}
+          metric={recapData[selectedSensor]?.metric}
         />
       )}
     </Box>

@@ -714,6 +714,70 @@ app.delete('/api/weekly-recap/:id', async (req, res) => {
   }
 });
 
+app.get('/api/sensor_data', async (req, res) => {
+  const { sensor, start_date, end_date } = req.query;
+
+  if (!sensor || !start_date || !end_date) {
+    return res.status(400).json({ error: 'Missing required query parameters' });
+  }
+
+  // No need to convert dates to UNIX timestamps since message_timestamp is an ISO string
+  const params = [start_date, end_date];
+
+  let query = '';
+
+  // Build the query based on the selected sensor
+  if (sensor === 'temperature') {
+    query = `
+      SELECT temperature, message_timestamp 
+      FROM weather_data 
+      WHERE message_timestamp BETWEEN $1 AND $2 
+      ORDER BY message_timestamp ASC`;
+  } else if (sensor === 'percent_humidity') {
+    query = `
+      SELECT percent_humidity, message_timestamp 
+      FROM weather_data 
+      WHERE message_timestamp BETWEEN $1 AND $2 
+      ORDER BY message_timestamp ASC`;
+  } else if (sensor === 'wind_speed') {
+    query = `
+      SELECT wind_speed, message_timestamp 
+      FROM weather_data 
+      WHERE message_timestamp BETWEEN $1 AND $2 
+      ORDER BY message_timestamp ASC`;
+  } else if (sensor === 'rain_15_min_inches') {
+    query = `
+      SELECT rain_15_min_inches, message_timestamp 
+      FROM weather_data 
+      WHERE message_timestamp BETWEEN $1 AND $2 
+      ORDER BY message_timestamp ASC`;
+  } else if (sensor === 'soil_moisture') {
+    query = `
+      SELECT soil_moisture, message_timestamp 
+      FROM weather_data 
+      WHERE message_timestamp BETWEEN $1 AND $2 
+      ORDER BY message_timestamp ASC`;
+  } else if (sensor === 'leaf_wetness') {
+    query = `
+      SELECT leaf_wetness, message_timestamp 
+      FROM weather_data 
+      WHERE message_timestamp BETWEEN $1 AND $2 
+      ORDER BY message_timestamp ASC`;
+  } else {
+    return res.status(400).json({ error: 'Invalid sensor selected' });
+  }
+
+  try {
+    const result = await client.query(query, params);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching sensor data:', error);
+    res.status(500).json({ error: 'An error occurred while fetching sensor data' });
+  }
+});
+
+
+
 
 // Cron Job route that runs every 10 minutes to check live values against user thresholds
 app.get('/api/run-check-thresholds', async (req, res) => {
