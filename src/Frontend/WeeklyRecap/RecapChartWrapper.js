@@ -25,6 +25,7 @@ const RecapChartWrapper = ({ children }) => {
       bg={getBackgroundColor(colorMode)}
       h="500px"
       w="100%"
+      mt={6}
     >
       {children}
     </Box>

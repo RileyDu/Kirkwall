@@ -345,9 +345,14 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
           mb={4}
           px={1}
         >
-          <Heading size={isLargerThan768 ? 'lg' : 'md'} fontWeight="bold" mb={!isLargerThan768 ? 4 : 0}>
-            Recap for {metricToName[recapData[selectedSensor]?.metric] ||
-            selectedSensor} ({formatDateMMDDYY(new Date(weekStartDate))} -{' '}
+          <Heading
+            size={isLargerThan768 ? 'lg' : 'md'}
+            fontWeight="bold"
+            mb={!isLargerThan768 ? 4 : 0}
+          >
+            Recap for{' '}
+            {metricToName[recapData[selectedSensor]?.metric] || selectedSensor}{' '}
+            ({formatDateMMDDYY(new Date(weekStartDate))} -{' '}
             {formatDateMMDDYY(new Date(weekEndDate))})
           </Heading>
           <Box display="flex" gap={4}>
@@ -632,6 +637,14 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
               </SimpleGrid>
             )}
           </Box>
+          {sensorData && sensorData.length > 0 && recapData && (
+            <RecapChartWrapper>
+              <LineChart
+                data={sensorData}
+                metric={recapData[selectedSensor]?.metric}
+              />
+            </RecapChartWrapper>
+          )}
         </Box>
       )}
       {showChatbot && (
@@ -639,14 +652,6 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
           showChatbot={showChatbot}
           onClose={() => setShowChatbot(false)}
         />
-      )}
-      {sensorData && sensorData.length > 0 && recapData && (
-        <RecapChartWrapper>
-        <LineChart
-          data={sensorData}
-          metric={recapData[selectedSensor]?.metric}
-        />
-        </RecapChartWrapper>
       )}
     </Box>
   );
