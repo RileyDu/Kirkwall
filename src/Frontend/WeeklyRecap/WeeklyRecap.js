@@ -26,6 +26,20 @@ import { motion } from 'framer-motion';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import ChatbotModal from './WeeklyRecapAiModal.js';
 
+// Helper function to adjust dates
+const adjustWeekStartDate = (date) => {
+  const targetDate = "2024-09-16"; // The date format to compare
+  const currentDate = new Date(date);
+  const formattedCurrentDate = currentDate.toISOString().split("T")[0]; // Get YYYY-MM-DD format
+
+  // If the date does not match the target, subtract 6 days
+  if (formattedCurrentDate !== targetDate) {
+    currentDate.setDate(currentDate.getDate() - 6);
+  }
+
+  return currentDate.toISOString().split("T")[0]; // Return adjusted date in YYYY-MM-DD format
+};
+
 // Utility functions here (formatDateMMDDYY, getStartOfWeek, getEndDate, getLabelForMetric, metricToName)
 const metricToName = {
   temperature: 'Temperature',
@@ -121,53 +135,66 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   const [showChatbot, setShowChatbot] = useState(false);
   const toast = useToast(); // For showing copy notifications
 
-  // Fetch available weeks for dropdown on component mount
   useEffect(() => {
     const fetchAvailableWeeks = async () => {
       try {
-        const response = await axios.get('/api/weekly-recap/weeks');
-        setAvailableWeeks(response.data.map(week => week.week_start_date));
-        if (response.data.length > 0) {
-          const mostRecentWeek = response.data[0].week_start_date;
+        const response = await axios.get("/api/weekly-recap/weeks");
+        const adjustedWeeks = response.data.map((week) => ({
+          ...week,
+          week_start_date: adjustWeekStartDate(week.week_start_date),
+        }));
+  
+        setAvailableWeeks(adjustedWeeks.map((week) => week.week_start_date));
+        console.log("Available weeks:", adjustedWeeks);
+  
+        if (adjustedWeeks.length > 0) {
+          const mostRecentWeek = adjustedWeeks[0].week_start_date;
           setWeekStartDate(mostRecentWeek);
-          setWeekEndDate(
-            formatDateMMDDYY(getEndDate(new Date(mostRecentWeek)))
-          );
+          setWeekEndDate(formatDateMMDDYY(getEndDate(new Date(mostRecentWeek))));
         }
       } catch (error) {
-        console.error('Error fetching available weeks:', error);
+        console.error("Error fetching available weeks:", error);
       }
     };
-
+  
     fetchAvailableWeeks();
   }, []);
 
   useEffect(() => {
     const fetchWeeklyRecapData = async () => {
       if (!userEmail || userMetrics.length === 0 || !weekStartDate) return;
-
+  
+      let adjustedWeekStartDate = weekStartDate;
+  
+      // Check if weekStartDate doesn't match "2024-09-16"
+      if (weekStartDate !== "2024-09-16") {
+        const date = new Date(weekStartDate);
+        date.setDate(date.getDate() + 6); // Add 6 days to the weekStartDate
+        adjustedWeekStartDate = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+      }
+  
       try {
         const recapResponse = await axios.get('/api/weekly-recap', {
-          params: { user_email: userEmail, week_start_date: weekStartDate },
+          params: { user_email: userEmail, week_start_date: adjustedWeekStartDate },
         });
         setRecapData(recapResponse.data);
-
+  
         const alertResponse = await axios.get('/api/alerts/recap', {
           params: { start_date: weekStartDate },
         });
         const filteredAlerts = alertResponse.data.filter(alert =>
           userMetrics.includes(alert.metric)
         );
-
+  
         setRecentAlerts(filteredAlerts);
-
+  
         // Count alerts by metric
         const alertCount = filteredAlerts.reduce((count, alert) => {
           count[alert.metric] = (count[alert.metric] || 0) + 1;
           return count;
         }, {});
         setAlertCounts(alertCount);
-
+  
         // Set initial selected sensor to the first metric in the list
         if (recapResponse.data && Object.keys(recapResponse.data).length > 0) {
           setSelectedSensor(Object.keys(recapResponse.data)[0]);
@@ -176,9 +203,10 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
         console.error('Error fetching data:', error);
       }
     };
-
+  
     fetchWeeklyRecapData();
   }, [userEmail, userMetrics, weekStartDate]);
+  
 
   const handleWeekChange = e => {
     const selectedWeekStartDate = e.target.value;
