@@ -261,7 +261,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   };
 
   const copyToClipboard = () => {
-    setHasCopied(true);
+    setShowChatbot(true);
     const combinedData = {
       recapData: recapData,
       recentAlerts: recentAlerts,
@@ -586,52 +586,20 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     borderWidth={'1px'}
                     p={6}
                     alignSelf="flex-start"
-                    height={'auto'}
+                    height="335px"
                   >
                     <Heading fontSize="lg" mb={2} color={'white'}>
-                      Recap Data
+                      AI Analysis
                     </Heading>
-                    <Box
-                      p={4}
-                      bg="gray.700"
-                      borderRadius="md"
-                      maxHeight="200px"
-                      overflowY="scroll"
-                      mb={4}
-                    >
-                      <Text fontSize="xs" color="white">
-                        {JSON.stringify(recapData, null, 2)}
-                      </Text>
-                      <Text fontSize="xs" color="white">
-                        {JSON.stringify(recentAlerts, null, 2)}
-                      </Text>
-                    </Box>
-                    <Button
-                      variant="blue"
-                      onClick={copyToClipboard}
-                      width={isLargerThan768 ? 'auto' : '100%'}
-                    >
-                      Copy to Clipboard
-                    </Button>
+                    <Box p={4} bg="gray.700" borderRadius="md" mb={4}></Box>
                     <Button
                       variant={'blue'}
-                      isDisabled={!hasCopied}
-                      onClick={() => setShowChatbot(true)}
+                      onClick={() => copyToClipboard()}
                       width={isLargerThan768 ? 'auto' : '100%'}
                       mt={isLargerThan768 ? 0 : 4}
                     >
                       Analyze Recap
                     </Button>
-                    {!hasCopied && (
-                      <Badge
-                        ml={isLargerThan768 ? 12 : 0}
-                        colorScheme="green"
-                        fontSize={'sm'}
-                        mt={isLargerThan768 ? 0 : 4}
-                      >
-                        Please copy to clipboard to access AI Analytics
-                      </Badge>
-                    )}
                   </Box>
                 </motion.div>
               </SimpleGrid>
