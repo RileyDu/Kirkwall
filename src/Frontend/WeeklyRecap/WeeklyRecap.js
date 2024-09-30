@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -134,6 +134,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   const [hasCopied, setHasCopied] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
   const toast = useToast(); // For showing copy notifications
+  const hasMounted = useRef(false);
 
   useEffect(() => {
     const fetchAvailableWeeks = async () => {
@@ -163,47 +164,50 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   useEffect(() => {
     const fetchWeeklyRecapData = async () => {
       if (!userEmail || userMetrics.length === 0 || !weekStartDate) return;
-  
+
       let adjustedWeekStartDate = weekStartDate;
-  
+
       // Check if weekStartDate doesn't match "2024-09-16"
       if (weekStartDate !== "2024-09-16") {
         const date = new Date(weekStartDate);
         date.setDate(date.getDate() + 6); // Add 6 days to the weekStartDate
         adjustedWeekStartDate = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
       }
-  
+
       try {
         const recapResponse = await axios.get('/api/weekly-recap', {
           params: { user_email: userEmail, week_start_date: adjustedWeekStartDate },
         });
         setRecapData(recapResponse.data);
-  
+
         const alertResponse = await axios.get('/api/alerts/recap', {
           params: { start_date: weekStartDate },
         });
         const filteredAlerts = alertResponse.data.filter(alert =>
           userMetrics.includes(alert.metric)
         );
-  
+
         setRecentAlerts(filteredAlerts);
-  
+
         // Count alerts by metric
         const alertCount = filteredAlerts.reduce((count, alert) => {
           count[alert.metric] = (count[alert.metric] || 0) + 1;
           return count;
         }, {});
         setAlertCounts(alertCount);
-  
-        // Set initial selected sensor to the first metric in the list
-        if (recapResponse.data && Object.keys(recapResponse.data).length > 0) {
-          setSelectedSensor(Object.keys(recapResponse.data)[0]);
+
+        // Set initial selected sensor only on initial page load
+        if (!hasMounted.current) {
+          if (recapResponse.data && Object.keys(recapResponse.data).length > 0) {
+            setSelectedSensor(Object.keys(recapResponse.data)[0]);
+          }
+          hasMounted.current = true; // Mark that the component has mounted
         }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-  
+
     fetchWeeklyRecapData();
   }, [userEmail, userMetrics, weekStartDate]);
   
