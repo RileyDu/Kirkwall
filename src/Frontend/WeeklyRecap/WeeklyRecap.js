@@ -221,29 +221,29 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     fetchWeeklyRecapData();
   }, [userEmail, userMetrics, weekStartDate]);
 
-  useEffect(() => {
-    const fetchSensorData = async () => {
-      if (!selectedSensor || !weekStartDate || !weekEndDate) return;
+  // useEffect(() => {
+  //   const fetchSensorData = async () => {
+  //     if (!selectedSensor || !weekStartDate || !weekEndDate) return;
 
-      try {
-        const response = await axios.get('/api/sensor_data', {
-          params: {
-            sensor: recapData[selectedSensor]?.metric, // Send as a string, not an array
-            start_date: new Date(weekStartDate).toISOString().split('T')[0], // Format as YYYY-MM-DD
-            end_date: new Date(weekEndDate).toISOString().split('T')[0], // Format as YYYY-MM-DD
-          },
-        });
+  //     try {
+  //       const response = await axios.get('/api/sensor_data', {
+  //         params: {
+  //           sensor: recapData[selectedSensor]?.metric, // Send as a string, not an array
+  //           start_date: new Date(weekStartDate).toISOString().split('T')[0], // Format as YYYY-MM-DD
+  //           end_date: new Date(weekEndDate).toISOString().split('T')[0], // Format as YYYY-MM-DD
+  //         },
+  //       });
 
-        setSensorData(response.data);
-        console.log('Fetched sensor data for graph:', response.data);
-        // Set state to handle the graph data
-      } catch (error) {
-        console.error('Error fetching sensor data:', error);
-      }
-    };
+  //       setSensorData(response.data);
+  //       console.log('Fetched sensor data for graph:', response.data);
+  //       // Set state to handle the graph data
+  //     } catch (error) {
+  //       console.error('Error fetching sensor data:', error);
+  //     }
+  //   };
 
-    fetchSensorData();
-  }, [selectedSensor, weekStartDate, weekEndDate]);
+  //   fetchSensorData();
+  // }, [selectedSensor, weekStartDate, weekEndDate]);
 
   const handleWeekChange = e => {
     const selectedWeekStartDate = e.target.value;
@@ -509,7 +509,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
             </SimpleGrid>
 
             {/* Second row of cards */}
-            {recentAlerts.length > 0 && (
+            {recentAlerts && (
               <SimpleGrid
                 columns={{ base: 1, sm: 1, md: 2 }}
                 spacing={6}
@@ -542,14 +542,29 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                       Alerts for Selected Week
                     </Heading>
                     <Box overflowY={'scroll'} maxHeight="250px">
-                      {recentAlerts.map(alert => (
-                        <Box key={alert.id} mb={2}>
-                          <Text fontSize="sm" color="white">
-                            {alert.message}
-                          </Text>
-                          <Divider mb={2} mt={2} borderColor="whiteAlpha.600" />
-                        </Box>
-                      ))}
+                      {recentAlerts.length > 0 ? (
+                        recentAlerts.map(alert => (
+                          <Box key={alert.id} mb={2}>
+                            <Text fontSize="sm" color="white">
+                              {alert.message}
+                            </Text>
+                            <Divider
+                              mb={2}
+                              mt={2}
+                              borderColor="whiteAlpha.600"
+                            />
+                          </Box>
+                        ))
+                      ) : (
+                        <Text
+                          fontSize="2xl"
+                          color="white"
+                          textAlign="center"
+                          mt={12}
+                        >
+                          No alerts for this week.
+                        </Text>
+                      )}
                     </Box>
                   </Box>
                 </motion.div>
@@ -623,12 +638,12 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
           onClose={() => setShowChatbot(false)}
         />
       )}
-      {sensorData && sensorData.length > 0 && recapData && (
+      {/* {sensorData && sensorData.length > 0 && recapData && (
         <LineChart
           data={sensorData}
           metric={recapData[selectedSensor]?.metric}
         />
-      )}
+      )} */}
     </Box>
   );
 };
