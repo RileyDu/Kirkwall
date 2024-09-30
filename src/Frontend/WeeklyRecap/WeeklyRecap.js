@@ -493,7 +493,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     maxWidth="100%"
                     textAlign="left"
                     position="relative"
-                    maxHeight="335px"
+                    height="335px"
                   >
                     <Heading
                       size="md"
