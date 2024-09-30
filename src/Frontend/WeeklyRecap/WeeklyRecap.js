@@ -316,39 +316,35 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
             {formatDateMMDDYY(new Date(weekEndDate))}{' '}
           </Heading>
           <Box display="flex" gap={4}>
-            <Menu>
-              <MenuButton
-                as={Button}
-                rightIcon={<ChevronDownIcon />}
-                maxWidth="200px"
-                borderRadius="md"
-                shadow="sm"
-                bg="gray.800"
-                color="white"
-                _hover={{ shadow: 'md' }}
-                _focus={{ borderColor: 'teal.500' }}
-                // border={'2px solid whiteAlpha.200'}
-              >
-                {metricToName[recapData[selectedSensor]?.metric] ||
-                  selectedSensor ||
-                  'Select Sensor'}
-              </MenuButton>
-              <MenuList bg="gray.700" color="white">
-                {Object.keys(recapData).map(sensor => (
-                  <MenuItem
-                    key={sensor}
-                    onClick={() =>
-                      handleSensorChange({ target: { value: sensor } })
-                    }
-                    bg={'gray.700'}
-                    _hover={{ bg: 'gray.600' }}
-                    _focus={{ bg: '#3D5A80' }}
-                  >
-                    {metricToName[recapData[sensor]?.metric] || sensor}
-                  </MenuItem>
-                ))}
-              </MenuList>
-            </Menu>
+          <Menu>
+  <MenuButton
+    as={Button}
+    rightIcon={<ChevronDownIcon />}
+    maxWidth="200px"
+    borderRadius="md"
+    shadow="sm"
+    bg="gray.800"
+    color="white"
+    _hover={{ shadow: 'md' }}
+    _focus={{ borderColor: 'teal.500' }}
+  >
+    {metricToName[recapData[selectedSensor]?.metric] || selectedSensor || 'Select Sensor'}
+  </MenuButton>
+  <MenuList bg="gray.700" color="white">
+    {Object.keys(recapData).map(sensor => (
+      <MenuItem
+        key={sensor}
+        onClick={() => handleSensorChange({ target: { value: sensor } })}
+        bg={sensor === selectedSensor ? 'gray.900' : 'gray.700'}
+        _hover={{ bg: 'gray.600' }}
+        _focus={{ bg: '#3D5A80' }}
+      >
+        {metricToName[recapData[sensor]?.metric] || sensor}
+      </MenuItem>
+    ))}
+  </MenuList>
+</Menu>
+
 
             <Menu>
               <MenuButton
@@ -378,7 +374,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     onClick={() =>
                       handleWeekChange({ target: { value: week } })
                     }
-                    bg={'gray.700'}
+                    bg={week === weekStartDate ? 'gray.900' : 'gray.700'}
                     _hover={{ bg: 'gray.600' }}
                     _focus={{ bg: '#3D5A80' }}
                   >
