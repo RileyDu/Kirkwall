@@ -44,7 +44,7 @@ const adjustWeekStartDate = date => {
 const calculateDifferential = (current, previous) => {
   if (previous === undefined || current === undefined) return null; // Safety check for undefined data
 
-  console.log(current, previous);
+  // console.log('current and previous', current, previous);
 
   const difference = current - previous;
   const percentage = ((difference / previous) * 100).toFixed(2);
@@ -53,6 +53,35 @@ const calculateDifferential = (current, previous) => {
     return { value: `${percentage}% ▲`, color: 'green' };
   } else if (difference < 0) {
     return { value: `${percentage}% ▼`, color: 'red' };
+  } else {
+    return { value: 'No change', color: 'gray' };
+  }
+};
+
+const calculateAlertDifferential = (current, previous) => {
+  console.log('current and previous', current, previous);
+  if (previous === 0 && current === 0)
+    return { value: 'No change', color: 'gray' }; // Both weeks have zero alerts
+  if (previous === undefined || current === undefined)
+    return { value: 'No change', color: 'gray' }; // Handle undefined data
+
+  // When there were no alerts in the previous week but there are alerts in the current week
+  if (previous === 0 && current > 0) {
+    return { value: '100% ▲', color: 'green' };
+  }
+
+  // When there were alerts in the previous week but none in the current week
+  if (previous > 0 && current === 0) {
+    return { value: '100% ▼', color: 'red' };
+  }
+
+  const difference = current - previous;
+  const percentage = ((difference / previous) * 100).toFixed(2);
+
+  if (difference > 0) {
+    return { value: `${percentage}% ▲`, color: 'green' };
+  } else if (difference < 0) {
+    return { value: `${Math.abs(percentage)}% ▼`, color: 'red' };
   } else {
     return { value: 'No change', color: 'gray' };
   }
@@ -145,7 +174,9 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   const [recapData, setRecapData] = useState({});
   const [previousRecapData, setPreviousRecapData] = useState({});
   const [recentAlerts, setRecentAlerts] = useState([]);
+  const [previousAlerts, setPreviousAlerts] = useState([]);
   const [alertCounts, setAlertCounts] = useState({});
+  const [previousAlertCounts, setPreviousAlertCounts] = useState({});
   const [weekStartDate, setWeekStartDate] = useState('');
   const [weekEndDate, setWeekEndDate] = useState('');
   const [availableWeeks, setAvailableWeeks] = useState([]); // To store available weeks
@@ -278,6 +309,23 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
           },
         });
         setPreviousRecapData(previousRecapResponse.data);
+        const alertResponse = await axios.get('/api/alerts/recap', {
+          params: {
+            start_date: previousWeekStartDate.toISOString().split('T')[0],
+          },
+        });
+        const filteredAlerts = alertResponse.data.filter(alert =>
+          userMetrics.includes(alert.metric)
+        );
+
+        setPreviousAlerts(filteredAlerts);
+
+        // Count alerts by metric
+        const alertCount = filteredAlerts.reduce((count, alert) => {
+          count[alert.metric] = (count[alert.metric] || 0) + 1;
+          return count;
+        }, {});
+        setPreviousAlertCounts(alertCount);
       } catch (error) {
         console.error('Error fetching previous week data:', error);
       }
@@ -370,13 +418,11 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
 
   const currentAlertCount = alertCounts[recapData[selectedSensor]?.metric] || 0;
   const previousAlertCount =
-    alertCounts[previousRecapData[selectedSensor]?.metric] || 0;
-  const alertDifferential = calculateDifferential(
+    previousAlertCounts[recapData[selectedSensor]?.metric] || 0;
+  const alertDifferential = calculateAlertDifferential(
     currentAlertCount,
     previousAlertCount
   );
-
-
 
   return (
     <Box
@@ -569,16 +615,16 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                       Alerts
                     </StatLabel>
                     <StatNumber fontSize="4xl" color="white" mb={1}>
-                      {alertCounts[recapData[selectedSensor]?.metric] || 0}
+                      {currentAlertCount}
                     </StatNumber>
                     {alertDifferential && (
                       <>
-                      <StatHelpText color={alertDifferential.color}>
-                        {alertDifferential.value}
-                      </StatHelpText>
-                      <StatHelpText color="gray.400" fontSize={'md'}>
-                        vs previous week
-                      </StatHelpText>
+                        <StatHelpText color={alertDifferential.color}>
+                          {alertDifferential.value}
+                        </StatHelpText>
+                        <StatHelpText color="gray.400" fontSize={'md'}>
+                          vs previous week
+                        </StatHelpText>
                       </>
                     )}
                   </Stat>
@@ -690,10 +736,11 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                       color="white"
                       fontSize={'lg'}
                     >
-                      If you would like to analyze this data, please click the
-                      button below. It will copy the data into your clipboard.
-                      Then a chatbot will be launched to analyze the data.
-                      Please paste the data into the chatbot to analyze it.
+                      If you would like to analyze the data for this week for
+                      all sensors, please click the button below. It will copy
+                      the data into your clipboard. A chatbot will be
+                      launched to analyze the data, please paste the data into
+                      the chatbot to analyze it.
                     </Box>
                     <Button
                       variant={'blue'}
