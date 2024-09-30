@@ -587,16 +587,26 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     p={6}
                     alignSelf="flex-start"
                     height="335px"
+                    position={'relative'}
                   >
-                    <Heading fontSize="lg" mb={2} color={'white'}>
+                    <Heading size={'md'} mb={2} color={'white'} textDecoration={'underline'}>
                       AI Analysis
                     </Heading>
-                    <Box p={4} bg="gray.700" borderRadius="md" mb={4}></Box>
+                    <Box p={4} bg="gray.700" borderRadius="md" mb={4} color="white" fontSize={'lg'}>
+                      If you would like to analyze this data, please click the
+                      button below. It will copy the data into your clipboard.
+                      Then a chatbot will be launched to analyze the data. 
+                      Please paste the data into the chatbot to analyze it.
+                    </Box>
                     <Button
                       variant={'blue'}
                       onClick={() => copyToClipboard()}
-                      width={isLargerThan768 ? 'auto' : '100%'}
+                      width={'99%'}
                       mt={isLargerThan768 ? 0 : 4}
+                      size={isLargerThan768 ? 'lg' : 'md'}
+                      position="absolute" 
+                      bottom="4"           
+                      left="1"            
                     >
                       Analyze Recap
                     </Button>
