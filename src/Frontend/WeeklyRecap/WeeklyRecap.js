@@ -562,6 +562,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                   >
                     <Box
                       p={6}
+                      borderColor={differential?.color || 'gray.400'}
                       borderWidth="1px"
                       borderRadius="xl"
                       shadow="lg"
@@ -604,6 +605,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                   p={6}
                   borderWidth="1px"
                   borderRadius="xl"
+                  borderColor={alertDifferential?.color || 'gray.400'}
                   shadow="lg"
                   bg="gray.800"
                   color="white"

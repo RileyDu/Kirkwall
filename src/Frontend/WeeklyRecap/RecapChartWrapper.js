@@ -16,7 +16,7 @@ const RecapChartWrapper = ({ children }) => {
 
   return (
     <Box
-      border="2px"
+      border="1px"
       borderColor={getBorderColor(colorMode)}
       borderRadius="lg"
       boxShadow="lg"
