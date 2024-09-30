@@ -429,6 +429,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
           </Box>
         </Flex>
       )}
+      
       {recapData && selectedSensor && (
         <Box
           p={6}
@@ -514,6 +515,20 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                 </Box>
               </motion.div>
             </SimpleGrid>
+            {sensorData && sensorData.length > 0 && recapData && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 2 }}
+              >
+            <RecapChartWrapper>
+              <LineChart
+                data={sensorData}
+                metric={recapData[selectedSensor]?.metric}
+              />
+            </RecapChartWrapper>
+            </motion.div>
+          )}
 
             {/* Second row of cards */}
             {recentAlerts && (
@@ -615,14 +630,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
               </SimpleGrid>
             )}
           </Box>
-          {sensorData && sensorData.length > 0 && recapData && (
-            <RecapChartWrapper>
-              <LineChart
-                data={sensorData}
-                metric={recapData[selectedSensor]?.metric}
-              />
-            </RecapChartWrapper>
-          )}
+
         </Box>
       )}
       {showChatbot && (

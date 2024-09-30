@@ -26,6 +26,7 @@ const RecapChartWrapper = ({ children }) => {
       h="500px"
       w="100%"
       mt={6}
+      mb={6}
     >
       {children}
     </Box>
