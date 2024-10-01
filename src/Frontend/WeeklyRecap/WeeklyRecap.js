@@ -443,6 +443,11 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
           mb={4}
           px={1}
         >
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.4 }}
+          >
           <Heading
             size={isLargerThan768 ? 'lg' : 'md'}
             fontWeight="bold"
@@ -453,6 +458,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
             ({formatDateMMDDYY(new Date(weekStartDate))} -{' '}
             {formatDateMMDDYY(new Date(weekEndDate))})
           </Heading>
+          </motion.div>
           <Box display="flex" gap={4}>
             <Menu>
               <MenuButton
