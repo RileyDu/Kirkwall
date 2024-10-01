@@ -287,7 +287,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                   </PopoverTrigger>
                   <PopoverContent
                     bg="#2D3748"
-                    borderColor="#F4B860"
+                    borderColor="whiteAlpha.600"
                     zIndex={1005}
                   >
                     <PopoverCloseButton size="lg" />
