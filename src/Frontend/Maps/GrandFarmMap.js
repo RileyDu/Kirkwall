@@ -8,20 +8,21 @@ import {
   Marker,
 } from '@vis.gl/react-google-maps';
 import { Heading, Box, useMediaQuery, useColorMode } from '@chakra-ui/react';
+import { motion } from 'framer-motion';
 
 const center = {
-    lat: 46.832556,
-    lng: -97.263596,
+  lat: 46.832556,
+  lng: -97.263596,
 };
 
 const locations = [
-    {
-        lat: 46.832556,
-        lng: -97.263596,
-        info: 'Grand Farm',
-        details: 'Temp, Humidity, Rainfall & Wind',
-        dataReading: 'Sends data every 5 minutes',
-      }
+  {
+    lat: 46.832556,
+    lng: -97.263596,
+    info: 'Grand Farm',
+    details: 'Temp, Humidity, Rainfall & Wind',
+    dataReading: 'Sends data every 5 minutes',
+  },
 ];
 
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
@@ -64,11 +65,23 @@ const GrandFarmMap = ({ statusOfAlerts }) => {
         pt={statusOfAlerts ? '10px' : '74px'}
         color={colorMode === 'light' ? 'black' : 'white'}
       >
-        <Heading size="xl" pb={'4'}>
-          Grand Farm Sensor Map
-        </Heading>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Heading size="xl" pb={'4'}>
+            Grand Farm Sensor Map
+          </Heading>
+        </motion.div>
       </Box>
-      <div className="map-container" style={mapContainerStyles}>
+      <motion.div
+        className="map-container"
+        style={mapContainerStyles}
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.5 }}
+      >
         <Map
           defaultCenter={center}
           defaultZoom={10}
@@ -115,7 +128,7 @@ const GrandFarmMap = ({ statusOfAlerts }) => {
             </AdvancedMarker>
           ))}
         </Map>
-      </div>
+      </motion.div>
     </APIProvider>
   );
 };
