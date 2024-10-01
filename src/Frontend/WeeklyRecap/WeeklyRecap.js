@@ -27,6 +27,8 @@ import ChatbotModal from './WeeklyRecapAiModal.js';
 import { LineChart } from '../Charts/Charts.js';
 import RecapChartWrapper from './RecapChartWrapper.js';
 
+const MotionBox = motion(Box);
+
 // Helper function to adjust dates
 const adjustWeekStartDate = date => {
   const targetDate = '2024-09-16'; // The date format to compare
@@ -527,13 +529,17 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
       )}
 
       {recapData && selectedSensor && (
-        <Box
+        <MotionBox
           p={6}
           borderWidth="1px"
           borderRadius="xl"
           shadow="lg"
           bg="gray.900"
           color="white"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0}}
+          transition={{ duration: 1 }}
         >
           {/* Box for both rows of cards */}
           <Box width="100%">
@@ -558,7 +564,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    transition={{ duration: 0.9, delay: index * 0.3 }}
                   >
                     <Box
                       p={6}
@@ -599,7 +605,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.3, delay: 0.3 }}
+                transition={{ duration: 0.3, delay: 0.9 }}
               >
                 <Box
                   p={6}
@@ -635,9 +641,9 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
             </SimpleGrid>
             {sensorData && sensorData.length > 0 && recapData && (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 2 }}
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.5 }}
               >
                 <RecapChartWrapper>
                   <LineChart
@@ -658,7 +664,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 2 }}
+                  transition={{ duration: 2, delay: 1.5 }}
                 >
                   <Box
                     p={6}
@@ -711,7 +717,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 2 }}
+                  transition={{ duration: 2, delay: 1.5 }}
                 >
                   <Box
                     bg={'gray.700'}
@@ -740,9 +746,9 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     >
                       If you would like to analyze the data for this week for
                       all sensors, please click the button below. It will copy
-                      the data into your clipboard. A chatbot will be
-                      launched to analyze the data, please paste the data into
-                      the chatbot to analyze it.
+                      the data into your clipboard. A chatbot will be launched
+                      to analyze the data, please paste the data into the
+                      chatbot to analyze it.
                     </Box>
                     <Button
                       variant={'blue'}
@@ -761,7 +767,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
               </SimpleGrid>
             )}
           </Box>
-        </Box>
+        </MotionBox>
       )}
       {showChatbot && (
         <ChatbotModal
