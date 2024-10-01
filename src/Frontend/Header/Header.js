@@ -188,9 +188,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     mb: 4,
     bg: '#cee8ff',
     color: '#212121',
-    _hover: {
-      bg: '#d7a247',
-    },
     boxShadow: 'md',
   };
 
