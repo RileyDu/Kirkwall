@@ -31,7 +31,12 @@ import {
   PopoverCloseButton,
   PopoverBody,
   PopoverFooter,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import MiniDashboard from './ChartDashboard.js';
 import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
@@ -67,6 +72,7 @@ const ChartExpandModal = ({
   const [emailsForThreshold, setEmailsForThreshold] = useState(['']);
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
+  const [alertFrequency, setAlertFrequency] = useState('');
   const [currentValue, setCurrentValue] = useState(null);
   const [threshKill, setThreshKill] = useState(false);
   const [timeframe, setTimeframe] = useState('');
@@ -95,6 +101,7 @@ const ChartExpandModal = ({
     const timeframe = threshold?.timeframe ?? '';
     const threshkill = threshold?.thresh_kill ?? false;
     const timestamp = threshold?.timestamp ?? '';
+    const alertInterval = threshold?.alert_interval ?? '';
     return {
       highThreshold,
       lowThreshold,
@@ -103,6 +110,7 @@ const ChartExpandModal = ({
       timeframe,
       threshkill,
       timestamp,
+      alertInterval
     };
   };
 
@@ -137,6 +145,7 @@ const ChartExpandModal = ({
     setThreshKill(latestThreshold.threshkill);
     setTimeframe(latestThreshold.timeframe);
     setTimestamp(latestThreshold.timestamp);
+    setAlertFrequency(latestThreshold.alertInterval);
 
     setPhoneNumbers(
       latestThreshold.phone?.split(',').map(phone => phone.trim()) || ['']
@@ -228,12 +237,15 @@ const ChartExpandModal = ({
     const emailsString = emailsForThreshold.join(', '); // Join emails into a single string
 
     // Use the newTimeframe if it's available, otherwise use the cleared timeframe when pause is off
-    console.log('threshKill', threshKill);
-    console.log('newTimeframe', newTimeframe);
-    console.log('timeframe', timeframe);
+    // console.log('threshKill', threshKill);
+    // console.log('newTimeframe', newTimeframe);
+    // console.log('timeframe', timeframe);
     const timeOfPause = threshKill ? newTimeframe || timeframe : null; // Ensure `null` when threshKill is off
-    console.log('timeOfPause', timeOfPause);
+    // console.log('timeOfPause', timeOfPause);
 
+    console.log('alert_interval', alertFrequency);
+
+    // Send the new threshold to the backend
     try {
       // Perform Axios POST request to create the threshold
       await axios.post('/api/create_threshold', {
@@ -245,6 +257,7 @@ const ChartExpandModal = ({
         timestamp: timestamp,
         thresh_kill: threshKill, // Send the correct boolean
         timeframe: timeOfPause, // Send `null` if `threshKill` is off
+        alert_interval: alertFrequency,
       });
 
       console.log('Alerts Set or Cleared');
@@ -271,6 +284,7 @@ const ChartExpandModal = ({
         timestamp: timestamp,
         thresh_kill: false, // Turn off thresh_kill
         timeframe: null, // Clear the timeframe
+        alert_interval: alertFrequency,
       });
       console.log(
         'Threshold updated: thresh_kill turned off and timeframe cleared.'
@@ -290,7 +304,7 @@ const ChartExpandModal = ({
     setLowThreshold('');
     setPhoneNumbers([]);
     setEmailsForThreshold([]);
-
+    setAlertFrequency(null);
     try {
       // Create a new threshold with empty values to clear the current threshold
       await axios.post('/api/create_threshold', {
@@ -302,6 +316,7 @@ const ChartExpandModal = ({
         timestamp: timestamp,
         thresh_kill: false, // Ensure thresh_kill is off
         timeframe: null, // Clear timeframe
+        alert_interval: null,
       });
       console.log('Alerts Cleared');
     } catch (error) {
@@ -750,6 +765,11 @@ const ChartExpandModal = ({
                               {emailsForThreshold.join(', ')}
                             </Text>
                           ) : null}
+                          {alertFrequency ? (
+                            <Text color="white" fontSize={['xs', 'md']}>
+                              <strong>Frequency:</strong> {alertFrequency} mins
+                            </Text>
+                          ) : null}
                         </HStack>
                         <Box
                           fontSize={['xs', 'md']}
@@ -1046,22 +1066,33 @@ const ChartExpandModal = ({
                 />
               </FormControl>
               <FormControl mt={4}>
-                <FormLabel>Alert Frequency (Minutes)</FormLabel>
-                <Select
-                  placeholder="Select frequency"
-                  value={alertFrequency}
-                  onChange={e => setAlertFrequency(e.target.value)}
-                  bg={'white'}
-                  border={'2px solid #3D5A80'}
-                  color={'#212121'}
-                >
-                  <option value="10">10 Minutes</option>
-                  <option value="20">20 Minutes</option>
-                  <option value="30">30 Minutes</option>
-                  <option value="40">40 Minutes</option>
-                  <option value="50">50 Minutes</option>
-                  <option value="60">60 Minutes</option>
-                </Select>
+                <FormLabel>Alert Frequency</FormLabel>
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    rightIcon={<ChevronDownIcon />}
+                    bg={'white'}
+                    color={'#212121'}
+                    w={'100%'}
+                  >
+                    {alertFrequency
+                      ? `${alertFrequency} Minutes`
+                      : 'Select Frequency'}
+                  </MenuButton>
+                  <MenuList bg="gray.700" color="white" border={'2px solid #3D5A80'}>
+                    {[10, 20, 30, 40, 50, 60].map(freq => (
+                      <MenuItem
+                        key={freq}
+                        onClick={() => setAlertFrequency(freq)}
+                        bg={freq === alertFrequency ? 'gray.900' : 'gray.700'}
+                        _hover={{ bg: 'gray.600' }}
+                        _focus={{ bg: '#3D5A80' }}
+                      >
+                        {freq} Minutes
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
               </FormControl>
             </ModalBody>
             <ModalFooter>

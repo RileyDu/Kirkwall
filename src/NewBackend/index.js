@@ -161,12 +161,12 @@ app.get('/api/thresholds', async (req, res) => {
 });
 
 app.post('/api/create_threshold', async (req, res) => {
-  const { metric, high, low, phone, email, timestamp, thresh_kill, timeframe } =
+  const { metric, high, low, phone, email, timestamp, thresh_kill, timeframe, alert_interval } =
     req.body;
 
   const query = `
-    INSERT INTO thresholds (metric, high, low, phone, email, timestamp, thresh_kill, timeframe)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    INSERT INTO thresholds (metric, high, low, phone, email, timestamp, thresh_kill, timeframe, alert_interval)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
     RETURNING *`;
 
   try {
@@ -179,6 +179,7 @@ app.post('/api/create_threshold', async (req, res) => {
       timestamp,
       thresh_kill,
       timeframe,
+      alert_interval
     ]);
     res.status(201).json(result.rows[0]);
   } catch (error) {

@@ -215,12 +215,12 @@ const createCustomChartOptions = (metric, data, colorMode) => {
 // These components take in data and metric as props
 // These are what are actually rendered in the app
 export const LineChart = ({ data, metric }) => {
-  console.log('data:', data);
-  console.log('metric:', metric);
+  // console.log('data:', data);
+  // console.log('metric:', metric);
   const { colorMode } = useColorMode();
   const chartData = processWeatherData(data, metric, colorMode);
   if (!chartData) return <Spinner size="xl" />;
-  console.log('chartData:', chartData);
+  // console.log('chartData:', chartData);
   const dataKey = chartData.datasets[0].data;
   const options = createCustomChartOptions(metric, dataKey, colorMode);
 
