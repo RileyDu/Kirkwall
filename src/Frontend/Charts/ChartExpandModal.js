@@ -108,14 +108,18 @@ const ChartExpandModal = ({
 
   useEffect(() => {
     const latestThreshold = findLatestThreshold(metric);
-  
+
     // Check if the timeframe is "99 days" and treat it as an indefinite pause
     const isIndefinitePause = latestThreshold?.timeframe.days === 99;
     // console.log(isIndefinitePause)
     // console.log(latestThreshold?.timeframe)
-  
+
     // If there's a timestamp and a timeframe and it's not an indefinite pause
-    if (latestThreshold?.timestamp && latestThreshold?.timeframe && !isIndefinitePause) {
+    if (
+      latestThreshold?.timestamp &&
+      latestThreshold?.timeframe &&
+      !isIndefinitePause
+    ) {
       const { formatted, date } = calculateTimeOfToggle(
         latestThreshold?.timestamp,
         latestThreshold?.timeframe
@@ -123,17 +127,17 @@ const ChartExpandModal = ({
       setTimeOfToggle(formatted);
       setToggleTimeAsDate(date);
     } else if (isIndefinitePause) {
-      setTimeOfToggle("Indefinitely Paused");
+      setTimeOfToggle('Indefinitely Paused');
       setToggleTimeAsDate(null); // Clear the date since it's paused indefinitely
     }
-  
+
     // Set other threshold-related states
     setHighThreshold(latestThreshold.highThreshold);
     setLowThreshold(latestThreshold.lowThreshold);
     setThreshKill(latestThreshold.threshkill);
     setTimeframe(latestThreshold.timeframe);
     setTimestamp(latestThreshold.timestamp);
-  
+
     setPhoneNumbers(
       latestThreshold.phone?.split(',').map(phone => phone.trim()) || ['']
     );
@@ -141,7 +145,6 @@ const ChartExpandModal = ({
       latestThreshold.email?.split(',').map(email => email.trim()) || ['']
     );
   }, [metric, thresholds]);
-  
 
   // If the time of toggle is set, start polling for the threshold timeframe to be met and reverse thresh_kill
   useEffect(() => {
@@ -857,7 +860,7 @@ const ChartExpandModal = ({
                                   setNewTimeframe('99 days'); // Set timeframe to "indefinite"
                                   setUserHasChosenTimeframe(true); // Submit the new threshold state
                                   setIsTimePickerOpen(false);
-                                  setTimeOfToggle('Indefinitely Paused')
+                                  setTimeOfToggle('Indefinitely Paused');
                                 }}
                               >
                                 Pause Indefinitely
@@ -1041,6 +1044,24 @@ const ChartExpandModal = ({
                   border={'2px solid #3D5A80'}
                   color={'#212121'}
                 />
+              </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>Alert Frequency (Minutes)</FormLabel>
+                <Select
+                  placeholder="Select frequency"
+                  value={alertFrequency}
+                  onChange={e => setAlertFrequency(e.target.value)}
+                  bg={'white'}
+                  border={'2px solid #3D5A80'}
+                  color={'#212121'}
+                >
+                  <option value="10">10 Minutes</option>
+                  <option value="20">20 Minutes</option>
+                  <option value="30">30 Minutes</option>
+                  <option value="40">40 Minutes</option>
+                  <option value="50">50 Minutes</option>
+                  <option value="60">60 Minutes</option>
+                </Select>
               </FormControl>
             </ModalBody>
             <ModalFooter>
