@@ -34,7 +34,12 @@ import {
   useMediaQuery,
   Select,
   Switch,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import { FaBell } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useWeatherData } from '../WeatherDataContext.js';
@@ -59,6 +64,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
   const [threshKill, setThreshKill] = useState(false);
   const [timeframe, setTimeframe] = useState('');
   const [newTimeframe, setNewTimeframe] = useState('');
+  const [alertFrequency, setAlertFrequency] = useState('');
 
   const [uploadedImageUrl, setUploadedImageUrl] = useState('');
 
@@ -129,6 +135,16 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     const phoneNumbersString = phoneNumbers.join(', '); // Join phone numbers into a single string
     const emailsString = emailsForThreshold.join(', '); // Join emails into a single string
 
+    // Use the newTimeframe if it's available, otherwise use the cleared timeframe when pause is off
+    // console.log('threshKill', threshKill);
+    // console.log('newTimeframe', newTimeframe);
+    // console.log('timeframe', timeframe);
+    const timeOfPause = threshKill ? newTimeframe || timeframe : null; // Ensure `null` when threshKill is off
+    // console.log('timeOfPause', timeOfPause);
+
+    console.log('alert_interval', alertFrequency);
+
+    // Send the new threshold to the backend
     try {
       // Perform Axios POST request to create the threshold
       await axios.post('/api/create_threshold', {
@@ -139,7 +155,8 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
         email: emailsString,
         timestamp: timestamp,
         thresh_kill: threshKill, // Send the correct boolean
-        timeframe: null, // Send `null` if `threshKill` is off
+        timeframe: timeOfPause, // Send `null` if `threshKill` is off
+        alert_interval: alertFrequency,
       });
 
       console.log('Alerts Set or Cleared');
@@ -149,7 +166,6 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
       setIsThresholdModalOpen(false);
     }
   };
-
   // Clear the threshold data and send it to the backend
   const handleFormClear = async () => {
     const timestamp = new Date().toISOString();
@@ -157,7 +173,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     setLowThreshold('');
     setPhoneNumbers([]);
     setEmailsForThreshold([]);
-
+    setAlertFrequency(null);
     try {
       // Create a new threshold with empty values to clear the current threshold
       await axios.post('/api/create_threshold', {
@@ -169,6 +185,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
         timestamp: timestamp,
         thresh_kill: false, // Ensure thresh_kill is off
         timeframe: null, // Clear timeframe
+        alert_interval: null,
       });
       console.log('Alerts Cleared');
     } catch (error) {
@@ -242,7 +259,8 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     const lowThreshold = threshold?.low ?? '';
     const phone = threshold?.phone ?? '';
     const email = threshold?.email ?? '';
-    return { highThreshold, lowThreshold, phone, email };
+    const alertInterval = threshold?.alert_interval ?? '';
+    return { highThreshold, lowThreshold, phone, email, alertInterval };
   };
 
   // Update the threshold values when the metric or thresholds change, fetched from the database
@@ -250,7 +268,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     const latestThreshold = findLatestThreshold(metric);
     setHighThreshold(latestThreshold.highThreshold);
     setLowThreshold(latestThreshold.lowThreshold);
-
+    setAlertFrequency(latestThreshold.alertInterval);
     // Ensure phone numbers are set as an array
     const phoneNumbersArray = latestThreshold.phone
       ? latestThreshold.phone.split(',').map(phone => phone.trim()) // Split and trim each phone number
@@ -742,22 +760,6 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
               </Grid>
             </Box>
           </ModalBody>
-          {/* <Flex justifyContent="flex-end" p={3}>
-            <MotionIconButton
-              icon={<FaQuestion />}
-              variant="outline"
-              color="#212121"
-              height={10}
-              width={10}
-              bg={'brand.400'}
-              _hover={{ bg: 'brand.800' }}
-              border={'2px solid #fd9801'}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              ml={2}
-              onClick={handleOpenFaqsModal}
-            />
-          </Flex> */}
         </ModalContent>
       </Modal>
       <FaqsModal isOpen={isFaqsModalOpen} onClose={handleCloseFaqsModal} />
@@ -860,6 +862,35 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
                 color={'#212121'}
               />
             </FormControl>
+            <FormControl mt={4}>
+                <FormLabel>Alert Frequency</FormLabel>
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    rightIcon={<ChevronDownIcon />}
+                    bg={'white'}
+                    color={'#212121'}
+                    w={'100%'}
+                  >
+                    {alertFrequency
+                      ? `${alertFrequency} Minutes`
+                      : 'Select Frequency'}
+                  </MenuButton>
+                  <MenuList bg="gray.700" color="white" border={'2px solid #3D5A80'}>
+                    {[10, 20, 30, 40, 50, 60].map(freq => (
+                      <MenuItem
+                        key={freq}
+                        onClick={() => setAlertFrequency(freq)}
+                        bg={freq === alertFrequency ? 'gray.900' : 'gray.700'}
+                        _hover={{ bg: 'gray.600' }}
+                        _focus={{ bg: '#3D5A80' }}
+                      >
+                        {freq} Minutes
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
+              </FormControl>
           </ModalBody>
           <ModalFooter>
               <Button
@@ -884,7 +915,8 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
               >
                 Cancel
               </Button>
-              <Button variant="blue" color="black" onClick={handleFormSubmit}>
+              <Button variant="blue" color="black" onClick={handleFormSubmit} isDisabled={!alertFrequency || (!highThreshold && !lowThreshold)}
+              >
                 Save
               </Button>
             </ModalFooter>

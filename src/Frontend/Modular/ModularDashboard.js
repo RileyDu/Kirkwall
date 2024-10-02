@@ -402,7 +402,7 @@ const ModularDashboard = ({
             }}
             gap="4"
           >
-            {customerMetrics.map(metric => {
+            {customerMetrics.map((metric, index) => {
               const settingsOfMetric = metricSettings.find(
                 m => m.metric === metric
               );
@@ -423,14 +423,14 @@ const ModularDashboard = ({
               const ChartComponent = chartComponents[chartType] || LineChart;
 
               return (
-                <AnimatePresence key={metric}>
+                <AnimatePresence key={index}>
                   {!isChartHidden && (
                     <MotionBox
                       layout // This will ensure smooth position transitions
                       initial={{ opacity: 0, height: 'auto', scale: 0.5 }}
                       animate={{ opacity: 1, height: 'auto', scale: 1 }}
                       exit={{ opacity: 0, height: 0, scale: 0 }}
-                      transition={{ duration: 1 }}
+                      transition={{ duration: 2 }}
                     >
                       <MotionGridItem
                         layout
