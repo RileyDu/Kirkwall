@@ -1118,7 +1118,8 @@ const ChartExpandModal = ({
               >
                 Cancel
               </Button>
-              <Button variant="blue" color="black" onClick={handleFormSubmit}>
+              <Button variant="blue" color="black" onClick={handleFormSubmit} isDisabled={!alertFrequency || (!highThreshold && !lowThreshold)}
+              >
                 Save
               </Button>
             </ModalFooter>
