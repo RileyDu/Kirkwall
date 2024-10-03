@@ -27,7 +27,7 @@ export const checkThresholds = async () => {
     const location = await getLocationforAlert(metric);
     if (type === 'sensor_stoppage') {
       await sendAlertToDB(metric, `Sensor stoppage: ${alertMessage} for ${location}.`, new Date());
-      await sendSMSAlert(['7012120985'], `Sensor stoppage: ${alertMessage} for ${location}.`, id, null );
+      await sendSMSAlert(['7016393862'], `Sensor stoppage: ${alertMessage} for ${location}.`, id, null );
       return; // Abort further execution to prevent sending SMS/Email
     }
   
@@ -67,7 +67,7 @@ export const checkThresholds = async () => {
     if (timeDifferenceInMinutes > 20) {
       console.log(`Sensor for ${metric} has stopped sending data. Last reading was ${timeDifferenceInMinutes} minutes ago.`);
   
-      const alertMessage = `The sensor for ${metric} has not sent data in over 20 minutes. Last reading at ${formatDateTime(lastTimestamp)}`;
+      const alertMessage = `The sensor for ${metric} has not sent data in over 20 minutes. Last reading at ${formatDateTime(lastTimestamp)}, currently at ${formatDateTime(currentTime)}`;
   
       // Corrected call to sendAlert with the proper parameters
       await sendAlert(alertMessage, metric, null, null, null, 'sensor_stoppage');
