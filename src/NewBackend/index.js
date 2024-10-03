@@ -209,6 +209,48 @@ app.get('/api/update_threshold/:id', async (req, res) => {
   }
 });
 
+app.get('/api/get_last_alert_time/:id', async (req, res) => {
+  const { id } = req.params;
+
+  const query = 'SELECT time_of_last_alert FROM thresholds WHERE id = $1';
+
+  try {
+    const result = await client.query(query, [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Threshold not found' });
+    }
+
+    res.status(200).json({ lastAlertTime: result.rows[0].time_of_last_alert });
+  } catch (error) {
+    console.error('Error fetching last alert time:', error);
+    res.status(500).json({ error: 'An error occurred while fetching the last alert time' });
+  }
+});
+
+app.put('/api/update_last_alert_time/:id', async (req, res) => {
+  const { id } = req.params;
+  const { lastAlertTime } = req.body; // Expecting a timestamp
+
+  const query = `
+    UPDATE thresholds SET time_of_last_alert = $1 WHERE id = $2
+    RETURNING *`;
+
+  try {
+    const result = await client.query(query, [lastAlertTime, id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Threshold not found' });
+    }
+
+    res.status(200).json({ message: 'Last alert time updated successfully', threshold: result.rows[0] });
+  } catch (error) {
+    console.error('Error updating last alert time:', error);
+    res.status(500).json({ error: 'An error occurred while updating the last alert time' });
+  }
+});
+
+
 app.get('/api/alerts', async (req, res) => {
   try {
     const result = await client.query(

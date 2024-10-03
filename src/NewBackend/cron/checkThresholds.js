@@ -22,61 +22,60 @@ export const checkThresholds = async () => {
   const sendGridApiKey = process.env.SENDGRID_API_KEY;
   sgMail.setApiKey(sendGridApiKey);
 
-  const sendAlert = async (alertMessage, metric, type = 'threshold') => {
-    // Log alert to the database if it’s not already in the logic
-    if (type === 'sensor_stoppage') {
-      await sendAlertToDB(metric, `Sensor stoppage: ${alertMessage}`, new Date());
-    }
-    const formattedDateTime = formatDateTime(new Date());
+  const sendAlert = async (alertMessage, metric, phone, email, id, type = 'threshold') => {
+    // Log alert to the database if it's a sensor stoppage
     const location = await getLocationforAlert(metric);
+    if (type === 'sensor_stoppage') {
+      await sendAlertToDB(metric, `Sensor stoppage: ${alertMessage} for ${location}.`, new Date());
+      await sendSMSAlert(['7012120985'], `Sensor stoppage: ${alertMessage} for ${location}.`, id, null );
+      return; // Abort further execution to prevent sending SMS/Email
+    }
+  
+    const formattedDateTime = formatDateTime(new Date());
     const message = `${alertMessage} at ${formattedDateTime} CST for ${location}.`;
-
-    const phoneNumbers = phone
-      ? phone.split(',').map(num => num.trim())
-      : [];
-    const emails = email
-      ? email.split(',').map(em => em.trim())
-      : [];
-
+  
+    // Split phone numbers and emails if available
+    const phoneNumbers = phone ? phone.split(',').map(num => num.trim()) : [];
+    const emails = email ? email.split(',').map(em => em.trim()) : [];
+  
+    await sendAlertToDB(metric, message, new Date());
+  
+    // Send SMS if phone numbers are provided
     if (phoneNumbers.length > 0) await sendSMSAlert(phoneNumbers, message, id, phoneNumbers);
+  
+    // Send Email if emails are provided
     if (emails.length > 0) await sendEmailAlert(emails, 'Sensor Alert', message, id, phoneNumbers);
-
-
+  
     lastAlertTimes[id] = new Date(); // Update last alert time to avoid redundant alerts
   };
-
-  // Define checkForSensorStoppage after sendAlert, since it relies on it
+  
   const checkForSensorStoppage = async (metric, responseData) => {
     if (!responseData || responseData.length === 0) {
       console.error(`No data available for metric: ${metric}`);
       return;
     }
-
-    // console.log(`Checking for sensor stoppage for ${metric}`);
-    // console.log(`responseData:`, responseData);
-
-    // console.log(`responseData.data:`, responseData.data);
-    const lastDataPoint = (responseData[0] || responseData.data[0]); // Most recent reading
-    console.log(`lastDataPoint:`, lastDataPoint);
+  
+    const lastDataPoint = responseData[0] || responseData.data[0]; // Most recent reading
     const lastTimestamp = new Date(
-      lastDataPoint.publishedat ||
-      lastDataPoint.reading_time ||
+      lastDataPoint.publishedat || 
+      lastDataPoint.reading_time || 
       lastDataPoint.message_timestamp
     );
     const currentTime = new Date();
     const timeDifferenceInMinutes = (currentTime - lastTimestamp) / (1000 * 60);
-
+  
     if (timeDifferenceInMinutes > 20) {
       console.log(`Sensor for ${metric} has stopped sending data. Last reading was ${timeDifferenceInMinutes} minutes ago.`);
-
-      const alertMessage = `Alert: The sensor for ${metric} has not sent data in over 20 minutes. Last reading at ${formatDateTime(lastTimestamp)}`;
-
-      // Reuse sendAlert function to notify about the sensor stoppage
-      await sendAlert(alertMessage, metric, 'sensor_stoppage');
+  
+      const alertMessage = `The sensor for ${metric} has not sent data in over 20 minutes. Last reading at ${formatDateTime(lastTimestamp)}`;
+  
+      // Corrected call to sendAlert with the proper parameters
+      await sendAlert(alertMessage, metric, null, null, null, 'sensor_stoppage');
     } else {
       console.log(`Sensor for ${metric} is active. Last reading was ${timeDifferenceInMinutes} minutes ago.`);
     }
   };
+  
 
   // Send an SMS alert to the specified phone numbers
   const sendSMSAlert = async (
@@ -176,6 +175,52 @@ export const checkThresholds = async () => {
     }
   };
 
+  const checkAlertInterval = async (thresholdId, alertInterval, metric) => {
+    try {
+      const lastAlertResponse = await axios.get(`${baseURL}/api/get_last_alert_time/${thresholdId}`);
+      const lastAlertTime = lastAlertResponse.data.lastAlertTime;
+      const currentTime = new Date();
+  
+      if (lastAlertTime) {
+        // Parse lastAlertTime properly with new Date()
+        const parsedLastAlertTime = new Date(lastAlertTime);
+  
+        if (isNaN(parsedLastAlertTime)) {
+          throw new Error(`Invalid lastAlertTime: ${lastAlertTime}`);
+        }
+  
+        // Manually adjust for the 5-hour time zone difference
+        const adjustedLastAlertTime = new Date(parsedLastAlertTime.getTime() - (5 * 60 * 60 * 1000)); // Add 5 hours
+  
+        // Calculate the time difference in minutes
+        const timeDiffInMinutes = (currentTime - adjustedLastAlertTime) / (1000 * 60);
+  
+        if (timeDiffInMinutes < alertInterval) {
+          console.log(`Skipping ${metric}, interval of ${alertInterval} minutes not yet passed. Time since last alert: ${timeDiffInMinutes.toFixed(2)} minutes.`);
+          return false; // Don't send alert if interval hasn't passed
+        }
+      }
+  
+      console.log(`${alertInterval} minutes passed since last alert @ ${lastAlertTime || 'N/A'} for ${metric}, alerts can now be sent.`);
+      return true; // Allow the alert to be sent
+    } catch (error) {
+      console.error('Error checking alert interval:', error);
+      return true; // Proceed with sending the alert if there's an error
+    }
+  };
+  
+  
+  // Function to record the time of the first alert
+  const recordAlertTime = async (thresholdId, metric) => {
+    const currentTime = moment.utc().toISOString(); // Current time in UTC format
+    try {
+      await axios.put(`${baseURL}/api/update_last_alert_time/${thresholdId}`, { lastAlertTime: currentTime });
+      console.log(`Recorded new alert time for ${metric}`);
+    } catch (error) {
+      console.error('Error recording alert time:', error);
+    }
+  };
+  
   // Extract the current value of the metric from the response data
   const extractCurrentValue = (response, metric) => {
     if (Array.isArray(response)) {
@@ -279,6 +324,7 @@ export const checkThresholds = async () => {
         thresh_kill,
         timeframe,
         timestamp,
+        alert_interval,
       } = threshold;
       // console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=');
       // console.log(`Checking threshold for metric: ${metric}`);
@@ -355,6 +401,11 @@ export const checkThresholds = async () => {
           }
         }
       }
+
+      const shouldSendAlert = await checkAlertInterval(id, alert_interval || 10, metric); // Default to 10 minutes if no interval is provided
+
+      if (!shouldSendAlert) continue; // Skip if interval hasn't passed
+
 
       const renameKeyToMetric = (data, metric) => {
         return data.map(d => {
@@ -534,8 +585,13 @@ export const checkThresholds = async () => {
           await sendAlert(
             `Alert: The ${metric} value of ${formatValue(
               currentValue
-            )} exceeds the high threshold of ${formatValue(high)}`
+            )} exceeds the high threshold of ${formatValue(high)}`,
+            metric,
+            phone,
+            email,
+            id
           );
+          await recordAlertTime(id, metric);
         } else {
           console.log(
             `${metric} High threshold NOT exceeded: CURRENT = ${currentValue} // HIGH THRESHOLD = ${high}`
@@ -552,8 +608,14 @@ export const checkThresholds = async () => {
           await sendAlert(
             `Alert: The ${metric} value of ${formatValue(
               currentValue
-            )} is below the low threshold of ${formatValue(low)}`
+            )} is below the low threshold of ${formatValue(low)}`,
+            metric,
+            phone,
+            email,
+            id
           );
+          await recordAlertTime(id, metric);
+
         } else {
           console.log(
             `${metric} LOW threshold NOT exceeded: CURRENT = ${currentValue} // LOW THRESHOLD = ${low}`
