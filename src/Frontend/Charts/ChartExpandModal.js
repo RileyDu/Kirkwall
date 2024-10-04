@@ -765,12 +765,14 @@ const ChartExpandModal = ({
                                 {phoneNumbers.join(', ')}
                               </Text>
                             ) : null}
-                            {emailsForThreshold?.length > 0 ? (
+                            {emailsForThreshold?.length > 0 &&
+                            !emailsForThreshold.every(email => email === '') ? (
                               <Text color="white" fontSize={['xs', 'md']}>
                                 <strong>Email:</strong>{' '}
                                 {emailsForThreshold.join(', ')}
                               </Text>
                             ) : null}
+
                             {alertFrequency ? (
                               <Text color="white" fontSize={['xs', 'md']}>
                                 <strong>Frequency:</strong> {alertFrequency}{' '}
@@ -781,29 +783,29 @@ const ChartExpandModal = ({
                         ) : (
                           <VStack gap={0} align={'flex-start'} width={'100%'}>
                             {highThreshold ? (
-                              <Text color="white" fontSize='2xs'>
+                              <Text color="white" fontSize="2xs">
                                 <strong>High:</strong> {highThreshold}
                               </Text>
                             ) : null}
                             {lowThreshold ? (
-                              <Text color="white" fontSize='2xs'>
+                              <Text color="white" fontSize="2xs">
                                 <strong>Low:</strong> {lowThreshold}
                               </Text>
                             ) : null}
                             {phoneNumbers?.length > 0 ? (
-                              <Text color="white" fontSize='2xs'>
+                              <Text color="white" fontSize="2xs">
                                 <strong>Phone:</strong>{' '}
                                 {phoneNumbers.join(', ')}
                               </Text>
                             ) : null}
                             {emailsForThreshold?.length > 0 ? (
-                              <Text color="white" fontSize='2xs'>
+                              <Text color="white" fontSize="2xs">
                                 <strong>Email:</strong>{' '}
                                 {emailsForThreshold.join(', ')}
                               </Text>
                             ) : null}
                             {alertFrequency ? (
-                              <Text color="white" fontSize='2xs'>
+                              <Text color="white" fontSize="2xs">
                                 <strong>Frequency:</strong> {alertFrequency}{' '}
                                 mins
                               </Text>
