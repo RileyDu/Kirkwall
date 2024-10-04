@@ -17,6 +17,7 @@ import {
   CircularProgress,
   SimpleGrid,
   Stack,
+  VStack,
   FormControl,
   FormLabel,
   Input,
@@ -35,6 +36,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import MiniDashboard from './ChartDashboard.js';
@@ -91,6 +93,8 @@ const ChartExpandModal = ({
   const { thresholds, alertsThreshold, fetchAlertsThreshold } =
     useWeatherData();
 
+  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
+
   // Find the latest threshold for the selected metric, assign a graph to the threshold
   const findLatestThreshold = metric => {
     const threshold = thresholds.find(threshold => threshold.metric === metric);
@@ -110,7 +114,7 @@ const ChartExpandModal = ({
       timeframe,
       threshkill,
       timestamp,
-      alertInterval
+      alertInterval,
     };
   };
 
@@ -257,7 +261,7 @@ const ChartExpandModal = ({
         timestamp: timestamp,
         thresh_kill: threshKill, // Send the correct boolean
         timeframe: timeOfPause, // Send `null` if `threshKill` is off
-        alert_interval: alertFrequency,
+        alert_interval: alertFrequency || 10,
       });
 
       console.log('Alerts Set or Cleared');
@@ -284,7 +288,7 @@ const ChartExpandModal = ({
         timestamp: timestamp,
         thresh_kill: false, // Turn off thresh_kill
         timeframe: null, // Clear the timeframe
-        alert_interval: alertFrequency,
+        alert_interval: alertFrequency || 10,
       });
       console.log(
         'Threshold updated: thresh_kill turned off and timeframe cleared.'
@@ -705,7 +709,7 @@ const ChartExpandModal = ({
                   bg="gray.700"
                   borderRadius="md"
                   boxShadow="md"
-                  p={4}
+                  p={3}
                   height="430px"
                   className="thresholds-display"
                 >
@@ -720,7 +724,7 @@ const ChartExpandModal = ({
                           fontSize="xl"
                           fontWeight="bold"
                           textDecor={'underline'}
-                          pb="2"
+                          pb="1"
                           // textAlign={'center'}
                           color="white"
                         >
@@ -743,34 +747,70 @@ const ChartExpandModal = ({
                         alignItems={'center'}
                         flexWrap={'nowrap'}
                       >
-                        <HStack gap={6} justify={'flex-start'} width={'75%'}>
-                          {highThreshold ? (
-                            <Text color="white" fontSize={['xs', 'md']}>
-                              <strong>High:</strong> {highThreshold}
-                            </Text>
-                          ) : null}
-                          {lowThreshold ? (
-                            <Text color="white" fontSize={['xs', 'md']}>
-                              <strong>Low:</strong> {lowThreshold}
-                            </Text>
-                          ) : null}
-                          {phoneNumbers?.length > 0 ? (
-                            <Text color="white" fontSize={['xs', 'md']}>
-                              <strong>Phone:</strong> {phoneNumbers.join(', ')}
-                            </Text>
-                          ) : null}
-                          {emailsForThreshold?.length > 0 ? (
-                            <Text color="white" fontSize={['xs', 'md']}>
-                              <strong>Email:</strong>{' '}
-                              {emailsForThreshold.join(', ')}
-                            </Text>
-                          ) : null}
-                          {alertFrequency ? (
-                            <Text color="white" fontSize={['xs', 'md']}>
-                              <strong>Frequency:</strong> {alertFrequency} mins
-                            </Text>
-                          ) : null}
-                        </HStack>
+                        {isLargerThan768 ? (
+                          <HStack gap={6} justify={'flex-start'} width={'75%'}>
+                            {highThreshold ? (
+                              <Text color="white" fontSize={['xs', 'md']}>
+                                <strong>High:</strong> {highThreshold}
+                              </Text>
+                            ) : null}
+                            {lowThreshold ? (
+                              <Text color="white" fontSize={['xs', 'md']}>
+                                <strong>Low:</strong> {lowThreshold}
+                              </Text>
+                            ) : null}
+                            {phoneNumbers?.length > 0 ? (
+                              <Text color="white" fontSize={['xs', 'md']}>
+                                <strong>Phone:</strong>{' '}
+                                {phoneNumbers.join(', ')}
+                              </Text>
+                            ) : null}
+                            {emailsForThreshold?.length > 0 ? (
+                              <Text color="white" fontSize={['xs', 'md']}>
+                                <strong>Email:</strong>{' '}
+                                {emailsForThreshold.join(', ')}
+                              </Text>
+                            ) : null}
+                            {alertFrequency ? (
+                              <Text color="white" fontSize={['xs', 'md']}>
+                                <strong>Frequency:</strong> {alertFrequency}{' '}
+                                mins
+                              </Text>
+                            ) : null}
+                          </HStack>
+                        ) : (
+                          <VStack gap={0} align={'flex-start'} width={'100%'}>
+                            {highThreshold ? (
+                              <Text color="white" fontSize='2xs'>
+                                <strong>High:</strong> {highThreshold}
+                              </Text>
+                            ) : null}
+                            {lowThreshold ? (
+                              <Text color="white" fontSize='2xs'>
+                                <strong>Low:</strong> {lowThreshold}
+                              </Text>
+                            ) : null}
+                            {phoneNumbers?.length > 0 ? (
+                              <Text color="white" fontSize='2xs'>
+                                <strong>Phone:</strong>{' '}
+                                {phoneNumbers.join(', ')}
+                              </Text>
+                            ) : null}
+                            {emailsForThreshold?.length > 0 ? (
+                              <Text color="white" fontSize='2xs'>
+                                <strong>Email:</strong>{' '}
+                                {emailsForThreshold.join(', ')}
+                              </Text>
+                            ) : null}
+                            {alertFrequency ? (
+                              <Text color="white" fontSize='2xs'>
+                                <strong>Frequency:</strong> {alertFrequency}{' '}
+                                mins
+                              </Text>
+                            ) : null}
+                          </VStack>
+                        )}
+
                         <Box
                           fontSize={['xs', 'md']}
                           ml={8}
@@ -1079,7 +1119,11 @@ const ChartExpandModal = ({
                       ? `${alertFrequency} Minutes`
                       : 'Select Frequency'}
                   </MenuButton>
-                  <MenuList bg="gray.700" color="white" border={'2px solid #3D5A80'}>
+                  <MenuList
+                    bg="gray.700"
+                    color="white"
+                    border={'2px solid #3D5A80'}
+                  >
                     {[10, 20, 30, 40, 50, 60].map(freq => (
                       <MenuItem
                         key={freq}
@@ -1118,7 +1162,13 @@ const ChartExpandModal = ({
               >
                 Cancel
               </Button>
-              <Button variant="blue" color="black" onClick={handleFormSubmit} isDisabled={!alertFrequency || (!highThreshold && !lowThreshold)}
+              <Button
+                variant="blue"
+                color="black"
+                onClick={handleFormSubmit}
+                isDisabled={
+                  !alertFrequency || (!highThreshold && !lowThreshold)
+                }
               >
                 Save
               </Button>
