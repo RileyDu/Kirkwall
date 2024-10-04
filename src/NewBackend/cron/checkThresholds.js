@@ -26,7 +26,7 @@ export const checkThresholds = async () => {
     // Log alert to the database if it's a sensor stoppage
     const location = await getLocationforAlert(metric);
     if (type === 'sensor_stoppage') {
-      // await sendAlertToDB(metric, `Sensor stoppage: ${alertMessage} for ${location}.`, new Date());
+      await sendAlertToDB(metric, `Sensor stoppage: ${alertMessage} for ${location}.`, new Date());
       // await sendSMSAlert(['7016393862'], `Sensor stoppage: ${alertMessage} for ${location}.`, id, null );
       return; // Abort further execution to prevent sending SMS/Email
     }
@@ -60,21 +60,22 @@ export const checkThresholds = async () => {
       lastDataPoint.publishedat || 
       lastDataPoint.reading_time || 
       lastDataPoint.message_timestamp
-    );
-    const currentTime = new Date();
-    const timeDifferenceInMinutes = (currentTime - lastTimestamp) / (1000 * 60);
+    ).toISOString(); // Convert to UTC
+   
+    const currentTime = new Date().toISOString(); // Always use UTC for comparison
+    const timeDifferenceInMinutes = (new Date(currentTime) - new Date(lastTimestamp)) / (1000 * 60);
   
-    if (timeDifferenceInMinutes > 20) {
+    if (timeDifferenceInMinutes > 30) {
       console.log(`Sensor for ${metric} has stopped sending data. Last reading was ${timeDifferenceInMinutes} minutes ago.`);
   
-      const alertMessage = `The sensor for ${metric} has not sent data in over 20 minutes. Last reading at ${formatDateTime(lastTimestamp)}, currently at ${formatDateTime(currentTime)}`;
+      const alertMessage = `The sensor for ${metric} has not sent data in over 30 minutes. Last reading at ${formatDateTime(new Date(lastTimestamp))}, currently at ${formatDateTime(new Date(currentTime))}`;
   
-      // Corrected call to sendAlert with the proper parameters
       await sendAlert(alertMessage, metric, null, null, null, 'sensor_stoppage');
     } else {
       console.log(`Sensor for ${metric} is active. Last reading was ${timeDifferenceInMinutes} minutes ago.`);
     }
   };
+  
   
 
   // Send an SMS alert to the specified phone numbers
