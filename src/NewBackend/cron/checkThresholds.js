@@ -27,7 +27,7 @@ export const checkThresholds = async () => {
     const location = await getLocationforAlert(metric);
     if (type === 'sensor_stoppage') {
       await sendAlertToDB(metric, `Sensor stoppage: ${alertMessage} for ${location}.`, new Date());
-      // await sendSMSAlert(['7016393862'], `Sensor stoppage: ${alertMessage} for ${location}.`, id, null );
+      await sendSMSAlert(['7016393862'], `Sensor stoppage: ${alertMessage} for ${location}.`, id, null );
       return; // Abort further execution to prevent sending SMS/Email
     }
   
