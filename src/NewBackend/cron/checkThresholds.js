@@ -55,26 +55,32 @@ export const checkThresholds = async () => {
       return;
     }
   
-    const lastDataPoint = responseData[0] || responseData.data[0]; // Most recent reading
-    const lastTimestamp = new Date(
+    let lastDataPoint = responseData[0] || responseData.data[0]; // Most recent reading
+    let lastTimestamp = new Date(
       lastDataPoint.publishedat || 
       lastDataPoint.reading_time || 
       lastDataPoint.message_timestamp
-    ).toISOString(); // Convert to UTC
-   
-    const currentTime = new Date().toISOString(); // Always use UTC for comparison
-    const timeDifferenceInMinutes = (new Date(currentTime) - new Date(lastTimestamp)) / (1000 * 60);
+    );
+  
+    // If the metric starts with 'im' and `publishedat` is used, add 300 minutes (5 hours)
+    if (metric.startsWith('im') && lastDataPoint.publishedat) {
+      lastTimestamp = new Date(lastTimestamp.getTime() + 300 * 60000); // 300 minutes in milliseconds
+    }
+  
+    const currentTime = new Date(); // Always use UTC for comparison
+    const timeDifferenceInMinutes = (currentTime - lastTimestamp) / (1000 * 60); // Convert time difference to minutes
   
     if (timeDifferenceInMinutes > 30) {
       console.log(`Sensor for ${metric} has stopped sending data. Last reading was ${timeDifferenceInMinutes} minutes ago.`);
-  
-      const alertMessage = `The sensor for ${metric} has not sent data in over 30 minutes. Last reading at ${formatDateTime(new Date(lastTimestamp))}, currently at ${formatDateTime(new Date(currentTime))}`;
+      
+      const alertMessage = `The sensor for ${metric} has not sent data in over 30 minutes. Last reading at ${formatDateTime(lastTimestamp)}, currently at ${formatDateTime(currentTime)}`;
   
       await sendAlert(alertMessage, metric, null, null, null, 'sensor_stoppage');
     } else {
       console.log(`Sensor for ${metric} is active. Last reading was ${timeDifferenceInMinutes} minutes ago.`);
     }
   };
+  
   
   
 
