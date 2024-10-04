@@ -190,7 +190,7 @@ export const checkThresholds = async () => {
         }
   
         // Manually adjust for the 5-hour time zone difference
-        const adjustedLastAlertTime = new Date(parsedLastAlertTime.getTime() - (5 * 60 * 60 * 1000)); // Add 5 hours
+        const adjustedLastAlertTime = new Date(parsedLastAlertTime.getTime()); // Add 5 hours
   
         // Calculate the time difference in minutes
         const timeDiffInMinutes = (currentTime - adjustedLastAlertTime) / (1000 * 60);
