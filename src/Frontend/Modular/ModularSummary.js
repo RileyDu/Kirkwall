@@ -16,7 +16,7 @@ import {
   TabPanel,
   SimpleGrid,
 } from '@chakra-ui/react';
-import { FaChessRook } from 'react-icons/fa';
+import { FaChessRook, FaTrash } from 'react-icons/fa';
 import { useColorMode } from '@chakra-ui/color-mode';
 import { useMediaQuery } from '@chakra-ui/media-query';
 import { useAuth } from '../AuthComponents/AuthContext.js';
@@ -26,6 +26,7 @@ import { useWeatherData } from '../WeatherDataContext.js';
 import { keyframes } from '@emotion/react';
 import { animate, motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const ModularSummary = ({ statusOfAlerts }) => {
   const [initialMount, setInitialMount] = useState(true);
@@ -47,6 +48,14 @@ const ModularSummary = ({ statusOfAlerts }) => {
   const filteredSummaryMetrics = metrics.filter(metric =>
     userMetrics.includes(metric.metric)
   );
+
+  const clearAlerts = async id => {
+    try {
+      axios.delete(`/api/delete_alert/${id}`); 
+    } catch (error) {
+      console.error('Error deleting alert:', error);
+    }
+  };
 
   const isGrandFarm = currentUser.email === 'pmo@grandfarm.com';
 
@@ -260,6 +269,13 @@ const ModularSummary = ({ statusOfAlerts }) => {
                               <Text color="#212121" fontSize="lg">
                                 {alert.message}
                               </Text>
+                              {/* <FaTrash
+                                color="#212121"
+                                onClick={() => clearAlerts(alert.id)}
+                                aria-label="Delete alert"
+                                cursor="pointer"
+                                size={20}
+                              /> */}
                             </Flex>
                           </Box>
                         ))

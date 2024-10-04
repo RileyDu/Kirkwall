@@ -193,7 +193,7 @@ export const checkThresholds = async () => {
         const adjustedLastAlertTime = new Date(parsedLastAlertTime.getTime()); // Add 5 hours
   
         // Calculate the time difference in minutes
-        const timeDiffInMinutes = (currentTime - adjustedLastAlertTime) / (1000 * 60);
+        const timeDiffInMinutes = Math.ceil((currentTime - adjustedLastAlertTime) / (1000 * 60));
   
         if (timeDiffInMinutes < alertInterval) {
           console.log(`Skipping ${metric}, interval of ${alertInterval} minutes not yet passed. Time since last alert: ${timeDiffInMinutes.toFixed(2)} minutes.`);
