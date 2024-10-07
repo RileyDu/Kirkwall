@@ -11,7 +11,7 @@ const VideoPlayerPage = () => {
       flexDirection="column"
       alignItems="center"
     >
-      <Heading size={'lg'} mt={2} textAlign="center">
+      <Heading size={'xl'} mt={2} textAlign="center">
         Live Video Feed
       </Heading>
       <TestVideoFeed />
