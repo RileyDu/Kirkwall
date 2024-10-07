@@ -404,7 +404,7 @@ const MainApp = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="/test" element={<TestSite />} />
+          <Route path="/testsite" element={<TestSite />} />
           <Route path="*" element={<RedirectBasedOnAuth />} />
         </Routes>
       </Layout>
