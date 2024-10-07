@@ -405,7 +405,7 @@ const MainApp = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="/testsite" element={<TestSite />} />
+          {/* <Route path="/testsite" element={<TestSite />} /> */}
           <Route path='/videofeed' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><VideoPlayerPage /></ProtectedRoute>} />
           <Route path="*" element={<RedirectBasedOnAuth />} />
         </Routes>
