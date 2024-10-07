@@ -8,7 +8,8 @@ import multer from 'multer';
 import sgMail from '@sendgrid/mail';
 import { checkThresholds } from './cron/checkThresholds.js'; // Import your cron logic
 import { generateWeeklyRecap } from './cron/cronWeeklyRecap.js';
-
+import puppeteer from 'puppeteer';
+import * as cheerio from 'cheerio';
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -161,8 +162,17 @@ app.get('/api/thresholds', async (req, res) => {
 });
 
 app.post('/api/create_threshold', async (req, res) => {
-  const { metric, high, low, phone, email, timestamp, thresh_kill, timeframe, alert_interval } =
-    req.body;
+  const {
+    metric,
+    high,
+    low,
+    phone,
+    email,
+    timestamp,
+    thresh_kill,
+    timeframe,
+    alert_interval,
+  } = req.body;
 
   const query = `
     INSERT INTO thresholds (metric, high, low, phone, email, timestamp, thresh_kill, timeframe, alert_interval)
@@ -179,7 +189,7 @@ app.post('/api/create_threshold', async (req, res) => {
       timestamp,
       thresh_kill,
       timeframe,
-      alert_interval
+      alert_interval,
     ]);
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -224,7 +234,9 @@ app.get('/api/get_last_alert_time/:id', async (req, res) => {
     res.status(200).json({ lastAlertTime: result.rows[0].time_of_last_alert });
   } catch (error) {
     console.error('Error fetching last alert time:', error);
-    res.status(500).json({ error: 'An error occurred while fetching the last alert time' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while fetching the last alert time' });
   }
 });
 
@@ -243,13 +255,19 @@ app.put('/api/update_last_alert_time/:id', async (req, res) => {
       return res.status(404).json({ error: 'Threshold not found' });
     }
 
-    res.status(200).json({ message: 'Last alert time updated successfully', threshold: result.rows[0] });
+    res
+      .status(200)
+      .json({
+        message: 'Last alert time updated successfully',
+        threshold: result.rows[0],
+      });
   } catch (error) {
     console.error('Error updating last alert time:', error);
-    res.status(500).json({ error: 'An error occurred while updating the last alert time' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while updating the last alert time' });
   }
 });
-
 
 app.get('/api/alerts', async (req, res) => {
   try {
@@ -728,11 +746,9 @@ app.get('/api/weekly-recap', async (req, res) => {
     const result = await client.query(query, queryParams);
 
     if (result.rows.length === 0) {
-      return res
-        .status(404)
-        .json({
-          error: 'No weekly recap data found for the specified criteria',
-        });
+      return res.status(404).json({
+        error: 'No weekly recap data found for the specified criteria',
+      });
     }
 
     res.status(200).json(result.rows);
@@ -935,15 +951,16 @@ app.get('/api/sensor_data', async (req, res) => {
     res.status(200).json(renamedData);
   } catch (error) {
     console.error('Error fetching sensor data:', error);
-    res.status(500).json({ error: 'An error occurred while fetching sensor data' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while fetching sensor data' });
   }
 });
 
-
 // Scrape Big Iron Auctions using Puppeteer
-app.get('/api/scrape', async (req, res) => {
+app.get('/api/scrapeBigIron', async (req, res) => {
   const { query } = req.query;
-  const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '-'); // Format the query to match the category URL
+  const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '+'); // Format the query to match the category URL
 
   try {
     // Launch Puppeteer browser
@@ -951,23 +968,32 @@ app.get('/api/scrape', async (req, res) => {
     const page = await browser.newPage();
 
     // Navigate to the correct BigIron sale category page
-    const url = `https://www.bigiron.com/sale/${formattedQuery}`;
+    const url = `https://www.bigiron.com/Search?showTab=true&search=${formattedQuery}&searchMode=All`;
+    // const url = `https://www.bigiron.com/sale/${formattedQuery}`;
     await page.goto(url, { waitUntil: 'networkidle2' });
 
     // Wait for the search results container to load
-    await page.waitForSelector('.searchResults--grid-item', { timeout: 60000 }); // Increased timeout to 60 seconds
+    await page.waitForSelector('.pager-data', { timeout: 60000 }); // Increased timeout to 60 seconds
 
     // Extract the HTML content
     const content = await page.content();
     const $ = cheerio.load(content);
 
     let bigIronResults = [];
-    $('.searchResults--grid-item').each((i, el) => {
-      if (i < 10) { // Only collect the first 10 listings
-        const equipmentName = $(el).find('.searchResults--title').text().trim();
-        const price = $(el).find('.searchResults--price').text().trim();
+    $('.pager-list-item').each((i, el) => {
+      if (i < 10) {
+        // Only collect the first 10 listings
+        const equipmentName = $(el).find('.lot-title h1').text().trim();
+        const price = $(el).find('.bidding-js-amount').first().text().trim();
         const link = $(el).find('a').attr('href');
-        bigIronResults.push({ equipmentName, price, link: `https://www.bigiron.com/${link}` });
+        const imageUrl = $(el).find('.bidding-js-preview img').attr('src');
+
+        bigIronResults.push({
+          equipmentName,
+          price,
+          link: `https://www.bigiron.com${link}`,
+          image: imageUrl ? `${imageUrl}` : null, // Construct the full image URL
+        });
       }
     });
 
@@ -981,6 +1007,54 @@ app.get('/api/scrape', async (req, res) => {
   }
 });
 
+// Scrape Purple Wave Auctions using Puppeteer
+// app.get('/api/scrapePurpleWave', async (req, res) => {
+//   const { query } = req.query;
+//   const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '%'); // Format the query to match the category URL
+
+//   try {
+//     // Launch Puppeteer browser
+//     const browser = await puppeteer.launch({ headless: true });
+//     const page = await browser.newPage();
+
+//     // Navigate to the correct BigIron sale category page
+//     const url = `https://www.purplewave.com/search/${formattedQuery}`;
+//     await page.goto(url, { waitUntil: 'networkidle2' });
+
+//     // Wait for the search results container to load
+//     await page.waitForSelector('#item-list', { timeout: 30000 }); // Increased timeout to 30 seconds
+
+//     // Extract the HTML content
+//     const content = await page.content();
+//     const $ = cheerio.load(content);
+
+//     let purpleWaveResults = [];
+//     $('.pager-list-item').each((i, el) => {
+//       if (i < 10) {
+//         // Only collect the first 10 listings
+//         const equipmentName = $(el).find('.first-line h3').text().trim();
+//         const price = $(el).find('.table-cell label:contains("Current")').next().text().trim();
+//         const link = $(el).find('.thumbnail').attr('href');
+//         const imageUrl = $(el).find('.bidpod-thumbnail img').attr('src');
+
+//         purpleWaveResults.push({
+//           equipmentName,
+//           price,
+//           link: `https://www.purplewave.com${link}`,
+//           image: imageUrl ? `${imageUrl}` : null, // Construct the full image URL
+//         });
+//       }
+//     });
+
+//     await browser.close();
+
+//     // Send the scraped data back
+//     res.json(purpleWaveResults);
+//   } catch (error) {
+//     console.error('Error scraping Big Iron:', error);
+//     res.status(500).send('Failed to scrape Big Iron data');
+//   }
+// });
 
 // Cron Job route that runs every 10 minutes to check live values against user thresholds
 app.get('/api/run-check-thresholds', async (req, res) => {
