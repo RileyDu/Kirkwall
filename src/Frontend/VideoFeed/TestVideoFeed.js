@@ -21,8 +21,8 @@ const TestVideoFeed = () => {
       alignItems="center"
     >
       <iframe
-        width="560"
-        height="315"
+        width="1120"
+        height="630"
         src="https://player.twitch.tv/?channel=rileyduu&parent=kirkwall-demo.vercel.app&controls=false&autoplay=true"
         title="video player"
         frameborder="0"

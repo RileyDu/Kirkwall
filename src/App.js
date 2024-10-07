@@ -51,6 +51,7 @@ import ThankYouAdmin from './Frontend/Alert/ThankYouAdmin.js';
 import EnergyPage from './Frontend/Energy/EnergyPage.js';
 import WeeklyRecap from './Frontend/WeeklyRecap/WeeklyRecap.js';
 import TestSite from './Frontend/TestSite.js';
+import VideoPlayerPage from './Frontend/VideoFeed/VideoPlayerPage.js';
 
 const Layout = ({
   children,
@@ -405,6 +406,7 @@ const MainApp = () => {
             }
           />
           <Route path="/testsite" element={<TestSite />} />
+          <Route path='/videofeed' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><VideoPlayerPage /></ProtectedRoute>} />
           <Route path="*" element={<RedirectBasedOnAuth />} />
         </Routes>
       </Layout>
