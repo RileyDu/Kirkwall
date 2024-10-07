@@ -21,6 +21,7 @@ import {
   FaBook,
   FaBookOpen,
   FaCalendarWeek,
+  FaVideo,
 } from 'react-icons/fa';
 import { MdElectricBolt } from 'react-icons/md';
 
@@ -131,6 +132,7 @@ const buttonConfig = {
       label: 'Weekly Recap',
       route: '/weeklyrecap',
     },
+    { icon: <FaVideo size="30" />, label: 'Video', route: '/videofeed' },
   ],
 };
 
