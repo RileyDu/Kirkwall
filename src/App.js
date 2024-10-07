@@ -50,6 +50,7 @@ import ThankYou from './Frontend/Alert/ThankYou.js';
 import ThankYouAdmin from './Frontend/Alert/ThankYouAdmin.js';
 import EnergyPage from './Frontend/Energy/EnergyPage.js';
 import WeeklyRecap from './Frontend/WeeklyRecap/WeeklyRecap.js';
+import TestSite from './Frontend/TestSite.js';
 
 const Layout = ({
   children,
@@ -403,6 +404,7 @@ const MainApp = () => {
               </ProtectedRoute>
             }
           />
+          <Route path="/test" element={<TestSite />} />
           <Route path="*" element={<RedirectBasedOnAuth />} />
         </Routes>
       </Layout>
