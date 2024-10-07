@@ -23,12 +23,13 @@ const TestVideoFeed = () => {
       <iframe
         width="560"
         height="315"
-        src="https://player.twitch.tv/?channel=joshseki&parent=kirkwall-demo.vercel.app"
-        title="YouTube video player"
+        src="https://player.twitch.tv/?channel=rileyduu&parent=kirkwall-demo.vercel.app"
+        title="video player"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         referrerpolicy="strict-origin-when-cross-origin"
-        allowfullscreen
+        allowfullscreen="true"
+        
       ></iframe>
     </Box>
   );
