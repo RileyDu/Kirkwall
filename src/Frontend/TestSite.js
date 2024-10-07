@@ -22,7 +22,7 @@ const TestSite = () => {
     setError(null);
 
     try {
-      const response = await axios.get('http://localhost:5000/scrape', {
+      const response = await axios.get('/api/scrape', {
         params: { query },
       });
       setResults(response.data); // Set the results from the backend

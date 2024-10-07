@@ -940,7 +940,46 @@ app.get('/api/sensor_data', async (req, res) => {
 });
 
 
+// Scrape Big Iron Auctions using Puppeteer
+app.get('/api/scrape', async (req, res) => {
+  const { query } = req.query;
+  const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '-'); // Format the query to match the category URL
 
+  try {
+    // Launch Puppeteer browser
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+
+    // Navigate to the correct BigIron sale category page
+    const url = `https://www.bigiron.com/sale/${formattedQuery}`;
+    await page.goto(url, { waitUntil: 'networkidle2' });
+
+    // Wait for the search results container to load
+    await page.waitForSelector('.searchResults--grid-item', { timeout: 60000 }); // Increased timeout to 60 seconds
+
+    // Extract the HTML content
+    const content = await page.content();
+    const $ = cheerio.load(content);
+
+    let bigIronResults = [];
+    $('.searchResults--grid-item').each((i, el) => {
+      if (i < 10) { // Only collect the first 10 listings
+        const equipmentName = $(el).find('.searchResults--title').text().trim();
+        const price = $(el).find('.searchResults--price').text().trim();
+        const link = $(el).find('a').attr('href');
+        bigIronResults.push({ equipmentName, price, link: `https://www.bigiron.com/${link}` });
+      }
+    });
+
+    await browser.close();
+
+    // Send the scraped data back
+    res.json(bigIronResults);
+  } catch (error) {
+    console.error('Error scraping Big Iron:', error);
+    res.status(500).send('Failed to scrape Big Iron data');
+  }
+});
 
 
 // Cron Job route that runs every 10 minutes to check live values against user thresholds
