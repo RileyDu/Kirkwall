@@ -11,46 +11,44 @@ import {
   Stat,
   StatLabel,
   StatNumber,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItemOption,
+  MenuOptionGroup,
+  IconButton,
 } from '@chakra-ui/react';
-import TestVideoFeed from './VideoFeed/TestVideoFeed.js';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 
 const TestSite = () => {
   const [query, setQuery] = useState(''); // State for search query
   const [bigIronResults, setBigIronResults] = useState([]); // State for storing search results from Big Iron
   const [purpleWaveResults, setPurpleWaveResults] = useState([]); // State for storing search results from Purple Wave
-  const [auctionTimeResults, setAuctionTimeResults] = useState([]); // State for storing search results from Auction Time
   const [loading, setLoading] = useState(false); // State for showing loading indicator
   const [error, setError] = useState(null); // State for handling errors
+  const [selectedSites, setSelectedSites] = useState(['Big Iron', 'Purple Wave']); // Default selected sites
 
-  // Function to search for equipment by making an API request to the backend
   const searchEquipment = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      // Use Promise.all to make both API calls simultaneously
-      const [bigIronResponse, purpleWaveResponse, auctionTimeResponse] =
-        await Promise.all([
-        //   axios.get('/api/scrapeBigIron', {
-        //     params: { query },
-        //   }),
-        //   axios.get('/api/scrapePurpleWave', {
-        //     params: { query },
-        //   }),
-          axios.get('/api/scrapeAuctionTime', {
-            params: { query },
-          }),
-        ]);
+      const requests = [];
+      
+      if (selectedSites.includes('Big Iron')) {
+        requests.push(
+          axios.get('/api/scrapeBigIron', { params: { query } })
+            .then(response => setBigIronResults(response.data))
+        );
+      }
+      if (selectedSites.includes('Purple Wave')) {
+        requests.push(
+          axios.get('/api/scrapePurpleWave', { params: { query } })
+            .then(response => setPurpleWaveResults(response.data))
+        );
+      }
 
-      // Set the results for each site
-      setBigIronResults(bigIronResponse.data);
-      setPurpleWaveResults(purpleWaveResponse.data);
-      setAuctionTimeResults(auctionTimeResponse.data);
-
-      // Log the results
-      console.log('Big Iron search results:', bigIronResponse.data);
-      console.log('Purple Wave search results:', purpleWaveResponse.data);
-      console.log('Auction Time search results:', auctionTimeResponse.data);
+      await Promise.all(requests);
     } catch (err) {
       setError('Failed to fetch data. Please try again.');
       console.error('Error fetching equipment:', err);
@@ -60,15 +58,7 @@ const TestSite = () => {
   };
 
   return (
-    <Box
-      //   maxWidth="md"
-      mx="auto"
-      mt={16}
-      px={4}
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-    >
+    <Box mx="auto" mt={16} px={4} display="flex" flexDirection="column" alignItems="center">
       <Heading as="h1" fontSize="2xl" mb={6} textAlign="center">
         AgScrapper: Agriculture Equipment Search
       </Heading>
@@ -83,6 +73,24 @@ const TestSite = () => {
         mb={4}
         colorScheme="teal"
       />
+
+      {/* Site Selection Menu */}
+      <Menu closeOnSelect={false}>
+        <MenuButton as={Button} rightIcon={<ChevronDownIcon />} colorScheme="teal" mb={4}>
+          Select Sites
+        </MenuButton>
+        <MenuList>
+          <MenuOptionGroup
+            defaultValue={['Big Iron', 'Purple Wave']}
+            title="Sites"
+            type="checkbox"
+            onChange={value => setSelectedSites(value)}
+          >
+            <MenuItemOption value="Big Iron">Big Iron</MenuItemOption>
+            <MenuItemOption value="Purple Wave">Purple Wave</MenuItemOption>
+          </MenuOptionGroup>
+        </MenuList>
+      </Menu>
 
       {/* Search Button */}
       <Button
@@ -147,46 +155,6 @@ const TestSite = () => {
           </Box>
         ))}
         {purpleWaveResults.map((item, index) => (
-          <Box
-            key={index}
-            borderWidth="1px"
-            borderRadius="lg"
-            overflow="hidden"
-            boxShadow="md"
-            transition="transform 0.2s"
-            _hover={{ transform: 'scale(1.05)' }}
-          >
-            <Image
-              src={item.image}
-              alt={item.equipmentName}
-              w="100%"
-              h="200px"
-              objectFit="cover"
-            />
-            <Box p={4}>
-              <Stat mb={2}>
-                <StatLabel fontWeight="bold" fontSize="lg">
-                  {item.equipmentName}
-                </StatLabel>
-                <StatNumber color="teal.500">{item.price}</StatNumber>
-              </Stat>
-              <Button
-                as="a"
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                colorScheme="teal"
-                size="sm"
-                variant="outline"
-                w="full"
-              >
-                View on Auction Site
-              </Button>
-              <Text>Purple Wave Auction</Text>
-            </Box>
-          </Box>
-        ))}
-        {auctionTimeResults.map((item, index) => (
           <Box
             key={index}
             borderWidth="1px"

@@ -1052,50 +1052,50 @@ app.get('/api/scrapePurpleWave', async (req, res) => {
   }
 });
 
-app.get('/api/scrapeAuctionTime', async (req, res) => {
-  const { query } = req.query;
-  const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '%20');
+// app.get('/api/scrapeAuctionTime', async (req, res) => {
+//   const { query } = req.query;
+//   const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '%20');
 
-  try {
-    const browser = await puppeteer.launch({ headless: true });
-    const page = await browser.newPage();
+//   try {
+//     const browser = await puppeteer.launch({ headless: true });
+//     const page = await browser.newPage();
 
-    // Navigate to the search page
-    const url = `https://www.auctiontime.com/listings/auctions/online/all-auctions/list?keywords=${formattedQuery}`;
-    await page.goto(url, { waitUntil: 'networkidle2' });
+//     // Navigate to the search page
+//     const url = `https://www.auctiontime.com/listings/auctions/online/all-auctions/list?keywords=${formattedQuery}`;
+//     await page.goto(url, { waitUntil: 'networkidle2' });
 
-    // Wait for the item list to load
-    await page.waitForSelector('.listings-list', { timeout: 15000 });
+//     // Wait for the item list to load
+//     await page.waitForSelector('.listings-list', { timeout: 15000 });
 
-    // Extract the content
-    const content = await page.content();
-    const $ = cheerio.load(content);
+//     // Extract the content
+//     const content = await page.content();
+//     const $ = cheerio.load(content);
 
-    let auctionTimeResults = [];
-    $('.listings-list').each((i, el) => {
-      if (i < 10) {
-        const equipmentName = $(el).find('.first-line h3').text().trim();
-        const price = $(el).find('.table-cell label:contains("Current")').parent().contents().not('label').text().trim();
-        const link = $(el).find('.thumbnail').attr('href');
-        const imageUrl = $(el).find('.thumbnail img').attr('src');
+//     let auctionTimeResults = [];
+//     $('.listings-list').each((i, el) => {
+//       if (i < 10) {
+//         const equipmentName = $(el).find('.first-line h3').text().trim();
+//         const price = $(el).find('.table-cell label:contains("Current")').parent().contents().not('label').text().trim();
+//         const link = $(el).find('.thumbnail').attr('href');
+//         const imageUrl = $(el).find('.thumbnail img').attr('src');
 
-        auctionTimeResults.push({
-          equipmentName,
-          price,
-          link: link ? `https://www.auctiontime.com${link}` : null,
-          image: imageUrl ? `${imageUrl}` : null
-        });
-      }
-    });
+//         auctionTimeResults.push({
+//           equipmentName,
+//           price,
+//           link: link ? `https://www.auctiontime.com${link}` : null,
+//           image: imageUrl ? `${imageUrl}` : null
+//         });
+//       }
+//     });
 
-    await browser.close();
+//     await browser.close();
 
-    res.json(auctionTimeResults);
-  } catch (error) {
-    console.error('Error scraping Auction Time:', error);
-    res.status(500).send('Failed to scrape Auction Time data');
-  }
-});
+//     res.json(auctionTimeResults);
+//   } catch (error) {
+//     console.error('Error scraping Auction Time:', error);
+//     res.status(500).send('Failed to scrape Auction Time data');
+//   }
+// });
 
 
 
