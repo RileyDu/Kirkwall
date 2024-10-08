@@ -43,11 +43,11 @@ const VideoPlayerPage = () => {
 
   return (
     <Box mx="auto" mt={16} px={4}>
-      <Heading size="xl" textAlign="center" mb={8}>
+      <Heading size="xl" textAlign="center" mb={4}>
         Video Monitoring
       </Heading>
       
-      <SimpleGrid columns={[1, 2, 3]} spacing={6}>
+      <SimpleGrid columns={[1, 2, 3]} spacing={4}>
         {videoFeeds.map((feed, index) => (
           <VideoFeedCard
             key={index}
