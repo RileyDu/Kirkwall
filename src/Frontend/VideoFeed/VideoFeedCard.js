@@ -1,7 +1,11 @@
-import { Box, Badge, Text } from '@chakra-ui/react';
-import { FaCamera } from 'react-icons/fa';
+import { Box, Badge, Text, IconButton } from '@chakra-ui/react';
+import { FaCamera, FaExpand } from 'react-icons/fa';
+import { useDisclosure } from '@chakra-ui/react';
+import FullscreenModal from './FullScreenModal.js';
 
 const VideoFeedCard = ({ title, location, status, streamUrl }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Box
       borderRadius="lg"
@@ -34,11 +38,10 @@ const VideoFeedCard = ({ title, location, status, streamUrl }) => {
         )}
       </Box>
       
-      {/* Live/Offline Badge */}
       <Badge
         position="absolute"
-        top="6"
-        right="6"
+        top={status === 'live' ? '6' : '6'}
+        right={status === 'live' ? '6' : '7'}
         colorScheme={status === 'live' ? 'red' : 'gray'}
         bg={status === 'live' ? 'red.500' : 'gray.500'}
         color="white"
@@ -53,11 +56,26 @@ const VideoFeedCard = ({ title, location, status, streamUrl }) => {
         {status === 'live' ? 'LIVE' : 'OFFLINE'}
       </Badge>
 
+      <IconButton
+        icon={<FaExpand />}
+        position="absolute"
+        bottom="4"
+        right="4"
+        onClick={onOpen}
+        // colorScheme="whiteAlpha"
+        variant={'blue'}
+        aria-label="Expand to Fullscreen"
+        borderRadius={'10px'}
+      />
+
       <Box mt={4}>
         <Text fontSize="lg" fontWeight="bold" color="white">{title}</Text>
         <Text fontSize="md" color="white">{Date && new Date().toLocaleString()}</Text>
         <Text fontSize="sm" color="gray.300">{location}</Text>
       </Box>
+
+      {/* Fullscreen Modal */}
+      <FullscreenModal isOpen={isOpen} onClose={onClose} streamUrl={streamUrl} />
     </Box>
   );
 };

@@ -1,5 +1,6 @@
-import { Box, Heading, SimpleGrid, Input } from '@chakra-ui/react';
+import { Box, Heading, SimpleGrid, Input, InputGroup, InputRightElement, Icon } from '@chakra-ui/react';
 import { useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
 import VideoFeedCard from './VideoFeedCard.js';
 
 const VideoPlayerPage = () => {
@@ -56,13 +57,16 @@ const VideoPlayerPage = () => {
         Video Monitoring
       </Heading>
       
-      <Input
-        placeholder="Search video feeds"
-        mb={4}
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        width={'50%'}
-      />
+      <InputGroup mb={4} width="50%">
+        <Input
+          placeholder="Search video feeds"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <InputRightElement pointerEvents="none">
+          <Icon as={FaSearch} color="gray.400" />
+        </InputRightElement>
+      </InputGroup>
       
       <SimpleGrid columns={[1, 2, 3]} spacing={4}>
         {filteredFeeds.map((feed, index) => (
