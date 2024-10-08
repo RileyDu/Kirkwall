@@ -56,7 +56,7 @@ const VideoFeedCard = ({ title, location, status, streamUrl }) => {
         {status === 'live' ? 'LIVE' : 'OFFLINE'}
       </Badge>
 
-      <IconButton
+      {/* <IconButton
         icon={<FaExpand />}
         position="absolute"
         bottom="4"
@@ -66,7 +66,7 @@ const VideoFeedCard = ({ title, location, status, streamUrl }) => {
         variant={'blue'}
         aria-label="Expand to Fullscreen"
         borderRadius={'10px'}
-      />
+      /> */}
 
       <Box mt={4}>
         <Text fontSize="lg" fontWeight="bold" color="white">{title}</Text>
