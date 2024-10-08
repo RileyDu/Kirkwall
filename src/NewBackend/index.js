@@ -1007,54 +1007,98 @@ app.get('/api/scrapeBigIron', async (req, res) => {
   }
 });
 
-// Scrape Purple Wave Auctions using Puppeteer
-// app.get('/api/scrapePurpleWave', async (req, res) => {
-//   const { query } = req.query;
-//   const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '%'); // Format the query to match the category URL
+app.get('/api/scrapePurpleWave', async (req, res) => {
+  const { query } = req.query;
+  const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '%20');
 
-//   try {
-//     // Launch Puppeteer browser
-//     const browser = await puppeteer.launch({ headless: true });
-//     const page = await browser.newPage();
+  try {
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
 
-//     // Navigate to the correct BigIron sale category page
-//     const url = `https://www.purplewave.com/search/${formattedQuery}`;
-//     await page.goto(url, { waitUntil: 'networkidle2' });
+    // Navigate to the search page
+    const url = `https://www.purplewave.com/search/${formattedQuery}`;
+    await page.goto(url, { waitUntil: 'networkidle2' });
 
-//     // Wait for the search results container to load
-//     await page.waitForSelector('#item-list', { timeout: 30000 }); // Increased timeout to 30 seconds
+    // Wait for the item list to load
+    await page.waitForSelector('.panel.panel-default.auction-item-compressed', { timeout: 15000 });
 
-//     // Extract the HTML content
-//     const content = await page.content();
-//     const $ = cheerio.load(content);
+    // Extract the content
+    const content = await page.content();
+    const $ = cheerio.load(content);
 
-//     let purpleWaveResults = [];
-//     $('.pager-list-item').each((i, el) => {
-//       if (i < 10) {
-//         // Only collect the first 10 listings
-//         const equipmentName = $(el).find('.first-line h3').text().trim();
-//         const price = $(el).find('.table-cell label:contains("Current")').next().text().trim();
-//         const link = $(el).find('.thumbnail').attr('href');
-//         const imageUrl = $(el).find('.bidpod-thumbnail img').attr('src');
+    let purpleWaveResults = [];
+    $('.panel.panel-default.auction-item-compressed').each((i, el) => {
+      if (i < 10) {
+        const equipmentName = $(el).find('.first-line h3').text().trim();
+        const price = $(el).find('.table-cell label:contains("Current")').parent().contents().not('label').text().trim();
+        const link = $(el).find('.thumbnail').attr('href');
+        const imageUrl = $(el).find('.thumbnail img').attr('src');
 
-//         purpleWaveResults.push({
-//           equipmentName,
-//           price,
-//           link: `https://www.purplewave.com${link}`,
-//           image: imageUrl ? `${imageUrl}` : null, // Construct the full image URL
-//         });
-//       }
-//     });
+        purpleWaveResults.push({
+          equipmentName,
+          price,
+          link: link ? `https://www.purplewave.com${link}` : null,
+          image: imageUrl ? `${imageUrl}` : null
+        });
+      }
+    });
 
-//     await browser.close();
+    await browser.close();
 
-//     // Send the scraped data back
-//     res.json(purpleWaveResults);
-//   } catch (error) {
-//     console.error('Error scraping Big Iron:', error);
-//     res.status(500).send('Failed to scrape Big Iron data');
-//   }
-// });
+    res.json(purpleWaveResults);
+  } catch (error) {
+    console.error('Error scraping Purple Wave:', error);
+    res.status(500).send('Failed to scrape Purple Wave data');
+  }
+});
+
+app.get('/api/scrapeAuctionTime', async (req, res) => {
+  const { query } = req.query;
+  const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '%20');
+
+  try {
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+
+    // Navigate to the search page
+    const url = `https://www.auctiontime.com/listings/auctions/online/all-auctions/list?keywords=${formattedQuery}`;
+    await page.goto(url, { waitUntil: 'networkidle2' });
+
+    // Wait for the item list to load
+    await page.waitForSelector('.listings-list', { timeout: 15000 });
+
+    // Extract the content
+    const content = await page.content();
+    const $ = cheerio.load(content);
+
+    let auctionTimeResults = [];
+    $('.listings-list').each((i, el) => {
+      if (i < 10) {
+        const equipmentName = $(el).find('.first-line h3').text().trim();
+        const price = $(el).find('.table-cell label:contains("Current")').parent().contents().not('label').text().trim();
+        const link = $(el).find('.thumbnail').attr('href');
+        const imageUrl = $(el).find('.thumbnail img').attr('src');
+
+        auctionTimeResults.push({
+          equipmentName,
+          price,
+          link: link ? `https://www.auctiontime.com${link}` : null,
+          image: imageUrl ? `${imageUrl}` : null
+        });
+      }
+    });
+
+    await browser.close();
+
+    res.json(auctionTimeResults);
+  } catch (error) {
+    console.error('Error scraping Auction Time:', error);
+    res.status(500).send('Failed to scrape Auction Time data');
+  }
+});
+
+
+
 
 // Cron Job route that runs every 10 minutes to check live values against user thresholds
 app.get('/api/run-check-thresholds', async (req, res) => {
