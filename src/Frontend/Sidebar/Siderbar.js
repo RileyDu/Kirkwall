@@ -22,6 +22,7 @@ import {
   FaBookOpen,
   FaCalendarWeek,
   FaVideo,
+  FaTractor
 } from 'react-icons/fa';
 import { MdElectricBolt } from 'react-icons/md';
 
@@ -133,6 +134,7 @@ const buttonConfig = {
       route: '/weeklyrecap',
     },
     { icon: <FaVideo size="30" />, label: 'Video Feeds', route: '/videofeed' },
+    { icon: <FaTractor size="30" />, label: 'AgSraper', route: '/agscraper' },
   ],
 };
 

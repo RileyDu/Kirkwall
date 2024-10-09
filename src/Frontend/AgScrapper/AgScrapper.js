@@ -18,13 +18,12 @@ import {
   MenuOptionGroup,
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
+import { useAuth } from '../AuthComponents/AuthContext.js';
 
-const TestSite = () => {
+const AgScrapper = () => {
   const [query, setQuery] = useState('');
-  const [bigIronResults, setBigIronResults] = useState([]);
-  const [purpleWaveResults, setPurpleWaveResults] = useState([]);
-  const [nextBigIronResults, setNextBigIronResults] = useState([]);
-  const [nextPurpleWaveResults, setNextPurpleWaveResults] = useState([]);
+  const [results, setResults] = useState([]);
+  const [nextResults, setNextResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingNext, setLoadingNext] = useState(false);
   const [error, setError] = useState(null);
@@ -33,32 +32,37 @@ const TestSite = () => {
     'Purple Wave',
   ]);
   const [currentPage, setCurrentPage] = useState(1);
+  const { currentUser } = useAuth();
 
   const searchEquipment = async () => {
+    if (query.length < 3) {
+      setError('Please enter at least 3 characters.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setCurrentPage(1);
+    setResults([]);
 
     try {
       const requests = [];
 
       if (selectedSites.includes('Big Iron')) {
         requests.push(
-          axios
-            .get('/api/scrapeBigIron', { params: { query, page: 1 } })
-            .then(response => setBigIronResults(response.data))
+          axios.get('/api/scrapeBigIron', { params: { query, page: 1 } })
         );
       }
       if (selectedSites.includes('Purple Wave')) {
         requests.push(
-          axios
-            .get('/api/scrapePurpleWave', { params: { query, page: 1 } })
-            .then(response => setPurpleWaveResults(response.data))
+          axios.get('/api/scrapePurpleWave', { params: { query, page: 1 } })
         );
       }
 
-      await Promise.all(requests);
-      prefetchNextPage(2); // Prefetch the second page right after the initial fetch
+      const responses = await Promise.all(requests);
+      const allResults = responses.flatMap(response => response.data);
+      setResults(allResults);
+      prefetchNextPage(2);
     } catch (err) {
       setError('Failed to fetch data. Please try again.');
       console.error('Error fetching equipment:', err);
@@ -74,20 +78,18 @@ const TestSite = () => {
 
       if (selectedSites.includes('Big Iron')) {
         nextRequests.push(
-          axios
-            .get('/api/scrapeBigIron', { params: { query, page } })
-            .then(response => setNextBigIronResults(response.data))
+          axios.get('/api/scrapeBigIron', { params: { query, page } })
         );
       }
       if (selectedSites.includes('Purple Wave')) {
         nextRequests.push(
-          axios
-            .get('/api/scrapePurpleWave', { params: { query, page } })
-            .then(response => setNextPurpleWaveResults(response.data))
+          axios.get('/api/scrapePurpleWave', { params: { query, page } })
         );
       }
 
-      await Promise.all(nextRequests);
+      const nextResponses = await Promise.all(nextRequests);
+      const newNextResults = nextResponses.flatMap(response => response.data);
+      setNextResults(newNextResults);
     } catch (err) {
       console.error('Error prefetching next page:', err);
     } finally {
@@ -96,29 +98,28 @@ const TestSite = () => {
   };
 
   const handleLoadMore = async () => {
-    setBigIronResults(prevResults => [...prevResults, ...nextBigIronResults]);
-    setPurpleWaveResults(prevResults => [
-      ...prevResults,
-      ...nextPurpleWaveResults,
-    ]);
-
-    // Clear the next results and fetch the next page after the current one
+    setResults(prevResults => [...prevResults, ...nextResults]);
     const nextPage = currentPage + 1;
-    setNextBigIronResults([]);
-    setNextPurpleWaveResults([]);
+    setNextResults([]);
     setCurrentPage(nextPage);
-
     await prefetchNextPage(nextPage + 1);
   };
 
   const handleClearResults = () => {
     setQuery('');
-    setBigIronResults([]);
-    setPurpleWaveResults([]);
-    setNextBigIronResults([]);
-    setNextPurpleWaveResults([]);
+    setResults([]);
+    setNextResults([]);
     setCurrentPage(1);
-    // setSelectedSites(['Big Iron', 'Purple Wave']);
+  };
+
+  const saveLinkToLocalStorage = link => {
+    const userEmail = currentUser?.email;
+    if (!userEmail) return;
+
+    const storageKey = `savedLinks_${userEmail}`;
+    const existingLinks = JSON.parse(localStorage.getItem(storageKey)) || [];
+    const updatedLinks = [...existingLinks, link];
+    localStorage.setItem(storageKey, JSON.stringify(updatedLinks));
   };
 
   return (
@@ -166,17 +167,17 @@ const TestSite = () => {
         </MenuList>
       </Menu>
 
-      {(bigIronResults?.length > 0 || purpleWaveResults?.length > 0) && (
-            <Button
-            colorScheme="teal"
-            size="lg"
-            onClick={handleClearResults}
-            w="full"
-            mb={6}
-          >
-            Clear
-          </Button>
-)}
+      {results.length > 0 && (
+        <Button
+          colorScheme="teal"
+          size="lg"
+          onClick={handleClearResults}
+          w="full"
+          mb={6}
+        >
+          Clear
+        </Button>
+      )}
       <Button
         colorScheme="teal"
         size="lg"
@@ -185,20 +186,18 @@ const TestSite = () => {
         loadingText="Searching"
         w="full"
         mb={6}
+        isDisabled={query.length < 3}
       >
         Search
       </Button>
-
-
 
       {error && (
         <Text color="red.500" mt={4} textAlign="center">
           {error}
         </Text>
       )}
-
       <Grid templateColumns="repeat(4, 4fr)" gap={6} mt={6} w="full">
-        {[...bigIronResults, ...purpleWaveResults].map((item, index) => (
+        {results.map((item, index) => (
           <Box
             key={index}
             borderWidth="1px"
@@ -234,13 +233,22 @@ const TestSite = () => {
               >
                 View on Auction Site
               </Button>
+              <Button
+                colorScheme="yellow"
+                size="sm"
+                onClick={() => saveLinkToLocalStorage(item.link)}
+                w="full"
+                mb={2}
+              >
+                ★ Save
+              </Button>
               <Text>{item.source}</Text>
             </Box>
           </Box>
         ))}
       </Grid>
 
-      {(bigIronResults.length > 0 || purpleWaveResults.length > 0) && (
+      {results.length > 0 && (
         <Box mt={6} display="flex" justifyContent="center">
           <Button
             onClick={handleLoadMore}
@@ -256,4 +264,4 @@ const TestSite = () => {
   );
 };
 
-export default TestSite;
+export default AgScrapper;

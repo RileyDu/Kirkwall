@@ -34,7 +34,6 @@ import { keyframes } from '@emotion/react';
 import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors.js';
 import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySensors.js';
 import MapComponent from './Frontend/Maps/KirkwallMap.js';
-import LandingPage from './Frontend/LandingPage/LandingPage.js';
 import ImpriMedMap from './Frontend/Maps/ImpriMedMap.js';
 import GrandFarmMap from './Frontend/Maps/GrandFarmMap.js';
 import RJMap from './Frontend/Maps/RJMap.js';
@@ -50,8 +49,8 @@ import ThankYou from './Frontend/Alert/ThankYou.js';
 import ThankYouAdmin from './Frontend/Alert/ThankYouAdmin.js';
 import EnergyPage from './Frontend/Energy/EnergyPage.js';
 import WeeklyRecap from './Frontend/WeeklyRecap/WeeklyRecap.js';
-import TestSite from './Frontend/TestSite.js';
 import VideoPlayerPage from './Frontend/VideoFeed/VideoPlayerPage.js';
+import AgScrapper from './Frontend/AgScrapper/AgScrapper.js';
 
 const Layout = ({
   children,
@@ -405,7 +404,7 @@ const MainApp = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="/testsite" element={<TestSite />} />
+          <Route path="/agscraper" element={<AgScrapper />} />
           <Route path='/videofeed' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><VideoPlayerPage /></ProtectedRoute>} />
           <Route path="*" element={<RedirectBasedOnAuth />} />
         </Routes>
