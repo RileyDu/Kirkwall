@@ -972,7 +972,7 @@ app.get('/api/scrapeBigIron', async (req, res) => {
     await pageObj.goto(url, { waitUntil: 'networkidle2' });
 
     // Wait for the search results container to load
-    await pageObj.waitForSelector('.pager-data', { timeout: 60000 });
+    await pageObj.waitForSelector('.pager-data', { timeout: 10000 });
 
     // Extract the HTML content
     const content = await pageObj.content();
@@ -1018,7 +1018,7 @@ app.get('/api/scrapePurpleWave', async (req, res) => {
     await pageObj.goto(url, { waitUntil: 'networkidle2' });
 
     // Wait for the item list to load
-    await pageObj.waitForSelector('.panel.panel-default.auction-item-compressed', { timeout: 15000 });
+    await pageObj.waitForSelector('.panel.panel-default.auction-item-compressed', { timeout: 10000 });
 
     // Extract the content
     const content = await pageObj.content();

@@ -48,15 +48,15 @@ const AgScrapper = () => {
       setError('Please enter at least 3 characters.');
       return;
     }
-
+  
     setLoading(true);
     setError(null);
     setCurrentPage(1);
     setResults([]);
-
+  
     try {
       const requests = [];
-
+  
       if (selectedSites.includes('Big Iron')) {
         requests.push(
           axios.get('/api/scrapeBigIron', { params: { query, page: 1 } })
@@ -67,11 +67,26 @@ const AgScrapper = () => {
           axios.get('/api/scrapePurpleWave', { params: { query, page: 1 } })
         );
       }
-
-      const responses = await Promise.all(requests);
-      const allResults = responses.flatMap(response => response.data);
-      setResults(allResults);
-      prefetchNextPage(2);
+  
+      // Use Promise.allSettled to handle each request independently
+      const responses = await Promise.allSettled(requests);
+  
+      const successfulResults = responses
+        .filter(response => response.status === 'fulfilled')
+        .flatMap(response => response.value.data);
+  
+      const errors = responses.filter(response => response.status === 'rejected');
+  
+      if (errors.length > 0) {
+        console.error('One or more sites failed:', errors);
+      }
+  
+      if (successfulResults.length > 0) {
+        setResults(successfulResults);
+        prefetchNextPage(2);
+      } else {
+        setError('No data found on selected sites.');
+      }
     } catch (err) {
       setError('Failed to fetch data. Please try again.');
       console.error('Error fetching equipment:', err);
@@ -79,6 +94,7 @@ const AgScrapper = () => {
       setLoading(false);
     }
   };
+  
 
   const prefetchNextPage = async page => {
     setLoadingNext(true);
