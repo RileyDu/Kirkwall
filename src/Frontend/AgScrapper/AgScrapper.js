@@ -20,6 +20,8 @@ import {
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import SavedLinksModal from './SavedLinksModal.js';
+import animationData from './Perfect-loop-cube-SVG.json';
+import Lottie from 'react-lottie';
 
 const AgScrapper = () => {
   const { currentUser } = useAuth();
@@ -48,15 +50,15 @@ const AgScrapper = () => {
       setError('Please enter at least 3 characters.');
       return;
     }
-  
+
     setLoading(true);
     setError(null);
     setCurrentPage(1);
     setResults([]);
-  
+
     try {
       const requests = [];
-  
+
       if (selectedSites.includes('Big Iron')) {
         requests.push(
           axios.get('/api/scrapeBigIron', { params: { query, page: 1 } })
@@ -67,20 +69,22 @@ const AgScrapper = () => {
           axios.get('/api/scrapePurpleWave', { params: { query, page: 1 } })
         );
       }
-  
+
       // Use Promise.allSettled to handle each request independently
       const responses = await Promise.allSettled(requests);
-  
+
       const successfulResults = responses
         .filter(response => response.status === 'fulfilled')
         .flatMap(response => response.value.data);
-  
-      const errors = responses.filter(response => response.status === 'rejected');
-  
+
+      const errors = responses.filter(
+        response => response.status === 'rejected'
+      );
+
       if (errors.length > 0) {
         console.error('One or more sites failed:', errors);
       }
-  
+
       if (successfulResults.length > 0) {
         setResults(successfulResults);
         prefetchNextPage(2);
@@ -94,7 +98,6 @@ const AgScrapper = () => {
       setLoading(false);
     }
   };
-  
 
   const prefetchNextPage = async page => {
     setLoadingNext(true);
@@ -159,8 +162,19 @@ const AgScrapper = () => {
     setSavedLinks(updatedLinks); // Update state to reflect changes in real-time
   };
 
-  const isLinkSaved = (link) => savedLinks.some(savedLink => savedLink.link === link);
+  const isLinkSaved = link =>
+    savedLinks.some(savedLink => savedLink.link === link);
 
+  console.log('animationData', animationData);
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice',
+    },
+  };
 
   return (
     <Box
@@ -184,7 +198,11 @@ const AgScrapper = () => {
         mb={4}
         colorScheme="teal"
       />
-
+      {loading && 
+      <div>
+        <Lottie options={defaultOptions} height={400} width={400} />
+      </div>
+      }
       <Menu closeOnSelect={false}>
         <MenuButton
           as={Button}
