@@ -990,7 +990,8 @@ app.get('/api/scrapeBigIron', async (req, res) => {
         equipmentName,
         price,
         link: `https://www.bigiron.com${link}`,
-        image: imageUrl ? `${imageUrl}` : null
+        image: imageUrl ? `${imageUrl}` : null,
+        source: 'Big Iron'
       });
     }
     });
@@ -1004,22 +1005,23 @@ app.get('/api/scrapeBigIron', async (req, res) => {
 
 
 app.get('/api/scrapePurpleWave', async (req, res) => {
-  const { query } = req.query;
+  const { query, page = 1 } = req.query; // Default page to 1 if not provided
   const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '%20');
 
   try {
     const browser = await puppeteer.launch({ headless: true });
-    const page = await browser.newPage();
+    const pageObj = await browser.newPage();
 
-    // Navigate to the search page
-    const url = `https://www.purplewave.com/search/${formattedQuery}`;
-    await page.goto(url, { waitUntil: 'networkidle2' });
+    // Construct the URL with the updated parameters, including the page number
+    const url = `https://www.purplewave.com/search/${formattedQuery}?searchType=all&dateType=upcoming&zipcodeRange=all&sortBy=current_bid-desc&perPage=20&grouped=true&viewtype=compressed&page=${page}`;
+    
+    await pageObj.goto(url, { waitUntil: 'networkidle2' });
 
     // Wait for the item list to load
-    await page.waitForSelector('.panel.panel-default.auction-item-compressed', { timeout: 15000 });
+    await pageObj.waitForSelector('.panel.panel-default.auction-item-compressed', { timeout: 15000 });
 
     // Extract the content
-    const content = await page.content();
+    const content = await pageObj.content();
     const $ = cheerio.load(content);
 
     let purpleWaveResults = [];
@@ -1034,19 +1036,20 @@ app.get('/api/scrapePurpleWave', async (req, res) => {
           equipmentName,
           price,
           link: link ? `https://www.purplewave.com${link}` : null,
-          image: imageUrl ? `${imageUrl}` : null
+          image: imageUrl ? `${imageUrl}` : null,
+          source: 'Purple Wave'
         });
       }
     });
 
     await browser.close();
-
     res.json(purpleWaveResults);
   } catch (error) {
     console.error('Error scraping Purple Wave:', error);
     res.status(500).send('Failed to scrape Purple Wave data');
   }
 });
+
 
 // app.get('/api/scrapeAuctionTime', async (req, res) => {
 //   const { query } = req.query;
