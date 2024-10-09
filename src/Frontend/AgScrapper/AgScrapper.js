@@ -19,8 +19,11 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useAuth } from '../AuthComponents/AuthContext.js';
+import SavedLinksModal from './SavedLinksModal.js';
 
 const AgScrapper = () => {
+  const { currentUser } = useAuth();
+  const userEmail = currentUser?.email;
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [nextResults, setNextResults] = useState([]);
@@ -32,7 +35,13 @@ const AgScrapper = () => {
     'Purple Wave',
   ]);
   const [currentPage, setCurrentPage] = useState(1);
-  const { currentUser } = useAuth();
+  const [savedLinks, setSavedLinks] = useState(() => {
+    const userEmail = currentUser?.email;
+    if (!userEmail) return [];
+
+    const storageKey = `savedLinks_${userEmail}`;
+    return JSON.parse(localStorage.getItem(storageKey)) || [];
+  });
 
   const searchEquipment = async () => {
     if (query.length < 3) {
@@ -112,15 +121,30 @@ const AgScrapper = () => {
     setCurrentPage(1);
   };
 
-  const saveLinkToLocalStorage = link => {
-    const userEmail = currentUser?.email;
+  const toggleLinkInLocalStorage = (title, link) => {
     if (!userEmail) return;
 
     const storageKey = `savedLinks_${userEmail}`;
     const existingLinks = JSON.parse(localStorage.getItem(storageKey)) || [];
-    const updatedLinks = [...existingLinks, link];
+
+    // Check if the link already exists
+    const linkExists = existingLinks.some(savedLink => savedLink.link === link);
+
+    let updatedLinks;
+    if (linkExists) {
+      // Remove if it already exists
+      updatedLinks = existingLinks.filter(savedLink => savedLink.link !== link);
+    } else {
+      // Add new link with title
+      updatedLinks = [...existingLinks, { title, link }];
+    }
+
     localStorage.setItem(storageKey, JSON.stringify(updatedLinks));
+    setSavedLinks(updatedLinks); // Update state to reflect changes in real-time
   };
+
+  const isLinkSaved = (link) => savedLinks.some(savedLink => savedLink.link === link);
+
 
   return (
     <Box
@@ -132,7 +156,7 @@ const AgScrapper = () => {
       alignItems="center"
     >
       <Heading as="h1" fontSize="2xl" mb={6} textAlign="center">
-        AgScrapper: Agriculture Equipment Search
+        AgScraper: Agriculture Equipment Search
       </Heading>
 
       <Input
@@ -236,12 +260,16 @@ const AgScrapper = () => {
               <Button
                 colorScheme="yellow"
                 size="sm"
-                onClick={() => saveLinkToLocalStorage(item.link)}
+                variant={isLinkSaved(item.link) ? 'ghost' : 'solid'}
+                onClick={() =>
+                  toggleLinkInLocalStorage(item.equipmentName, item.link)
+                }
                 w="full"
                 mb={2}
               >
-                ★ Save
+                {isLinkSaved(item.link) ? '★ Saved' : '☆ Save'}
               </Button>
+
               <Text>{item.source}</Text>
             </Box>
           </Box>
@@ -260,6 +288,12 @@ const AgScrapper = () => {
           </Button>
         </Box>
       )}
+
+      <SavedLinksModal
+        savedLinks={savedLinks}
+        setSavedLinks={setSavedLinks}
+        currentUser={currentUser}
+      />
     </Box>
   );
 };
