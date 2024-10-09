@@ -959,53 +959,49 @@ app.get('/api/sensor_data', async (req, res) => {
 
 // Scrape Big Iron Auctions using Puppeteer
 app.get('/api/scrapeBigIron', async (req, res) => {
-  const { query } = req.query;
-  const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '+'); // Format the query to match the category URL
+  const { query, page = 1 } = req.query; // Set default page to 1 if not provided
+  const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '+');
 
   try {
-    // Launch Puppeteer browser
     const browser = await puppeteer.launch({ headless: true });
-    const page = await browser.newPage();
+    const pageObj = await browser.newPage();
 
-    // Navigate to the correct BigIron sale category page
-    const url = `https://www.bigiron.com/Search?showTab=true&search=${formattedQuery}&searchMode=All`;
-    // const url = `https://www.bigiron.com/sale/${formattedQuery}`;
-    await page.goto(url, { waitUntil: 'networkidle2' });
+    // Use the updated URL format for Big Iron with pagination
+    const url = `https://www.bigiron.com/Search?showTab=true&search=${formattedQuery}&searchMode=All&userControlsVisible=false&distance=500&historical=false&tab=equipment-tab&page=${page}&itemsPerPage=20&filter=Open&sort=Start&sortOrder=Ascending`;
+    
+    await pageObj.goto(url, { waitUntil: 'networkidle2' });
 
     // Wait for the search results container to load
-    await page.waitForSelector('.pager-data', { timeout: 60000 }); // Increased timeout to 60 seconds
+    await pageObj.waitForSelector('.pager-data', { timeout: 60000 });
 
     // Extract the HTML content
-    const content = await page.content();
+    const content = await pageObj.content();
     const $ = cheerio.load(content);
 
     let bigIronResults = [];
     $('.pager-list-item').each((i, el) => {
-      if (i < 10) {
-        // Only collect the first 10 listings
-        const equipmentName = $(el).find('.lot-title h1').text().trim();
-        const price = $(el).find('.bidding-js-amount').first().text().trim();
-        const link = $(el).find('a').attr('href');
-        const imageUrl = $(el).find('.bidding-js-preview img').attr('src');
+      if (i < 20) {
+      const equipmentName = $(el).find('.lot-title h1').text().trim();
+      const price = $(el).find('.bidding-js-amount').first().text().trim();
+      const link = $(el).find('a').attr('href');
+      const imageUrl = $(el).find('.bidding-js-preview img').attr('src');
 
-        bigIronResults.push({
-          equipmentName,
-          price,
-          link: `https://www.bigiron.com${link}`,
-          image: imageUrl ? `${imageUrl}` : null, // Construct the full image URL
-        });
-      }
+      bigIronResults.push({
+        equipmentName,
+        price,
+        link: `https://www.bigiron.com${link}`,
+        image: imageUrl ? `${imageUrl}` : null
+      });
+    }
     });
-
     await browser.close();
-
-    // Send the scraped data back
     res.json(bigIronResults);
   } catch (error) {
     console.error('Error scraping Big Iron:', error);
     res.status(500).send('Failed to scrape Big Iron data');
   }
 });
+
 
 app.get('/api/scrapePurpleWave', async (req, res) => {
   const { query } = req.query;
@@ -1028,7 +1024,7 @@ app.get('/api/scrapePurpleWave', async (req, res) => {
 
     let purpleWaveResults = [];
     $('.panel.panel-default.auction-item-compressed').each((i, el) => {
-      if (i < 10) {
+      if (i < 20) {
         const equipmentName = $(el).find('.first-line h3').text().trim();
         const price = $(el).find('.table-cell label:contains("Current")').parent().contents().not('label').text().trim();
         const link = $(el).find('.thumbnail').attr('href');
