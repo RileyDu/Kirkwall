@@ -44,6 +44,7 @@ const AgScrapper = ({ statusOfAlerts }) => {
   ]);
   const [currentPage, setCurrentPage] = useState(1);
   const [baseIndex, setBaseIndex] = useState(0); // Track the start index for animations
+  const [hasMoreResults, setHasMoreResults] = useState(true);
 
   const [savedLinks, setSavedLinks] = useState(() => {
     const userEmail = currentUser?.email;
@@ -60,15 +61,16 @@ const AgScrapper = ({ statusOfAlerts }) => {
       setError('Please enter at least 3 characters.');
       return;
     }
-
+  
     setLoading(true);
     setError(null);
     setCurrentPage(1);
     setResults([]);
-
+    setHasMoreResults(true); // Reset hasMoreResults on new search
+  
     try {
       const requests = [];
-
+  
       if (selectedSites.includes('Big Iron')) {
         requests.push(
           axios.get('/api/scrapeBigIron', { params: { query, page: 1 } })
@@ -79,27 +81,34 @@ const AgScrapper = ({ statusOfAlerts }) => {
           axios.get('/api/scrapePurpleWave', { params: { query, page: 1 } })
         );
       }
-
-      // Use Promise.allSettled to handle each request independently
+  
       const responses = await Promise.allSettled(requests);
-
+  
       const successfulResults = responses
         .filter(response => response.status === 'fulfilled')
         .flatMap(response => response.value.data);
-
+  
       const errors = responses.filter(
         response => response.status === 'rejected'
       );
-
+  
       if (errors.length > 0) {
         console.error('One or more sites failed:', errors);
       }
-
+  
       if (successfulResults.length > 0) {
         setResults(successfulResults);
-        prefetchNextPage(2);
+  
+        // Check if we have fewer than 20 results, indicating no more pages
+        if (successfulResults.length < 20) {
+          setHasMoreResults(false);
+        } else {
+          setHasMoreResults(true);
+          prefetchNextPage(2);
+        }
       } else {
         setError('No data found on selected sites.');
+        setHasMoreResults(false); // No results found, no more results to load
       }
     } catch (err) {
       setError('Failed to fetch data. Please try again.');
@@ -108,6 +117,7 @@ const AgScrapper = ({ statusOfAlerts }) => {
       setLoading(false);
     }
   };
+  
 
   const prefetchNextPage = async page => {
     setLoadingNext(true);
@@ -127,7 +137,13 @@ const AgScrapper = ({ statusOfAlerts }) => {
 
       const nextResponses = await Promise.all(nextRequests);
       const newNextResults = nextResponses.flatMap(response => response.data);
+
       setNextResults(newNextResults);
+      if (newNextResults.length < 20) {
+        setHasMoreResults(false);
+      } else {
+        setHasMoreResults(true);
+      }
     } catch (err) {
       console.error('Error prefetching next page:', err);
     } finally {
@@ -137,7 +153,7 @@ const AgScrapper = ({ statusOfAlerts }) => {
 
   const handleLoadMore = async () => {
     setResults(prevResults => {
-      const newBaseIndex = prevResults.length; // Update base index for the new batch
+      const newBaseIndex = prevResults.length;
       setBaseIndex(newBaseIndex);
       return [...prevResults, ...nextResults];
     });
@@ -147,7 +163,6 @@ const AgScrapper = ({ statusOfAlerts }) => {
     setCurrentPage(nextPage);
     await prefetchNextPage(nextPage + 1);
   };
-
 
   const handleClearResults = () => {
     setQuery('');
@@ -183,13 +198,13 @@ const AgScrapper = ({ statusOfAlerts }) => {
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: (index) => ({
+    visible: index => ({
       opacity: 1,
       y: 0,
       transition: {
         delay: (index - baseIndex) * 0.1, // Reset delay for the new batch of items
-      }
-    })
+      },
+    }),
   };
 
   return (
@@ -385,11 +400,15 @@ const AgScrapper = ({ statusOfAlerts }) => {
         <Box mt={6}>
           <Button
             onClick={handleLoadMore}
-            isDisabled={loadingNext}
+            isDisabled={loadingNext || !hasMoreResults}
             colorScheme="teal"
             size="lg"
           >
-            {loadingNext ? 'Loading...' : 'Show More'}
+            {loadingNext
+              ? 'Loading...'
+              : hasMoreResults
+              ? 'Show More'
+              : 'No More Results'}
           </Button>
         </Box>
       )}
