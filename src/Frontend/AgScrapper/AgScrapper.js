@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Box,
@@ -22,10 +22,13 @@ import {
   useMediaQuery,
   useDisclosure,
   useColorMode,
+  IconButton,
 } from '@chakra-ui/react';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import SavedLinksModal from './SavedLinksModal.js';
 import { motion } from 'framer-motion';
+import { ArrowUpIcon } from '@chakra-ui/icons';
+
 
 const AgScrapper = ({ statusOfAlerts }) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
@@ -46,6 +49,7 @@ const AgScrapper = ({ statusOfAlerts }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [baseIndex, setBaseIndex] = useState(0); // Track the start index for animations
   const [hasMoreResults, setHasMoreResults] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const [savedLinks, setSavedLinks] = useState(() => {
     const userEmail = currentUser?.email;
@@ -207,6 +211,23 @@ const AgScrapper = ({ statusOfAlerts }) => {
     }),
   };
 
+  // Scroll to top function
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Detect scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+      setIsScrolled(scrollTop > 300); // Show the button after scrolling down 300px
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <Box
       mx="auto"
@@ -233,11 +254,15 @@ const AgScrapper = ({ statusOfAlerts }) => {
           value={query}
           onChange={e => setQuery(e.target.value)}
           colorScheme="teal"
-          w={{ base: '70%'}}
+          w={{ base: '70%' }}
           ml={{ base: 0, md: '200px' }}
         />
         {/* Buttons row */}
-        <HStack spacing={4} w="full" justifyContent={isLargerThan768 ? 'flex-start' : 'center'}>
+        <HStack
+          spacing={4}
+          w="full"
+          justifyContent={isLargerThan768 ? 'flex-start' : 'center'}
+        >
           <Menu closeOnSelect={false}>
             <MenuButton
               as={Button}
@@ -292,7 +317,11 @@ const AgScrapper = ({ statusOfAlerts }) => {
         </Text>
       )}
       {loading && (
-        <Box display={'flex'} justifyContent={'center'} mt={isLargerThan768 ? '100px' : '0px'}>
+        <Box
+          display={'flex'}
+          justifyContent={'center'}
+          mt={isLargerThan768 ? '100px' : '0px'}
+        >
           <dotlottie-player
             // src="https://lottie.host/aa5a13e0-d18a-4a94-a12a-e2d4dec5563c/9kTrjfgaWK.json" // hand
             // src="https://lottie.host/8f2ae775-e459-4074-bc30-abcf715786da/K00szLdcP4.json" // blue blocks
@@ -402,6 +431,20 @@ const AgScrapper = ({ statusOfAlerts }) => {
           </Button>
         </Box>
       )}
+
+      {isScrolled && (
+        <IconButton
+          icon={<ArrowUpIcon />}
+          onClick={scrollToTop}
+          position="fixed"
+          bottom="20px"
+          right="20px"
+          variant={'blue'}
+          aria-label="Scroll to top"
+          zIndex={1000}
+        />
+      )}
+
       {/* Hook up the modal with isOpen and onClose from useDisclosure */}
       <SavedLinksModal
         savedLinks={savedLinks}
