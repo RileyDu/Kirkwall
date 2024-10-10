@@ -10,6 +10,7 @@ import { checkThresholds } from './cron/checkThresholds.js'; // Import your cron
 import { generateWeeklyRecap } from './cron/cronWeeklyRecap.js';
 import puppeteer from 'puppeteer';
 import * as cheerio from 'cheerio';
+import * as chromium from 'chrome-aws-lambda';
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -959,42 +960,46 @@ app.get('/api/sensor_data', async (req, res) => {
 
 // Scrape Big Iron Auctions using Puppeteer
 app.get('/api/scrapeBigIron', async (req, res) => {
-  const { query, page = 1 } = req.query; // Set default page to 1 if not provided
+  const { query, page = 1 } = req.query;
   const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '+');
 
   try {
-    const browser = await puppeteer.launch({ headless: true });
-    const pageObj = await browser.newPage();
-
-    // Use the updated URL format for Big Iron with pagination
-    const url = `https://www.bigiron.com/Search?showTab=true&search=${formattedQuery}&searchMode=All&userControlsVisible=false&distance=500&historical=false&tab=equipment-tab&page=${page}&itemsPerPage=20&filter=Open&sort=Start&sortOrder=Ascending`;
+    // Launch puppeteer with chrome-aws-lambda settings
+    const browser = await puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath,
+      headless: chromium.headless,
+    });
     
+    const pageObj = await browser.newPage();
+    
+    // Define the target URL
+    const url = `https://www.bigiron.com/Search?showTab=true&search=${formattedQuery}&searchMode=All&userControlsVisible=false&distance=500&historical=false&tab=equipment-tab&page=${page}&itemsPerPage=20&filter=Open&sort=Start&sortOrder=Ascending`;
     await pageObj.goto(url, { waitUntil: 'networkidle2' });
-
-    // Wait for the search results container to load
+    
     await pageObj.waitForSelector('.pager-data', { timeout: 10000 });
-
-    // Extract the HTML content
+    
     const content = await pageObj.content();
     const $ = cheerio.load(content);
-
+    
     let bigIronResults = [];
     $('.pager-list-item').each((i, el) => {
       if (i < 20) {
-      const equipmentName = $(el).find('.lot-title h1').text().trim();
-      const price = $(el).find('.bidding-js-amount').first().text().trim();
-      const link = $(el).find('a').attr('href');
-      const imageUrl = $(el).find('.bidding-js-preview img').attr('src');
-
-      bigIronResults.push({
-        equipmentName,
-        price,
-        link: `https://www.bigiron.com${link}`,
-        image: imageUrl ? `${imageUrl}` : null,
-        source: 'Big Iron'
-      });
-    }
+        const equipmentName = $(el).find('.lot-title h1').text().trim();
+        const price = $(el).find('.bidding-js-amount').first().text().trim();
+        const link = $(el).find('a').attr('href');
+        const imageUrl = $(el).find('.bidding-js-preview img').attr('src');
+        
+        bigIronResults.push({
+          equipmentName,
+          price,
+          link: `https://www.bigiron.com${link}`,
+          image: imageUrl ? `${imageUrl}` : null,
+          source: 'Big Iron'
+        });
+      }
     });
+    
     await browser.close();
     res.json(bigIronResults);
   } catch (error) {
@@ -1003,27 +1008,28 @@ app.get('/api/scrapeBigIron', async (req, res) => {
   }
 });
 
-
 app.get('/api/scrapePurpleWave', async (req, res) => {
-  const { query, page = 1 } = req.query; // Default page to 1 if not provided
+  const { query, page = 1 } = req.query;
   const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '%20');
 
   try {
-    const browser = await puppeteer.launch({ headless: true });
-    const pageObj = await browser.newPage();
-
-    // Construct the URL with the updated parameters, including the page number
-    const url = `https://www.purplewave.com/search/${formattedQuery}?searchType=all&dateType=upcoming&zipcodeRange=all&sortBy=current_bid-desc&perPage=20&grouped=true&viewtype=compressed&page=${page}`;
+    // Launch puppeteer with chrome-aws-lambda settings
+    const browser = await puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath,
+      headless: chromium.headless,
+    });
     
+    const pageObj = await browser.newPage();
+    
+    const url = `https://www.purplewave.com/search/${formattedQuery}?searchType=all&dateType=upcoming&zipcodeRange=all&sortBy=current_bid-desc&perPage=20&grouped=true&viewtype=compressed&page=${page}`;
     await pageObj.goto(url, { waitUntil: 'networkidle2' });
-
-    // Wait for the item list to load
+    
     await pageObj.waitForSelector('.panel.panel-default.auction-item-compressed', { timeout: 10000 });
-
-    // Extract the content
+    
     const content = await pageObj.content();
     const $ = cheerio.load(content);
-
+    
     let purpleWaveResults = [];
     $('.panel.panel-default.auction-item-compressed').each((i, el) => {
       if (i < 20) {
@@ -1031,7 +1037,7 @@ app.get('/api/scrapePurpleWave', async (req, res) => {
         const price = $(el).find('.table-cell label:contains("Current")').parent().contents().not('label').text().trim();
         const link = $(el).find('.thumbnail').attr('href');
         const imageUrl = $(el).find('.thumbnail img').attr('src');
-
+        
         purpleWaveResults.push({
           equipmentName,
           price,
@@ -1049,6 +1055,7 @@ app.get('/api/scrapePurpleWave', async (req, res) => {
     res.status(500).send('Failed to scrape Purple Wave data');
   }
 });
+
 
 
 // app.get('/api/scrapeAuctionTime', async (req, res) => {

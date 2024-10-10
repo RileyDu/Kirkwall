@@ -29,7 +29,6 @@ import SavedLinksModal from './SavedLinksModal.js';
 import { motion } from 'framer-motion';
 import { ArrowUpIcon } from '@chakra-ui/icons';
 
-
 const AgScrapper = ({ statusOfAlerts }) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
   const { currentUser } = useAuth();
