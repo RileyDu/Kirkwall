@@ -180,7 +180,7 @@ const AgScrapper = ({ statusOfAlerts }) => {
 
   const isLinkSaved = link =>
     savedLinks.some(savedLink => savedLink.link === link);
-  
+
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: (index) => ({
@@ -333,6 +333,8 @@ const AgScrapper = ({ statusOfAlerts }) => {
                 w="100%"
                 h="175px"
                 objectFit="cover"
+                onClick={() => window.open(item.link, '_blank')}
+                cursor={'pointer'}
               />
               <Box p={4} flex="1" display="flex" flexDirection="column">
                 <Stat mb={2}>
