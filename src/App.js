@@ -404,7 +404,7 @@ const MainApp = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="/agscraper" element={<AgScrapper />} />
+          <Route path="/agscraper" element={<AgScrapper statusOfAlerts={showAlerts} />} />
           <Route path='/videofeed' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><VideoPlayerPage /></ProtectedRoute>} />
           <Route path="*" element={<RedirectBasedOnAuth />} />
         </Routes>

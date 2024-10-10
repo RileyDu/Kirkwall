@@ -20,16 +20,17 @@ import {
   HStack,
   useMediaQuery,
   useDisclosure,
+  useColorMode,
 } from '@chakra-ui/react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import SavedLinksModal from './SavedLinksModal.js';
-import animationData from './Perfect-loop-cube-SVG.json';
-import Lottie from 'react-lottie';
+import { motion } from 'framer-motion';
 
-const AgScrapper = () => {
+const AgScrapper = ({ statusOfAlerts }) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
   const { currentUser } = useAuth();
+  const { colorMode } = useColorMode();
+
   const userEmail = currentUser?.email;
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
@@ -171,21 +172,27 @@ const AgScrapper = () => {
 
   const isLinkSaved = link =>
     savedLinks.some(savedLink => savedLink.link === link);
-
-  console.log('animationData', animationData);
-
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: animationData,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
-    },
+  
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (index) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: index * 0.1,
+      }
+    })
   };
 
   return (
-    <Box mx="auto" mt={16} px={4} maxW="container.xl" textAlign="center">
-      <Heading as="h1" fontSize="2xl" mb={6}>
+    <Box
+      mx="auto"
+      pt={statusOfAlerts ? '10px' : '74px'}
+      px={4}
+      maxW="container.xl"
+      textAlign="center"
+    >
+      <Heading size={isLargerThan768 ? 'lg' : 'md'} fontWeight="bold" mb={4}>
         AgScraper: Agriculture Equipment Search
       </Heading>
 
@@ -217,7 +224,7 @@ const AgScrapper = () => {
           <MenuList>
             <MenuOptionGroup
               defaultValue={['Big Iron', 'Purple Wave']}
-              title="Sites"
+              // title="Sites"
               type="checkbox"
               onChange={setSelectedSites}
             >
@@ -241,9 +248,9 @@ const AgScrapper = () => {
         <Button
           colorScheme="teal"
           onClick={searchEquipment}
-          isLoading={loading}
+          // isLoading={loading}
           loadingText="Searching"
-          isDisabled={query.length < 3}
+          isDisabled={query.length < 3 || loading}
           whiteSpace="nowrap"
           overflow="hidden"
           textOverflow="ellipsis"
@@ -252,18 +259,18 @@ const AgScrapper = () => {
           Search
         </Button>
 
-        {results.length > 0 && (
-          <Button
-            colorScheme="red"
-            onClick={handleClearResults}
-            whiteSpace="nowrap"
-            overflow="hidden"
-            textOverflow="ellipsis"
-            maxW="full"
-          >
-            Clear
-          </Button>
-        )}
+        {/* {results.length > 0 && ( */}
+        <Button
+          colorScheme="red"
+          onClick={handleClearResults}
+          whiteSpace="nowrap"
+          overflow="hidden"
+          textOverflow="ellipsis"
+          maxW="full"
+          isDisabled={query.length < 1}
+        >
+          Clear
+        </Button>
       </HStack>
 
       {error && (
@@ -271,76 +278,99 @@ const AgScrapper = () => {
           {error}
         </Text>
       )}
-
       {loading && (
-        <Box display={'flex'} justifyContent={'center'} mt={6}>
-          <iframe
-            src="https://lottie.host/embed/29e878f1-e85d-4a1c-a3a1-68c18b876d52/3iCbnE5CTe.json"
-            height={600}
-            width={600}
-          ></iframe>
+        <Box display={'flex'} justifyContent={'center'} mt={'100px'}>
+          <dotlottie-player
+            // src="https://lottie.host/aa5a13e0-d18a-4a94-a12a-e2d4dec5563c/9kTrjfgaWK.json" // hand
+            // src="https://lottie.host/8f2ae775-e459-4074-bc30-abcf715786da/K00szLdcP4.json" // blue blocks
+            src="https://lottie.host/56f013ea-1157-45f1-aff0-13bee76388dc/dlL0MwupV0.json" // spinner
+            background="transparent"
+            speed="1"
+            style={{ width: '600px', height: '600px' }}
+            loop
+            autoplay
+          ></dotlottie-player>
         </Box>
       )}
-
       <Grid
         templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(4, 1fr)' }}
         gap={6}
         mt={6}
       >
         {results.map((item, index) => (
-          <Box
+          <motion.div
             key={index}
-            borderWidth="1px"
-            borderRadius="lg"
-            overflow="hidden"
-            boxShadow="md"
-            transition="transform 0.2s"
-            _hover={{ transform: 'scale(1.05)' }}
+            custom={index}
+            initial="hidden"
+            animate="visible"
+            variants={cardVariants}
           >
-            <Image
-              src={item.image}
-              alt={item.equipmentName}
-              w="100%"
-              h="175px"
-              objectFit="cover"
-            />
-            <Box p={4}>
-              <Stat mb={2}>
-                <StatLabel fontWeight="bold" fontSize="lg">
-                  {item.equipmentName}
-                </StatLabel>
-                <StatNumber color="teal.500">{item.price}</StatNumber>
-              </Stat>
-              <Text>{item.source}</Text>
-              <Button
-                as="a"
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                colorScheme="teal"
-                size="sm"
-                variant="outline"
-                w="full"
-                mb={2}
-              >
-                View on Auction Site
-              </Button>
-              <Button
-                colorScheme="yellow"
-                size="sm"
-                onClick={() =>
-                  toggleLinkInLocalStorage(item.equipmentName, item.link)
-                }
-                w="full"
-                mb={2}
-              >
-                {isLinkSaved(item.link) ? '★ Saved' : '☆ Save'}
-              </Button>
+            <Box
+              key={index}
+              borderWidth="1px"
+              borderRadius="lg"
+              overflow="hidden"
+              boxShadow="md"
+              transition="transform 0.5s"
+              _hover={{ transform: 'scale(1.05)' }}
+              display="flex"
+              flexDirection="column"
+              justifyContent="space-between"
+              bg={colorMode === 'light' ? 'gray.200' : 'gray.800'}
+              height={'100%'}
+            >
+              <Image
+                src={item.image}
+                alt={item.equipmentName}
+                w="100%"
+                h="175px"
+                objectFit="cover"
+              />
+              <Box p={4} flex="1" display="flex" flexDirection="column">
+                <Stat mb={2}>
+                  <StatLabel fontWeight="bold" fontSize="lg">
+                    {item.equipmentName}
+                  </StatLabel>
+                  <StatNumber color="teal.500">{item.price}</StatNumber>
+                </Stat>
+                <Text mb={4}>{item.source}</Text>
+
+                <Box
+                  mt="auto"
+                  display="flex"
+                  justifyContent="space-between"
+                  gap={2}
+                >
+                  <Button
+                    as="a"
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    colorScheme="teal"
+                    size="sm"
+                    variant="outline"
+                    w="full"
+                    flex={6}
+                  >
+                    View on Auction Site
+                  </Button>
+                  <Button
+                    colorScheme="yellow"
+                    size="sm"
+                    onClick={() =>
+                      toggleLinkInLocalStorage(item.equipmentName, item.link)
+                    }
+                    w="full"
+                    flex={1}
+                  >
+                    {isLinkSaved(item.link) ? '★' : '☆'}
+                  </Button>
+                </Box>
+              </Box>
             </Box>
-          </Box>
+          </motion.div>
         ))}
       </Grid>
-
       {results.length > 0 && (
         <Box mt={6}>
           <Button
@@ -353,7 +383,6 @@ const AgScrapper = () => {
           </Button>
         </Box>
       )}
-
       {/* Hook up the modal with isOpen and onClose from useDisclosure */}
       <SavedLinksModal
         savedLinks={savedLinks}
