@@ -969,7 +969,7 @@ app.get('/api/sensor_data', async (req, res) => {
     
     const browser = await puppeteer.launch({
       args: chromium.args || ['--no-sandbox', '--disable-setuid-sandbox'],
-      executablePath: process.env.VERCEL ? await chromium.executablePath : puppeteer.executablePath(), // Use puppeteer's local path
+      executablePath: chromium.executablePath ? chromium.executablePath : puppeteer.executablePath(), // Use puppeteer's local path
       headless: true,
     });
     
@@ -1018,7 +1018,7 @@ app.get('/api/scrapePurpleWave', async (req, res) => {
     
     const browser = await puppeteer.launch({
       args: chromium.args || ['--no-sandbox', '--disable-setuid-sandbox'],
-      executablePath: process.env.VERCEL ? await chromium.executablePath : puppeteer.executablePath(), // Use puppeteer's local path
+      executablePath: chromium.executablePath ? await chromium.executablePath : puppeteer.executablePath(), // Use puppeteer's local path
       headless: true,
     });
     
