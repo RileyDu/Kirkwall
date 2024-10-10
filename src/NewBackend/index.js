@@ -966,8 +966,8 @@ app.get('/api/scrapeBigIron', async (req, res) => {
   try {
     // Launch puppeteer with chrome-aws-lambda settings
     const browser = await puppeteer.launch({
-      args: chromium.args,
-      executablePath: await chromium.executablePath,
+      args: [...chromium.args, '--no-sandbox', '--disable-setuid-sandbox'],
+      executablePath: await chromium.executablePath || '/usr/bin/chromium-browser', // Fallback path for local dev
       headless: chromium.headless,
     });
     
@@ -1015,8 +1015,8 @@ app.get('/api/scrapePurpleWave', async (req, res) => {
   try {
     // Launch puppeteer with chrome-aws-lambda settings
     const browser = await puppeteer.launch({
-      args: chromium.args,
-      executablePath: await chromium.executablePath,
+      args: [...chromium.args, '--no-sandbox', '--disable-setuid-sandbox'],
+      executablePath: await chromium.executablePath || '/usr/bin/chromium-browser', // Fallback path for local dev
       headless: chromium.headless,
     });
     
