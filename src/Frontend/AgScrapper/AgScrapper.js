@@ -43,6 +43,8 @@ const AgScrapper = ({ statusOfAlerts }) => {
     'Purple Wave',
   ]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [baseIndex, setBaseIndex] = useState(0); // Track the start index for animations
+
   const [savedLinks, setSavedLinks] = useState(() => {
     const userEmail = currentUser?.email;
     if (!userEmail) return [];
@@ -134,12 +136,18 @@ const AgScrapper = ({ statusOfAlerts }) => {
   };
 
   const handleLoadMore = async () => {
-    setResults(prevResults => [...prevResults, ...nextResults]);
+    setResults(prevResults => {
+      const newBaseIndex = prevResults.length; // Update base index for the new batch
+      setBaseIndex(newBaseIndex);
+      return [...prevResults, ...nextResults];
+    });
+
     const nextPage = currentPage + 1;
     setNextResults([]);
     setCurrentPage(nextPage);
     await prefetchNextPage(nextPage + 1);
   };
+
 
   const handleClearResults = () => {
     setQuery('');
@@ -179,7 +187,7 @@ const AgScrapper = ({ statusOfAlerts }) => {
       opacity: 1,
       y: 0,
       transition: {
-        delay: index * 0.1,
+        delay: (index - baseIndex) * 0.1, // Reset delay for the new batch of items
       }
     })
   };
@@ -217,7 +225,7 @@ const AgScrapper = ({ statusOfAlerts }) => {
             whiteSpace="nowrap"
             overflow="hidden"
             textOverflow="ellipsis"
-            w="25%"
+            w="20%"
           >
             Select Sites
           </MenuButton>
