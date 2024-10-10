@@ -959,24 +959,25 @@ app.get('/api/sensor_data', async (req, res) => {
 });
 
 // Scrape Big Iron Auctions using Puppeteer
-app.get('/api/scrapeBigIron', async (req, res) => {
+  app.get('/api/scrapeBigIron', async (req, res) => {
   const { query, page = 1 } = req.query;
   const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '+');
 
   try {
-    // Launch puppeteer with chrome-aws-lambda settings
+    // Check if chromium.args exists and is an array
+    const args = Array.isArray(chromium.args) ? chromium.args : [];
+    
     const browser = await puppeteer.launch({
-      args: [...chromium.args, '--no-sandbox', '--disable-setuid-sandbox'],
-      executablePath: await chromium.executablePath || '/usr/bin/chromium-browser', // Fallback path for local dev
-      headless: chromium.headless,
+      args: chromium.args || ['--no-sandbox', '--disable-setuid-sandbox'],
+      executablePath: process.env.VERCEL ? await chromium.executablePath : puppeteer.executablePath(), // Use puppeteer's local path
+      headless: true,
     });
     
+    
     const pageObj = await browser.newPage();
-    
-    // Define the target URL
     const url = `https://www.bigiron.com/Search?showTab=true&search=${formattedQuery}&searchMode=All&userControlsVisible=false&distance=500&historical=false&tab=equipment-tab&page=${page}&itemsPerPage=20&filter=Open&sort=Start&sortOrder=Ascending`;
-    await pageObj.goto(url, { waitUntil: 'networkidle2' });
     
+    await pageObj.goto(url, { waitUntil: 'networkidle2' });
     await pageObj.waitForSelector('.pager-data', { timeout: 10000 });
     
     const content = await pageObj.content();
@@ -1013,18 +1014,18 @@ app.get('/api/scrapePurpleWave', async (req, res) => {
   const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '%20');
 
   try {
-    // Launch puppeteer with chrome-aws-lambda settings
+    const args = Array.isArray(chromium.args) ? chromium.args : [];
+    
     const browser = await puppeteer.launch({
-      args: [...chromium.args, '--no-sandbox', '--disable-setuid-sandbox'],
-      executablePath: await chromium.executablePath || '/usr/bin/chromium-browser', // Fallback path for local dev
-      headless: chromium.headless,
+      args: chromium.args || ['--no-sandbox', '--disable-setuid-sandbox'],
+      executablePath: process.env.VERCEL ? await chromium.executablePath : puppeteer.executablePath(), // Use puppeteer's local path
+      headless: true,
     });
     
     const pageObj = await browser.newPage();
-    
     const url = `https://www.purplewave.com/search/${formattedQuery}?searchType=all&dateType=upcoming&zipcodeRange=all&sortBy=current_bid-desc&perPage=20&grouped=true&viewtype=compressed&page=${page}`;
-    await pageObj.goto(url, { waitUntil: 'networkidle2' });
     
+    await pageObj.goto(url, { waitUntil: 'networkidle2' });
     await pageObj.waitForSelector('.panel.panel-default.auction-item-compressed', { timeout: 10000 });
     
     const content = await pageObj.content();
