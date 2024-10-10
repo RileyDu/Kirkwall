@@ -16,6 +16,10 @@ import {
   MenuList,
   MenuItemOption,
   MenuOptionGroup,
+  VStack,
+  HStack,
+  useMediaQuery,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useAuth } from '../AuthComponents/AuthContext.js';
@@ -24,6 +28,7 @@ import animationData from './Perfect-loop-cube-SVG.json';
 import Lottie from 'react-lottie';
 
 const AgScrapper = () => {
+  const { onOpen, onClose, isOpen } = useDisclosure();
   const { currentUser } = useAuth();
   const userEmail = currentUser?.email;
   const [query, setQuery] = useState('');
@@ -44,6 +49,8 @@ const AgScrapper = () => {
     const storageKey = `savedLinks_${userEmail}`;
     return JSON.parse(localStorage.getItem(storageKey)) || [];
   });
+
+  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
   const searchEquipment = async () => {
     if (query.length < 3) {
@@ -177,84 +184,109 @@ const AgScrapper = () => {
   };
 
   return (
-    <Box
-      mx="auto"
-      mt={16}
-      px={4}
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-    >
-      <Heading as="h1" fontSize="2xl" mb={6} textAlign="center">
+    <Box mx="auto" mt={16} px={4} maxW="container.xl" textAlign="center">
+      <Heading as="h1" fontSize="2xl" mb={6}>
         AgScraper: Agriculture Equipment Search
       </Heading>
 
-      <Input
-        variant="outline"
-        placeholder="Enter equipment type..."
-        size="lg"
-        value={query}
-        onChange={e => setQuery(e.target.value)}
-        mb={4}
-        colorScheme="teal"
-      />
-      {loading && 
-      <div>
-        <Lottie options={defaultOptions} height={400} width={400} />
-      </div>
-      }
-      <Menu closeOnSelect={false}>
-        <MenuButton
-          as={Button}
-          rightIcon={<ChevronDownIcon />}
+      <HStack
+        spacing={isLargerThan768 ? 2 : 4}
+        w="full"
+        justifyContent="center"
+      >
+        <Input
+          variant="outline"
+          placeholder="Enter equipment type..."
+          size="lg"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
           colorScheme="teal"
-          mb={4}
-        >
-          Select Sites
-        </MenuButton>
-        <MenuList>
-          <MenuOptionGroup
-            defaultValue={['Big Iron', 'Purple Wave']}
-            title="Sites"
-            type="checkbox"
-            onChange={value => setSelectedSites(value)}
+        />
+        <Menu closeOnSelect={false}>
+          <MenuButton
+            as={Button}
+            // rightIcon={<ChevronDownIcon />}
+            colorScheme="teal"
+            whiteSpace="nowrap"
+            overflow="hidden"
+            textOverflow="ellipsis"
+            w="25%"
           >
-            <MenuItemOption value="Big Iron">Big Iron</MenuItemOption>
-            <MenuItemOption value="Purple Wave">Purple Wave</MenuItemOption>
-          </MenuOptionGroup>
-        </MenuList>
-      </Menu>
+            Select Sites
+          </MenuButton>
+          <MenuList>
+            <MenuOptionGroup
+              defaultValue={['Big Iron', 'Purple Wave']}
+              title="Sites"
+              type="checkbox"
+              onChange={setSelectedSites}
+            >
+              <MenuItemOption value="Big Iron">Big Iron</MenuItemOption>
+              <MenuItemOption value="Purple Wave">Purple Wave</MenuItemOption>
+            </MenuOptionGroup>
+          </MenuList>
+        </Menu>
 
-      {results.length > 0 && (
+        <Button
+          colorScheme="yellow"
+          onClick={onOpen}
+          whiteSpace="nowrap"
+          overflow="hidden"
+          textOverflow="ellipsis"
+          maxW="full"
+        >
+          ★
+        </Button>
+
         <Button
           colorScheme="teal"
-          size="lg"
-          onClick={handleClearResults}
-          w="full"
-          mb={6}
+          onClick={searchEquipment}
+          isLoading={loading}
+          loadingText="Searching"
+          isDisabled={query.length < 3}
+          whiteSpace="nowrap"
+          overflow="hidden"
+          textOverflow="ellipsis"
+          maxW="full"
         >
-          Clear
+          Search
         </Button>
-      )}
-      <Button
-        colorScheme="teal"
-        size="lg"
-        onClick={searchEquipment}
-        isLoading={loading}
-        loadingText="Searching"
-        w="full"
-        mb={6}
-        isDisabled={query.length < 3}
-      >
-        Search
-      </Button>
+
+        {results.length > 0 && (
+          <Button
+            colorScheme="red"
+            onClick={handleClearResults}
+            whiteSpace="nowrap"
+            overflow="hidden"
+            textOverflow="ellipsis"
+            maxW="full"
+          >
+            Clear
+          </Button>
+        )}
+      </HStack>
 
       {error && (
-        <Text color="red.500" mt={4} textAlign="center">
+        <Text color="red.500" mt={4}>
           {error}
         </Text>
       )}
-      <Grid templateColumns="repeat(4, 4fr)" gap={6} mt={6} w="full">
+
+      {loading && (
+        <Box display={'flex'} justifyContent={'center'} mt={6}>
+          <iframe
+            src="https://lottie.host/embed/29e878f1-e85d-4a1c-a3a1-68c18b876d52/3iCbnE5CTe.json"
+            height={600}
+            width={600}
+          ></iframe>
+        </Box>
+      )}
+
+      <Grid
+        templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(4, 1fr)' }}
+        gap={6}
+        mt={6}
+      >
         {results.map((item, index) => (
           <Box
             key={index}
@@ -269,7 +301,7 @@ const AgScrapper = () => {
               src={item.image}
               alt={item.equipmentName}
               w="100%"
-              h="200px"
+              h="175px"
               objectFit="cover"
             />
             <Box p={4}>
@@ -279,6 +311,7 @@ const AgScrapper = () => {
                 </StatLabel>
                 <StatNumber color="teal.500">{item.price}</StatNumber>
               </Stat>
+              <Text>{item.source}</Text>
               <Button
                 as="a"
                 href={item.link}
@@ -288,13 +321,13 @@ const AgScrapper = () => {
                 size="sm"
                 variant="outline"
                 w="full"
+                mb={2}
               >
                 View on Auction Site
               </Button>
               <Button
                 colorScheme="yellow"
                 size="sm"
-                variant={isLinkSaved(item.link) ? 'ghost' : 'solid'}
                 onClick={() =>
                   toggleLinkInLocalStorage(item.equipmentName, item.link)
                 }
@@ -303,15 +336,13 @@ const AgScrapper = () => {
               >
                 {isLinkSaved(item.link) ? '★ Saved' : '☆ Save'}
               </Button>
-
-              <Text>{item.source}</Text>
             </Box>
           </Box>
         ))}
       </Grid>
 
       {results.length > 0 && (
-        <Box mt={6} display="flex" justifyContent="center">
+        <Box mt={6}>
           <Button
             onClick={handleLoadMore}
             isDisabled={loadingNext}
@@ -323,10 +354,13 @@ const AgScrapper = () => {
         </Box>
       )}
 
+      {/* Hook up the modal with isOpen and onClose from useDisclosure */}
       <SavedLinksModal
         savedLinks={savedLinks}
         setSavedLinks={setSavedLinks}
         currentUser={currentUser}
+        isOpen={isOpen}
+        onClose={onClose}
       />
     </Box>
   );
