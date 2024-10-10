@@ -966,10 +966,12 @@ app.get('/api/sensor_data', async (req, res) => {
   try {
     // Check if chromium.args exists and is an array
     const args = Array.isArray(chromium.args) ? chromium.args : [];
+    const executablePath = process.env.CHROME_PATH || await chromium.executablePath;
+
     
     const browser = await puppeteer.launch({
-      args: chromium.args || ['--no-sandbox', '--disable-setuid-sandbox'],
-      executablePath: chromium.executablePath ? chromium.executablePath : puppeteer.executablePath(), // Use puppeteer's local path
+      args: args || ['--no-sandbox', '--disable-setuid-sandbox'],
+      executablePath: executablePath, // Use puppeteer's local path
       headless: true,
     });
     
@@ -1015,10 +1017,12 @@ app.get('/api/scrapePurpleWave', async (req, res) => {
 
   try {
     const args = Array.isArray(chromium.args) ? chromium.args : [];
+    const executablePath = process.env.CHROME_PATH || await chromium.executablePath;
+
     
     const browser = await puppeteer.launch({
-      args: chromium.args || ['--no-sandbox', '--disable-setuid-sandbox'],
-      executablePath: chromium.executablePath ? await chromium.executablePath : puppeteer.executablePath(), // Use puppeteer's local path
+      args: args || ['--no-sandbox', '--disable-setuid-sandbox'],
+      executablePath: executablePath, // Use puppeteer's local path
       headless: true,
     });
     
