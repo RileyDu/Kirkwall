@@ -18,6 +18,7 @@ import {
   MenuOptionGroup,
   VStack,
   HStack,
+  Stack,
   useMediaQuery,
   useDisclosure,
   useColorMode,
@@ -61,16 +62,16 @@ const AgScrapper = ({ statusOfAlerts }) => {
       setError('Please enter at least 3 characters.');
       return;
     }
-  
+
     setLoading(true);
     setError(null);
     setCurrentPage(1);
     setResults([]);
     setHasMoreResults(true); // Reset hasMoreResults on new search
-  
+
     try {
       const requests = [];
-  
+
       if (selectedSites.includes('Big Iron')) {
         requests.push(
           axios.get('/api/scrapeBigIron', { params: { query, page: 1 } })
@@ -81,24 +82,24 @@ const AgScrapper = ({ statusOfAlerts }) => {
           axios.get('/api/scrapePurpleWave', { params: { query, page: 1 } })
         );
       }
-  
+
       const responses = await Promise.allSettled(requests);
-  
+
       const successfulResults = responses
         .filter(response => response.status === 'fulfilled')
         .flatMap(response => response.value.data);
-  
+
       const errors = responses.filter(
         response => response.status === 'rejected'
       );
-  
+
       if (errors.length > 0) {
         console.error('One or more sites failed:', errors);
       }
-  
+
       if (successfulResults.length > 0) {
         setResults(successfulResults);
-  
+
         // Check if we have fewer than 20 results, indicating no more pages
         if (successfulResults.length < 20) {
           setHasMoreResults(false);
@@ -117,7 +118,6 @@ const AgScrapper = ({ statusOfAlerts }) => {
       setLoading(false);
     }
   };
-  
 
   const prefetchNextPage = async page => {
     setLoadingNext(true);
@@ -218,12 +218,14 @@ const AgScrapper = ({ statusOfAlerts }) => {
       <Heading size={isLargerThan768 ? 'lg' : 'md'} fontWeight="bold" mb={4}>
         AgScraper: Agriculture Equipment Search
       </Heading>
-
-      <HStack
-        spacing={isLargerThan768 ? 2 : 4}
+      <Stack
+        direction={{ base: 'column', md: 'row' }}
+        spacing={4}
         w="full"
         justifyContent="center"
+        align="center"
       >
+        {/* Input row */}
         <Input
           variant="outline"
           placeholder="Enter equipment type..."
@@ -231,78 +233,66 @@ const AgScrapper = ({ statusOfAlerts }) => {
           value={query}
           onChange={e => setQuery(e.target.value)}
           colorScheme="teal"
+          w={{ base: '70%'}}
+          ml={{ base: 0, md: '200px' }}
         />
-        <Menu closeOnSelect={false}>
-          <MenuButton
-            as={Button}
-            // rightIcon={<ChevronDownIcon />}
+        {/* Buttons row */}
+        <HStack spacing={4} w="full" justifyContent={isLargerThan768 ? 'flex-start' : 'center'}>
+          <Menu closeOnSelect={false}>
+            <MenuButton
+              as={Button}
+              colorScheme="teal"
+              whiteSpace="nowrap"
+              overflow="hidden"
+              textOverflow="ellipsis"
+              w={{ base: 'auto', md: '20%' }}
+            >
+              Select Sites
+            </MenuButton>
+            <MenuList>
+              <MenuOptionGroup
+                defaultValue={['Big Iron', 'Purple Wave']}
+                type="checkbox"
+                onChange={setSelectedSites}
+              >
+                <MenuItemOption value="Big Iron">Big Iron</MenuItemOption>
+                <MenuItemOption value="Purple Wave">Purple Wave</MenuItemOption>
+              </MenuOptionGroup>
+            </MenuList>
+          </Menu>
+
+          <Button colorScheme="yellow" onClick={onOpen}>
+            ★
+          </Button>
+
+          <Button
             colorScheme="teal"
+            onClick={searchEquipment}
+            isDisabled={query.length < 3 || loading}
             whiteSpace="nowrap"
             overflow="hidden"
             textOverflow="ellipsis"
-            w="20%"
+            maxW="full"
           >
-            Select Sites
-          </MenuButton>
-          <MenuList>
-            <MenuOptionGroup
-              defaultValue={['Big Iron', 'Purple Wave']}
-              // title="Sites"
-              type="checkbox"
-              onChange={setSelectedSites}
-            >
-              <MenuItemOption value="Big Iron">Big Iron</MenuItemOption>
-              <MenuItemOption value="Purple Wave">Purple Wave</MenuItemOption>
-            </MenuOptionGroup>
-          </MenuList>
-        </Menu>
+            Search
+          </Button>
 
-        <Button
-          colorScheme="yellow"
-          onClick={onOpen}
-          whiteSpace="nowrap"
-          overflow="hidden"
-          textOverflow="ellipsis"
-          maxW="full"
-        >
-          ★
-        </Button>
-
-        <Button
-          colorScheme="teal"
-          onClick={searchEquipment}
-          // isLoading={loading}
-          loadingText="Searching"
-          isDisabled={query.length < 3 || loading}
-          whiteSpace="nowrap"
-          overflow="hidden"
-          textOverflow="ellipsis"
-          maxW="full"
-        >
-          Search
-        </Button>
-
-        {/* {results.length > 0 && ( */}
-        <Button
-          colorScheme="red"
-          onClick={handleClearResults}
-          whiteSpace="nowrap"
-          overflow="hidden"
-          textOverflow="ellipsis"
-          maxW="full"
-          isDisabled={query.length < 1}
-        >
-          Clear
-        </Button>
-      </HStack>
-
+          <Button
+            colorScheme="red"
+            onClick={handleClearResults}
+            isDisabled={query.length < 1}
+          >
+            Clear
+          </Button>
+        </HStack>
+      </Stack>
       {error && (
         <Text color="red.500" mt={4}>
           {error}
         </Text>
       )}
       {loading && (
-        <Box display={'flex'} justifyContent={'center'} mt={'100px'}>
+        <Box display={'flex'} justifyContent={'center'} mt={isLargerThan768 ? '100px' : '0px'}>
           <dotlottie-player
             // src="https://lottie.host/aa5a13e0-d18a-4a94-a12a-e2d4dec5563c/9kTrjfgaWK.json" // hand
             // src="https://lottie.host/8f2ae775-e459-4074-bc30-abcf715786da/K00szLdcP4.json" // blue blocks
