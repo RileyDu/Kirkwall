@@ -25,11 +25,11 @@ export const checkThresholds = async () => {
   const sendAlert = async (alertMessage, metric, phone, email, id, type = 'threshold') => {
     // Log alert to the database if it's a sensor stoppage
     const location = await getLocationforAlert(metric);
-    if (type === 'sensor_stoppage') {
-      await sendAlertToDB(metric, `Sensor stoppage: ${alertMessage} for ${location}.`, new Date());
-      await sendSMSAlert(['7016393862'], `Sensor stoppage: ${alertMessage} for ${location}.`, id, null );
-      return; // Abort further execution to prevent sending SMS/Email
-    }
+    // if (type === 'sensor_stoppage') {
+    //   await sendAlertToDB(metric, `Sensor stoppage: ${alertMessage} for ${location}.`, new Date());
+    //   await sendSMSAlert(['7016393862'], `Sensor stoppage: ${alertMessage} for ${location}.`, id, null );
+    //   return; // Abort further execution to prevent sending SMS/Email
+    // }
   
     const formattedDateTime = formatDateTime(new Date());
     const message = `${alertMessage} at ${formattedDateTime} CST for ${location}.`;
