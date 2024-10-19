@@ -73,9 +73,9 @@ export const checkThresholds = async () => {
     if (timeDifferenceInMinutes > 30) {
       console.log(`Sensor for ${metric} has stopped sending data. Last reading was ${timeDifferenceInMinutes} minutes ago.`);
       
-      const alertMessage = `The sensor for ${metric} has not sent data in over 30 minutes. Last reading at ${formatDateTime(lastTimestamp)}, currently at ${formatDateTime(currentTime)}`;
+      // const alertMessage = `The sensor for ${metric} has not sent data in over 30 minutes. Last reading at ${formatDateTime(lastTimestamp)}, currently at ${formatDateTime(currentTime)}`;
   
-      await sendAlert(alertMessage, metric, null, null, null, 'sensor_stoppage');
+      // await sendAlert(alertMessage, metric, null, null, null, 'sensor_stoppage');
     } else {
       console.log(`Sensor for ${metric} is active. Last reading was ${timeDifferenceInMinutes} minutes ago.`);
     }
