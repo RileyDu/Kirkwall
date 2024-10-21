@@ -25,7 +25,7 @@ import {
   FaTractor
 } from 'react-icons/fa';
 import { MdElectricBolt } from 'react-icons/md';
-
+import { TbFridge } from "react-icons/tb";
 import { GiGroundSprout } from 'react-icons/gi';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -135,6 +135,8 @@ const buttonConfig = {
     },
     { icon: <FaVideo size="30" />, label: 'Video Feeds', route: '/videofeed' },
     // { icon: <FaTractor size="30" />, label: 'AgSraper', route: '/agscraper' },
+
+    { icon: <TbFridge size="30" />, label: 'Cold Chain', route: '/coldchain' },
   ],
 };
 
