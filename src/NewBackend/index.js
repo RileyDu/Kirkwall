@@ -1133,6 +1133,19 @@ app.get('/api/run-weekly-recap', async (req, res) => {
   }
 });
 
+// GET route for all security alerts
+app.get('/api/soalerts', async (req, res) => {
+  try {
+    const result = await client.query('SELECT * FROM soalerts');
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching security alerts:', error);
+    res
+      .status(500)
+      .json({ error: 'An error occurred while fetching security alerts' });
+  }
+});
+
 // Catch-all route for other API requests
 app.get('/api/*', (req, res) => {
   res.status(404).json({ error: 'API route not found' });

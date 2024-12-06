@@ -15,6 +15,8 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
+import { MetricSettings } from '../Modular/MetricSettings.js';
+import { CustomerSettings } from '../Modular/CustomerSettings.js';
 
 const ColdChainDash = () => {
   const cardBg = useColorModeValue('gray.500', 'gray.800');
@@ -25,14 +27,14 @@ const ColdChainDash = () => {
     'test@kirkwall.io': {
       locations: ['Incubator', 'Grand Farm'],
       sensors: ['Temperature Sensor', 'Humidity Sensor'],
-      alerts: ['High Temperature Alert', 'Low Temperature Alert'],
+      alerts: ['High Temperature Alert', 'Low Temperature Alert', 'Sensor Stoppage Alert'],
     },
     'pmo@grandfarm.com': {
       locations: ['Grand Farm'],
       sensors: ['Temperature Sensor', 'Pressure Sensor'],
-      alerts: ['Pressure Alert', 'Humidity Alert'],
+      alerts: ['Pressure Alert', 'Humidity Alert', 'Sensor Stoppage Alert'],
     },
-    'jerrycromarty@imprimed.com': {
+    'jerrycromarty@imprimedicine.com': {
       locations: ['ImpriMed'],
       sensors: ['Light Sensor', 'CO2 Sensor'],
       alerts: ['CO2 Alert', 'Light Intensity Alert'],
@@ -41,15 +43,21 @@ const ColdChainDash = () => {
 
   // Local state to track selected customer
   const [selectedCustomer, setSelectedCustomer] = useState('test@kirkwall.io');
-  const [selectedLocation, setSelectedLocation] = useState(customers[selectedCustomer].locations[0]);
+  const [selectedLocation, setSelectedLocation] = useState(
+    customers[selectedCustomer].locations[0]
+  );
   const [selectedSensor, setSelectedSensor] = useState('');
-//   const [selectedAlert, setSelectedAlert] = useState('');
+  //   const [selectedAlert, setSelectedAlert] = useState('');
 
-const handleCustomerChange = (customer) => {
-  setSelectedCustomer(customer);
-  setSelectedLocation(customers[customer].locations[0]); // Automatically select the first location
-  setSelectedSensor('');
-};
+  const handleCustomerChange = customer => {
+    setSelectedCustomer(customer);
+    setSelectedLocation(customers[customer].locations[0]); // Automatically select the first location
+    setSelectedSensor('');
+  };
+
+  const selectedCustomerSettings = CustomerSettings.find(
+    customer => customer.email === selectedCustomer
+  );
 
   return (
     <Box
@@ -84,8 +92,6 @@ const handleCustomerChange = (customer) => {
             p={6}
             position="relative"
           >
-
-
             {/* Header Row */}
             <Flex justify="space-between" mb={2}>
               <Heading size="md" textAlign="left">
@@ -116,8 +122,6 @@ const handleCustomerChange = (customer) => {
             <Text>Customer: {selectedCustomer}</Text>
           </Box>
         </GridItem>
-
-
         {/* Locations Tile */}
         <GridItem>
           <Box
@@ -155,7 +159,6 @@ const handleCustomerChange = (customer) => {
             <Text>Location: {selectedLocation}</Text>
           </Box>
         </GridItem>
-
         {/* Fleets Tile */}
         <GridItem>
           <Box
@@ -211,19 +214,33 @@ const handleCustomerChange = (customer) => {
                   Select Sensor
                 </MenuButton>
                 <MenuList>
-                  {customers[selectedCustomer].sensors.map(sensor => (
-                    <MenuItem key={sensor}>{sensor}</MenuItem>
-                  ))}
+                  {/* Filter CustomerSettings to get metrics for the selected customer */}
+                  {selectedCustomerSettings?.metric.map(metric => {
+                    // Find the corresponding metric in MetricSettings to display the user-friendly name
+                    const metricInfo = MetricSettings.find(
+                      metricSetting => metricSetting.metric === metric
+                    );
+                    return (
+                      <MenuItem
+                        key={metricInfo.id}
+                        onClick={() => setSelectedSensor(metricInfo.metric)}
+                      >
+                        {metricInfo.name} {/* Display the user-friendly name */}
+                      </MenuItem>
+                    );
+                  })}
                 </MenuList>
               </Menu>
             </Flex>
             <Divider mb={4} />
+            {/* Display selected sensor's user-friendly name */}
             <Text>
-              Current Sensor: {customers[selectedCustomer].sensors[0]}
+              Current Sensor:{' '}
+              {MetricSettings.find(metric => metric.metric === selectedSensor)
+                ?.name || 'No Sensor Selected'}
             </Text>
           </Box>
         </GridItem>
-
         {/* Alerts Tile */}
         <GridItem>
           <Box
@@ -256,7 +273,6 @@ const handleCustomerChange = (customer) => {
             <Text>Current Alert: {customers[selectedCustomer].alerts[0]}</Text>
           </Box>
         </GridItem>
-
         {/* Energy Usage Tile */}
         <GridItem>
           <Box
@@ -279,7 +295,6 @@ const handleCustomerChange = (customer) => {
             <Text>Cost: $50</Text>
           </Box>
         </GridItem>
-
         {/* Reports Tile */}
         <GridItem>
           <Box
