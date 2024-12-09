@@ -52,6 +52,7 @@ import WeeklyRecap from './Frontend/WeeklyRecap/WeeklyRecap.js';
 import VideoPlayerPage from './Frontend/VideoFeed/VideoPlayerPage.js';
 import AgScrapper from './Frontend/AgScrapper/AgScrapper.js';
 import ColdChainDash from './Frontend/ColdChain/ColdChainDash.js';
+import SOAlerts from './Frontend/SOAlerts/soalerts.js';
 
 const Layout = ({
   children,
@@ -408,6 +409,7 @@ const MainApp = () => {
           <Route path="/agscraper" element={<AgScrapper statusOfAlerts={showAlerts} />} />
           <Route path='/videofeed' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><VideoPlayerPage /></ProtectedRoute>} />
           <Route path='/coldchain' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><ColdChainDash /></ProtectedRoute>} />
+          <Route path='/soalerts' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><SOAlerts /></ProtectedRoute>} />
           <Route path="*" element={<RedirectBasedOnAuth />} />
         </Routes>
       </Layout>

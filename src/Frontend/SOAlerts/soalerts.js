@@ -54,7 +54,7 @@ import {
         alignItems="center"
       >
         <Heading mb={6} textAlign="center" size="xl" fontWeight="bold">
-          Cold Chain Dashboard
+          Security Onion Alerts
         </Heading>
   
         {/* Grid Layout for Dashboard Tiles */}
@@ -92,7 +92,7 @@ import {
                   </Thead>
                   <Tbody>
                     {securityAlerts.map((alert) => (
-                      <Tr key={alert.id} _hover={{ bg: 'gray.100' }}>
+                      <Tr key={alert.id}>
                         <Td>{alert.alert_name}</Td>
                         <Td>
                           <Tag
@@ -103,7 +103,9 @@ import {
                           </Tag>
                         </Td>
                         <Td>{alert.source_ip || 'N/A'}</Td>
-                        <Td>{new Date(alert.timestamp).toLocaleString()}</Td>
+                        <Td>
+  {new Date(new Date(alert.timestamp).getTime() - 6 * 60 * 60 * 1000).toLocaleString()}
+</Td>
                       </Tr>
                     ))}
                     {/* If no alerts are present, display a message */}

@@ -22,7 +22,8 @@ import {
   FaBookOpen,
   FaCalendarWeek,
   FaVideo,
-  FaTractor
+  FaTractor,
+  FaLock
 } from 'react-icons/fa';
 import { MdElectricBolt } from 'react-icons/md';
 import { TbFridge } from "react-icons/tb";
@@ -134,9 +135,10 @@ const buttonConfig = {
       route: '/weeklyrecap',
     },
     { icon: <FaVideo size="30" />, label: 'Video Feeds', route: '/videofeed' },
-    // { icon: <FaTractor size="30" />, label: 'AgSraper', route: '/agscraper' },
-
+    { icon: <FaTractor size="30" />, label: 'AgSraper', route: '/agscraper' },
     { icon: <TbFridge size="30" />, label: 'Cold Chain', route: '/coldchain' },
+    { icon: <FaLock size="30" />, label: 'Settings', route: '/soalerts' },
+
   ],
 };
 
