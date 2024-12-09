@@ -34,6 +34,8 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
   ]);
   const [starterSelected, setStarterSelected] = useState(false);
   const [userInput, setUserInput] = useState('');
+  const [isFollowUp, setIsFollowUp] = useState(false);
+  const [lastBotResponse, setLastBotResponse] = useState('');
 
   const { currentUser } = useAuth();
   const userEmail = currentUser?.email;
@@ -93,6 +95,8 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
           ...prev,
           { role: 'assistant', content: botMessage.text },
         ]);
+        setLastBotResponse(response.data.response); // Store last bot response
+        setIsFollowUp(true); // Enable follow-up
       }
     } catch (err) {
       console.error('Error communicating with API:', err);
@@ -117,14 +121,28 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
     setError(null);
 
     try {
-      const response = await axios.post(
-        `/api/nlquery/`,
-        {
-          question: userInput,
-          conversation: conversationHistory.concat({ role: 'user', content: userInput }),
-          userEmail, // Include userEmail in the request body
-        },
-      );
+      let response;
+      if (isFollowUp && lastBotResponse) {
+        // Send to the new follow-up route
+        response = await axios.post(
+          `/api/followup/`,
+          {
+            lastResponse: lastBotResponse,
+            question: userInput,
+            userEmail, // Include userEmail if needed
+          },
+        );
+      } else {
+        // Fallback to the original route if not a follow-up
+        response = await axios.post(
+          `/api/nlquery/`,
+          {
+            question: userInput,
+            conversation: conversationHistory.concat({ role: 'user', content: userInput }),
+            userEmail,
+          },
+        );
+      }
 
       if (response.data.response) {
         const botMessage = {
@@ -136,6 +154,8 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
           ...prev,
           { role: 'assistant', content: botMessage.text },
         ]);
+        setLastBotResponse(response.data.response); // Update last bot response
+        setIsFollowUp(true); // Maintain follow-up state
       }
     } catch (err) {
       console.error('Error communicating with API:', err);
@@ -155,6 +175,8 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
     setStarterSelected(false);
     setUserInput('');
     setError(null);
+    setIsFollowUp(false);
+    setLastBotResponse('');
   };
 
   const handleKeyPress = (e) => {
@@ -239,7 +261,7 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
                   ))}
                 </VStack>
               ) : (
-                <HStack width="100%">
+                <HStack width="100%" spacing="2">
                   <Input
                     placeholder="Type your message..."
                     value={userInput}

@@ -1192,6 +1192,36 @@ app.post(
   }
 );
 
+app.post('/api/followup', async (req, res) => {
+
+  const { lastResponse,question, userEmail } = req.body;
+  
+  if (!userEmail) {
+    console.error('User email not found in token.');
+    return res.status(400).json({ error: 'User email not found in token.' });
+  }
+  
+  try {
+  console.log(`Handling follow-up for user: ${userEmail}`);
+
+  const intentResponse = await openai.chat.completions.create({
+    model: 'gpt-3.5-turbo',
+    messages: [
+      { role: 'system', content: 'You are a helpful assistant. You can analyze data and provide recommendations.' },
+      { role: 'user', content: lastResponse },
+      { role: 'user', content: question },
+    ],
+    max_tokens: 500,
+  });
+
+  const followUpResponse = intentResponse.choices[0].message.content;
+  return res.json({ response: followUpResponse });
+} catch (error) {
+  console.error('Error processing the follow-up:', error);
+  return res.status(500).json({ error: 'An internal server error occurred.' }); 
+}
+});
+
 // Handler for "What is the recap of the week?"
 async function handleRecapOfTheWeek(userEmail, body) {
   console.log(`Handling weekly recap for user: ${userEmail}`);
