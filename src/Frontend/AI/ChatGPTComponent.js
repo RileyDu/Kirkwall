@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
   Button,
-  Input,
   Text,
   VStack,
   HStack,
@@ -11,14 +10,12 @@ import {
   Spinner,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { FiSend } from 'react-icons/fi';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const ChatGPTComponent = () => {
   const [messages, setMessages] = useState([
     { sender: 'bot', text: 'Hello! How can I assist you today?' },
   ]);
-  const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [authToken, setAuthToken] = useState(null);
@@ -26,17 +23,22 @@ const ChatGPTComponent = () => {
     { role: 'assistant', content: 'Hello! How can I assist you today?' },
   ]);
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL;
-  const lastRequestTimeRef = useRef(0);
-  const REQUEST_INTERVAL = 1000;
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL
   const messagesEndRef = useRef(null);
 
   const bgGradient = useColorModeValue(
-    'linear(to-r, gray.100, gray.200)',
+    'linear(to-r, white, white)',
     'linear(to-r, gray.700, gray.800)'
   );
   const botBg = useColorModeValue('blue.200', 'blue.600');
   const userBg = useColorModeValue('blue.500', 'blue.300');
+
+  const starterPrompts = [
+    'What is the status of my sensors?',
+    'Has there been any network security alerts in the last week?',
+    'How many alerts have been generated in the last 24 hours?',
+    'When was the last alert generated?',
+  ];
 
   useEffect(() => {
     const auth = getAuth();
@@ -58,22 +60,10 @@ const ChatGPTComponent = () => {
     }
   }, [messages, loading]);
 
-  const handleSend = async () => {
-    if (input.trim() === '') return;
-
-    const currentTime = Date.now();
-    const timeSinceLastRequest = currentTime - lastRequestTimeRef.current;
-
-    if (timeSinceLastRequest < REQUEST_INTERVAL) {
-      setError('Please wait a moment before sending another message.');
-      return;
-    }
-
-    lastRequestTimeRef.current = currentTime;
-    const userMessage = { sender: 'user', text: input };
+  const handlePromptClick = async (prompt) => {
+    const userMessage = { sender: 'user', text: prompt };
     setMessages((prev) => [...prev, userMessage]);
-    setConversationHistory((prev) => [...prev, { role: 'user', content: input }]);
-    setInput('');
+    setConversationHistory((prev) => [...prev, { role: 'user', content: prompt }]);
     setLoading(true);
     setError(null);
 
@@ -86,7 +76,7 @@ const ChatGPTComponent = () => {
       const response = await axios.post(
         `${API_BASE_URL}/api/nlquery/query`,
         {
-          question: input,
+          question: prompt,
           conversation: conversationHistory,
         },
         {
@@ -113,15 +103,6 @@ const ChatGPTComponent = () => {
     }
   };
 
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      if (!loading) {
-        handleSend();
-      }
-    }
-  };
-
   return (
     <Flex
       direction="column"
@@ -130,7 +111,8 @@ const ChatGPTComponent = () => {
       mx="auto"
       my="8"
       p="4"
-      bgGradient={bgGradient}
+    //   bgGradient={bgGradient}
+      bg="white"
       borderRadius="lg"
       boxShadow="lg"
     >
@@ -174,26 +156,18 @@ const ChatGPTComponent = () => {
           {error}
         </Text>
       )}
-      <HStack mt="4" spacing="4">
-        <Input
-          placeholder="Type your query..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={handleKeyPress}
-          bg="gray.800"
-          color="white"
-          _placeholder={{ color: 'gray.500' }}
-          isDisabled={loading}
-        />
-        <Button
-          onClick={handleSend}
-          isLoading={loading}
-          colorScheme="blue"
-          rightIcon={<FiSend />}
-        >
-          Send
-        </Button>
-      </HStack>
+      <VStack mt="4" spacing="4" align="stretch">
+        {starterPrompts.map((prompt, index) => (
+          <Button
+            key={index}
+            onClick={() => handlePromptClick(prompt)}
+            colorScheme="blue"
+            isDisabled={loading}
+          >
+            {prompt}
+          </Button>
+        ))}
+      </VStack>
     </Flex>
   );
 };
