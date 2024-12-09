@@ -16,6 +16,7 @@ import {
   } from '@chakra-ui/react';
   import { useEffect, useState } from 'react';
   import axios from 'axios';
+  import ChatGPTComponent from '../AI/ChatGPTComponent.js';
   
   const SOAlerts = () => {
     const cardBg = useColorModeValue('gray.500', 'gray.800');
@@ -53,6 +54,8 @@ import {
         flexDirection="column"
         alignItems="center"
       >
+                <ChatGPTComponent />
+
         <Heading mb={6} textAlign="center" size="xl" fontWeight="bold">
           Security Onion Alerts
         </Heading>

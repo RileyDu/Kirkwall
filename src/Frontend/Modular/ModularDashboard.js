@@ -37,6 +37,7 @@ import { keyframes } from '@emotion/react';
 import axios from 'axios'; // Import Axios
 
 import { motion, AnimatePresence } from 'framer-motion';
+import ChatGPTComponent from '../AI/ChatGPTComponent.js';
 const MotionBox = motion(Box);
 const MotionGrid = motion(Grid);
 const MotionGridItem = motion(GridItem);
