@@ -1,3 +1,5 @@
+// frontend/src/components/ChatGPTComponent.jsx
+
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
@@ -10,7 +12,7 @@ import {
   Spinner,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { useAuth } from '../AuthComponents/AuthContext.js';
 
 const ChatGPTComponent = () => {
   const [messages, setMessages] = useState([
@@ -18,12 +20,14 @@ const ChatGPTComponent = () => {
   ]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [authToken, setAuthToken] = useState(null);
   const [conversationHistory, setConversationHistory] = useState([
     { role: 'assistant', content: 'Hello! How can I assist you today?' },
   ]);
 
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL
+  const { currentUser } = useAuth();
+  const userEmail = currentUser?.email;
+
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const messagesEndRef = useRef(null);
 
   const bgGradient = useColorModeValue(
@@ -34,25 +38,11 @@ const ChatGPTComponent = () => {
   const userBg = useColorModeValue('blue.500', 'blue.300');
 
   const starterPrompts = [
-    'What is the status of my sensors?',
+    'Could you give me a recap of the week?',
     'Has there been any network security alerts in the last week?',
     'How many alerts have been generated in the last 24 hours?',
     'When was the last alert generated?',
   ];
-
-  useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const token = await user.getIdToken();
-        setAuthToken(token);
-      } else {
-        setAuthToken(null);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -61,6 +51,11 @@ const ChatGPTComponent = () => {
   }, [messages, loading]);
 
   const handlePromptClick = async (prompt) => {
+    if (!userEmail) {
+      setError('User email not available.');
+      return;
+    }
+
     const userMessage = { sender: 'user', text: prompt };
     setMessages((prev) => [...prev, userMessage]);
     setConversationHistory((prev) => [...prev, { role: 'user', content: prompt }]);
@@ -68,23 +63,18 @@ const ChatGPTComponent = () => {
     setError(null);
 
     try {
-      if (!authToken) {
+      if (!userEmail) {
         setError('You must be logged in to perform this action.');
         return;
       }
 
       const response = await axios.post(
-        `${API_BASE_URL}/api/nlquery/query`,
+        `/api/nlquery/`,
         {
           question: prompt,
           conversation: conversationHistory,
+          userEmail, // Include userEmail in the request body
         },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
       );
 
       if (response.data.response) {
@@ -93,7 +83,10 @@ const ChatGPTComponent = () => {
           text: response.data.response,
         };
         setMessages((prev) => [...prev, botMessage]);
-        setConversationHistory((prev) => [...prev, { role: 'assistant', content: botMessage.text }]);
+        setConversationHistory((prev) => [
+          ...prev,
+          { role: 'assistant', content: botMessage.text },
+        ]);
       }
     } catch (err) {
       console.error('Error communicating with API:', err);
@@ -111,12 +104,17 @@ const ChatGPTComponent = () => {
       mx="auto"
       my="8"
       p="4"
-    //   bgGradient={bgGradient}
       bg="white"
       borderRadius="lg"
       boxShadow="lg"
     >
-      <Text fontSize="xl" fontWeight="bold" textAlign="center" color="blue.400" mb="4">
+      <Text
+        fontSize="xl"
+        fontWeight="bold"
+        textAlign="center"
+        color="blue.400"
+        mb="4"
+      >
         Chat Assistant
       </Text>
       <VStack

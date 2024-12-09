@@ -13,6 +13,8 @@ import * as cheerio from 'cheerio';
 import * as chromium from 'chrome-aws-lambda';
 const app = express();
 const port = process.env.PORT || 5000;
+import openai from './openaiClient.js';
+import { CustomerSettings } from '../Frontend/Modular/CustomerSettings.js';
 
 // Middleware to parse incoming JSON
 
@@ -1145,6 +1147,240 @@ app.get('/api/soalerts', async (req, res) => {
       .json({ error: 'An error occurred while fetching security alerts' });
   }
 });
+
+// Define allowed questions and their handlers
+const questionHandlers = {
+  'Could you give me a recap of the week?': handleRecapOfTheWeek,
+  'Has there been any network security alerts in the last week?': handleNetworkSecurityAlerts,
+  'How many alerts have been generated in the last 24 hours?': handleAlertCount,
+  'When was the last alert generated?': handleLastAlert,
+  // Add new questions and their handlers here
+};
+
+// POST /api/nlquery/query
+app.post(
+  '/api/nlquery',
+  async (req, res) => {
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //   console.error('Validation errors:', errors.array());
+    //   return res.status(400).json({ errors: errors.array() });
+    // }
+
+    const { question, userEmail } = req.body;
+    // const userEmail = req.user.email;
+
+    if (!userEmail) {
+      console.error('User email not found in token.');
+      return res.status(400).json({ error: 'User email not found in token.' });
+    }
+
+    // Check if the question is allowed
+    const handler = questionHandlers[question];
+    if (!handler) {
+      return res.status(400).json({ error: 'Invalid or unsupported question.' });
+    }
+
+    try {
+      // Invoke the corresponding handler
+      const response = await handler(userEmail, req.body);
+      return res.json(response);
+    } catch (error) {
+      console.error('Error processing the query:', error);
+      res.status(500).json({ error: 'An internal server error occurred.' });
+    }
+  }
+);
+
+// Handler for "What is the recap of the week?"
+async function handleRecapOfTheWeek(userEmail, body) {
+  console.log(`Handling weekly recap for user: ${userEmail}`);
+
+  // Find the customer settings for the user
+  const customer = CustomerSettings.find((c) => c.email === userEmail);
+
+  if (!customer) {
+    console.error(`No customer settings found for email: ${userEmail}`);
+    return { response: 'User settings not found. Please contact support.' };
+  }
+
+  const metrics = customer.metric;
+
+  if (!metrics || metrics.length === 0) {
+    console.error(`No metrics defined for user: ${userEmail}`);
+    return { response: 'No metrics associated with your account.' };
+  }
+
+  // Determine the latest week_start_date for the user
+  const latestWeekQuery = `
+    SELECT MAX(week_start_date) AS latest_week
+    FROM weekly_recap
+    WHERE user_email = $1;
+  `;
+
+  try {
+    const latestWeekResult = await client.query(latestWeekQuery, [userEmail]);
+    console.log('Latest Week Query Result:', latestWeekResult.rows);
+
+    if (
+      !latestWeekResult.rows ||
+      latestWeekResult.rows.length === 0 ||
+      !latestWeekResult.rows[0].latest_week
+    ) {
+      return { response: 'No weekly recap data available for this user.' };
+    }
+
+    const latestWeekStartDate = latestWeekResult.rows[0].latest_week;
+    console.log('Latest Week Start Date:', latestWeekStartDate);
+
+    // SQL query to retrieve weekly recap based on metrics and latest week
+    const recapQuery = `
+      SELECT metric, high, low, avg, alert_count, week_start_date
+      FROM weekly_recap
+      WHERE user_email = $1
+        AND metric = ANY($2)
+        AND week_start_date = $3;
+    `;
+
+    const recapResult = await client.query(recapQuery, [
+      userEmail,
+      metrics,
+      latestWeekStartDate,
+    ]);
+    console.log('Recap Query Result:', recapResult.rows);
+
+    if (recapResult.rows.length === 0) {
+      return { response: 'No weekly recap data found for your metrics.' };
+    }
+
+    // Structure the recap data
+    const recapData = recapResult.rows.map((row) => ({
+      metric: row.metric,
+      high: row.high,
+      low: row.low,
+      average: row.avg,
+      alertCount: row.alert_count,
+      weekStartDate: row.week_start_date,
+    }));
+
+    console.log('Structured Recap Data:', recapData);
+
+    return {
+      response: `Here is your weekly recap for the week ending on ${new Date(
+        latestWeekStartDate
+      ).toLocaleDateString()}: ${recapData.map((row) => `${row.metric}: ${row.average}`).join('\n')}`,
+    };
+  } catch (error) {
+    console.error('Database query failed:', error);
+    throw error; // Propagate the error to be handled by the route's error handler
+  }
+}
+
+
+
+// Handler for "Has there been any network security alerts in the last week?"
+async function handleNetworkSecurityAlerts(userEmail, body) {
+  const query = `
+    SELECT COUNT(*) AS alertCount
+    FROM soalerts
+    WHERE timestamp >= NOW() - INTERVAL '7 days';
+  `;
+  const result = await client.query(query);
+
+  const alertCount = result.rows[0].alertcount;
+  return {
+    response: `You have ${alertCount} network security alert(s) in the last week.`,
+  };
+}
+
+// Handler for "How many alerts have been generated in the last 24 hours?"
+async function handleAlertCount(userEmail, body) {
+  console.log(`Handling alert count for user: ${userEmail}`);
+
+  // Find the customer settings for the user
+  const customer = CustomerSettings.find((c) => c.email === userEmail);
+
+  if (!customer) {
+    console.error(`No customer settings found for email: ${userEmail}`);
+    return { response: 'User settings not found. Please contact support.' };
+  }
+
+  const metrics = customer.metric;
+
+  if (!metrics || metrics.length === 0) {
+    console.error(`No metrics defined for user: ${userEmail}`);
+    return { response: 'No metrics associated with your account.' };
+  }
+
+  // SQL query to count alerts based on metrics and time interval
+  const query = `
+    SELECT COUNT(*) AS alertCount
+    FROM alerts
+    WHERE metric = ANY($1)
+      AND timestamp >= NOW() - INTERVAL '24 hours';
+  `;
+
+  try {
+    const result = await client.query(query, [metrics]);
+
+    const alertCount = result.rows[0].alertcount;
+
+    return {
+      response: `You have ${alertCount} alert(s) generated in the last 24 hours.`,
+    };
+  } catch (error) {
+    console.error('Database query failed:', error);
+    throw error; // Propagate the error to be handled by the route's error handler
+  }
+}
+
+// Handler for "When was the last alert generated?"
+async function handleLastAlert(userEmail, body) {
+  console.log(`Handling last alert generation time for user: ${userEmail}`);
+
+  // Find the customer settings for the user
+  const customer = CustomerSettings.find((c) => c.email === userEmail);
+
+  if (!customer) {
+    console.error(`No customer settings found for email: ${userEmail}`);
+    return { response: 'User settings not found. Please contact support.' };
+  }
+
+  const metrics = customer.metric;
+
+  if (!metrics || metrics.length === 0) {
+    console.error(`No metrics defined for user: ${userEmail}`);
+    return { response: 'No metrics associated with your account.' };
+  }
+
+  // SQL query to retrieve the timestamp of the last alert based on metrics
+  const query = `
+    SELECT timestamp
+    FROM alerts
+    WHERE metric = ANY($1)
+    ORDER BY timestamp DESC
+    LIMIT 1;
+  `;
+
+  try {
+    const result = await client.query(query, [metrics]);
+
+    if (result.rows.length === 0) {
+      return { response: 'No alerts have been generated yet.' };
+    }
+
+    const lastAlertTime = result.rows[0].timestamp;
+
+    return {
+      response: `The last alert was generated on ${new Date(lastAlertTime).toLocaleString()}.`,
+    };
+  } catch (error) {
+    console.error('Database query failed:', error);
+    throw error; // Propagate the error to be handled by the route's error handler
+  }
+}
+
+
 
 // Catch-all route for other API requests
 app.get('/api/*', (req, res) => {
