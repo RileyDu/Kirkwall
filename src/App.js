@@ -29,7 +29,9 @@ import WindSensors from './Frontend/Sensors/WindSensors/WindSensor.js';
 import MobileMenu from './Frontend/MobileMenu/MobileMenu.js';
 import customTheme from './Frontend/Styles/theme.js';
 import { WeatherDataProvider } from './Frontend/WeatherDataContext.js';
-import { FaChessRook, FaQuestion, FaEllipsisV } from 'react-icons/fa';
+import { FaChessRook, FaQuestion, FaEllipsisV, FaHandSparkles } from 'react-icons/fa';
+import { IoSparkles } from "react-icons/io5";
+
 import { keyframes } from '@emotion/react';
 import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors.js';
 import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySensors.js';
@@ -53,6 +55,7 @@ import VideoPlayerPage from './Frontend/VideoFeed/VideoPlayerPage.js';
 import AgScrapper from './Frontend/AgScrapper/AgScrapper.js';
 import ColdChainDash from './Frontend/ColdChain/ColdChainDash.js';
 import SOAlerts from './Frontend/SOAlerts/soalerts.js';
+import ChatBotModal from './Frontend/Modals/ChatBotModal.js';
 
 const Layout = ({
   children,
@@ -85,6 +88,7 @@ const Layout = ({
   const [isOptionsModalOpen, setOptionsModalOpen] = useState(false); // State for OptionsModal
   const [isFaqsModalOpen, setFaqsModalOpen] = useState(false);
   const [isHelpModalOpen, setHelpModalOpen] = useState(false);
+  const [isChatBotModalOpen, setChatBotModalOpen] = useState(false);
 
   const handleOpenOptionsModal = () => setOptionsModalOpen(true);
   const handleCloseOptionsModal = () => setOptionsModalOpen(false);
@@ -99,6 +103,11 @@ const Layout = ({
   };
   const handleCloseHelpModal = () => setHelpModalOpen(false);
   const handleCloseFaqsModal = () => setFaqsModalOpen(false);
+
+  const handleOpenChatBotModal = () => {
+    setChatBotModalOpen(true);
+  };
+  const handleCloseChatBotModal = () => setChatBotModalOpen(false);
 
   const [runTour, setRunTour] = useState(false);
 
@@ -153,6 +162,27 @@ const Layout = ({
             left="20px"
             zIndex="1000"
           />
+
+          <MotionIconButton
+            icon={<IoSparkles />}
+            variant="outline"
+            color="#212121"
+            height={10}
+            width={10}
+            bg={'#cee8ff'}
+            _hover={{ bg: '#3D5A80', color: 'white' }}
+            border={'2px solid #3D5A80'}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            ml={2}
+            onClick={handleOpenChatBotModal}
+            position="fixed"
+            bottom="20px"
+            right="20px"
+            zIndex="1000"
+          />
+
+          <ChatBotModal isOpen={isChatBotModalOpen} onClose={handleCloseChatBotModal} />
 
           <OptionsModal
             isOpen={isOptionsModalOpen}

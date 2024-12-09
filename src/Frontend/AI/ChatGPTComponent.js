@@ -2,6 +2,12 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
   Box,
   Button,
   Text,
@@ -14,7 +20,7 @@ import {
 import axios from 'axios';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 
-const ChatGPTComponent = () => {
+const ChatGPTComponent = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState([
     { sender: 'bot', text: 'Hello! How can I assist you today?' },
   ]);
@@ -63,11 +69,6 @@ const ChatGPTComponent = () => {
     setError(null);
 
     try {
-      if (!userEmail) {
-        setError('You must be logged in to perform this action.');
-        return;
-      }
-
       const response = await axios.post(
         `/api/nlquery/`,
         {
@@ -97,76 +98,82 @@ const ChatGPTComponent = () => {
   };
 
   return (
-    <Flex
-      direction="column"
-      h="90vh"
-      maxW="800px"
-      mx="auto"
-      my="8"
-      p="4"
-      bg="white"
-      borderRadius="lg"
-      boxShadow="lg"
-    >
-      <Text
-        fontSize="xl"
-        fontWeight="bold"
-        textAlign="center"
-        color="blue.400"
-        mb="4"
+    <Modal isOpen={isOpen} onClose={onClose} size="xl">
+      <ModalOverlay />
+      <ModalContent
+        sx={{
+          border: '2px solid black',
+          bg: useColorModeValue('white', 'gray.800'), // Adjust as needed for light/dark mode
+        }}
+        maxW={['90vw', '800px']} // Responsive array for max width
       >
-        Chat Assistant
-      </Text>
-      <VStack
-        flex="1"
-        overflowY="auto"
-        spacing="4"
-        bg="gray.700"
-        borderRadius="lg"
-        p="4"
-        boxShadow="base"
-      >
-        {messages.map((msg, index) => (
-          <Box
-            key={index}
-            alignSelf={msg.sender === 'user' ? 'flex-end' : 'flex-start'}
-            bg={msg.sender === 'user' ? userBg : botBg}
-            px="4"
-            py="2"
-            borderRadius="md"
-            maxW="70%"
-            wordBreak="break-word"
-            boxShadow="sm"
+        <ModalHeader>Kirkwall AI</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Flex
+            direction="column"
+            h="60vh"
+            maxW="800px"
+            mx="auto"
+            my="4"
+            p="4"
+            bg={useColorModeValue('white', 'gray.700')}
+            borderRadius="lg"
+            boxShadow="lg"
           >
-            <Text color="white">{msg.text}</Text>
-          </Box>
-        ))}
-        {loading && (
-          <HStack alignSelf="flex-start">
-            <Spinner color="blue.500" />
-            <Text color="gray.300">Thinking...</Text>
-          </HStack>
-        )}
-        <div ref={messagesEndRef} />
-      </VStack>
-      {error && (
-        <Text color="red.400" textAlign="center" mt="2">
-          {error}
-        </Text>
-      )}
-      <VStack mt="4" spacing="4" align="stretch">
-        {starterPrompts.map((prompt, index) => (
-          <Button
-            key={index}
-            onClick={() => handlePromptClick(prompt)}
-            colorScheme="blue"
-            isDisabled={loading}
-          >
-            {prompt}
-          </Button>
-        ))}
-      </VStack>
-    </Flex>
+            <VStack
+              flex="1"
+              overflowY="auto"
+              spacing="4"
+              bg={useColorModeValue('gray.100', 'gray.600')}
+              borderRadius="lg"
+              p="4"
+              boxShadow="base"
+            >
+              {messages.map((msg, index) => (
+                <Box
+                  key={index}
+                  alignSelf={msg.sender === 'user' ? 'flex-end' : 'flex-start'}
+                  bg={msg.sender === 'user' ? userBg : botBg}
+                  px="4"
+                  py="2"
+                  borderRadius="md"
+                  maxW="70%"
+                  wordBreak="break-word"
+                  boxShadow="sm"
+                >
+                  <Text color="white">{msg.text}</Text>
+                </Box>
+              ))}
+              {loading && (
+                <HStack alignSelf="flex-start">
+                  <Spinner color="blue.500" />
+                  <Text color="gray.300">Thinking...</Text>
+                </HStack>
+              )}
+              <div ref={messagesEndRef} />
+            </VStack>
+            {error && (
+              <Text color="red.400" textAlign="center" mt="2">
+                {error}
+              </Text>
+            )}
+            <VStack mt="4" spacing="4" align="stretch">
+              {starterPrompts.map((prompt, index) => (
+                <Button
+                  key={index}
+                  onClick={() => handlePromptClick(prompt)}
+                  colorScheme="blue"
+                  isDisabled={loading}
+                >
+                  {prompt}
+                </Button>
+              ))}
+            </VStack>
+          </Flex>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
 };
 
