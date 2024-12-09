@@ -16,7 +16,10 @@ import {
   Flex,
   useColorModeValue,
   Spinner,
+  Input,
+  IconButton,
 } from '@chakra-ui/react';
+import { ArrowRightIcon } from '@chakra-ui/icons';
 import axios from 'axios';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 
@@ -29,11 +32,12 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
   const [conversationHistory, setConversationHistory] = useState([
     { role: 'assistant', content: 'Hello! How can I assist you today?' },
   ]);
+  const [starterSelected, setStarterSelected] = useState(false);
+  const [userInput, setUserInput] = useState('');
 
   const { currentUser } = useAuth();
   const userEmail = currentUser?.email;
 
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const messagesEndRef = useRef(null);
 
   const bgGradient = useColorModeValue(
@@ -65,6 +69,7 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
     const userMessage = { sender: 'user', text: prompt };
     setMessages((prev) => [...prev, userMessage]);
     setConversationHistory((prev) => [...prev, { role: 'user', content: prompt }]);
+    setStarterSelected(true);
     setLoading(true);
     setError(null);
 
@@ -73,7 +78,7 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
         `/api/nlquery/`,
         {
           question: prompt,
-          conversation: conversationHistory,
+          conversation: [...conversationHistory, { role: 'user', content: prompt }],
           userEmail, // Include userEmail in the request body
         },
       );
@@ -97,8 +102,69 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleUserInput = async () => {
+    if (!userInput.trim()) return;
+    if (!userEmail) {
+      setError('User email not available.');
+      return;
+    }
+
+    const userMessage = { sender: 'user', text: userInput };
+    setMessages((prev) => [...prev, userMessage]);
+    setConversationHistory((prev) => [...prev, { role: 'user', content: userInput }]);
+    setUserInput('');
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.post(
+        `/api/nlquery/`,
+        {
+          question: userInput,
+          conversation: conversationHistory.concat({ role: 'user', content: userInput }),
+          userEmail, // Include userEmail in the request body
+        },
+      );
+
+      if (response.data.response) {
+        const botMessage = {
+          sender: 'bot',
+          text: response.data.response,
+        };
+        setMessages((prev) => [...prev, botMessage]);
+        setConversationHistory((prev) => [
+          ...prev,
+          { role: 'assistant', content: botMessage.text },
+        ]);
+      }
+    } catch (err) {
+      console.error('Error communicating with API:', err);
+      setError('An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStartOver = () => {
+    setMessages([
+      { sender: 'bot', text: 'Hello! How can I assist you today?' },
+    ]);
+    setConversationHistory([
+      { role: 'assistant', content: 'Hello! How can I assist you today?' },
+    ]);
+    setStarterSelected(false);
+    setUserInput('');
+    setError(null);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleUserInput();
+    }
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
+    <Modal isOpen={isOpen} onClose={onClose} size="full" isCentered>
       <ModalOverlay />
       <ModalContent
         sx={{
@@ -107,12 +173,12 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
         }}
         maxW={['90vw', '800px']} // Responsive array for max width
       >
-        <ModalHeader>Kirkwall AI</ModalHeader>
-        <ModalCloseButton />
+        <ModalHeader bg="gray.900" color="white">Kirkwall AI</ModalHeader>
+        <ModalCloseButton mt={1} size={'lg'} />
         <ModalBody>
           <Flex
             direction="column"
-            h="60vh"
+            h="90vh"
             maxW="800px"
             mx="auto"
             my="4"
@@ -142,7 +208,7 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
                   wordBreak="break-word"
                   boxShadow="sm"
                 >
-                  <Text color="white">{msg.text}</Text>
+                  <Text color={msg.sender === 'user' ? 'black' : 'white'}>{msg.text}</Text>
                 </Box>
               ))}
               {loading && (
@@ -158,18 +224,46 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
                 {error}
               </Text>
             )}
-            <VStack mt="4" spacing="4" align="stretch">
-              {starterPrompts.map((prompt, index) => (
-                <Button
-                  key={index}
-                  onClick={() => handlePromptClick(prompt)}
-                  colorScheme="blue"
-                  isDisabled={loading}
-                >
-                  {prompt}
-                </Button>
-              ))}
-            </VStack>
+            <Flex mt="4" spacing="4" align="stretch" justify="space-between" alignItems="center">
+              {!starterSelected ? (
+                <VStack spacing="4" align="stretch" flex="1">
+                  {starterPrompts.map((prompt, index) => (
+                    <Button
+                      key={index}
+                      onClick={() => handlePromptClick(prompt)}
+                      colorScheme="blue"
+                      isDisabled={loading}
+                    >
+                      {prompt}
+                    </Button>
+                  ))}
+                </VStack>
+              ) : (
+                <HStack width="100%">
+                  <Input
+                    placeholder="Type your message..."
+                    value={userInput}
+                    onChange={(e) => setUserInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    // bg={useColorModeValue('gray.200', 'gray.600')}
+                  />
+                  <IconButton
+                    aria-label="Send message"
+                    icon={<ArrowRightIcon />}
+                    colorScheme="blue"
+                    onClick={handleUserInput}
+                    isDisabled={loading}
+                  />
+                  <Button
+                    onClick={handleStartOver}
+                    colorScheme="red"
+                    variant="outline"
+                  >
+                    Start Over
+                  </Button>
+                </HStack>
+              )}
+            </Flex>
           </Flex>
         </ModalBody>
       </ModalContent>
