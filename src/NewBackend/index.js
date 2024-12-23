@@ -1320,6 +1320,18 @@ async function startWatchdogChat(userEmail) {
   return { response: parsedJson, dailyData };
 }
 
+app.get('/api/mockdata', async (req, res) => {
+  try {
+    const result = await client.query('SELECT * FROM fermenteq_data');
+    // Return all rows from the fermenteq_data table
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching data from fermenteq_data:', error);
+    res.status(500).json({ error: 'An error occurred while fetching data' });
+  }
+});
+
+
 app.get('/api/*', (req, res) => {
   res.status(404).json({ error: 'API route not found' });
 });
