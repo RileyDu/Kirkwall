@@ -1178,30 +1178,57 @@ app.post('/api/followup', async (req, res) => {
   }
 
   try {
-    // On follow-up, we re-include the daily data if needed
+    // You can pass a system prompt that says: "Respond in JSON with these fields..."
+    const systemPrompt = `
+      You are a helpful assistant. You can analyze data and provide recommendations.
+      When you respond, produce valid JSON that includes the following keys:
+      - "summary": a brief summary of the data
+      - "trends": a list of observed trends
+      - "recommendations": a list of actionable recommendations
+      
+      Do not include any additional keys or text outside of valid JSON. 
+    `;
+
+    // Also pass your lastResponse, question, and JSON-ified data as user messages
     const content = JSON.stringify(readingsData);
+
     const intentResponse = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
-        {
-          role: 'system',
-          content:
-            'You are a helpful assistant. You can analyze data and provide recommendations.'
-        },
+        { role: 'system', content: systemPrompt },
         { role: 'user', content: lastResponse },
         { role: 'user', content: question },
-        { role: 'user', content: content }
+        { role: 'user', content: content },
       ],
       max_tokens: 500
     });
 
     const followUpResponse = intentResponse.choices[0].message.content;
-    return res.json({ response: followUpResponse });
+
+    // At this point, `followUpResponse` should be JSON. 
+    // You can try to parse it safely in the backend to confirm validity:
+    let parsedJson;
+    try {
+      parsedJson = JSON.parse(followUpResponse);
+    } catch (err) {
+      // If JSON parsing fails, handle the error or provide a fallback
+      console.error('Failed to parse JSON:', err);
+      return res.status(500).json({
+        error: 'Model response was not valid JSON. Please try again.'
+      });
+    }
+
+    // Then return the parsed JSON to your frontend
+    return res.json({ 
+      response: parsedJson 
+    });
+
   } catch (error) {
     console.error('Error processing the follow-up:', error);
     return res.status(500).json({ error: 'Internal server error.' });
   }
 });
+
 
 async function startWatchdogChat(userEmail) {
   console.log(`Starting watchdog chat for user: ${userEmail}`);
@@ -1221,7 +1248,6 @@ async function startWatchdogChat(userEmail) {
     GROUP BY 1
     ORDER BY 1 ASC;
   `;
-
   const result = await client.query(query);
   if (result.rows.length === 0) {
     throw new Error('No data found in the last 7 days.');
@@ -1236,15 +1262,26 @@ async function startWatchdogChat(userEmail) {
     summaryText += `  Humidity:    Avg: ${dayRow.avg_hum.toFixed(2)}%, Min: ${dayRow.min_hum.toFixed(2)}%, Max: ${dayRow.max_hum.toFixed(2)}%\n\n`;
   }
 
-  // Set up the initial system and assistant messages for the AI
   const messages = [
     {
       role: 'system',
-      content: `You are a helpful assistant that knows about watchdog sensor data from the past week. The user has the following daily aggregates:\n\n${summaryText}\nUse this data as context for any questions the user asks.`
+      content: `
+        You are a helpful assistant that knows about watchdog sensor data from the past week.
+        The user has the following daily aggregates:
+        ${summaryText}
+
+        Return the result in valid JSON. Use the keys "summary", "observations", and "tips" as an example structure:
+        {
+          "summary": "high-level summary of the data",
+          "observations": "detailed bullet points or analyses",
+          "tips": "additional tips, future watchouts, or recommended next steps"
+        }
+        Do not include any extra keys or text outside of valid JSON.
+      `
     },
     {
       role: 'assistant',
-      content: 'What would you like to know about your watchdog sensors from the past week?'
+      content: 'User said: "Give me a summary of the data from WatchDog for the last week."'
     }
   ];
 
@@ -1256,9 +1293,20 @@ async function startWatchdogChat(userEmail) {
   });
 
   const initialResponse = completion.choices[0].message.content;
-  // Return both the AI response and the daily aggregated data
-  return { response: initialResponse, dailyData };
+  let parsedJson;
+  try {
+    parsedJson = JSON.parse(initialResponse);
+    console.log('Parsed JSON from LLM:', parsedJson);
+    // console.log('Daily data:', dailyData);
+  } catch (err) {
+    console.error('Failed to parse JSON from LLM:', err);
+    throw new Error('Invalid JSON from LLM');
+  }
+
+  // Return both the parsed LLM data and the daily aggregator data
+  return { response: parsedJson, dailyData };
 }
+
 
 
 

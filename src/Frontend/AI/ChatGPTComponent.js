@@ -24,6 +24,8 @@ import {
   Tr,
   Th,
   Td,
+  UnorderedList,
+  ListItem,
 } from '@chakra-ui/react';
 import { ArrowRightIcon } from '@chakra-ui/icons';
 import axios from 'axios';
@@ -62,38 +64,48 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
     }
   }, [messages, loading]);
 
-  const handlePromptClick = async (prompt) => {
+  const handlePromptClick = async prompt => {
     if (!userEmail) {
       setError('User email not available.');
       return;
     }
-  
+
     const userMessage = { sender: 'user', text: prompt };
-    setMessages((prev) => [...prev, userMessage]);
-    setConversationHistory((prev) => [...prev, { role: 'user', content: prompt }]);
+    setMessages(prev => [...prev, userMessage]);
+    setConversationHistory(prev => [
+      ...prev,
+      { role: 'user', content: prompt },
+    ]);
     setStarterSelected(true);
     setLoading(true);
     setError(null);
-  
+
     try {
       const response = await axios.post('/api/nlquery/', {
         question: prompt,
-        conversation: [...conversationHistory, { role: 'user', content: prompt }],
+        conversation: [
+          ...conversationHistory,
+          { role: 'user', content: prompt },
+        ],
         userEmail,
       });
-  
+
       if (response.data.response) {
         // Store dailyData for table rendering
         if (response.data.dailyData && response.data.dailyData.length > 0) {
           setHiddenData(response.data.dailyData);
         }
-  
+
         const botMessage = {
           sender: 'bot',
-          text: response.data.response,
+          // Instead of just response.data.response (a string),
+          // now you might do something like JSON.stringify or build a custom UI:
+          text: JSON.stringify(response.data.response.summary, null, 2),
+          // or store it as a structured object
+          data: response.data.response,
         };
-        setMessages((prev) => [...prev, botMessage]);
-        setConversationHistory((prev) => [
+        setMessages(prev => [...prev, botMessage]);
+        setConversationHistory(prev => [
           ...prev,
           { role: 'assistant', content: botMessage.text },
         ]);
@@ -116,8 +128,11 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
     }
 
     const userMessage = { sender: 'user', text: userInput };
-    setMessages((prev) => [...prev, userMessage]);
-    setConversationHistory((prev) => [...prev, { role: 'user', content: userInput }]);
+    setMessages(prev => [...prev, userMessage]);
+    setConversationHistory(prev => [
+      ...prev,
+      { role: 'user', content: userInput },
+    ]);
     setUserInput('');
     setLoading(true);
     setError(null);
@@ -125,33 +140,34 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
     try {
       let response;
       if (isFollowUp && lastBotResponse) {
-        response = await axios.post(
-          `/api/followup/`,
-          {
-            lastResponse: lastBotResponse,
-            question: userInput,
-            userEmail,
-            readingsData: hiddenData,
-          },
-        );
+        response = await axios.post(`/api/followup/`, {
+          lastResponse: lastBotResponse,
+          question: userInput,
+          userEmail,
+          readingsData: hiddenData,
+        });
       } else {
-        response = await axios.post(
-          `/api/nlquery/`,
-          {
-            question: userInput,
-            conversation: conversationHistory.concat({ role: 'user', content: userInput }),
-            userEmail,
-          },
-        );
+        response = await axios.post(`/api/nlquery/`, {
+          question: userInput,
+          conversation: conversationHistory.concat({
+            role: 'user',
+            content: userInput,
+          }),
+          userEmail,
+        });
       }
 
       if (response.data.response) {
         const botMessage = {
           sender: 'bot',
-          text: response.data.response,
+          // Instead of just response.data.response (a string),
+          // now you might do something like JSON.stringify or build a custom UI:
+          text: JSON.stringify(response.data.response.summary, null, 2),
+          // or store it as a structured object
+          data: response.data.response,
         };
-        setMessages((prev) => [...prev, botMessage]);
-        setConversationHistory((prev) => [
+        setMessages(prev => [...prev, botMessage]);
+        setConversationHistory(prev => [
           ...prev,
           { role: 'assistant', content: botMessage.text },
         ]);
@@ -181,7 +197,7 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
     setHiddenData(null); // Clear the daily data
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = e => {
     if (e.key === 'Enter') {
       handleUserInput();
     }
@@ -191,12 +207,14 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
   const displayedMessages = useMemo(() => {
     // If we don't have hiddenData or we have fewer than two messages, just display messages as usual.
     if (!hiddenData || messages.length < 2) {
-      return messages.map((msg) => ({ ...msg, isTable: false }));
+      return messages.map(msg => ({ ...msg, isTable: false }));
     }
 
     // Otherwise, take the first two, add a special placeholder for the table, then the rest
-    const firstTwo = messages.slice(0, 2).map((msg) => ({ ...msg, isTable: false }));
-    const rest = messages.slice(2).map((msg) => ({ ...msg, isTable: false }));
+    const firstTwo = messages
+      .slice(0, 2)
+      .map(msg => ({ ...msg, isTable: false }));
+    const rest = messages.slice(2).map(msg => ({ ...msg, isTable: false }));
     // This is our special placeholder for rendering the table
     const tablePlaceholder = { isTable: true };
     return [...firstTwo, tablePlaceholder, ...rest];
@@ -212,7 +230,9 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
         }}
         maxW={['90vw', '800px']}
       >
-        <ModalHeader bg="gray.900" color="white">Kirkwall AI</ModalHeader>
+        <ModalHeader bg="gray.900" color="white">
+          Kirkwall AI
+        </ModalHeader>
         <ModalCloseButton mt={1} size={'lg'} />
         <ModalBody>
           <Flex
@@ -236,7 +256,7 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
               boxShadow="base"
             >
               {displayedMessages.map((msg, index) => {
-                // If this item is the table placeholder, render the table
+                // 1) If this item is the table placeholder, render the table
                 if (msg.isTable) {
                   return (
                     <Box
@@ -260,7 +280,9 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
                         </Thead>
                         <Tbody>
                           {hiddenData.map((dayRow, idx) => {
-                            const dayStr = new Date(dayRow.day).toLocaleDateString();
+                            const dayStr = new Date(
+                              dayRow.day
+                            ).toLocaleDateString();
                             return (
                               <Tr key={idx}>
                                 <Td>{dayStr}</Td>
@@ -279,11 +301,54 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
                   );
                 }
 
-                // Otherwise, render a normal message
+                // 2) If the bot sent a structured JSON response (msg.data), render the JSON fields
+                else if (msg.sender === 'bot' && msg.data) {
+                  return (
+                    <Box
+                      key={index}
+                      alignSelf="flex-start"
+                      bg={botBg}
+                      px="4"
+                      py="2"
+                      borderRadius="md"
+                      maxW="70%"
+                      wordBreak="break-word"
+                      boxShadow="sm"
+                    >
+                      {/* Example of using specific fields from msg.data */}
+                      <Text color="white" fontWeight="bold">
+                        Summary:
+                      </Text>
+                      <Text color="white">{msg.data.summary}</Text>
+                
+                      <Text color="white" fontWeight="bold" mt={3}>
+                        Trends / Observations:
+                      </Text>
+                      <UnorderedList color="white" mt={1} spacing={2}>
+                        {msg.data.observations.map((observation, idx) => (
+                          <ListItem key={idx}>{observation}</ListItem>
+                        ))}
+                      </UnorderedList>
+                
+                      <Text color="white" fontWeight="bold" mt={3}>
+                        Recommendations / Tips:
+                      </Text>
+                      <UnorderedList color="white" mt={1} spacing={2}>
+                        {msg.data.tips.map((tip, idx) => (
+                          <ListItem key={idx}>{tip}</ListItem>
+                        ))}
+                      </UnorderedList>
+                    </Box>
+                  )
+                }
+
+                // 3) Otherwise, render a normal message (text)
                 return (
                   <Box
                     key={index}
-                    alignSelf={msg.sender === 'user' ? 'flex-end' : 'flex-start'}
+                    alignSelf={
+                      msg.sender === 'user' ? 'flex-end' : 'flex-start'
+                    }
                     bg={msg.sender === 'user' ? userBg : botBg}
                     px="4"
                     py="2"
@@ -292,7 +357,9 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
                     wordBreak="break-word"
                     boxShadow="sm"
                   >
-                    <Text color={msg.sender === 'user' ? 'black' : 'white'}>{msg.text}</Text>
+                    <Text color={msg.sender === 'user' ? 'black' : 'white'}>
+                      {msg.text}
+                    </Text>
                   </Box>
                 );
               })}
@@ -311,7 +378,13 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
                 {error}
               </Text>
             )}
-            <Flex mt="4" spacing="4" align="stretch" justify="space-between" alignItems="center">
+            <Flex
+              mt="4"
+              spacing="4"
+              align="stretch"
+              justify="space-between"
+              alignItems="center"
+            >
               {!starterSelected ? (
                 <VStack spacing="4" align="stretch" flex="1">
                   {starterPrompts.map((prompt, index) => (
@@ -330,7 +403,7 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
                   <Input
                     placeholder="Type your message..."
                     value={userInput}
-                    onChange={(e) => setUserInput(e.target.value)}
+                    onChange={e => setUserInput(e.target.value)}
                     onKeyPress={handleKeyPress}
                   />
                   <IconButton
