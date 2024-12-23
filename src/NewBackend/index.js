@@ -91,6 +91,7 @@ app.get('/api/watchdog_data', async (req, res) => {
 
   try {
     const result = await client.query(query, [limit]);
+    
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching watchdog data:', error);
@@ -116,6 +117,7 @@ app.get('/api/rivercity_data', async (req, res) => {
 
   try {
     const result = await client.query(query, ['0080E115054FF0B7', limit]);
+    // console.log('Query result:', result.rows);
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching rivercity data:', error);

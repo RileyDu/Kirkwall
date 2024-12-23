@@ -26,6 +26,8 @@ import {
     const [rivercityTempChartType, setRivercityTempChartType] = useState('bar');
     const [rivercityHumChartType, setRivercityHumChartType] = useState('bar');
 
+    // console.log('rivercityData', rivercityData);
+
 
   
     const { colorMode } = useColorMode();

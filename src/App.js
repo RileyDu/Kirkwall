@@ -29,7 +29,7 @@ import WindSensors from './Frontend/Sensors/WindSensors/WindSensor.js';
 import MobileMenu from './Frontend/MobileMenu/MobileMenu.js';
 import customTheme from './Frontend/Styles/theme.js';
 import { WeatherDataProvider } from './Frontend/WeatherDataContext.js';
-import { FaChessRook, FaQuestion, FaEllipsisV, FaHandSparkles } from 'react-icons/fa';
+import { FaChessRook, FaQuestion } from 'react-icons/fa';
 import { IoSparkles } from "react-icons/io5";
 
 import { keyframes } from '@emotion/react';
@@ -57,6 +57,8 @@ import ColdChainDash from './Frontend/ColdChain/ColdChainDash.js';
 import SOAlerts from './Frontend/SOAlerts/soalerts.js';
 import ChatBotModal from './Frontend/Modals/ChatBotModal.js';
 
+import { useAuth } from './Frontend/AuthComponents/AuthContext.js';
+
 const Layout = ({
   children,
   isMinimized,
@@ -68,13 +70,11 @@ const Layout = ({
   startTourButtonRef,
   runThresholdTour,
   setRunThresholdTour,
-  // setIsTourRunning,
-  // isTourRunning,
-  // activeChartID,
-  // setActiveChartID
 }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const location = useLocation();
+
+  const { currentUser } = useAuth();
 
   const shouldShowSidebar =
     location.pathname !== '/' &&
@@ -162,7 +162,8 @@ const Layout = ({
             left="20px"
             zIndex="1000"
           />
-
+          
+          {currentUser.email === 'test@kirkwall.io' && (
           <MotionIconButton
             icon={<IoSparkles />}
             variant="outline"
@@ -181,7 +182,8 @@ const Layout = ({
             right="20px"
             zIndex="1000"
           />
-
+        )}
+        
           <ChatBotModal isOpen={isChatBotModalOpen} onClose={handleCloseChatBotModal} />
 
           <OptionsModal
