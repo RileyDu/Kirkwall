@@ -1,6 +1,6 @@
 // frontend/src/components/ChatGPTComponent.jsx
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -18,6 +18,12 @@ import {
   Spinner,
   Input,
   IconButton,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
 } from '@chakra-ui/react';
 import { ArrowRightIcon } from '@chakra-ui/icons';
 import axios from 'axios';
@@ -36,24 +42,18 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
   const [userInput, setUserInput] = useState('');
   const [isFollowUp, setIsFollowUp] = useState(false);
   const [lastBotResponse, setLastBotResponse] = useState('');
+  const [hiddenData, setHiddenData] = useState(null); // This will hold your dailyData array
 
   const { currentUser } = useAuth();
   const userEmail = currentUser?.email;
 
   const messagesEndRef = useRef(null);
 
-  const bgGradient = useColorModeValue(
-    'linear(to-r, white, white)',
-    'linear(to-r, gray.700, gray.800)'
-  );
   const botBg = useColorModeValue('blue.200', 'blue.600');
   const userBg = useColorModeValue('blue.500', 'blue.300');
 
   const starterPrompts = [
-    'Could you give me a recap of the week?',
-    'Has there been any network security alerts in the last week?',
-    'How many alerts have been generated in the last 24 hours?',
-    'When was the last alert generated?',
+    'Give me a summary of the data from WatchDog for the last week.',
   ];
 
   useEffect(() => {
@@ -67,25 +67,27 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
       setError('User email not available.');
       return;
     }
-
+  
     const userMessage = { sender: 'user', text: prompt };
     setMessages((prev) => [...prev, userMessage]);
     setConversationHistory((prev) => [...prev, { role: 'user', content: prompt }]);
     setStarterSelected(true);
     setLoading(true);
     setError(null);
-
+  
     try {
-      const response = await axios.post(
-        `/api/nlquery/`,
-        {
-          question: prompt,
-          conversation: [...conversationHistory, { role: 'user', content: prompt }],
-          userEmail, // Include userEmail in the request body
-        },
-      );
-
+      const response = await axios.post('/api/nlquery/', {
+        question: prompt,
+        conversation: [...conversationHistory, { role: 'user', content: prompt }],
+        userEmail,
+      });
+  
       if (response.data.response) {
+        // Store dailyData for table rendering
+        if (response.data.dailyData && response.data.dailyData.length > 0) {
+          setHiddenData(response.data.dailyData);
+        }
+  
         const botMessage = {
           sender: 'bot',
           text: response.data.response,
@@ -95,8 +97,8 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
           ...prev,
           { role: 'assistant', content: botMessage.text },
         ]);
-        setLastBotResponse(response.data.response); // Store last bot response
-        setIsFollowUp(true); // Enable follow-up
+        setLastBotResponse(response.data.response);
+        setIsFollowUp(true);
       }
     } catch (err) {
       console.error('Error communicating with API:', err);
@@ -123,17 +125,16 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
     try {
       let response;
       if (isFollowUp && lastBotResponse) {
-        // Send to the new follow-up route
         response = await axios.post(
           `/api/followup/`,
           {
             lastResponse: lastBotResponse,
             question: userInput,
-            userEmail, // Include userEmail if needed
+            userEmail,
+            readingsData: hiddenData,
           },
         );
       } else {
-        // Fallback to the original route if not a follow-up
         response = await axios.post(
           `/api/nlquery/`,
           {
@@ -154,8 +155,8 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
           ...prev,
           { role: 'assistant', content: botMessage.text },
         ]);
-        setLastBotResponse(response.data.response); // Update last bot response
-        setIsFollowUp(true); // Maintain follow-up state
+        setLastBotResponse(response.data.response);
+        setIsFollowUp(true);
       }
     } catch (err) {
       console.error('Error communicating with API:', err);
@@ -177,6 +178,7 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
     setError(null);
     setIsFollowUp(false);
     setLastBotResponse('');
+    setHiddenData(null); // Clear the daily data
   };
 
   const handleKeyPress = (e) => {
@@ -185,15 +187,30 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
     }
   };
 
+  // Build a display array that injects the table as the third item (right after the second message).
+  const displayedMessages = useMemo(() => {
+    // If we don't have hiddenData or we have fewer than two messages, just display messages as usual.
+    if (!hiddenData || messages.length < 2) {
+      return messages.map((msg) => ({ ...msg, isTable: false }));
+    }
+
+    // Otherwise, take the first two, add a special placeholder for the table, then the rest
+    const firstTwo = messages.slice(0, 2).map((msg) => ({ ...msg, isTable: false }));
+    const rest = messages.slice(2).map((msg) => ({ ...msg, isTable: false }));
+    // This is our special placeholder for rendering the table
+    const tablePlaceholder = { isTable: true };
+    return [...firstTwo, tablePlaceholder, ...rest];
+  }, [messages, hiddenData]);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="full" isCentered>
       <ModalOverlay />
       <ModalContent
         sx={{
           border: '2px solid black',
-          bg: useColorModeValue('white', 'gray.800'), // Adjust as needed for light/dark mode
+          bg: useColorModeValue('white', 'gray.800'),
         }}
-        maxW={['90vw', '800px']} // Responsive array for max width
+        maxW={['90vw', '800px']}
       >
         <ModalHeader bg="gray.900" color="white">Kirkwall AI</ModalHeader>
         <ModalCloseButton mt={1} size={'lg'} />
@@ -218,27 +235,75 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
               p="4"
               boxShadow="base"
             >
-              {messages.map((msg, index) => (
-                <Box
-                  key={index}
-                  alignSelf={msg.sender === 'user' ? 'flex-end' : 'flex-start'}
-                  bg={msg.sender === 'user' ? userBg : botBg}
-                  px="4"
-                  py="2"
-                  borderRadius="md"
-                  maxW="70%"
-                  wordBreak="break-word"
-                  boxShadow="sm"
-                >
-                  <Text color={msg.sender === 'user' ? 'black' : 'white'}>{msg.text}</Text>
-                </Box>
-              ))}
+              {displayedMessages.map((msg, index) => {
+                // If this item is the table placeholder, render the table
+                if (msg.isTable) {
+                  return (
+                    <Box
+                      key={`table-${index}`}
+                      alignSelf="stretch"
+                      boxShadow="sm"
+                      borderRadius="md"
+                      overflowX="auto"
+                    >
+                      <Table variant="simple" size="sm">
+                        <Thead>
+                          <Tr>
+                            <Th>Date</Th>
+                            <Th>Avg Temp (°F)</Th>
+                            <Th>Min Temp (°F)</Th>
+                            <Th>Max Temp (°F)</Th>
+                            <Th>Avg Hum (%)</Th>
+                            <Th>Min Hum (%)</Th>
+                            <Th>Max Hum (%)</Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          {hiddenData.map((dayRow, idx) => {
+                            const dayStr = new Date(dayRow.day).toLocaleDateString();
+                            return (
+                              <Tr key={idx}>
+                                <Td>{dayStr}</Td>
+                                <Td>{dayRow.avg_temp.toFixed(2)}</Td>
+                                <Td>{dayRow.min_temp.toFixed(2)}</Td>
+                                <Td>{dayRow.max_temp.toFixed(2)}</Td>
+                                <Td>{dayRow.avg_hum.toFixed(2)}</Td>
+                                <Td>{dayRow.min_hum.toFixed(2)}</Td>
+                                <Td>{dayRow.max_hum.toFixed(2)}</Td>
+                              </Tr>
+                            );
+                          })}
+                        </Tbody>
+                      </Table>
+                    </Box>
+                  );
+                }
+
+                // Otherwise, render a normal message
+                return (
+                  <Box
+                    key={index}
+                    alignSelf={msg.sender === 'user' ? 'flex-end' : 'flex-start'}
+                    bg={msg.sender === 'user' ? userBg : botBg}
+                    px="4"
+                    py="2"
+                    borderRadius="md"
+                    maxW="70%"
+                    wordBreak="break-word"
+                    boxShadow="sm"
+                  >
+                    <Text color={msg.sender === 'user' ? 'black' : 'white'}>{msg.text}</Text>
+                  </Box>
+                );
+              })}
+
               {loading && (
                 <HStack alignSelf="flex-start">
                   <Spinner color="blue.500" />
                   <Text color="gray.300">Thinking...</Text>
                 </HStack>
               )}
+
               <div ref={messagesEndRef} />
             </VStack>
             {error && (
@@ -267,7 +332,6 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    // bg={useColorModeValue('gray.200', 'gray.600')}
                   />
                   <IconButton
                     aria-label="Send message"
