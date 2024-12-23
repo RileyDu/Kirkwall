@@ -23,7 +23,8 @@ import {
   FaCalendarWeek,
   FaVideo,
   FaTractor,
-  FaLock
+  FaLock,
+  FaAtom
 } from 'react-icons/fa';
 import { MdElectricBolt } from 'react-icons/md';
 import { TbFridge } from "react-icons/tb";
@@ -138,6 +139,7 @@ const buttonConfig = {
     { icon: <FaTractor size="30" />, label: 'AgSraper', route: '/agscraper' },
     { icon: <TbFridge size="30" />, label: 'Cold Chain', route: '/coldchain' },
     { icon: <FaLock size="30" />, label: 'Settings', route: '/soalerts' },
+    { icon: <FaAtom size="30" />, label: 'Settings', route: '/bioworx' },
 
   ],
 };

@@ -56,6 +56,7 @@ import AgScrapper from './Frontend/AgScrapper/AgScrapper.js';
 import ColdChainDash from './Frontend/ColdChain/ColdChainDash.js';
 import SOAlerts from './Frontend/SOAlerts/soalerts.js';
 import ChatBotModal from './Frontend/Modals/ChatBotModal.js';
+import BioWorx from './Frontend/BioWorx/BioWorx.js';
 
 import { useAuth } from './Frontend/AuthComponents/AuthContext.js';
 
@@ -183,7 +184,7 @@ const Layout = ({
             zIndex="1000"
           />
         )}
-        
+
           <ChatBotModal isOpen={isChatBotModalOpen} onClose={handleCloseChatBotModal} />
 
           <OptionsModal
@@ -442,6 +443,7 @@ const MainApp = () => {
           <Route path='/videofeed' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><VideoPlayerPage /></ProtectedRoute>} />
           <Route path='/coldchain' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><ColdChainDash /></ProtectedRoute>} />
           <Route path='/soalerts' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><SOAlerts /></ProtectedRoute>} />
+          <Route path='/bioworx' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><BioWorx /></ProtectedRoute>} />
           <Route path="*" element={<RedirectBasedOnAuth />} />
         </Routes>
       </Layout>
