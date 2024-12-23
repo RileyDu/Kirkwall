@@ -26,6 +26,7 @@ import {
   Td,
   UnorderedList,
   ListItem,
+  Divider,
 } from '@chakra-ui/react';
 import { ArrowRightIcon } from '@chakra-ui/icons';
 import axios from 'axios';
@@ -97,7 +98,7 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
         }
 
         const botMessage = {
-          sender: 'bot',
+          sender: 'summary',
           // Instead of just response.data.response (a string),
           // now you might do something like JSON.stringify or build a custom UI:
           text: JSON.stringify(response.data.response.summary, null, 2),
@@ -157,12 +158,12 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
         });
       }
 
-      if (response.data.response) {
+      if (response.data.response.summary) {
         const botMessage = {
           sender: 'bot',
           // Instead of just response.data.response (a string),
           // now you might do something like JSON.stringify or build a custom UI:
-          text: JSON.stringify(response.data.response.summary, null, 2),
+          text: JSON.stringify(response.data.response, null, 2),
           // or store it as a structured object
           data: response.data.response,
         };
@@ -173,6 +174,17 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
         ]);
         setLastBotResponse(response.data.response);
         setIsFollowUp(true);
+      }
+      else if (response.data.response) {
+        const botMessage = {
+          sender: 'bot',
+          text: response.data.response
+        };
+        setMessages(prev => [...prev, botMessage]);
+        setConversationHistory(prev => [
+          ...prev,
+          { role: 'assistant', content: botMessage.text },
+        ]);
       }
     } catch (err) {
       console.error('Error communicating with API:', err);
@@ -302,7 +314,7 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
                 }
 
                 // 2) If the bot sent a structured JSON response (msg.data), render the JSON fields
-                else if (msg.sender === 'bot' && msg.data) {
+                else if (msg.sender === 'summary' && msg.data) {
                   return (
                     <Box
                       key={index}
@@ -320,24 +332,9 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
                         Summary:
                       </Text>
                       <Text color="white">{msg.data.summary}</Text>
-                
-                      <Text color="white" fontWeight="bold" mt={3}>
-                        Trends / Observations:
-                      </Text>
-                      <UnorderedList color="white" mt={1} spacing={2}>
-                        {msg.data.observations.map((observation, idx) => (
-                          <ListItem key={idx}>{observation}</ListItem>
-                        ))}
-                      </UnorderedList>
-                
-                      <Text color="white" fontWeight="bold" mt={3}>
-                        Recommendations / Tips:
-                      </Text>
-                      <UnorderedList color="white" mt={1} spacing={2}>
-                        {msg.data.tips.map((tip, idx) => (
-                          <ListItem key={idx}>{tip}</ListItem>
-                        ))}
-                      </UnorderedList>
+                      {/* {console.log(msg.data)} */}
+                      <Divider my={2} />
+                      <Text color="white" fontWeight="bold">What would you like to know about your watchdog sensors from the past week?</Text>
                     </Box>
                   )
                 }

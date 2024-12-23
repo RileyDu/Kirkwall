@@ -1153,7 +1153,10 @@ app.post('/api/nlquery', async (req, res) => {
   const { question, userEmail } = req.body;
 
   // Only one supported question now
-  if (question !== 'Give me a summary of the data from WatchDog for the last week.') {
+  if (
+    question !==
+    'Give me a summary of the data from WatchDog for the last week.'
+  ) {
     return res.status(400).json({ error: 'Invalid or unsupported question.' });
   }
 
@@ -1178,57 +1181,57 @@ app.post('/api/followup', async (req, res) => {
   }
 
   try {
-    // You can pass a system prompt that says: "Respond in JSON with these fields..."
+    // system prompt is a plain string
     const systemPrompt = `
-      You are a helpful assistant. You can analyze data and provide recommendations.
-      When you respond, produce valid JSON that includes the following keys:
-      - "summary": a brief summary of the data
-      - "trends": a list of observed trends
-      - "recommendations": a list of actionable recommendations
-      
-      Do not include any additional keys or text outside of valid JSON. 
+      You are a data analysis assistant. Your task is to:
+
+Analyze the provided data and determine key insights or patterns.
+Summarize the main trends observed from your analysis.
+Offer actionable tips or recommendations based on those trends.
+Formatting Requirements:
+
+Return your answer in plain text (no Markdown or special formatting).
+Make the response concise, clear, and easy to parse in a React application.
+Organize your key points in simple sections or bullet points without using any Markdown syntax.
+Additional Instructions:
+
+If you reference specific data points or statistics, provide them in a readable format (e.g., “Sales increased by 20% this quarter.”).
+Keep your language straightforward and avoid jargon where possible.
+Only include relevant information that addresses the analysis, trends, and tips.
     `;
 
-    // Also pass your lastResponse, question, and JSON-ified data as user messages
-    const content = JSON.stringify(readingsData);
-
+    // Make sure to pass strings to the OpenAI endpoint
     const intentResponse = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: lastResponse },
+        { role: 'user', content: JSON.stringify(lastResponse) },
         { role: 'user', content: question },
-        { role: 'user', content: content },
+        { role: 'user', content: JSON.stringify(readingsData) },
       ],
-      max_tokens: 500
+      max_tokens: 500,
     });
 
     const followUpResponse = intentResponse.choices[0].message.content;
 
-    // At this point, `followUpResponse` should be JSON. 
-    // You can try to parse it safely in the backend to confirm validity:
-    let parsedJson;
-    try {
-      parsedJson = JSON.parse(followUpResponse);
-    } catch (err) {
-      // If JSON parsing fails, handle the error or provide a fallback
-      console.error('Failed to parse JSON:', err);
-      return res.status(500).json({
-        error: 'Model response was not valid JSON. Please try again.'
-      });
-    }
+    // Safely parse the JSON
+    // let parsedJson;
+    // try {
+    //   parsedJson = JSON.parse(followUpResponse);
+    // } catch (err) {
+    //   console.error('Failed to parse JSON:', err);
+    //   return res.status(500).json({
+    //     error: 'Model response was not valid JSON. Please try again.',
+    //   });
+    // }
 
-    // Then return the parsed JSON to your frontend
-    return res.json({ 
-      response: parsedJson 
-    });
-
+    // console.log('Follow-up response:', parsedJson);
+    return res.json({ response: followUpResponse });
   } catch (error) {
     console.error('Error processing the follow-up:', error);
     return res.status(500).json({ error: 'Internal server error.' });
   }
 });
-
 
 async function startWatchdogChat(userEmail) {
   console.log(`Starting watchdog chat for user: ${userEmail}`);
@@ -1253,13 +1256,22 @@ async function startWatchdogChat(userEmail) {
     throw new Error('No data found in the last 7 days.');
   }
 
-  const dailyData = result.rows; 
-  let summaryText = 'Here are the daily aggregated measurements for the past 7 days:\n\n';
+  const dailyData = result.rows;
+  let summaryText =
+    'Here are the daily aggregated measurements for the past 7 days:\n\n';
   for (const dayRow of dailyData) {
     const dayStr = new Date(dayRow.day).toLocaleDateString();
     summaryText += `Date: ${dayStr}\n`;
-    summaryText += `  Temperature: Avg: ${dayRow.avg_temp.toFixed(2)}°F, Min: ${dayRow.min_temp.toFixed(2)}°F, Max: ${dayRow.max_temp.toFixed(2)}°F\n`;
-    summaryText += `  Humidity:    Avg: ${dayRow.avg_hum.toFixed(2)}%, Min: ${dayRow.min_hum.toFixed(2)}%, Max: ${dayRow.max_hum.toFixed(2)}%\n\n`;
+    summaryText += `  Temperature: Avg: ${dayRow.avg_temp.toFixed(
+      2
+    )}°F, Min: ${dayRow.min_temp.toFixed(2)}°F, Max: ${dayRow.max_temp.toFixed(
+      2
+    )}°F\n`;
+    summaryText += `  Humidity:    Avg: ${dayRow.avg_hum.toFixed(
+      2
+    )}%, Min: ${dayRow.min_hum.toFixed(2)}%, Max: ${dayRow.max_hum.toFixed(
+      2
+    )}%\n\n`;
   }
 
   const messages = [
@@ -1270,26 +1282,25 @@ async function startWatchdogChat(userEmail) {
         The user has the following daily aggregates:
         ${summaryText}
 
-        Return the result in valid JSON. Use the keys "summary", "observations", and "tips" as an example structure:
+        Return the result in valid JSON. Use the keys "summary" as an example structure:
         {
-          "summary": "high-level summary of the data",
-          "observations": "detailed bullet points or analyses",
-          "tips": "additional tips, future watchouts, or recommended next steps"
+          "summary": "high-level summary of the data"
         }
         Do not include any extra keys or text outside of valid JSON.
-      `
+      `,
     },
     {
       role: 'assistant',
-      content: 'User said: "Give me a summary of the data from WatchDog for the last week."'
-    }
+      content:
+        'User said: "Give me a summary of the data from WatchDog for the last week."',
+    },
   ];
 
   // Call OpenAI
   const completion = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: messages,
-    max_tokens: 500
+    max_tokens: 500,
   });
 
   const initialResponse = completion.choices[0].message.content;
@@ -1307,9 +1318,6 @@ async function startWatchdogChat(userEmail) {
   return { response: parsedJson, dailyData };
 }
 
-
-
-
 app.get('/api/*', (req, res) => {
   res.status(404).json({ error: 'API route not found' });
 });
@@ -1323,9 +1331,7 @@ if (process.env.NODE_ENV === 'development') {
 
 export default app;
 
-
-// async function handleWatchdogSummary(userEmail, body) { 
-
+// async function handleWatchdogSummary(userEmail, body) {
 
 //   console.log(`Handling watchdog summary for user: ${userEmail}`);
 
@@ -1401,7 +1407,6 @@ export default app;
 //   }
 // }
 
-
 // Define allowed questions and their handlers
 // const questionHandlers = {
 //   // 'Could you give me a recap of the week?': handleRecapOfTheWeek,
@@ -1449,7 +1454,6 @@ export default app;
 // app.post('/api/followup', async (req, res) => {
 //   const { lastResponse, question, userEmail, readingsData } = req.body;
 //   const content = JSON.stringify(readingsData);
-
 
 //   if (!userEmail) {
 //     console.error('User email not found in token.');
@@ -1706,7 +1710,7 @@ export default app;
 //       throw new Error('No data found in the last 7 days.');
 //     }
 
-//     const dailyData = result.rows; 
+//     const dailyData = result.rows;
 
 //     let summaryText = 'Here are the daily aggregated measurements for the past 7 days:\n\n';
 //     for (const dayRow of dailyData) {
@@ -1741,8 +1745,5 @@ export default app;
 //     throw error;
 //   }
 // }
-
-
-
 
 // Catch-all route for other API requests
