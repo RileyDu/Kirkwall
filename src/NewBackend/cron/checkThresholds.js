@@ -6,7 +6,7 @@ import moment from 'moment-timezone';
 import axios from 'axios';
 const baseURL = process.env.BACKEND_URL || 'https://kirkwall-demo.vercel.app/'; // Set your backend URL
 
-console.log('BACKEND_URL from .env:', process.env.BACKEND_URL);
+console.log('BACKEND_URL from .env:', baseURL);
 
 // Initialize only when the function is called
 export const checkThresholds = async () => {
