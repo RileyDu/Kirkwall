@@ -66,7 +66,7 @@ import {
       // Only keep the last two digits of the year
       const year = date.getFullYear().toString().slice(-2);
   
-      return `${hours}:${minutes} ${month}/${day}/${year}`;
+      return `${hours}:${minutes} (${day}/${month})`;
     });
   
     // Master list of variable fields we want to chart
@@ -202,7 +202,7 @@ import {
       responsive: true,
       plugins: {
         legend: {
-          display: false,
+          display: true,
           position: 'top', // or 'bottom'
           labels: {
             color: 'white',
@@ -218,6 +218,8 @@ import {
         x: {
           ticks: {
             color: 'white',
+            autoSkip: true,
+            maxTicksLimit: 10,
           },
           title: {
             display: true,
