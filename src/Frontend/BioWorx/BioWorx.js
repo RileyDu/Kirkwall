@@ -7,9 +7,7 @@ import {
   } from '@chakra-ui/react';
   import { useEffect, useState } from 'react';
   import axios from 'axios';
-  
-  // 1. Import Chart.js modules and the 'Line' component
-  import {
+    import {
     Chart as ChartJS,
     CategoryScale,
     LinearScale,
@@ -202,8 +200,31 @@ import {
       responsive: true,
       plugins: {
         legend: {
+          // Make sure the legend is displayed
           display: true,
-          position: 'top', // or 'bottom'
+          // Optionally position the legend
+          position: 'top',
+          
+          // OPTIONAL: if you want to customize the onClick behavior
+          onClick: (e, legendItem, legend) => {
+            // The default behavior toggles dataset visibility
+            const index = legendItem.datasetIndex;
+            const chart = legend.chart;
+    
+            // Toggle dataset visibility
+            chart.setDatasetVisibility(index, !chart.isDatasetVisible(index));
+    
+            // Update the chart
+            chart.update();
+          },
+          onHover: (event) => {
+            // Change the cursor to pointer when hovering over legend items
+            event.native.target.style.cursor = 'pointer';
+          },
+          onLeave: (event) => {
+            // Revert cursor back when no longer hovering
+            event.native.target.style.cursor = 'default';
+          },
           labels: {
             color: 'white',
           },
