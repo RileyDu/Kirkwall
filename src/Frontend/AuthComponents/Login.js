@@ -16,6 +16,7 @@ import {
   FormErrorMessage,
   Image,
   Link,
+  Divider,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -88,7 +89,7 @@ const Login = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.log('User logged in successfully');
-        navigate('/dashboard');
+      navigate('/dashboard');
     } catch (error) {
       const errorCode = error.code;
       const errorMessage =
@@ -219,13 +220,16 @@ const Login = () => {
               {/* <Link color="#F4B860" textAlign="center">Forgot Password?</Link> */}
             </Stack>
           </form>
-          {/* <Divider my="4" /> */}
-          {/* <Text color="gray.400" textAlign="center">
-            Don't have an account? <Link color="#F4B860">Sign up</Link>
-          </Text> */}
+          <Text color="gray.400" textAlign="center">
+            Don't have an account? <Link color="#cee8ff" href="/signup">Sign up</Link>
+          </Text>
           {/* <Divider my="4" /> */}
           <Text color="gray.400" textAlign="center">
-            <Link color="white" href='https://www.kirkwall.io' textDecoration={'underline'}>
+            <Link
+              color="white"
+              href="https://www.kirkwall.io"
+              textDecoration={'underline'}
+            >
               Back to Home
             </Link>
           </Text>
