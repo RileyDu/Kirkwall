@@ -35,6 +35,7 @@ import {
   FaSnowflake,
   FaBookOpen,
   FaCalendarWeek,
+  FaFileDownload
 } from 'react-icons/fa';
 import { GiGroundSprout } from 'react-icons/gi';
 import { FiAlertTriangle } from 'react-icons/fi';
@@ -223,6 +224,23 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           <SummaryButton isSummaryOpen={isSummaryOpen} onSummaryToggle={onSummaryToggle} summaryMetrics={filteredSummaryMetrics} />
         )} */}
           {isLargerThan768 && (
+            <>
+            <motion.div {...motionProps}>
+              <Tooltip label="Export Data">
+                <MotionIconButton
+                  icon={<FaFileDownload />}
+                  isRound
+                  size="lg"
+                  // onClick={exportData}
+                  bg="transparent"
+                  color="whitesmoke"
+                  aria-label="Export Data"
+                  _hover={{ bg: 'transparent' }}
+                  whileHover={{ scale: 1.4 }}
+                  whileTap={{ scale: 0.9 }}
+                  />
+              </Tooltip>
+            </motion.div>
             <motion.div {...motionProps}>
               <Tooltip label="Toggle Weather Alerts">
                 <MotionIconButton
@@ -239,6 +257,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                 />
               </Tooltip>
             </motion.div>
+            </>
           )}
           <motion.div {...motionProps}>
             <Tooltip label="Toggle Dark Mode">
