@@ -225,7 +225,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         )} */}
           {isLargerThan768 && (
             <>
-            <motion.div {...motionProps}>
+            {/* <motion.div {...motionProps}>
               <Tooltip label="Export Data">
                 <MotionIconButton
                   icon={<FaFileDownload />}
@@ -240,7 +240,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                   whileTap={{ scale: 0.9 }}
                   />
               </Tooltip>
-            </motion.div>
+            </motion.div> */}
             <motion.div {...motionProps}>
               <Tooltip label="Toggle Weather Alerts">
                 <MotionIconButton

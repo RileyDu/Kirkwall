@@ -220,9 +220,9 @@ const Login = () => {
               {/* <Link color="#F4B860" textAlign="center">Forgot Password?</Link> */}
             </Stack>
           </form>
-          <Text color="gray.400" textAlign="center">
+          {/* <Text color="gray.400" textAlign="center">
             Don't have an account? <Link color="#cee8ff" href="/signup">Sign up</Link>
-          </Text>
+          </Text> */}
           {/* <Divider my="4" /> */}
           <Text color="gray.400" textAlign="center">
             <Link

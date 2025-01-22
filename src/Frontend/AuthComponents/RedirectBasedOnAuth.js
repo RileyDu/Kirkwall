@@ -6,7 +6,7 @@ const RedirectBasedOnAuth = () => {
   const { currentUser } = useAuth();
 
   // If the user is not logged in, redirect to '/'
-  if (!currentUser) {
+  if (!currentUser || !currentUser.email) {
     return <Navigate to="/" />;
   }
 

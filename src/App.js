@@ -164,7 +164,7 @@ const Layout = ({
             zIndex="1000"
           />
           
-          {currentUser.email === 'test@kirkwall.io' && (
+          {currentUser?.email === 'test@kirkwall.io' && (
           <MotionIconButton
             icon={<IoSparkles />}
             variant="outline"
