@@ -25,7 +25,7 @@ import {
   MenuList,
   Checkbox,
   useDisclosure,
-  Text
+  Text,
 } from '@chakra-ui/react';
 import ChartWrapper from '../Charts/ChartWrapper.js';
 import { LineChart, BarChart } from '../Charts/Charts.js';
@@ -71,6 +71,7 @@ const ModularDashboard = ({
   const [chartLayoutIcon, setChartLayoutIcon] = useState(TbColumns2);
   const [chartLayout, setChartLayout] = useState(2);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [showNewUserText, setShowNewUserText] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
@@ -143,39 +144,67 @@ const ModularDashboard = ({
     }, 1);
   };
 
+  useEffect(() => {
+    let timer;
+
+    if (loading) {
+      timer = setTimeout(() => setShowNewUserText(true), 2500); // 3-second delay
+    } else {
+      setShowNewUserText(false);
+    }
+
+    return () => clearTimeout(timer);
+  }, [loading]);
+
   const spin = keyframes`
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 `;
 
-if (loading) {
-  return (
-    <Flex
-      direction="column"
-      justify="center"
-      align="center"
-      height="100vh" 
-      textAlign="center"
-      padding="4"
-    >
-      <Box
-        as={FaChessRook}
-        animation={`${spin} infinite 2s linear`}
-        fontSize="6xl"
-        color={getLogoColor()}
-        mb={4}                 
-      />
-      <Text fontSize="lg">
-        New User? Please schedule an onboarding meeting to get you fully registered!
-      </Text>
-      <Text fontSize="lg" textDecor={'underline'} cursor={'pointer'} onClick={() => navigate('/onboarding')}>
-        Click here!
-      </Text>
-    </Flex>
-  );
-}
+  if (loading) {
+    return (
+      <Flex
+        direction="column"
+        justify="center"
+        align="center"
+        height="100vh"
+        textAlign="center"
+        padding="4"
+      >
+        <Box
+          as={FaChessRook}
+          animation={`${spin} infinite 2s linear`}
+          fontSize="6xl"
+          color={getLogoColor()}
+          mb={4}
+        />
+        {showNewUserText && (
+          <>
+            <Text fontSize="lg">
+              New User? Please schedule an onboarding meeting to get you fully
+              registered!
+            </Text>
+            <Text
+              fontSize="lg"
+              textDecor="underline"
+              cursor="pointer"
+              onClick={() => navigate('/onboarding')}
+              mt={2}
+            >
+              Click here!
+            </Text>
+          </>
+        )}
+      </Flex>
+    );
+  }
 
-  if (!chartData || metricSettings.length === 0 || filteredChartData.length === 0 || loading === true) {
+  if (
+    !chartData ||
+    metricSettings.length === 0 ||
+    filteredChartData.length === 0 ||
+    loading === true
+  ) {
     return (
       <Flex justify="center" align="center" height="100%">
         <Box
@@ -199,7 +228,9 @@ if (loading) {
     // console.log('Updated filteredChartData:', filteredChartData);
 
     // Find chartData based on metric
-    const chartDataForMetric = filteredChartData.find(chart => chart.metric === metric);
+    const chartDataForMetric = filteredChartData.find(
+      chart => chart.metric === metric
+    );
 
     if (chartDataForMetric) {
       const updatedHiddenState = !chartDataForMetric.hidden;

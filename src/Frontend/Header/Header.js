@@ -225,7 +225,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         )} */}
           {isLargerThan768 && (
             <>
-            <motion.div {...motionProps}>
+            {currentUser && currentUser.email === 'test@kirkwall.io' && (
+              <motion.div {...motionProps}>
               <Tooltip label="Export Data">
                 <MotionIconButton
                   icon={<FaFileDownload />}
@@ -241,6 +242,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                   />
               </Tooltip>
             </motion.div>
+                )}
             <motion.div {...motionProps}>
               <Tooltip label="Toggle Weather Alerts">
                 <MotionIconButton
