@@ -58,6 +58,7 @@ import SOAlerts from './Frontend/SOAlerts/soalerts.js';
 import ChatBotModal from './Frontend/Modals/ChatBotModal.js';
 import BioWorx from './Frontend/BioWorx/BioWorx.js';
 import PrivacyPolicy from './Frontend/Privacy/PrivacyPolicy.js';
+import Onboarding from './Frontend/AuthComponents/Onboarding.js';
 
 import { useAuth } from './Frontend/AuthComponents/AuthContext.js';
 
@@ -409,6 +410,14 @@ const MainApp = () => {
             }
           />
           <Route
+            path="/onboarding"
+            element={
+              <ProtectedRoute>
+                <Onboarding />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/imprimed/map"
             element={
               <ProtectedRoute
@@ -442,7 +451,7 @@ const MainApp = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="/agscraper" element={<AgScrapper statusOfAlerts={showAlerts} />} />
+          <Route path="/agscraper"  element={<AgScrapper statusOfAlerts={showAlerts} />} />
           <Route path='/videofeed' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><VideoPlayerPage /></ProtectedRoute>} />
           <Route path='/coldchain' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><ColdChainDash /></ProtectedRoute>} />
           <Route path='/soalerts' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><SOAlerts /></ProtectedRoute>} />
