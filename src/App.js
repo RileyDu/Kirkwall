@@ -57,6 +57,7 @@ import ColdChainDash from './Frontend/ColdChain/ColdChainDash.js';
 import SOAlerts from './Frontend/SOAlerts/soalerts.js';
 import ChatBotModal from './Frontend/Modals/ChatBotModal.js';
 import BioWorx from './Frontend/BioWorx/BioWorx.js';
+import PrivacyPolicy from './Frontend/Privacy/PrivacyPolicy.js';
 
 import { useAuth } from './Frontend/AuthComponents/AuthContext.js';
 
@@ -265,6 +266,7 @@ const MainApp = () => {
     <Box>
       {location.pathname !== '/' &&
         location.pathname !== '/signup' &&
+        location.pathname !== '/privacypolicy' &&
         location.pathname !== '/landing' && (
           <Header
             toggleMobileMenu={toggleMobileMenu}
@@ -287,6 +289,7 @@ const MainApp = () => {
         <Routes>
           {/* <Route path="/landing" element={<LandingPage />} /> */}
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/privacypolicy" element={<PrivacyPolicy />} />
           <Route path="/" element={<Login />} />
           <Route
             path="/dashboard"

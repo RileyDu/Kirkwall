@@ -49,12 +49,12 @@ const SignUp = () => {
   });
 
   // Simple email validation check
-  const validateEmail = (email) => {
+  const validateEmail = email => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
   };
 
-  const handleSignUp = async (event) => {
+  const handleSignUp = async event => {
     event.preventDefault();
     setIsLoading(true);
     let hasError = false;
@@ -101,7 +101,7 @@ const SignUp = () => {
 
   // Let the user press "Enter" to submit the signup form
   useEffect(() => {
-    const handleEnterPress = (event) => {
+    const handleEnterPress = event => {
       if (event.key === 'Enter') {
         handleSignUp(event);
       }
@@ -157,7 +157,7 @@ const SignUp = () => {
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   required
                   bg="#2D3748"
                   border="2px solid"
@@ -181,7 +181,7 @@ const SignUp = () => {
                   id="password"
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   required
                   bg="#2D3748"
                   border="2px solid"
@@ -246,6 +246,14 @@ const SignUp = () => {
       <Center py={4}>
         <Text color="gray.600">&copy; 2024 Kirkwall. All rights reserved.</Text>
       </Center>
+      <Text
+        color="gray.600"
+        textDecor={'underline'}
+        onClick={() => navigate('/privacypolicy')}
+        cursor={'pointer'}
+      >
+        Privacy Policy
+      </Text>
     </Flex>
   );
 };

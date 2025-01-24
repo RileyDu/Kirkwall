@@ -25,6 +25,7 @@ import {
   MenuList,
   Checkbox,
   useDisclosure,
+  Text
 } from '@chakra-ui/react';
 import ChartWrapper from '../Charts/ChartWrapper.js';
 import { LineChart, BarChart } from '../Charts/Charts.js';
@@ -35,6 +36,7 @@ import { FaChevronDown } from 'react-icons/fa';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { keyframes } from '@emotion/react';
 import axios from 'axios'; // Import Axios
+import { useNavigate } from 'react-router-dom';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import ChatGPTComponent from '../AI/ChatGPTComponent.js';
@@ -74,6 +76,8 @@ const ModularDashboard = ({
   const { colorMode } = useColorMode();
   const { currentUser } = useAuth();
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
+
+  const navigate = useNavigate();
 
   const {
     chartData,
@@ -144,18 +148,32 @@ const ModularDashboard = ({
   100% { transform: rotate(360deg); }
 `;
 
-  if (loading) {
-    return (
-      <Flex justify="center" align="center" height="100%">
-        <Box
-          as={FaChessRook}
-          animation={`${spin} infinite 2s linear`}
-          fontSize="6xl"
-          color={getLogoColor()}
-        />
-      </Flex>
-    );
-  }
+if (loading) {
+  return (
+    <Flex
+      direction="column"
+      justify="center"
+      align="center"
+      height="100vh" 
+      textAlign="center"
+      padding="4"
+    >
+      <Box
+        as={FaChessRook}
+        animation={`${spin} infinite 2s linear`}
+        fontSize="6xl"
+        color={getLogoColor()}
+        mb={4}                 
+      />
+      <Text fontSize="lg">
+        New User? Please schedule an onboarding meeting to get you fully registered!
+      </Text>
+      <Text fontSize="lg" textDecor={'underline'} cursor={'pointer'} onClick={() => navigate('/onboarding')}>
+        Click here!
+      </Text>
+    </Flex>
+  );
+}
 
   if (!chartData || metricSettings.length === 0 || filteredChartData.length === 0 || loading === true) {
     return (

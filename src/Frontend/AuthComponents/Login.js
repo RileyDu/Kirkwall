@@ -238,6 +238,7 @@ const Login = () => {
       <Center py={4}>
         <Text color="gray.600">&copy; 2024 Kirkwall. All rights reserved.</Text>
       </Center>
+        <Text color="gray.600" textDecor={'underline'} onClick={() => navigate('/privacypolicy')} cursor={'pointer'}> Privacy Policy</Text>
     </Flex>
   );
 };
