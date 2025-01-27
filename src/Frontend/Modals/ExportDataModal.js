@@ -13,7 +13,6 @@ import {
   FormLabel,
   Input,
   Select,
-  useDisclosure,
   VStack,
   useToast,
 } from '@chakra-ui/react';
@@ -24,10 +23,9 @@ const ExportDataModal = ({ isOpen, onClose }) => {
 
   // Form state
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
     dataType: '',
-    dateRange: '',
+    dateRangeStart: '',
+    dateRangeEnd: '',
   });
 
   // Handle form input changes
@@ -37,25 +35,76 @@ const ExportDataModal = ({ isOpen, onClose }) => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // For now, we'll just log the data and close the modal
-    console.log('Form Data Submitted:', formData);
-    toast({
-      title: 'Request Submitted.',
-      description: 'Your data request has been submitted successfully.',
-      status: 'success',
-      duration: 5000,
-      isClosable: true,
+
+    const { dataType, dateRangeStart, dateRangeEnd } = formData;
+
+    if (!dataType || !dateRangeStart || !dateRangeEnd) {
+      toast({
+        title: 'Missing Fields.',
+        description: 'Please fill in all required fields.',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    // Construct the query parameters
+    const params = new URLSearchParams({
+      metric: dataType,
+      startDate: dateRangeStart,
+      endDate: dateRangeEnd,
     });
-    onClose();
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      dataType: '',
-      dateRange: '',
-    });
+
+    // Construct the full URL (adjust the base URL as needed)
+    const url = `/api/export_data?${params.toString()}`;
+
+    try {
+      // Initiate the file download by creating a temporary link
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to export data.');
+      }
+
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = 'exported_data.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+
+      toast({
+        title: 'Download Started.',
+        description: 'Your CSV file is downloading.',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+
+      onClose();
+      // Reset form
+      setFormData({
+        dataType: '',
+        dateRangeStart: '',
+        dateRangeEnd: '',
+      });
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      toast({
+        title: 'Export Failed.',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -68,64 +117,54 @@ const ExportDataModal = ({ isOpen, onClose }) => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Request Data</ModalHeader>
+          <ModalHeader>Export Data</ModalHeader>
           <ModalCloseButton />
           <form onSubmit={handleSubmit}>
             <ModalBody pb={6}>
               <VStack spacing={4}>
                 <FormControl isRequired>
-                  <FormLabel>Name</FormLabel>
-                  <Input
-                    ref={initialRef}
-                    placeholder="Your Name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                  />
-                </FormControl>
-
-                <FormControl isRequired>
-                  <FormLabel>Email</FormLabel>
-                  <Input
-                    type="email"
-                    placeholder="your.email@example.com"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                  />
-                </FormControl>
-
-                <FormControl isRequired>
-                  <FormLabel>Data Type</FormLabel>
+                  <FormLabel>Data Metric Type</FormLabel>
                   <Select
                     placeholder="Select data type"
                     name="dataType"
                     value={formData.dataType}
                     onChange={handleChange}
                   >
-                    <option value="sales">Sales</option>
-                    <option value="inventory">Inventory</option>
-                    <option value="customers">Customers</option>
+                    <option value="temp">Watchdog Temperature</option>
+                    <option value="hum">Watchdog Humidity</option>
                     {/* Add more options as needed */}
                   </Select>
                 </FormControl>
 
                 <FormControl isRequired>
-                  <FormLabel>Date Range</FormLabel>
+                  <FormLabel>Date Range Start</FormLabel>
                   <Input
-                    type="text"
-                    placeholder="e.g., 2023-01-01 to 2023-12-31"
-                    name="dateRange"
-                    value={formData.dateRange}
+                    type="date"
+                    placeholder="Start Date"
+                    name="dateRangeStart"
+                    value={formData.dateRangeStart}
+                    onChange={handleChange}
+                  />
+                </FormControl>
+                <FormControl isRequired>
+                  <FormLabel>Date Range End</FormLabel>
+                  <Input
+                    type="date"
+                    placeholder="End Date"
+                    name="dateRangeEnd"
+                    value={formData.dateRangeEnd}
                     onChange={handleChange}
                   />
                 </FormControl>
               </VStack>
             </ModalBody>
-
             <ModalFooter>
-              <Button bg={'#cee8ff'} mr={3}>
-                Submit
+              <Button
+                type="submit"
+                colorScheme="blue"
+                mr={3}
+              >
+                Export
               </Button>
               <Button onClick={onClose}>Cancel</Button>
             </ModalFooter>
