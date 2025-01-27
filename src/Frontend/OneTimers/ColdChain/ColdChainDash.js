@@ -15,8 +15,8 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
-import { MetricSettings } from '../Modular/MetricSettings.js';
-import { CustomerSettings } from '../Modular/CustomerSettings.js';
+import { MetricSettings } from '../../Modular/MetricSettings.js';
+import { CustomerSettings } from '../../Modular/CustomerSettings.js';
 
 const ColdChainDash = () => {
   const cardBg = useColorModeValue('gray.500', 'gray.800');

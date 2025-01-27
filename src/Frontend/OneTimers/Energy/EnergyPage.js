@@ -30,7 +30,7 @@ import { AddIcon, EditIcon } from '@chakra-ui/icons';
 import { FaTrash, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { MdLocationOn } from 'react-icons/md';
 import EnergyCalculatorModal from './EnergyCalculatorModal.js';
-import { useAuth } from '../AuthComponents/AuthContext.js';
+import { useAuth } from '../../AuthComponents/AuthContext.js';
 import { motion } from 'framer-motion';
 
 const MotionBox = motion(Box);

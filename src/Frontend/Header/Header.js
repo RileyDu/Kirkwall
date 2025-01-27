@@ -122,46 +122,11 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         route: '/weeklyrecap',
       },
     ],
-    'russell@rjenergysolutions.com': [
-      {
-        icon: <FaSnowflake size="30" />,
-        label: 'Rivercity',
-        route: '/RivercitySensors',
-      },
-      { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
-      { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' },
-      // { icon: <MdElectricBolt size="30"/>, label: 'Energy', route: '/energy' },
-      // { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
-    ],
-    'trey@watchdogprotect.com': [
-      {
-        icon: <FaDog size="30" />,
-        label: 'Watchdog',
-        route: '/WatchdogSensors',
-      },
-      { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
-      {
-        icon: <FaGlobe size="30" />,
-        label: 'Map',
-        route: '/watchdogprotect/map',
-      },
-      { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
-      {
-        icon: <FaCalendarWeek size="30" />,
-        label: 'Weekly Recap',
-        route: '/weeklyrecap',
-      },
-    ],
     default: [
       {
         icon: <FaDog size="30" />,
         label: 'Watchdog',
         route: '/WatchdogSensors',
-      },
-      {
-        icon: <FaSnowflake size="30" />,
-        label: 'Rivercity',
-        route: '/RivercitySensors',
       },
       { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' },
@@ -345,11 +310,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                           : currentUser.email ===
                             'jerrycromarty@imprimedicine.com'
                           ? '/ImpriMedLogo.png'
-                          : currentUser.email ===
-                            'russell@rjenergysolutions.com'
-                          ? '/RJLogo.jpeg'
-                          : currentUser.email === 'trey@watchdogprotect.com'
-                          ? '/RookLogoWhite.png'
                           : '/RookLogoWhite.png'
                       }
                       cursor="pointer"
@@ -373,10 +333,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                         : currentUser.email ===
                           'jerrycromarty@imprimedicine.com'
                         ? 'ImpriMed'
-                        : currentUser.email === 'russell@rjenergysolutions.com'
-                        ? 'RJ Energy Solutions'
-                        : currentUser.email === 'trey@watchdogprotect.com'
-                        ? 'Watch Dog Protect'
                         : 'Kirkwall'}
                     </PopoverHeader>
                     <PopoverBody>
@@ -455,8 +411,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         </DrawerContent>
       </Drawer>
 
- {/* Move Modals Outside DrawerBody */}
- {user && (
+      {/* Move Modals Outside DrawerBody */}
+      {user && (
         <>
           <AdminExpandModal
             isOpen={isAdminOpen}

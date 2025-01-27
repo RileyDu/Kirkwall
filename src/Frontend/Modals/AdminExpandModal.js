@@ -320,19 +320,9 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
       { label: 'Incu #2 Temp', metric: 'imIncubatorTwoTemp' },
       { label: 'Incu #2 Hum', metric: 'imIncubatorTwoHum' },
     ],
-    'russell@rjenergysolutions.com': [
-      { label: 'Rivercity Temperature', metric: 'rctemp' },
-      { label: 'Rivercity Humidity', metric: 'humidity' },
-    ],
-    'trey@watchdogprotect.com': [
-      { label: 'Watchdog Temperature', metric: 'temp' },
-      { label: 'Watchdog Humidity', metric: 'hum' },
-    ],
     'test@kirkwall.io': [
       { label: 'Temperature (Watchdog)', metric: 'temp' },
       { label: 'Humidity (Watchdog)', metric: 'hum' },
-      { label: 'Temperature (Rivercity)', metric: 'rctemp' },
-      { label: 'Humidity (Rivercity)', metric: 'humidity' },
       { label: 'Temperature (GF)', metric: 'temperature' },
       { label: 'Humidity (GF)', metric: 'percent_humidity' },
       { label: 'Wind Speed (GF)', metric: 'wind_speed' },
@@ -351,8 +341,6 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     rain_15_min_inches: 'Rainfall',
     temp: 'Temperature (Watchdog)',
     hum: 'Humidity (Watchdog)',
-    rctemp: 'Temperature (Rivercity)',
-    humidity: 'Humidity (Rivercity)',
     imFreezerOneTemp: 'Freezer #1 Temp (°C)',
     imFreezerOneHum: 'Freezer #1 Humidity (%)',
     imFreezerTwoTemp: 'Freezer #2 Temp (°C)',

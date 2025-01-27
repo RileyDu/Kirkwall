@@ -446,13 +446,6 @@ export const checkThresholds = async () => {
           );
           break;
 
-        case 'rctemp':
-        case 'humidity':
-          responseData = await axios.get(
-            `${baseURL}/api/rivercity_data?limit=3`
-          );
-          break;
-
         case 'imFreezerOneTemp':
           response = await axios.get(
             `${baseURL}/api/impriMed_data?deveui=0080E1150618C9DE&limit=3`

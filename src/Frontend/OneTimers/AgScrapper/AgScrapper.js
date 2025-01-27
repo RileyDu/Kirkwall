@@ -24,7 +24,7 @@ import {
   useColorMode,
   IconButton,
 } from '@chakra-ui/react';
-import { useAuth } from '../AuthComponents/AuthContext.js';
+import { useAuth } from '../../AuthComponents/AuthContext.js';
 import SavedLinksModal from './SavedLinksModal.js';
 import { motion } from 'framer-motion';
 import { ArrowUpIcon } from '@chakra-ui/icons';

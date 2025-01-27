@@ -21,9 +21,9 @@ import { createObjectCsvStringifier } from 'csv-writer';
 // Middleware to parse incoming JSON
 
 //FOR SOME REASONE THIS NEEDS TO BE COMMENTED OUT FOR LOCAL VERCEL DEV, BUT NEEDS TO EXIST FOR PROD
-if (process.env.NODE_ENV === 'production') {
-app.use(express.json());
-}
+// if (process.env.NODE_ENV === 'production') {
+//   app.use(express.json());
+// }
 
 app.use(cors());
 
@@ -103,56 +103,31 @@ app.get('/api/watchdog_data', async (req, res) => {
   }
 });
 
-app.get('/api/rivercity_data', async (req, res) => {
-  const { limit = 10, type = 'all' } = req.query;
 
-  let query =
-    'SELECT * FROM rivercity_data WHERE deveui = $1 ORDER BY publishedat DESC LIMIT $2';
+// app.get('/api/impriMed_data', async (req, res) => {
+//   const { deveui, limit = 10 } = req.query; // Get the device id (deveui) and limit from query parameters
 
-  if (type === 'rctemp') {
-    query =
-      'SELECT rctemp, publishedat FROM rivercity_data WHERE deveui = $1 ORDER BY publishedat DESC LIMIT $2';
-  } else if (type === 'humidity') {
-    query =
-      'SELECT humidity, publishedat FROM rivercity_data WHERE deveui = $1 ORDER BY publishedat DESC LIMIT $2';
-  }
+//   // console.log('Received deveui:', deveui, 'Limit:', limit); // Log deveui and limit
 
-  try {
-    const result = await client.query(query, ['0080E115054FF0B7', limit]);
-    // console.log('Query result:', result.rows);
-    res.status(200).json(result.rows);
-  } catch (error) {
-    console.error('Error fetching rivercity data:', error);
-    res
-      .status(500)
-      .json({ error: 'An error occurred while fetching rivercity data' });
-  }
-});
+//   try {
+//     const query = `
+//       SELECT rctemp, humidity, publishedat, deveui 
+//       FROM rivercity_data 
+//       WHERE deveui = $1 
+//       ORDER BY publishedat DESC 
+//       LIMIT $2`;
 
-app.get('/api/impriMed_data', async (req, res) => {
-  const { deveui, limit = 10 } = req.query; // Get the device id (deveui) and limit from query parameters
+//     const result = await client.query(query, [deveui, limit]);
+//     // console.log('Query result:', result.rows); // Log the result from the query
 
-  // console.log('Received deveui:', deveui, 'Limit:', limit); // Log deveui and limit
-
-  try {
-    const query = `
-      SELECT rctemp, humidity, publishedat, deveui 
-      FROM rivercity_data 
-      WHERE deveui = $1 
-      ORDER BY publishedat DESC 
-      LIMIT $2`;
-
-    const result = await client.query(query, [deveui, limit]);
-    // console.log('Query result:', result.rows); // Log the result from the query
-
-    res.status(200).json(result.rows); // Send the data as JSON response
-  } catch (error) {
-    console.error('Error fetching ImpriMed data:', error);
-    res
-      .status(500)
-      .json({ error: 'An error occurred while fetching ImpriMed data' });
-  }
-});
+//     res.status(200).json(result.rows); // Send the data as JSON response
+//   } catch (error) {
+//     console.error('Error fetching ImpriMed data:', error);
+//     res
+//       .status(500)
+//       .json({ error: 'An error occurred while fetching ImpriMed data' });
+//   }
+// });
 
 app.get('/api/thresholds', async (req, res) => {
   try {

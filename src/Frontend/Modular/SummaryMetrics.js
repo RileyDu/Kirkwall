@@ -14,10 +14,7 @@ export const SummaryMetrics = () => {
     leafWetnessData,
     watchdogTempData,
     watchdogHumData,
-    rivercityTempData,
-    rivercityHumData,
     watchdogData,
-    rivercityData,
     impriFreezerOneTempData,
     impriFreezerOneHumData,
     impriFreezerTwoTempData,
@@ -133,16 +130,6 @@ export const SummaryMetrics = () => {
       label: 'Garage Humidity',
       ...calculateMetrics(watchdogHumData || watchdogData, 'hum'),
       metric: 'hum',
-    },
-    {
-      label: 'Rivercity Temperature',
-      ...calculateMetrics(rivercityTempData || rivercityData, 'rctemp'),
-      metric: 'rctemp',
-    },
-    {
-      label: 'Rivercity Humidity',
-      ...calculateMetrics(rivercityHumData || rivercityData, 'humidity'),
-      metric: 'humidity',
     },
     {
       label: 'Impri Freezer #1 (°C)',

@@ -34,12 +34,8 @@ import { IoSparkles } from "react-icons/io5";
 
 import { keyframes } from '@emotion/react';
 import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors.js';
-import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySensors.js';
 import MapComponent from './Frontend/Maps/KirkwallMap.js';
-import ImpriMedMap from './Frontend/Maps/ImpriMedMap.js';
 import GrandFarmMap from './Frontend/Maps/GrandFarmMap.js';
-import RJMap from './Frontend/Maps/RJMap.js';
-import WatchdogProtectMap from './Frontend/Maps/WatchdogMap.js';
 import { motion } from 'framer-motion';
 import HelpModal from './Frontend/Modals/HelpModal.js';
 import OptionsModal from './Frontend/Modals/OptionsModal.js';
@@ -49,14 +45,14 @@ import ModularSummary from './Frontend/Modular/ModularSummary.js';
 import RedirectBasedOnAuth from './Frontend/AuthComponents/RedirectBasedOnAuth.js';
 import ThankYou from './Frontend/Alert/ThankYou.js';
 import ThankYouAdmin from './Frontend/Alert/ThankYouAdmin.js';
-import EnergyPage from './Frontend/Energy/EnergyPage.js';
+import EnergyPage from './Frontend/OneTimers/Energy/EnergyPage.js';
 import WeeklyRecap from './Frontend/WeeklyRecap/WeeklyRecap.js';
-import VideoPlayerPage from './Frontend/VideoFeed/VideoPlayerPage.js';
-import AgScrapper from './Frontend/AgScrapper/AgScrapper.js';
-import ColdChainDash from './Frontend/ColdChain/ColdChainDash.js';
+import VideoPlayerPage from './Frontend/OneTimers/VideoFeed/VideoPlayerPage.js';
+import AgScrapper from './Frontend/OneTimers/AgScrapper/AgScrapper.js';
+import ColdChainDash from './Frontend/OneTimers/ColdChain/ColdChainDash.js';
 import SOAlerts from './Frontend/SOAlerts/soalerts.js';
 import ChatBotModal from './Frontend/Modals/ChatBotModal.js';
-import BioWorx from './Frontend/BioWorx/BioWorx.js';
+import BioWorx from './Frontend/Clients/BioWorx/BioWorx.js';
 import PrivacyPolicy from './Frontend/Privacy/PrivacyPolicy.js';
 import Onboarding from './Frontend/AuthComponents/Onboarding.js';
 
@@ -362,14 +358,6 @@ const MainApp = () => {
             }
           />
           <Route
-            path="/RivercitySensors"
-            element={
-              <ProtectedRoute>
-                <RivercitySensors statusOfAlerts={showAlerts} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/thankyou"
             element={
               <ProtectedRoute>
@@ -418,36 +406,10 @@ const MainApp = () => {
             }
           />
           <Route
-            path="/imprimed/map"
-            element={
-              <ProtectedRoute
-                allowedUsers={['jerrycromarty@imprimedicine.com']}
-              >
-                <ImpriMedMap statusOfAlerts={showAlerts} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/grandfarm/map"
             element={
               <ProtectedRoute allowedUsers={['pmo@grandfarm.com']}>
                 <GrandFarmMap statusOfAlerts={showAlerts} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/rjenergy/map"
-            element={
-              <ProtectedRoute allowedUsers={['russell@rjenergysolutions.com']}>
-                <RJMap statusOfAlerts={showAlerts} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/watchdogprotect/map"
-            element={
-              <ProtectedRoute allowedUsers={['trey@watchdogprotect.com']}>
-                <WatchdogProtectMap statusOfAlerts={showAlerts} />
               </ProtectedRoute>
             }
           />

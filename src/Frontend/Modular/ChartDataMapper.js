@@ -12,10 +12,7 @@ const ChartDataMapper = ({ dataForMetric }) => {
     leafWetnessData,
     watchdogTempData,
     watchdogHumData,
-    rivercityTempData,
-    rivercityHumData,
     watchdogData,
-    rivercityData,
     impriFreezerOneTempData,
     impriFreezerOneHumData,
     impriFreezerTwoTempData,
@@ -57,12 +54,6 @@ const ChartDataMapper = ({ dataForMetric }) => {
       break;
     case 'watchdogHumData':
       dataForChart = watchdogHumData || watchdogData;
-      break;
-    case 'rivercityTempData':
-      dataForChart = rivercityTempData || rivercityData;
-      break;
-    case 'rivercityHumData':
-      dataForChart = rivercityHumData || rivercityData;
       break;
     case 'imFreezerOneTempData':
       dataForChart = impriFreezerOneTempData;

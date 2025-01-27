@@ -268,11 +268,6 @@ const ModularDashboard = ({
       const response = await axios.put(
         `/api/update_chart`,
         updatedChartDetails,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
       );
 
       // Log the updated chart data returned from the server

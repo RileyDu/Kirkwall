@@ -8,8 +8,6 @@ export const CustomerSettings = [
     metric: [
       'temp',
       'hum',
-      'rctemp',
-      'humidity',
       'temperature',
       'percent_humidity',
       'wind_speed',
@@ -32,27 +30,6 @@ export const CustomerSettings = [
       'leaf_wetness',
     ],
   },
-  {
-    id: 3,
-    name: 'Watchdog Protect',
-    email: 'trey@watchdogprotect.com',
-    phones: '',
-    metric: ['temp', 'hum'],
-  },
-  // {
-  //   id: 4,
-  //   name: "Rivercity",
-  //   email: "",
-  //   phone: "",
-  //   metric: ["rctemp", "humidity"],
-  // },
-  // {
-  //     id: 5,
-  //     name: "RJ Energy",
-  //     email: "russell@rjenergysolutions.com",
-  //     phone: "",
-  //     metric: ["", ""],
-  //   },
   {
     id: 6,
     name: 'ImpriMed',

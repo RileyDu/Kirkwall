@@ -10,7 +10,6 @@ export const WeeklyRecapHelper = async (userMetrics) => {
     'leaf_wetness',
   ];
   const watchdogMetrics = ['temp', 'hum'];
-  const rivercityMetrics = ['rctemp', 'humidity'];
   const impriMedMetrics = [
     // 'imFreezerOneTemp',
     // 'imFreezerOneHum',
@@ -49,7 +48,6 @@ export const WeeklyRecapHelper = async (userMetrics) => {
   const allMetrics = [
     ...weatherMetrics,
     ...watchdogMetrics,
-    ...rivercityMetrics,
     ...impriMedMetrics,
   ];
 
@@ -72,10 +70,6 @@ export const WeeklyRecapHelper = async (userMetrics) => {
       let response;
       if (watchdogMetrics.includes(metric)) {
         response = await axios.get('/api/watchdog_data', {
-          params: { type: metric, limit: 1009 },
-        });
-      } else if (rivercityMetrics.includes(metric)) {
-        response = await axios.get('/api/rivercity_data', {
           params: { type: metric, limit: 1009 },
         });
       } else if (weatherMetrics.includes(metric)) {
