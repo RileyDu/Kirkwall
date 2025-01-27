@@ -285,7 +285,7 @@ const MainApp = () => {
       >
         <Routes>
           {/* <Route path="/landing" element={<LandingPage />} /> */}
-          <Route path="/signup" element={<SignUp />} />
+          {/* <Route path="/signup" element={<SignUp />} /> */}
           <Route path="/privacypolicy" element={<PrivacyPolicy />} />
           <Route path="/" element={<Login />} />
           <Route
