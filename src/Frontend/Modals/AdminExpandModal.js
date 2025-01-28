@@ -325,20 +325,6 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     rain_15_min_inches: 'Rainfall',
     temp: 'Temperature (Watchdog)',
     hum: 'Humidity (Watchdog)',
-    imFreezerOneTemp: 'Freezer #1 Temp (°C)',
-    imFreezerOneHum: 'Freezer #1 Humidity (%)',
-    imFreezerTwoTemp: 'Freezer #2 Temp (°C)',
-    imFreezerTwoHum: 'Freezer #2 Humidity (%)',
-    imFreezerThreeTemp: 'Freezer #3 Temp (°C)',
-    imFreezerThreeHum: 'Freezer #3 Humidity (%)',
-    imFridgeOneTemp: 'Fridge #1 Temp (°C)',
-    imFridgeOneHum: 'Fridge #1 Humidity (%)',
-    imFridgeTwoTemp: 'Fridge #2 Temp (°C)',
-    imFridgeTwoHum: 'Fridge #2 Humidity (%)',
-    imIncubatorOneTemp: 'Incubator #1 Temp (°C)',
-    imIncubatorOneHum: 'Incubator #1 Humidity (%)',
-    imIncubatorTwoTemp: 'Incubator #2 Temp (°C)',
-    imIncubatorTwoHum: 'Incubator #2 Humidity (%)',
   };
   const nameToMetric = Object.fromEntries(
     Object.entries(metricToName).map(([key, value]) => [

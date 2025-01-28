@@ -25,62 +25,6 @@ export const WeatherDataProvider = ({ children }) => {
   const [selectedTimePeriodWDTemp, setSelectedTimePeriodWDTemp] =
     useState('3H');
   const [selectedTimePeriodWDHum, setSelectedTimePeriodWDHum] = useState('3H');
-  const [
-    selectedTimePeriodIMFreezerOneTemp,
-    setSelectedTimePeriodIMFreezerOneTemp,
-  ] = useState('3H');
-  const [
-    selectedTimePeriodIMFreezerOneHum,
-    setSelectedTimePeriodIMFreezerOneHum,
-  ] = useState('3H');
-  const [
-    selectedTimePeriodIMFreezerTwoTemp,
-    setSelectedTimePeriodIMFreezerTwoTemp,
-  ] = useState('3H');
-  const [
-    selectedTimePeriodIMFreezerTwoHum,
-    setSelectedTimePeriodIMFreezerTwoHum,
-  ] = useState('3H');
-  const [
-    selectedTimePeriodIMFreezerThreeTemp,
-    setSelectedTimePeriodIMFreezerThreeTemp,
-  ] = useState('3H');
-  const [
-    selectedTimePeriodIMFreezerThreeHum,
-    setSelectedTimePeriodIMFreezerThreeHum,
-  ] = useState('3H');
-  const [
-    selectedTimePeriodIMFridgeOneTemp,
-    setSelectedTimePeriodIMFridgeOneTemp,
-  ] = useState('3H');
-  const [
-    selectedTimePeriodIMFridgeOneHum,
-    setSelectedTimePeriodIMFridgeOneHum,
-  ] = useState('3H');
-  const [
-    selectedTimePeriodIMFridgeTwoTemp,
-    setSelectedTimePeriodIMFridgeTwoTemp,
-  ] = useState('3H');
-  const [
-    selectedTimePeriodIMFridgeTwoHum,
-    setSelectedTimePeriodIMFridgeTwoHum,
-  ] = useState('3H');
-  const [
-    selectedTimePeriodIMIncubatorOneTemp,
-    setSelectedTimePeriodIMIncubatorOneTemp,
-  ] = useState('3H');
-  const [
-    selectedTimePeriodIMIncubatorOneHum,
-    setSelectedTimePeriodIMIncubatorOneHum,
-  ] = useState('3H');
-  const [
-    selectedTimePeriodIMIncubatorTwoTemp,
-    setSelectedTimePeriodIMIncubatorTwoTemp,
-  ] = useState('3H');
-  const [
-    selectedTimePeriodIMIncubatorTwoHum,
-    setSelectedTimePeriodIMIncubatorTwoHum,
-  ] = useState('3H');
   const [tempData, setTempData] = useState(null);
   const [humidityData, setHumidityData] = useState(null);
   const [windData, setWindData] = useState(null);
@@ -300,84 +244,6 @@ export const WeatherDataProvider = ({ children }) => {
         if (dataLoaded.leafWetness) {
           fetchSpecificData('leaf_wetness', selectedTimePeriodLeafWetness);
         }
-        if (dataLoaded.imFreezerOneTemp) {
-          fetchSpecificData(
-            'imFreezerOneTemp',
-            selectedTimePeriodIMFreezerOneTemp
-          );
-        }
-        if (dataLoaded.imFreezerOneHum) {
-          fetchSpecificData(
-            'imFreezerOneHum',
-            selectedTimePeriodIMFreezerOneHum
-          );
-        }
-        if (dataLoaded.imFreezerTwoTemp) {
-          fetchSpecificData(
-            'imFreezerTwoTemp',
-            selectedTimePeriodIMFreezerTwoTemp
-          );
-        }
-        if (dataLoaded.imFreezerTwoHum) {
-          fetchSpecificData(
-            'imFreezerTwoHum',
-            selectedTimePeriodIMFreezerTwoHum
-          );
-        }
-        if (dataLoaded.imFreezerThreeTemp) {
-          fetchSpecificData(
-            'imFreezerThreeTemp',
-            selectedTimePeriodIMFreezerThreeTemp
-          );
-        }
-        if (dataLoaded.imFreezerThreeHum) {
-          fetchSpecificData(
-            'imFreezerThreeHum',
-            selectedTimePeriodIMFreezerThreeHum
-          );
-        }
-        if (dataLoaded.imFridgeOneTemp) {
-          fetchSpecificData(
-            'imFridgeOneTemp',
-            selectedTimePeriodIMFridgeOneTemp
-          );
-        }
-        if (dataLoaded.imFridgeOneHum) {
-          fetchSpecificData('imFridgeOneHum', selectedTimePeriodIMFridgeOneHum);
-        }
-        if (dataLoaded.imFridgeTwoTemp) {
-          fetchSpecificData(
-            'imFridgeTwoTemp',
-            selectedTimePeriodIMFridgeTwoTemp
-          );
-        }
-        if (dataLoaded.imFridgeTwoHum) {
-          fetchSpecificData('imFridgeTwoHum', selectedTimePeriodIMFridgeTwoHum);
-        }
-        if (dataLoaded.imIncubatorOneTemp) {
-          fetchSpecificData(
-            'imIncubatorOneTemp',
-            selectedTimePeriodIMIncubatorOneTemp
-          );
-        }
-        if (dataLoaded.imIncubatorOneHum) {
-          fetchSpecificData(
-            'imIncubatorOneHum',
-            selectedTimePeriodIMIncubatorOneHum
-          );
-        }
-        if (dataLoaded.imIncubatorTwoTemp) {
-          fetchSpecificData(
-            'imIncubatorTwoTemp',
-            selectedTimePeriodIMIncubatorTwoTemp
-          );
-        }
-        if (dataLoaded.imIncubatorTwoHum) {
-          fetchSpecificData(
-            'imIncubatorTwoHum',
-            selectedTimePeriodIMIncubatorTwoHum
-          );
-        }
       }, 30000);
       return () => clearInterval(intervalId);
     }
@@ -391,20 +257,6 @@ export const WeatherDataProvider = ({ children }) => {
     selectedTimePeriodWDHum,
     selectedTimePeriodSoilMoisture,
     selectedTimePeriodLeafWetness,
-    selectedTimePeriodIMFreezerOneHum,
-    selectedTimePeriodIMFreezerOneTemp,
-    selectedTimePeriodIMFreezerTwoHum,
-    selectedTimePeriodIMFreezerTwoTemp,
-    selectedTimePeriodIMFreezerThreeHum,
-    selectedTimePeriodIMFreezerThreeTemp,
-    selectedTimePeriodIMFridgeOneHum,
-    selectedTimePeriodIMFridgeOneTemp,
-    selectedTimePeriodIMFridgeTwoHum,
-    selectedTimePeriodIMFridgeTwoTemp,
-    selectedTimePeriodIMIncubatorOneHum,
-    selectedTimePeriodIMIncubatorOneTemp,
-    selectedTimePeriodIMIncubatorTwoHum,
-    selectedTimePeriodIMIncubatorTwoTemp,
   ]);
 
   const handleTimePeriodChange = async (metric, timePeriod) => {
@@ -440,71 +292,6 @@ export const WeatherDataProvider = ({ children }) => {
       case 'hum':
         setSelectedTimePeriodWDHum(timePeriod);
         setDataLoaded(prevState => ({ ...prevState, watchdogHum: true }));
-        break;
-      case 'imFreezerOneTemp':
-        setSelectedTimePeriodIMFreezerOneTemp(timePeriod);
-        setDataLoaded(prevState => ({ ...prevState, imFreezerOneTemp: true }));
-        break;
-      case 'imFreezerOneHum':
-        setSelectedTimePeriodIMFreezerOneHum(timePeriod);
-        setDataLoaded(prevState => ({ ...prevState, imFreezerOneHum: true }));
-        break;
-      case 'imFreezerTwoTemp':
-        setSelectedTimePeriodIMFreezerTwoTemp(timePeriod);
-        setDataLoaded(prevState => ({ ...prevState, imFreezerTwoTemp: true }));
-        break;
-      case 'imFreezerTwoHum':
-        setSelectedTimePeriodIMFreezerTwoHum(timePeriod);
-        setDataLoaded(prevState => ({ ...prevState, imFreezerTwoHum: true }));
-        break;
-      case 'imFreezerThreeTemp':
-        setSelectedTimePeriodIMFreezerThreeTemp(timePeriod);
-        setDataLoaded(prevState => ({
-          ...prevState,
-          imFreezerThreeTemp: true,
-        }));
-        break;
-      case 'imFreezerThreeHum':
-        setSelectedTimePeriodIMFreezerThreeHum(timePeriod);
-        setDataLoaded(prevState => ({ ...prevState, imFreezerThreeHum: true }));
-        break;
-      case 'imFridgeOneTemp':
-        setSelectedTimePeriodIMFridgeOneTemp(timePeriod);
-        setDataLoaded(prevState => ({ ...prevState, imFridgeOneTemp: true }));
-        break;
-      case 'imFridgeOneHum':
-        setSelectedTimePeriodIMFridgeOneHum(timePeriod);
-        setDataLoaded(prevState => ({ ...prevState, imFridgeOneHum: true }));
-        break;
-      case 'imFridgeTwoTemp':
-        setSelectedTimePeriodIMFridgeTwoTemp(timePeriod);
-        setDataLoaded(prevState => ({ ...prevState, imFridgeTwoTemp: true }));
-        break;
-      case 'imFridgeTwoHum':
-        setSelectedTimePeriodIMFridgeTwoHum(timePeriod);
-        setDataLoaded(prevState => ({ ...prevState, imFridgeTwoHum: true }));
-        break;
-      case 'imIncubatorOneTemp':
-        setSelectedTimePeriodIMIncubatorOneTemp(timePeriod);
-        setDataLoaded(prevState => ({
-          ...prevState,
-          imIncubatorOneTemp: true,
-        }));
-        break;
-      case 'imIncubatorOneHum':
-        setSelectedTimePeriodIMIncubatorOneHum(timePeriod);
-        setDataLoaded(prevState => ({ ...prevState, imIncubatorOneHum: true }));
-        break;
-      case 'imIncubatorTwoTemp':
-        setSelectedTimePeriodIMIncubatorTwoTemp(timePeriod);
-        setDataLoaded(prevState => ({
-          ...prevState,
-          imIncubatorTwoTemp: true,
-        }));
-        break;
-      case 'imIncubatorTwoHum':
-        setSelectedTimePeriodIMIncubatorTwoHum(timePeriod);
-        setDataLoaded(prevState => ({ ...prevState, imIncubatorTwoHum: true }));
         break;
       default:
         break;
