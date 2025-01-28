@@ -165,6 +165,7 @@ export const WeatherDataProvider = ({ children }) => {
     imIncubatorTwoHum: '0080E1150618B45F',
   };
 
+
   // const fetchDeviceData = async (deviceKey, setTempData, setHumData, limit) => {
   //   const deveui = devices[deviceKey];
   //   console.log('Fetching data for deveui:', deveui);
@@ -292,6 +293,7 @@ export const WeatherDataProvider = ({ children }) => {
   //     return () => clearInterval(intervalId); // Cleanup on component unmount
   //   }
   // }, [currentUser]);
+
 
   useEffect(() => {
     const fetchThresholds = async () => {
