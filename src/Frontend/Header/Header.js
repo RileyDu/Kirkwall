@@ -112,16 +112,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         route: '/weeklyrecap',
       },
     ],
-    'jerrycromarty@imprimedicine.com': [
-      { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
-      { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' },
-      { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
-      {
-        icon: <FaCalendarWeek size="30" />,
-        label: 'Weekly Recap',
-        route: '/weeklyrecap',
-      },
-    ],
     default: [
       {
         icon: <FaDog size="30" />,
@@ -167,9 +157,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     switch (customerRole) {
       case 'gf':
         navigate('/grandfarm');
-        break;
-      case 'imprimed':
-        navigate('/imprimed');
         break;
       case 'rj':
         navigate('/rjenergy');
@@ -239,9 +226,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           </Box>
         </motion.div>
         <Flex align="center">
-          {/* {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && (
-          <SummaryButton isSummaryOpen={isSummaryOpen} onSummaryToggle={onSummaryToggle} summaryMetrics={filteredSummaryMetrics} />
-        )} */}
           {isLargerThan768 && (
             <>
               {currentUser && currentUser.email === 'test@kirkwall.io' && (
@@ -307,9 +291,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                       src={
                         currentUser.email === 'pmo@grandfarm.com'
                           ? '/GrandFarmLogo.jpg'
-                          : currentUser.email ===
-                            'jerrycromarty@imprimedicine.com'
-                          ? '/ImpriMedLogo.png'
                           : '/RookLogoWhite.png'
                       }
                       cursor="pointer"
@@ -330,9 +311,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                     >
                       {currentUser.email === 'pmo@grandfarm.com'
                         ? 'Grand Farm'
-                        : currentUser.email ===
-                          'jerrycromarty@imprimedicine.com'
-                        ? 'ImpriMed'
                         : 'Kirkwall'}
                     </PopoverHeader>
                     <PopoverBody>

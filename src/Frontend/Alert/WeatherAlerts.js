@@ -44,12 +44,7 @@ function WeatherAlerts({ isVisible }) {
 
   // Set state code based on user email
   useEffect(() => {
-    if (
-      currentUser &&
-      currentUser.email === 'jerrycromarty@imprimedicine.com'
-    ) {
-      setStateCode('CA');
-    } else if (currentUser && currentUser.email === 'pmo@grandfarm.com') {
+    if (currentUser && currentUser.email === 'pmo@grandfarm.com') {
       setStateCode('ND');
     } else {
       setStateCode('ND');
