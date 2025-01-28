@@ -414,16 +414,6 @@ export const checkThresholds = async () => {
       if (!shouldSendAlert) continue; // Skip if interval hasn't passed
 
 
-      const renameKeyToMetric = (data, metric) => {
-        return data.map(d => {
-          const value = metric.endsWith('Temp') ? d.rctemp : d.humidity;
-          return {
-            [metric]: value,
-            publishedat: d.publishedat,
-          };
-        });
-      };
-
       // Get the latest data for the metric
       let responseData;
       let response;

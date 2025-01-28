@@ -85,14 +85,6 @@ router.get('/', async (req, res) => {
       WHERE reading_time BETWEEN $1 AND $2 
       ORDER BY reading_time ASC`;
     params = [start_date, end_date];
-  } else if (deveuiPerMetric[sensor]) {
-    // Use the deveui from the mapping object
-    query = `
-      SELECT rctemp, humidity, publishedat 
-      FROM rivercity_data 
-      WHERE deveui = $1 AND publishedat BETWEEN $2 AND $3 
-      ORDER BY publishedat ASC`;
-    params = [deveuiPerMetric[sensor], start_date, end_date];
   } else {
     return res.status(400).json({ error: 'Invalid sensor selected' });
   }
