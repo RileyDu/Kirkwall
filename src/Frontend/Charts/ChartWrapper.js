@@ -107,7 +107,7 @@ const ChartWrapper = ({
   const { colorMode } = useColorMode();
 
   // Function to render close button on the chart
-  // Close button is rendered only on the home page and grandfarm, watchdogprotect, imprimed pages for now
+  // Close button is rendered only on the home page and grandfarm, watchdogprotect pages for now
   const renderCloseButton = () => {
     const routesWithCloseButton = [
       '/dashboard',

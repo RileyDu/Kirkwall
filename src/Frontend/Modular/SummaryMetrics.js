@@ -15,20 +15,6 @@ export const SummaryMetrics = () => {
     watchdogTempData,
     watchdogHumData,
     watchdogData,
-    impriFreezerOneTempData,
-    impriFreezerOneHumData,
-    impriFreezerTwoTempData,
-    impriFreezerTwoHumData,
-    impriFreezerThreeTempData,
-    impriFreezerThreeHumData,
-    impriFridgeOneTempData,
-    impriFridgeOneHumData,
-    impriFridgeTwoTempData,
-    impriFridgeTwoHumData,
-    impriIncuOneTempData,
-    impriIncuOneHumData,
-    impriIncuTwoTempData,
-    impriIncuTwoHumData,
   } = useWeatherData();
 
   const calculateTimePeriod = (metric, dataLength) => {
@@ -130,76 +116,6 @@ export const SummaryMetrics = () => {
       label: 'Garage Humidity',
       ...calculateMetrics(watchdogHumData || watchdogData, 'hum'),
       metric: 'hum',
-    },
-    {
-      label: 'Impri Freezer #1 (°C)',
-      ...calculateMetrics(impriFreezerOneTempData, 'imFreezerOneTemp'),
-      metric: 'imFreezerOneTemp',
-    },
-    {
-      label: 'Impri Freezer #1 (%)',
-      ...calculateMetrics(impriFreezerOneHumData, 'imFreezerOneHum'),
-      metric: 'imFreezerOneHum',
-    },
-    {
-      label: 'Impri Freezer #2 ',
-      ...calculateMetrics(impriFreezerTwoTempData, 'imFreezerTwoTemp'),
-      metric: 'imFreezerTwoTemp',
-    },
-    {
-      label: 'Impri Freezer #2',
-      ...calculateMetrics(impriFreezerTwoHumData, 'imFreezerTwoHum'),
-      metric: 'imFreezerTwoHum',
-    },
-    {
-      label: 'Impri Freezer #3',
-      ...calculateMetrics(impriFreezerThreeTempData, 'imFreezerThreeTemp'),
-      metric: 'imFreezerThreeTemp',
-    },
-    {
-      label: 'Impri Freezer #3',
-      ...calculateMetrics(impriFreezerThreeHumData, 'imFreezerThreeHum'),
-      metric: 'imFreezerThreeHum',
-    },
-    {
-      label: 'Impri Fridge #1',
-      ...calculateMetrics(impriFridgeOneTempData, 'imFridgeOneTemp'),
-      metric: 'imFridgeOneTemp',
-    },
-    {
-      label: 'Impri Fridge #1',
-      ...calculateMetrics(impriFridgeOneHumData, 'imFridgeOneHum'),
-      metric: 'imFridgeOneHum',
-    },
-    {
-      label: 'Impri Fridge #2',
-      ...calculateMetrics(impriFridgeTwoTempData, 'imFridgeTwoTemp'),
-      metric: 'imFridgeTwoTemp',
-    },
-    {
-      label: 'Impri Fridge #2',
-      ...calculateMetrics(impriFridgeTwoHumData, 'imFridgeTwoHum'),
-      metric: 'imFridgeTwoHum',
-    },
-    {
-      label: 'Impri Incubator #1',
-      ...calculateMetrics(impriIncuOneTempData, 'imIncubatorOneTemp'),
-      metric: 'imIncubatorOneTemp',
-    },
-    {
-      label: 'Impri Incubator #1',
-      ...calculateMetrics(impriIncuOneHumData, 'imIncubatorOneHum'),
-      metric: 'imIncubatorOneHum',
-    },
-    {
-      label: 'Impri Incubator #2',
-      ...calculateMetrics(impriIncuTwoTempData, 'imIncubatorTwoTemp'),
-      metric: 'imIncubatorTwoTemp',
-    },
-    {
-      label: 'Impri Incubator #2',
-      ...calculateMetrics(impriIncuTwoHumData, 'imIncubatorTwoHum'),
-      metric: 'imIncubatorTwoHum',
-    },
+    }
   ];
 };

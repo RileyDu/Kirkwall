@@ -10,45 +10,12 @@ export const WeeklyRecapHelper = async (userMetrics) => {
     'leaf_wetness',
   ];
   const watchdogMetrics = ['temp', 'hum'];
-  const impriMedMetrics = [
-    // 'imFreezerOneTemp',
-    // 'imFreezerOneHum',
-    'imFreezerTwoTemp',
-    'imFreezerTwoHum',
-    'imFreezerThreeTemp',
-    'imFreezerThreeHum',
-    'imFridgeOneTemp',
-    'imFridgeOneHum',
-    'imFridgeTwoTemp',
-    'imFridgeTwoHum',
-    // 'imIncubatorOneTemp',
-    // 'imIncubatorOneHum',
-    'imIncubatorTwoTemp',
-    'imIncubatorTwoHum',
-  ];
 
-  const deveuiPerMetric = {
-    imFreezerOneTemp: '0080E1150618C9DE',
-    imFreezerOneHum: '0080E1150618C9DE',
-    imFreezerTwoTemp: '0080E115054FC6DF',
-    imFreezerTwoHum: '0080E115054FC6DF',
-    imFreezerThreeTemp: '0080E1150618B549',
-    imFreezerThreeHum: '0080E1150618B549',
-    imFridgeOneTemp: '0080E1150619155F',
-    imFridgeOneHum: '0080E1150619155F',
-    imFridgeTwoTemp: '0080E115061924EA',
-    imFridgeTwoHum: '0080E115061924EA',
-    imIncubatorOneTemp: '0080E115054FF1DC',
-    imIncubatorOneHum: '0080E115054FF1DC',
-    imIncubatorTwoTemp: '0080E1150618B45F',
-    imIncubatorTwoHum: '0080E1150618B45F',
-  };
 
   // Combine all available metrics for filtering
   const allMetrics = [
     ...weatherMetrics,
     ...watchdogMetrics,
-    ...impriMedMetrics,
   ];
 
   // Filter only the metrics the user has access to
@@ -76,13 +43,7 @@ export const WeeklyRecapHelper = async (userMetrics) => {
         response = await axios.get('/api/weather_data', {
           params: { type: metric, limit: 2017 },
         });
-      } else if (impriMedMetrics.includes(metric)) {
-        const deveui = deveuiPerMetric[metric];
-        response = await axios.get('/api/impriMed_data', {
-          params: { deveui: deveui, limit: 1009 },
-        });
-        response.data = renameKeyToMetric(response.data, metric);
-      }
+      } 
       return response?.data || [];
     } catch (error) {
       console.error(`Error fetching data for ${metric}:`, error);
@@ -123,12 +84,3 @@ export const WeeklyRecapHelper = async (userMetrics) => {
   
   
   
-
-  // Rename key to metric for impriMed data
-  function renameKeyToMetric(data, metric) {
-    return data.map((d) => {
-      const value = metric.endsWith('Temp') ? d.rctemp : d.humidity;
-      return { [metric]: value, publishedat: d.publishedat };
-    });
-  }
-};
