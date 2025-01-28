@@ -8,17 +8,22 @@ import multer from 'multer';
 import sgMail from '@sendgrid/mail';
 import { checkThresholds } from './cron/checkThresholds.js'; // Import your cron logic
 import { generateWeeklyRecap } from './cron/cronWeeklyRecap.js';
-
-
+import puppeteer from 'puppeteer';
+import * as cheerio from 'cheerio';
+import * as chromium from 'chrome-aws-lambda';
 const app = express();
 const port = process.env.PORT || 5000;
+import openai from './openaiClient.js';
+import { CustomerSettings } from '../Frontend/Modular/CustomerSettings.js';
+import { createObjectCsvStringifier } from 'csv-writer';
+
 
 // Middleware to parse incoming JSON
 
-//FOR SOME REASONE THIS NEEDS TO BE COMMENTED OUT FOR LOCAL VERCEL DEV, BUT NEEDS TO EXIST FOR PROD
-// if (process.env.NODE_ENV === 'production') {
+// FOR SOME REASONE THIS NEEDS TO BE COMMENTED OUT FOR LOCAL VERCEL DEV, BUT NEEDS TO EXIST FOR PROD
+if (process.env.NODE_ENV === 'production') {
   app.use(express.json());
-// }
+}
 
 app.use(cors());
 
@@ -88,6 +93,7 @@ app.get('/api/watchdog_data', async (req, res) => {
 
   try {
     const result = await client.query(query, [limit]);
+    
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching watchdog data:', error);
@@ -97,55 +103,31 @@ app.get('/api/watchdog_data', async (req, res) => {
   }
 });
 
-app.get('/api/rivercity_data', async (req, res) => {
-  const { limit = 10, type = 'all' } = req.query;
 
-  let query =
-    'SELECT * FROM rivercity_data WHERE deveui = $1 ORDER BY publishedat DESC LIMIT $2';
+// app.get('/api/impriMed_data', async (req, res) => {
+//   const { deveui, limit = 10 } = req.query; // Get the device id (deveui) and limit from query parameters
 
-  if (type === 'rctemp') {
-    query =
-      'SELECT rctemp, publishedat FROM rivercity_data WHERE deveui = $1 ORDER BY publishedat DESC LIMIT $2';
-  } else if (type === 'humidity') {
-    query =
-      'SELECT humidity, publishedat FROM rivercity_data WHERE deveui = $1 ORDER BY publishedat DESC LIMIT $2';
-  }
+//   // console.log('Received deveui:', deveui, 'Limit:', limit); // Log deveui and limit
 
-  try {
-    const result = await client.query(query, ['0080E115054FF0B7', limit]);
-    res.status(200).json(result.rows);
-  } catch (error) {
-    console.error('Error fetching rivercity data:', error);
-    res
-      .status(500)
-      .json({ error: 'An error occurred while fetching rivercity data' });
-  }
-});
+//   try {
+//     const query = `
+//       SELECT rctemp, humidity, publishedat, deveui 
+//       FROM rivercity_data 
+//       WHERE deveui = $1 
+//       ORDER BY publishedat DESC 
+//       LIMIT $2`;
 
-app.get('/api/impriMed_data', async (req, res) => {
-  const { deveui, limit = 10 } = req.query; // Get the device id (deveui) and limit from query parameters
+//     const result = await client.query(query, [deveui, limit]);
+//     // console.log('Query result:', result.rows); // Log the result from the query
 
-  // console.log('Received deveui:', deveui, 'Limit:', limit); // Log deveui and limit
-
-  try {
-    const query = `
-      SELECT rctemp, humidity, publishedat, deveui 
-      FROM rivercity_data 
-      WHERE deveui = $1 
-      ORDER BY publishedat DESC 
-      LIMIT $2`;
-
-    const result = await client.query(query, [deveui, limit]);
-    // console.log('Query result:', result.rows); // Log the result from the query
-
-    res.status(200).json(result.rows); // Send the data as JSON response
-  } catch (error) {
-    console.error('Error fetching ImpriMed data:', error);
-    res
-      .status(500)
-      .json({ error: 'An error occurred while fetching ImpriMed data' });
-  }
-});
+//     res.status(200).json(result.rows); // Send the data as JSON response
+//   } catch (error) {
+//     console.error('Error fetching ImpriMed data:', error);
+//     res
+//       .status(500)
+//       .json({ error: 'An error occurred while fetching ImpriMed data' });
+//   }
+// });
 
 app.get('/api/thresholds', async (req, res) => {
   try {
@@ -162,12 +144,21 @@ app.get('/api/thresholds', async (req, res) => {
 });
 
 app.post('/api/create_threshold', async (req, res) => {
-  const { metric, high, low, phone, email, timestamp, thresh_kill, timeframe } =
-    req.body;
+  const {
+    metric,
+    high,
+    low,
+    phone,
+    email,
+    timestamp,
+    thresh_kill,
+    timeframe,
+    alert_interval,
+  } = req.body;
 
   const query = `
-    INSERT INTO thresholds (metric, high, low, phone, email, timestamp, thresh_kill, timeframe)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    INSERT INTO thresholds (metric, high, low, phone, email, timestamp, thresh_kill, timeframe, alert_interval)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
     RETURNING *`;
 
   try {
@@ -180,6 +171,7 @@ app.post('/api/create_threshold', async (req, res) => {
       timestamp,
       thresh_kill,
       timeframe,
+      alert_interval,
     ]);
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -203,10 +195,59 @@ app.get('/api/update_threshold/:id', async (req, res) => {
     res.redirect('/thankyou');
   } catch (error) {
     console.error('Error updating threshold:', error);
-    res.status(500).json({ error: 'An error occurred while updating threshold' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while updating threshold' });
   }
 });
 
+app.get('/api/get_last_alert_time/:id', async (req, res) => {
+  const { id } = req.params;
+
+  const query = 'SELECT time_of_last_alert FROM thresholds WHERE id = $1';
+
+  try {
+    const result = await client.query(query, [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Threshold not found' });
+    }
+
+    res.status(200).json({ lastAlertTime: result.rows[0].time_of_last_alert });
+  } catch (error) {
+    console.error('Error fetching last alert time:', error);
+    res
+      .status(500)
+      .json({ error: 'An error occurred while fetching the last alert time' });
+  }
+});
+
+app.put('/api/update_last_alert_time/:id', async (req, res) => {
+  const { id } = req.params;
+  const { lastAlertTime } = req.body; // Expecting a timestamp
+
+  const query = `
+    UPDATE thresholds SET time_of_last_alert = $1 WHERE id = $2
+    RETURNING *`;
+
+  try {
+    const result = await client.query(query, [lastAlertTime, id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Threshold not found' });
+    }
+
+    res.status(200).json({
+      message: 'Last alert time updated successfully',
+      threshold: result.rows[0],
+    });
+  } catch (error) {
+    console.error('Error updating last alert time:', error);
+    res
+      .status(500)
+      .json({ error: 'An error occurred while updating the last alert time' });
+  }
+});
 
 app.get('/api/alerts', async (req, res) => {
   try {
@@ -237,16 +278,17 @@ app.get('/api/alerts/recap', async (req, res) => {
       `SELECT * FROM alerts 
        WHERE timestamp >= $1 
        AND timestamp < $2 
-       ORDER BY timestamp DESC`, 
+       ORDER BY timestamp DESC`,
       [start_date, formattedEndDate]
     );
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching recent alerts:', error);
-    res.status(500).json({ error: 'An error occurred while fetching recent alerts' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while fetching recent alerts' });
   }
 });
-
 
 app.get('/api/alerts_per_user', async (req, res) => {
   const userMetrics = req.query.userMetrics; // Extract the userMetrics array from the query parameters
@@ -367,11 +409,11 @@ app.get('/api/update_admin_thresh/:phone', async (req, res) => {
     res.redirect('/thankyouadmin');
   } catch (error) {
     console.error('Error updating threshold:', error);
-    res.status(500).json({ error: 'An error occurred while updating threshold' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while updating threshold' });
   }
 });
-
-
 
 app.put('/api/update_admin/:id', async (req, res) => {
   const { id } = req.params;
@@ -474,7 +516,6 @@ app.put('/api/update_chart', async (req, res) => {
   }
 });
 
-
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
@@ -532,7 +573,9 @@ app.get('/api/equipment/:email', async (req, res) => {
       [email]
     );
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'No equipment found for this user.' });
+      return res
+        .status(404)
+        .json({ message: 'No equipment found for this user.' });
     }
     res.status(200).json(result.rows);
   } catch (error) {
@@ -561,13 +604,16 @@ app.post('/api/equipment', async (req, res) => {
 app.delete('/api/equipment/:id', async (req, res) => {
   const id = req.params.id;
   try {
-    const result = await client.query('DELETE FROM user_equipment WHERE id = $1', [id]);
+    const result = await client.query(
+      'DELETE FROM user_equipment WHERE id = $1',
+      [id]
+    );
     res.status(200).json({ message: 'Equipment deleted successfully' });
   } catch (error) {
     console.error('Error deleting equipment:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
-})
+});
 
 // Get energy credentials for a user by email
 app.get('/api/energy-info/:email', async (req, res) => {
@@ -578,7 +624,9 @@ app.get('/api/energy-info/:email', async (req, res) => {
       [email]
     );
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'No energy info found for this user.' });
+      return res
+        .status(404)
+        .json({ message: 'No energy info found for this user.' });
     }
     res.status(200).json(result.rows[0]);
   } catch (error) {
@@ -600,13 +648,14 @@ app.post('/api/energy-info', async (req, res) => {
   } catch (error) {
     if (error.code === '23505') {
       // 23505 is the error code for unique constraint violation in PostgreSQL
-      return res.status(409).json({ message: 'User with this email already exists.' });
+      return res
+        .status(409)
+        .json({ message: 'User with this email already exists.' });
     }
     console.error('Error adding energy info:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
-
 
 // Update the location via user
 app.put('/api/energy-info/:email', async (req, res) => {
@@ -618,9 +667,11 @@ app.put('/api/energy-info/:email', async (req, res) => {
       'UPDATE energy_info SET location = $1, updated_at = NOW() WHERE email = $2 RETURNING *',
       [location, email]
     );
-    
+
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'No user found with this email.' });
+      return res
+        .status(404)
+        .json({ message: 'No user found with this email.' });
     }
     res.status(200).json(result.rows[0]);
   } catch (error) {
@@ -631,7 +682,8 @@ app.put('/api/energy-info/:email', async (req, res) => {
 
 // POST route for adding weekly recap data
 app.post('/api/weekly-recap', async (req, res) => {
-  const { user_email, metric, week_start_date, high, low, avg, alert_count } = req.body;
+  const { user_email, metric, week_start_date, high, low, avg, alert_count } =
+    req.body;
 
   try {
     // Insert the new weekly recap data into the database
@@ -644,7 +696,9 @@ app.post('/api/weekly-recap', async (req, res) => {
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error('Error inserting weekly recap data:', error);
-    res.status(500).json({ error: 'An error occurred while inserting weekly recap data' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while inserting weekly recap data' });
   }
 });
 
@@ -672,13 +726,17 @@ app.get('/api/weekly-recap', async (req, res) => {
     const result = await client.query(query, queryParams);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'No weekly recap data found for the specified criteria' });
+      return res.status(404).json({
+        error: 'No weekly recap data found for the specified criteria',
+      });
     }
 
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching weekly recap data:', error);
-    res.status(500).json({ error: 'An error occurred while fetching weekly recap data' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while fetching weekly recap data' });
   }
 });
 
@@ -693,7 +751,9 @@ app.get('/api/weekly-recap/weeks', async (req, res) => {
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching week start dates:', error);
-    res.status(500).json({ error: 'An error occurred while fetching week start dates' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while fetching week start dates' });
   }
 });
 
@@ -710,10 +770,328 @@ app.delete('/api/weekly-recap/:id', async (req, res) => {
     res.status(200).json({ message: 'Weekly recap data deleted successfully' });
   } catch (error) {
     console.error('Error deleting weekly recap data:', error);
-    res.status(500).json({ error: 'An error occurred while deleting weekly recap data' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while deleting weekly recap data' });
   }
 });
 
+app.get('/api/sensor_data', async (req, res) => {
+  const { sensor, start_date, end_date } = req.query;
+
+  if (!sensor || !start_date || !end_date) {
+    return res.status(400).json({ error: 'Missing required query parameters' });
+  }
+
+  // Define the deveui mapping object
+  const deveuiPerMetric = {
+    rctemp: '0080E115054FF0B7',
+    humidity: '0080E115054FF0B7',
+    imFreezerOneTemp: '0080E1150618C9DE',
+    imFreezerOneHum: '0080E1150618C9DE',
+    imFreezerTwoTemp: '0080E115054FC6DF',
+    imFreezerTwoHum: '0080E115054FC6DF',
+    imFreezerThreeTemp: '0080E1150618B549',
+    imFreezerThreeHum: '0080E1150618B549',
+    imFridgeOneTemp: '0080E1150619155F',
+    imFridgeOneHum: '0080E1150619155F',
+    imFridgeTwoTemp: '0080E115061924EA',
+    imFridgeTwoHum: '0080E115061924EA',
+    imIncubatorOneTemp: '0080E115054FF1DC',
+    imIncubatorOneHum: '0080E115054FF1DC',
+    imIncubatorTwoTemp: '0080E1150618B45F',
+    imIncubatorTwoHum: '0080E1150618B45F',
+  };
+
+  let query = '';
+  let params = [];
+
+  // Build the query based on the selected sensor
+  if (sensor === 'temperature') {
+    query = `
+      SELECT temperature, message_timestamp 
+      FROM weather_data 
+      WHERE message_timestamp BETWEEN $1 AND $2 
+      ORDER BY message_timestamp ASC`;
+    params = [start_date, end_date];
+  } else if (sensor === 'percent_humidity') {
+    query = `
+      SELECT percent_humidity, message_timestamp 
+      FROM weather_data 
+      WHERE message_timestamp BETWEEN $1 AND $2 
+      ORDER BY message_timestamp ASC`;
+    params = [start_date, end_date];
+  } else if (sensor === 'wind_speed') {
+    query = `
+      SELECT wind_speed, message_timestamp 
+      FROM weather_data 
+      WHERE message_timestamp BETWEEN $1 AND $2 
+      ORDER BY message_timestamp ASC`;
+    params = [start_date, end_date];
+  } else if (sensor === 'rain_15_min_inches') {
+    query = `
+      SELECT rain_15_min_inches, message_timestamp 
+      FROM weather_data 
+      WHERE message_timestamp BETWEEN $1 AND $2 
+      ORDER BY message_timestamp ASC`;
+    params = [start_date, end_date];
+  } else if (sensor === 'soil_moisture') {
+    query = `
+      SELECT soil_moisture, message_timestamp 
+      FROM weather_data 
+      WHERE message_timestamp BETWEEN $1 AND $2 
+      ORDER BY message_timestamp ASC`;
+    params = [start_date, end_date];
+  } else if (sensor === 'leaf_wetness') {
+    query = `
+      SELECT leaf_wetness, message_timestamp 
+      FROM weather_data 
+      WHERE message_timestamp BETWEEN $1 AND $2 
+      ORDER BY message_timestamp ASC`;
+    params = [start_date, end_date];
+  } else if (sensor === 'temp') {
+    query = `
+      SELECT temp, reading_time 
+      FROM watchdog_data 
+      WHERE reading_time BETWEEN $1 AND $2 
+      ORDER BY reading_time ASC`;
+    params = [start_date, end_date];
+  } else if (sensor === 'hum') {
+    query = `
+      SELECT hum, reading_time
+      FROM watchdog_data 
+      WHERE reading_time BETWEEN $1 AND $2 
+      ORDER BY reading_time ASC`;
+    params = [start_date, end_date];
+  } else if (deveuiPerMetric[sensor]) {
+    // Use the deveui from the mapping object
+    query = `
+      SELECT rctemp, humidity, publishedat 
+      FROM rivercity_data 
+      WHERE deveui = $1 AND publishedat BETWEEN $2 AND $3 
+      ORDER BY publishedat ASC`;
+    params = [deveuiPerMetric[sensor], start_date, end_date];
+  } else {
+    return res.status(400).json({ error: 'Invalid sensor selected' });
+  }
+
+  try {
+    const result = await client.query(query, params);
+
+    // Map through the result to rename keys dynamically
+    const renamedData = result.rows.map(row => {
+      const newRow = { ...row };
+
+      if (sensor === 'imFreezerOneTemp') {
+        newRow.imFreezerOneTemp = newRow.rctemp;
+        delete newRow.rctemp;
+      } else if (sensor === 'imFreezerOneHum') {
+        newRow.imFreezerOneHum = newRow.humidity;
+        delete newRow.humidity;
+      } else if (sensor === 'imFreezerTwoTemp') {
+        newRow.imFreezerTwoTemp = newRow.rctemp;
+        delete newRow.rctemp;
+      } else if (sensor === 'imFreezerTwoHum') {
+        newRow.imFreezerTwoHum = newRow.humidity;
+        delete newRow.humidity;
+      } else if (sensor === 'imFreezerThreeTemp') {
+        newRow.imFreezerThreeTemp = newRow.rctemp;
+        delete newRow.rctemp;
+      } else if (sensor === 'imFreezerThreeHum') {
+        newRow.imFreezerThreeHum = newRow.humidity;
+        delete newRow.humidity;
+      } else if (sensor === 'imFridgeOneTemp') {
+        newRow.imFridgeOneTemp = newRow.rctemp;
+        delete newRow.rctemp;
+      } else if (sensor === 'imFridgeOneHum') {
+        newRow.imFridgeOneHum = newRow.humidity;
+        delete newRow.humidity;
+      } else if (sensor === 'imFridgeTwoTemp') {
+        newRow.imFridgeTwoTemp = newRow.rctemp;
+        delete newRow.rctemp;
+      } else if (sensor === 'imFridgeTwoHum') {
+        newRow.imFridgeTwoHum = newRow.humidity;
+        delete newRow.humidity;
+      } else if (sensor === 'imIncubatorOneTemp') {
+        newRow.imIncubatorOneTemp = newRow.rctemp;
+        delete newRow.rctemp;
+      } else if (sensor === 'imIncubatorOneHum') {
+        newRow.imIncubatorOneHum = newRow.humidity;
+        delete newRow.humidity;
+      } else if (sensor === 'imIncubatorTwoTemp') {
+        newRow.imIncubatorTwoTemp = newRow.rctemp;
+        delete newRow.rctemp;
+      } else if (sensor === 'imIncubatorTwoHum') {
+        newRow.imIncubatorTwoHum = newRow.humidity;
+        delete newRow.humidity;
+      }
+      return newRow;
+    });
+
+    res.status(200).json(renamedData);
+  } catch (error) {
+    console.error('Error fetching sensor data:', error);
+    res
+      .status(500)
+      .json({ error: 'An error occurred while fetching sensor data' });
+  }
+});
+
+// Scrape Big Iron Auctions using Puppeteer
+app.get('/api/scrapeBigIron', async (req, res) => {
+  const { query, page = 1 } = req.query;
+  const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '+');
+
+  try {
+    // Check if chromium.args exists and is an array
+    const args = Array.isArray(chromium.args) ? chromium.args : [];
+    const executablePath =
+      process.env.CHROME_PATH || (await chromium.executablePath);
+
+    const browser = await puppeteer.launch({
+      args: args || ['--no-sandbox', '--disable-setuid-sandbox'],
+      executablePath: executablePath, // Use puppeteer's local path
+      headless: true,
+    });
+
+    const pageObj = await browser.newPage();
+    const url = `https://www.bigiron.com/Search?showTab=true&search=${formattedQuery}&searchMode=All&userControlsVisible=false&distance=500&historical=false&tab=equipment-tab&page=${page}&itemsPerPage=20&filter=Open&sort=Start&sortOrder=Ascending`;
+
+    await pageObj.goto(url, { waitUntil: 'networkidle2' });
+    await pageObj.waitForSelector('.pager-data', { timeout: 10000 });
+
+    const content = await pageObj.content();
+    const $ = cheerio.load(content);
+
+    let bigIronResults = [];
+    $('.pager-list-item').each((i, el) => {
+      if (i < 20) {
+        const equipmentName = $(el).find('.lot-title h1').text().trim();
+        const price = $(el).find('.bidding-js-amount').first().text().trim();
+        const link = $(el).find('a').attr('href');
+        const imageUrl = $(el).find('.bidding-js-preview img').attr('src');
+
+        bigIronResults.push({
+          equipmentName,
+          price,
+          link: `https://www.bigiron.com${link}`,
+          image: imageUrl ? `${imageUrl}` : null,
+          source: 'Big Iron',
+        });
+      }
+    });
+
+    await browser.close();
+    res.json(bigIronResults);
+  } catch (error) {
+    console.error('Error scraping Big Iron:', error);
+    res.status(500).send('Failed to scrape Big Iron data');
+  }
+});
+
+app.get('/api/scrapePurpleWave', async (req, res) => {
+  const { query, page = 1 } = req.query;
+  const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '%20');
+
+  try {
+    const args = Array.isArray(chromium.args) ? chromium.args : [];
+    const executablePath =
+      process.env.CHROME_PATH || (await chromium.executablePath);
+
+    const browser = await puppeteer.launch({
+      args: args || ['--no-sandbox', '--disable-setuid-sandbox'],
+      executablePath: executablePath, // Use puppeteer's local path
+      headless: true,
+    });
+
+    const pageObj = await browser.newPage();
+    const url = `https://www.purplewave.com/search/${formattedQuery}?searchType=all&dateType=upcoming&zipcodeRange=all&sortBy=current_bid-desc&perPage=20&grouped=true&viewtype=compressed&page=${page}`;
+
+    await pageObj.goto(url, { waitUntil: 'networkidle2' });
+    await pageObj.waitForSelector(
+      '.panel.panel-default.auction-item-compressed',
+      { timeout: 10000 }
+    );
+
+    const content = await pageObj.content();
+    const $ = cheerio.load(content);
+
+    let purpleWaveResults = [];
+    $('.panel.panel-default.auction-item-compressed').each((i, el) => {
+      if (i < 20) {
+        const equipmentName = $(el).find('.first-line h3').text().trim();
+        const price = $(el)
+          .find('.table-cell label:contains("Current")')
+          .parent()
+          .contents()
+          .not('label')
+          .text()
+          .trim();
+        const link = $(el).find('.thumbnail').attr('href');
+        const imageUrl = $(el).find('.thumbnail img').attr('src');
+
+        purpleWaveResults.push({
+          equipmentName,
+          price,
+          link: link ? `https://www.purplewave.com${link}` : null,
+          image: imageUrl ? `${imageUrl}` : null,
+          source: 'Purple Wave',
+        });
+      }
+    });
+
+    await browser.close();
+    res.json(purpleWaveResults);
+  } catch (error) {
+    console.error('Error scraping Purple Wave:', error);
+    res.status(500).send('Failed to scrape Purple Wave data');
+  }
+});
+
+// app.get('/api/scrapeAuctionTime', async (req, res) => {
+//   const { query } = req.query;
+//   const formattedQuery = query.trim().toLowerCase().replace(/\s+/g, '%20');
+
+//   try {
+//     const browser = await puppeteer.launch({ headless: true });
+//     const page = await browser.newPage();
+
+//     // Navigate to the search page
+//     const url = `https://www.auctiontime.com/listings/auctions/online/all-auctions/list?keywords=${formattedQuery}`;
+//     await page.goto(url, { waitUntil: 'networkidle2' });
+
+//     // Wait for the item list to load
+//     await page.waitForSelector('.listings-list', { timeout: 15000 });
+
+//     // Extract the content
+//     const content = await page.content();
+//     const $ = cheerio.load(content);
+
+//     let auctionTimeResults = [];
+//     $('.listings-list').each((i, el) => {
+//       if (i < 10) {
+//         const equipmentName = $(el).find('.first-line h3').text().trim();
+//         const price = $(el).find('.table-cell label:contains("Current")').parent().contents().not('label').text().trim();
+//         const link = $(el).find('.thumbnail').attr('href');
+//         const imageUrl = $(el).find('.thumbnail img').attr('src');
+
+//         auctionTimeResults.push({
+//           equipmentName,
+//           price,
+//           link: link ? `https://www.auctiontime.com${link}` : null,
+//           image: imageUrl ? `${imageUrl}` : null
+//         });
+//       }
+//     });
+
+//     await browser.close();
+
+//     res.json(auctionTimeResults);
+//   } catch (error) {
+//     console.error('Error scraping Auction Time:', error);
+//     res.status(500).send('Failed to scrape Auction Time data');
+//   }
+// });
 
 // Cron Job route that runs every 10 minutes to check live values against user thresholds
 app.get('/api/run-check-thresholds', async (req, res) => {
@@ -737,9 +1115,268 @@ app.get('/api/run-weekly-recap', async (req, res) => {
   }
 });
 
+// GET route for all security alerts
+app.get('/api/soalerts', async (req, res) => {
+  try {
+    const result = await client.query('SELECT * FROM soalerts');
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching security alerts:', error);
+    res
+      .status(500)
+      .json({ error: 'An error occurred while fetching security alerts' });
+  }
+});
+
+app.post('/api/nlquery', async (req, res) => {
+  const { question, userEmail } = req.body;
+
+  // Only one supported question now
+  if (
+    question !==
+    'Give me a summary of the data from WatchDog for the last week.'
+  ) {
+    return res.status(400).json({ error: 'Invalid or unsupported question.' });
+  }
+
+  if (!userEmail) {
+    return res.status(400).json({ error: 'User email not provided.' });
+  }
+
+  try {
+    const result = await startWatchdogChat(userEmail);
+    // result contains { response: initialResponse, dailyData: [...] }
+    res.json(result);
+  } catch (error) {
+    console.error('Error processing the query:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+});
+
+app.post('/api/followup', async (req, res) => {
+  const { lastResponse, question, userEmail, readingsData } = req.body;
+  if (!userEmail) {
+    return res.status(400).json({ error: 'User email not found in token.' });
+  }
+
+  try {
+    // system prompt is a plain string
+    const systemPrompt = `
+      You are a data analysis assistant. Your task is to:
+
+Analyze the provided data and determine key insights or patterns.
+Summarize the main trends observed from your analysis.
+Offer actionable tips or recommendations based on those trends.
+Formatting Requirements:
+
+Return your answer in plain text (no Markdown or special formatting).
+Make the response concise, clear, and easy to parse in a React application.
+Organize your key points in simple sections or bullet points without using any Markdown syntax.
+Additional Instructions:
+
+If you reference specific data points or statistics, provide them in a readable format (e.g., “Sales increased by 20% this quarter.”).
+Keep your language straightforward and avoid jargon where possible.
+Only include relevant information that addresses the analysis, trends, and tips.
+    `;
+
+    // Make sure to pass strings to the OpenAI endpoint
+    const intentResponse = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: JSON.stringify(lastResponse) },
+        { role: 'user', content: question },
+        { role: 'user', content: JSON.stringify(readingsData) },
+      ],
+      max_tokens: 500,
+    });
+
+    const followUpResponse = intentResponse.choices[0].message.content;
+
+    // Safely parse the JSON
+    // let parsedJson;
+    // try {
+    //   parsedJson = JSON.parse(followUpResponse);
+    // } catch (err) {
+    //   console.error('Failed to parse JSON:', err);
+    //   return res.status(500).json({
+    //     error: 'Model response was not valid JSON. Please try again.',
+    //   });
+    // }
+
+    // console.log('Follow-up response:', parsedJson);
+    return res.json({ response: followUpResponse });
+  } catch (error) {
+    console.error('Error processing the follow-up:', error);
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+});
+
+async function startWatchdogChat(userEmail) {
+  console.log(`Starting watchdog chat for user: ${userEmail}`);
+
+  // Query the last 7 days of aggregated data
+  const query = `
+    SELECT
+      DATE_TRUNC('day', reading_time) AS day,
+      AVG(temp) AS avg_temp,
+      MIN(temp) AS min_temp,
+      MAX(temp) AS max_temp,
+      AVG(hum) AS avg_hum,
+      MIN(hum) AS min_hum,
+      MAX(hum) AS max_hum
+    FROM watchdog_data
+    WHERE reading_time >= NOW() - INTERVAL '7 DAYS'
+    GROUP BY 1
+    ORDER BY 1 ASC;
+  `;
+  const result = await client.query(query);
+  if (result.rows.length === 0) {
+    throw new Error('No data found in the last 7 days.');
+  }
+
+  const dailyData = result.rows;
+  let summaryText =
+    'Here are the daily aggregated measurements for the past 7 days:\n\n';
+  for (const dayRow of dailyData) {
+    const dayStr = new Date(dayRow.day).toLocaleDateString();
+    summaryText += `Date: ${dayStr}\n`;
+    summaryText += `  Temperature: Avg: ${dayRow.avg_temp.toFixed(
+      2
+    )}°F, Min: ${dayRow.min_temp.toFixed(2)}°F, Max: ${dayRow.max_temp.toFixed(
+      2
+    )}°F\n`;
+    summaryText += `  Humidity:    Avg: ${dayRow.avg_hum.toFixed(
+      2
+    )}%, Min: ${dayRow.min_hum.toFixed(2)}%, Max: ${dayRow.max_hum.toFixed(
+      2
+    )}%\n\n`;
+  }
+
+  const messages = [
+    {
+      role: 'system',
+      content: `
+        You are a helpful assistant that knows about watchdog sensor data from the past week.
+        The user has the following daily aggregates:
+        ${summaryText}
+
+        Return the result in valid JSON. Use the keys "summary" as an example structure:
+        {
+          "summary": "high-level summary of the data"
+        }
+        Do not include any extra keys or text outside of valid JSON.
+      `,
+    },
+    {
+      role: 'assistant',
+      content:
+        'User said: "Give me a summary of the data from WatchDog for the last week."',
+    },
+  ];
+
+  // Call OpenAI
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    messages: messages,
+    max_tokens: 500,
+  });
+
+  const initialResponse = completion.choices[0].message.content;
+  let parsedJson;
+  try {
+    parsedJson = JSON.parse(initialResponse);
+    console.log('Parsed JSON from LLM:', parsedJson);
+    // console.log('Daily data:', dailyData);
+  } catch (err) {
+    console.error('Failed to parse JSON from LLM:', err);
+    throw new Error('Invalid JSON from LLM');
+  }
+
+  // Return both the parsed LLM data and the daily aggregator data
+  return { response: parsedJson, dailyData };
+}
+
+app.get('/api/mockdata', async (req, res) => {
+  try {
+    const result = await client.query('SELECT * FROM fermenteq_data');
+    // Return all rows from the fermenteq_data table
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching data from fermenteq_data:', error);
+    res.status(500).json({ error: 'An error occurred while fetching data' });
+  }
+});
+
+app.get('/api/export_data', async (req, res) => {
+  const { metric, startDate, endDate } = req.query;
+
+  // Validate input parameters
+  if (!metric || !startDate || !endDate) {
+    return res.status(400).json({ error: 'metric, startDate, and endDate are required.' });
+  }
+
+  // Map metric to table column
+  const metricMapping = {
+    temp: 'temp',       // Assuming 'sales' maps to 'temp'
+    hum: 'hum',    // Assuming 'inventory' maps to 'hum'
+    // Add more mappings as needed
+  };
+
+  const column = metricMapping[metric];
+
+  if (!column) {
+    return res.status(400).json({ error: 'Invalid metric selected.' });
+  }
+
+  // Validate date formats (basic validation)
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if (isNaN(start) || isNaN(end)) {
+    return res.status(400).json({ error: 'Invalid date format. Use YYYY-MM-DD.' });
+  }
+
+  // Construct the SQL query
+  const query = `
+    SELECT ${column}, reading_time 
+    FROM watchdog_data 
+    WHERE reading_time BETWEEN $1 AND $2 
+    ORDER BY reading_time DESC
+  `;
+
+  try {
+    const result = await client.query(query, [startDate, endDate]);
+
+    // Check if data is present
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No data found for the given parameters.' });
+    }
+
+    // Define CSV headers based on the metric
+    const csvStringifier = createObjectCsvStringifier({
+      header: [
+        { id: column, title: metric },
+        { id: 'reading_time', title: 'Reading Time' },
+      ],
+    });
+
+    // Generate CSV content
+    const header = csvStringifier.getHeaderString();
+    const records = csvStringifier.stringifyRecords(result.rows);
+    const csvContent = header + records;
+
+    // Set headers to prompt download
+    res.setHeader('Content-disposition', 'attachment; filename=exported_data.csv');
+    res.set('Content-Type', 'text/csv');
+    res.status(200).send(csvContent);
+  } catch (error) {
+    console.error('Error exporting data:', error);
+    res.status(500).json({ error: 'An error occurred while exporting data.' });
+  }
+});
 
 
-// Catch-all route for other API requests
 app.get('/api/*', (req, res) => {
   res.status(404).json({ error: 'API route not found' });
 });
@@ -751,6 +1388,421 @@ if (process.env.NODE_ENV === 'development') {
   });
 }
 
-
-// Export the app for Vercel
 export default app;
+
+// async function handleWatchdogSummary(userEmail, body) {
+
+//   console.log(`Handling watchdog summary for user: ${userEmail}`);
+
+//   // Find the customer settings for the user
+//   const customer = CustomerSettings.find(c => c.email === userEmail);
+
+//   if (!customer) {
+//     console.error(`No customer settings found for email: ${userEmail}`);
+//     return { response: 'User settings not found. Please contact support.' };
+//   }
+
+//   // For this example, we'll use a fixed list of metrics; adjust as necessary
+//   const metrics = ['temp', 'hum'];
+
+//   if (!metrics || metrics.length === 0) {
+//     console.error(`No metrics defined for user: ${userEmail}`);
+//     return { response: 'No metrics associated with your account.' };
+//   }
+
+//   // Construct dynamic SELECT fields based on metrics for the summary
+//   const metricFields = metrics.map(m => `AVG(${m}) AS avg_${m}`).join(', ');
+
+//   const summaryQuery = `
+//     SELECT
+//       ${metricFields},
+//       MIN(reading_time) AS earliest_reading,
+//       MAX(reading_time) AS latest_reading,
+//       COUNT(*) AS total_readings
+//     FROM watchdog_data
+//     WHERE reading_time >= NOW() - INTERVAL '24 HOURS';
+//   `;
+
+//   try {
+//     // First, run the summary query
+//     const summaryResult = await client.query(summaryQuery);
+
+//     if (summaryResult.rows.length === 0 || summaryResult.rows[0].total_readings === 0) {
+//       return { response: 'No data found in the last 24 hours.' };
+//     }
+
+//     const summary = summaryResult.rows[0];
+//     console.log('Summary:', summary);
+
+//     // Construct a human-readable summary response
+//     let response = `Summary of WatchDog data for the last 24 hours:\n`;
+//     metrics.forEach(m => {
+//       response += `  Average ${m}: ${
+//         summary['avg_' + m] ? summary['avg_' + m].toFixed(2) : 'N/A'
+//       }\n`;
+//     });
+//     response += `Number of readings: ${summary.total_readings}\n`;
+//     response += `Time range: ${new Date(
+//       summary.earliest_reading
+//     ).toLocaleString()} - ${new Date(summary.latest_reading).toLocaleString()}`;
+
+//     // Now, fetch all the raw data points from the last 24 hours
+//     const allDataQuery = `
+//       SELECT *
+//       FROM watchdog_data
+//       WHERE reading_time >= NOW() - INTERVAL '24 HOURS'
+//       ORDER BY reading_time ASC;
+//     `;
+//     const allDataResult = await client.query(allDataQuery);
+
+//     // allDataResult.rows now contains all the readings from the last 24 hours
+//     // You can pass this `readingsData` to your AI for analysis
+//     const readingsData = allDataResult.rows;
+
+//     return { response, readingsData };
+//   } catch (error) {
+//     console.error('Database query failed:', error);
+//     throw error; // Propagate the error to be handled by the route's error handler
+//   }
+// }
+
+// Define allowed questions and their handlers
+// const questionHandlers = {
+//   // 'Could you give me a recap of the week?': handleRecapOfTheWeek,
+//   // 'Has there been any network security alerts in the last week?':
+//   //   handleNetworkSecurityAlerts,
+//   // 'How many alerts have been generated in the last 24 hours?': handleAlertCount,
+//   // 'When was the last alert generated?': handleLastAlert,
+//   'Give me a summary of the data from WatchDog for the last week.':
+//   startWatchdogChat,
+//   // Add new questions and their handlers here
+// };
+
+// POST /api/nlquery/query
+// app.post('/api/nlquery', async (req, res) => {
+//   // const errors = validationResult(req);
+//   // if (!errors.isEmpty()) {
+//   //   console.error('Validation errors:', errors.array());
+//   //   return res.status(400).json({ errors: errors.array() });
+//   // }
+
+//   const { question, userEmail } = req.body;
+//   // const userEmail = req.user.email;
+
+//   if (!userEmail) {
+//     console.error('User email not found in token.');
+//     return res.status(400).json({ error: 'User email not found in token.' });
+//   }
+
+//   // Check if the question is allowed
+//   const handler = questionHandlers[question];
+//   if (!handler) {
+//     return res.status(400).json({ error: 'Invalid or unsupported question.' });
+//   }
+
+//   try {
+//     // Invoke the corresponding handler
+//     const response = await handler(userEmail, req.body);
+//     return res.json(response);
+//   } catch (error) {
+//     console.error('Error processing the query:', error);
+//     res.status(500).json({ error: 'An internal server error occurred.' });
+//   }
+// });
+
+// app.post('/api/followup', async (req, res) => {
+//   const { lastResponse, question, userEmail, readingsData } = req.body;
+//   const content = JSON.stringify(readingsData);
+
+//   if (!userEmail) {
+//     console.error('User email not found in token.');
+//     return res.status(400).json({ error: 'User email not found in token.' });
+//   }
+
+//   try {
+//     console.log(`Handling follow-up for user: ${userEmail}`);
+
+//     const intentResponse = await openai.chat.completions.create({
+//       model: 'gpt-4o-mini',
+//       messages: [
+//         {
+//           role: 'system',
+//           content:
+//             'You are a helpful assistant. You can analyze data and provide recommendations.',
+//         },
+//         { role: 'user', content: lastResponse },
+//         { role: 'user', content: question },
+//         { role: 'user', content: content },
+//       ],
+//       max_tokens: 500,
+//     });
+
+//     const followUpResponse = intentResponse.choices[0].message.content;
+//     return res.json({ response: followUpResponse });
+//   } catch (error) {
+//     console.error('Error processing the follow-up:', error);
+//     return res
+//       .status(500)
+//       .json({ error: 'An internal server error occurred.' });
+//   }
+// });
+
+// Handler for "What is the recap of the week?"
+// async function handleRecapOfTheWeek(userEmail, body) {
+//   console.log(`Handling weekly recap for user: ${userEmail}`);
+
+//   // Find the customer settings for the user
+//   const customer = CustomerSettings.find(c => c.email === userEmail);
+
+//   if (!customer) {
+//     console.error(`No customer settings found for email: ${userEmail}`);
+//     return { response: 'User settings not found. Please contact support.' };
+//   }
+
+//   const metrics = customer.metric;
+
+//   if (!metrics || metrics.length === 0) {
+//     console.error(`No metrics defined for user: ${userEmail}`);
+//     return { response: 'No metrics associated with your account.' };
+//   }
+
+//   // Determine the latest week_start_date for the user
+//   const latestWeekQuery = `
+//     SELECT MAX(week_start_date) AS latest_week
+//     FROM weekly_recap
+//     WHERE user_email = $1;
+//   `;
+
+//   try {
+//     const latestWeekResult = await client.query(latestWeekQuery, [userEmail]);
+//     console.log('Latest Week Query Result:', latestWeekResult.rows);
+
+//     if (
+//       !latestWeekResult.rows ||
+//       latestWeekResult.rows.length === 0 ||
+//       !latestWeekResult.rows[0].latest_week
+//     ) {
+//       return { response: 'No weekly recap data available for this user.' };
+//     }
+
+//     const latestWeekStartDate = latestWeekResult.rows[0].latest_week;
+//     console.log('Latest Week Start Date:', latestWeekStartDate);
+
+//     // SQL query to retrieve weekly recap based on metrics and latest week
+//     const recapQuery = `
+//       SELECT metric, high, low, avg, alert_count, week_start_date
+//       FROM weekly_recap
+//       WHERE user_email = $1
+//         AND metric = ANY($2)
+//         AND week_start_date = $3;
+//     `;
+
+//     const recapResult = await client.query(recapQuery, [
+//       userEmail,
+//       metrics,
+//       latestWeekStartDate,
+//     ]);
+//     console.log('Recap Query Result:', recapResult.rows);
+
+//     if (recapResult.rows.length === 0) {
+//       return { response: 'No weekly recap data found for your metrics.' };
+//     }
+
+//     // Structure the recap data
+//     const recapData = recapResult.rows.map(row => ({
+//       metric: row.metric,
+//       high: row.high,
+//       low: row.low,
+//       average: row.avg,
+//       alertCount: row.alert_count,
+//       weekStartDate: row.week_start_date,
+//     }));
+
+//     console.log('Structured Recap Data:', recapData);
+
+//     return {
+//       response: `Here is your weekly recap for the week ending on ${new Date(
+//         latestWeekStartDate
+//       ).toLocaleDateString()}: ${recapData
+//         .map(row => `${row.metric}: ${row.average}`)
+//         .join('\n')}`,
+//     };
+//   } catch (error) {
+//     console.error('Database query failed:', error);
+//     throw error; // Propagate the error to be handled by the route's error handler
+//   }
+// }
+
+// Handler for "Has there been any network security alerts in the last week?"
+// async function handleNetworkSecurityAlerts(userEmail, body) {
+//   const query = `
+//     SELECT COUNT(*) AS alertCount
+//     FROM soalerts
+//     WHERE timestamp >= NOW() - INTERVAL '7 days';
+//   `;
+//   const result = await client.query(query);
+
+//   const alertCount = result.rows[0].alertcount;
+//   return {
+//     response: `You have ${alertCount} network security alert(s) in the last week.`,
+//   };
+// }
+
+// Handler for "How many alerts have been generated in the last 24 hours?"
+// async function handleAlertCount(userEmail, body) {
+//   console.log(`Handling alert count for user: ${userEmail}`);
+
+//   // Find the customer settings for the user
+//   const customer = CustomerSettings.find(c => c.email === userEmail);
+
+//   if (!customer) {
+//     console.error(`No customer settings found for email: ${userEmail}`);
+//     return { response: 'User settings not found. Please contact support.' };
+//   }
+
+//   const metrics = customer.metric;
+
+//   if (!metrics || metrics.length === 0) {
+//     console.error(`No metrics defined for user: ${userEmail}`);
+//     return { response: 'No metrics associated with your account.' };
+//   }
+
+//   // SQL query to count alerts based on metrics and time interval
+//   const query = `
+//     SELECT COUNT(*) AS alertCount
+//     FROM alerts
+//     WHERE metric = ANY($1)
+//       AND timestamp >= NOW() - INTERVAL '24 hours';
+//   `;
+
+//   try {
+//     const result = await client.query(query, [metrics]);
+
+//     const alertCount = result.rows[0].alertcount;
+
+//     return {
+//       response: `You have ${alertCount} alert(s) generated in the last 24 hours.`,
+//     };
+//   } catch (error) {
+//     console.error('Database query failed:', error);
+//     throw error; // Propagate the error to be handled by the route's error handler
+//   }
+// }
+
+// Handler for "When was the last alert generated?"
+// async function handleLastAlert(userEmail, body) {
+//   console.log(`Handling last alert generation time for user: ${userEmail}`);
+
+//   // Find the customer settings for the user
+//   const customer = CustomerSettings.find(c => c.email === userEmail);
+
+//   if (!customer) {
+//     console.error(`No customer settings found for email: ${userEmail}`);
+//     return { response: 'User settings not found. Please contact support.' };
+//   }
+
+//   const metrics = customer.metric;
+
+//   if (!metrics || metrics.length === 0) {
+//     console.error(`No metrics defined for user: ${userEmail}`);
+//     return { response: 'No metrics associated with your account.' };
+//   }
+
+//   // SQL query to retrieve the timestamp of the last alert based on metrics
+//   const query = `
+//     SELECT timestamp
+//     FROM alerts
+//     WHERE metric = ANY($1)
+//     ORDER BY timestamp DESC
+//     LIMIT 1;
+//   `;
+
+//   try {
+//     const result = await client.query(query, [metrics]);
+
+//     if (result.rows.length === 0) {
+//       return { response: 'No alerts have been generated yet.' };
+//     }
+
+//     const lastAlertTime = result.rows[0].timestamp;
+
+//     return {
+//       response: `The last alert was generated on ${new Date(
+//         lastAlertTime
+//       ).toLocaleString()}.`,
+//     };
+//   } catch (error) {
+//     console.error('Database query failed:', error);
+//     throw error; // Propagate the error to be handled by the route's error handler
+//   }
+// }
+
+// A new backend function that handles the downsampling and initial AI message
+// async function startWatchdogChat(userEmail) {
+//   console.log(`Starting watchdog chat for user: ${userEmail}`);
+
+//   const customer = CustomerSettings.find(c => c.email === userEmail);
+//   if (!customer) {
+//     console.error(`No customer settings found for email: ${userEmail}`);
+//     throw new Error('User settings not found. Please contact support.');
+//   }
+
+//   const query = `
+//     SELECT
+//       DATE_TRUNC('day', reading_time) AS day,
+//       AVG(temp) AS avg_temp,
+//       MIN(temp) AS min_temp,
+//       MAX(temp) AS max_temp,
+//       AVG(hum) AS avg_hum,
+//       MIN(hum) AS min_hum,
+//       MAX(hum) AS max_hum
+//     FROM watchdog_data
+//     WHERE reading_time >= NOW() - INTERVAL '7 DAYS'
+//     GROUP BY 1
+//     ORDER BY 1 ASC;
+//   `;
+
+//   try {
+//     const result = await client.query(query);
+
+//     if (result.rows.length === 0) {
+//       throw new Error('No data found in the last 7 days.');
+//     }
+
+//     const dailyData = result.rows;
+
+//     let summaryText = 'Here are the daily aggregated measurements for the past 7 days:\n\n';
+//     for (const dayRow of dailyData) {
+//       const dayStr = new Date(dayRow.day).toLocaleDateString();
+//       summaryText += `Date: ${dayStr}\n`;
+//       summaryText += `  Temperature: Avg: ${dayRow.avg_temp.toFixed(2)}°C, Min: ${dayRow.min_temp.toFixed(2)}°C, Max: ${dayRow.max_temp.toFixed(2)}°C\n`;
+//       summaryText += `  Humidity:    Avg: ${dayRow.avg_hum.toFixed(2)}%, Min: ${dayRow.min_hum.toFixed(2)}%, Max: ${dayRow.max_hum.toFixed(2)}%\n\n`;
+//     }
+
+//     const messages = [
+//       {
+//         role: 'system',
+//         content: `You are a helpful assistant that knows about watchdog sensor data from the past week. The user has the following daily aggregates:\n\n${summaryText}\nUse this data as context for any questions the user asks.`
+//       },
+//       {
+//         role: 'assistant',
+//         content: 'What would you like to know about your watchdog sensors from the past week?'
+//       }
+//     ];
+
+//     // Use the same approach as in the follow-up route
+//     const completion = await openai.chat.completions.create({
+//       model: 'gpt-4o-mini', // use the same model as your followup route if desired
+//       messages: messages,
+//       max_tokens: 500
+//     });
+
+//     const initialResponse = completion.choices[0].message.content;
+//     return { response: initialResponse };
+//   } catch (error) {
+//     console.error('Database or AI request failed:', error);
+//     throw error;
+//   }
+// }
+
+// Catch-all route for other API requests

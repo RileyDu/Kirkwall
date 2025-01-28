@@ -25,9 +25,6 @@ export default function HumiditySensors({ statusOfAlerts }) {
     watchdogData,
     watchdogTempData,
     watchdogHumData,
-    rivercityTempData,
-    rivercityHumData,
-    rivercityData,
     APIIDs,
 
    } = useWeatherData();

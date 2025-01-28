@@ -29,16 +29,13 @@ import WindSensors from './Frontend/Sensors/WindSensors/WindSensor.js';
 import MobileMenu from './Frontend/MobileMenu/MobileMenu.js';
 import customTheme from './Frontend/Styles/theme.js';
 import { WeatherDataProvider } from './Frontend/WeatherDataContext.js';
-import { FaChessRook, FaQuestion, FaEllipsisV } from 'react-icons/fa';
+import { FaChessRook, FaQuestion } from 'react-icons/fa';
+import { IoSparkles } from "react-icons/io5";
+
 import { keyframes } from '@emotion/react';
 import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors.js';
-import RivercitySensors from './Frontend/Sensors/RivercitySensors/RiverycitySensors.js';
 import MapComponent from './Frontend/Maps/KirkwallMap.js';
-import LandingPage from './Frontend/LandingPage/LandingPage.js';
-import ImpriMedMap from './Frontend/Maps/ImpriMedMap.js';
 import GrandFarmMap from './Frontend/Maps/GrandFarmMap.js';
-import RJMap from './Frontend/Maps/RJMap.js';
-import WatchdogProtectMap from './Frontend/Maps/WatchdogMap.js';
 import { motion } from 'framer-motion';
 import HelpModal from './Frontend/Modals/HelpModal.js';
 import OptionsModal from './Frontend/Modals/OptionsModal.js';
@@ -48,8 +45,18 @@ import ModularSummary from './Frontend/Modular/ModularSummary.js';
 import RedirectBasedOnAuth from './Frontend/AuthComponents/RedirectBasedOnAuth.js';
 import ThankYou from './Frontend/Alert/ThankYou.js';
 import ThankYouAdmin from './Frontend/Alert/ThankYouAdmin.js';
-import EnergyPage from './Frontend/Energy/EnergyPage.js';
+import EnergyPage from './Frontend/OneTimers/Energy/EnergyPage.js';
 import WeeklyRecap from './Frontend/WeeklyRecap/WeeklyRecap.js';
+import VideoPlayerPage from './Frontend/OneTimers/VideoFeed/VideoPlayerPage.js';
+import AgScrapper from './Frontend/OneTimers/AgScrapper/AgScrapper.js';
+import ColdChainDash from './Frontend/OneTimers/ColdChain/ColdChainDash.js';
+import SOAlerts from './Frontend/SOAlerts/soalerts.js';
+import ChatBotModal from './Frontend/Modals/ChatBotModal.js';
+import BioWorx from './Frontend/Clients/BioWorx/BioWorx.js';
+import PrivacyPolicy from './Frontend/Privacy/PrivacyPolicy.js';
+import Onboarding from './Frontend/AuthComponents/Onboarding.js';
+
+import { useAuth } from './Frontend/AuthComponents/AuthContext.js';
 
 const Layout = ({
   children,
@@ -62,13 +69,11 @@ const Layout = ({
   startTourButtonRef,
   runThresholdTour,
   setRunThresholdTour,
-  // setIsTourRunning,
-  // isTourRunning,
-  // activeChartID,
-  // setActiveChartID
 }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const location = useLocation();
+
+  const { currentUser } = useAuth();
 
   const shouldShowSidebar =
     location.pathname !== '/' &&
@@ -82,6 +87,7 @@ const Layout = ({
   const [isOptionsModalOpen, setOptionsModalOpen] = useState(false); // State for OptionsModal
   const [isFaqsModalOpen, setFaqsModalOpen] = useState(false);
   const [isHelpModalOpen, setHelpModalOpen] = useState(false);
+  const [isChatBotModalOpen, setChatBotModalOpen] = useState(false);
 
   const handleOpenOptionsModal = () => setOptionsModalOpen(true);
   const handleCloseOptionsModal = () => setOptionsModalOpen(false);
@@ -96,6 +102,11 @@ const Layout = ({
   };
   const handleCloseHelpModal = () => setHelpModalOpen(false);
   const handleCloseFaqsModal = () => setFaqsModalOpen(false);
+
+  const handleOpenChatBotModal = () => {
+    setChatBotModalOpen(true);
+  };
+  const handleCloseChatBotModal = () => setChatBotModalOpen(false);
 
   const [runTour, setRunTour] = useState(false);
 
@@ -150,6 +161,29 @@ const Layout = ({
             left="20px"
             zIndex="1000"
           />
+          
+          {currentUser?.email === 'test@kirkwall.io' && (
+          <MotionIconButton
+            icon={<IoSparkles />}
+            variant="outline"
+            color="#212121"
+            height={10}
+            width={10}
+            bg={'#cee8ff'}
+            _hover={{ bg: '#3D5A80', color: 'white' }}
+            border={'2px solid #3D5A80'}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            ml={2}
+            onClick={handleOpenChatBotModal}
+            position="fixed"
+            bottom="20px"
+            right="20px"
+            zIndex="1000"
+          />
+        )}
+
+          <ChatBotModal isOpen={isChatBotModalOpen} onClose={handleCloseChatBotModal} />
 
           <OptionsModal
             isOpen={isOptionsModalOpen}
@@ -229,6 +263,7 @@ const MainApp = () => {
     <Box>
       {location.pathname !== '/' &&
         location.pathname !== '/signup' &&
+        location.pathname !== '/privacypolicy' &&
         location.pathname !== '/landing' && (
           <Header
             toggleMobileMenu={toggleMobileMenu}
@@ -250,7 +285,8 @@ const MainApp = () => {
       >
         <Routes>
           {/* <Route path="/landing" element={<LandingPage />} /> */}
-          <Route path="/signup" element={<SignUp />} />
+          {/* <Route path="/signup" element={<SignUp />} /> */}
+          <Route path="/privacypolicy" element={<PrivacyPolicy />} />
           <Route path="/" element={<Login />} />
           <Route
             path="/dashboard"
@@ -322,14 +358,6 @@ const MainApp = () => {
             }
           />
           <Route
-            path="/RivercitySensors"
-            element={
-              <ProtectedRoute>
-                <RivercitySensors statusOfAlerts={showAlerts} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/thankyou"
             element={
               <ProtectedRoute>
@@ -370,12 +398,10 @@ const MainApp = () => {
             }
           />
           <Route
-            path="/imprimed/map"
+            path="/onboarding"
             element={
-              <ProtectedRoute
-                allowedUsers={['jerrycromarty@imprimedicine.com']}
-              >
-                <ImpriMedMap statusOfAlerts={showAlerts} />
+              <ProtectedRoute>
+                <Onboarding />
               </ProtectedRoute>
             }
           />
@@ -387,22 +413,11 @@ const MainApp = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/rjenergy/map"
-            element={
-              <ProtectedRoute allowedUsers={['russell@rjenergysolutions.com']}>
-                <RJMap statusOfAlerts={showAlerts} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/watchdogprotect/map"
-            element={
-              <ProtectedRoute allowedUsers={['trey@watchdogprotect.com']}>
-                <WatchdogProtectMap statusOfAlerts={showAlerts} />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/agscraper"  element={<AgScrapper statusOfAlerts={showAlerts} />} />
+          <Route path='/videofeed' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><VideoPlayerPage /></ProtectedRoute>} />
+          <Route path='/coldchain' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><ColdChainDash /></ProtectedRoute>} />
+          <Route path='/soalerts' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><SOAlerts /></ProtectedRoute>} />
+          <Route path='/bioworx' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><BioWorx /></ProtectedRoute>} />
           <Route path="*" element={<RedirectBasedOnAuth />} />
         </Routes>
       </Layout>

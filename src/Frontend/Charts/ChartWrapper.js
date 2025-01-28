@@ -33,12 +33,11 @@ import ChartExpandModal from './ChartExpandModal.js';
 import { getLabelForMetric } from './ChartDashboard.js';
 import { useColorMode } from '@chakra-ui/react';
 import MiniMap from '../Maps/GrandFarmMiniMap.js';
-import WatchdogMap from '../Maps/WatchdogMiniMap.js';
-import RivercityMap from '../Maps/RivercityMiniMap.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import ImpriMiniMap from '../Maps/ImpriMiniMap.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import axios from 'axios';
+import WatchdogMap from '../Maps/WatchdogMiniMap.js';
 
 const ChartWrapper = ({
   title,
@@ -98,9 +97,8 @@ const ChartWrapper = ({
 
   const mapComponents = {
     grandfarm: MiniMap,
-    garage: WatchdogMap,
-    freezer: RivercityMap,
     imprimed: ImpriMiniMap,
+    garage: WatchdogMap,
   };
 
   const MapComponent = mapComponents[sensorMap] || null;
@@ -154,25 +152,6 @@ const ChartWrapper = ({
       case 'hum':
         setSensorMap('garage');
         break;
-      case 'humidity':
-      case 'rctemp':
-        setSensorMap('freezer');
-        break;
-      case 'imFreezerOneTemp':
-      case 'imFreezerOneHum':
-      case 'imFreezerTwoTemp':
-      case 'imFreezerTwoHum':
-      case 'imFreezerThreeTemp':
-      case 'imFreezerThreeHum':
-      case 'imFridgeOneTemp':
-      case 'imFridgeOneHum':
-      case 'imFridgeTwoTemp':
-      case 'imFridgeTwoHum':
-      case 'imIncubatorOneTemp':
-      case 'imIncubatorOneHum':
-      case 'imIncubatorTwoTemp':
-      case 'imIncubatorTwoHum':
-        setSensorMap('imprimed');
       default:
         console.error(`Unknown metric: ${metric}`);
     }
@@ -206,22 +185,6 @@ const ChartWrapper = ({
         leaf_wetness: 'DavisLogoBlack.png',
         temp: 'WatchdogLogoBlack.png',
         hum: 'WatchdogLogoBlack.png',
-        humidity: 'rci-logo-blue.png',
-        rctemp: 'rci-logo-blue.png',
-        imFreezerOneTemp: 'rci-logo-blue.png',
-        imFreezerOneHum: 'rci-logo-blue.png',
-        imFreezerTwoTemp: 'rci-logo-blue.png',
-        imFreezerTwoHum: 'rci-logo-blue.png',
-        imFreezerThreeTemp: 'rci-logo-blue.png',
-        imFreezerThreeHum: 'rci-logo-blue.png',
-        imFridgeOneTemp: 'rci-logo-blue.png',
-        imFridgeOneHum: 'rci-logo-blue.png',
-        imFridgeTwoTemp: 'rci-logo-blue.png',
-        imFridgeTwoHum: 'rci-logo-blue.png',
-        imIncubatorOneTemp: 'rci-logo-blue.png',
-        imIncubatorOneHum: 'rci-logo-blue.png',
-        imIncubatorTwoTemp: 'rci-logo-blue.png',
-        imIncubatorTwoHum: 'rci-logo-blue.png',
       },
       dark: {
         temperature: 'DavisLogoWhite.png',
@@ -232,23 +195,6 @@ const ChartWrapper = ({
         leaf_wetness: 'DavisLogoWhite.png',
         temp: 'WatchdogLogoWhite.png',
         hum: 'WatchdogLogoWhite.png',
-        humidity: 'rci-logo-white.png',
-        rctemp: 'rci-logo-white.png',
-        impriTemp: 'rci-logo-white.png',
-        imFreezerOneTemp: 'rci-logo-white.png',
-        imFreezerOneHum: 'rci-logo-white.png',
-        imFreezerTwoTemp: 'rci-logo-white.png',
-        imFreezerTwoHum: 'rci-logo-white.png',
-        imFreezerThreeTemp: 'rci-logo-white.png',
-        imFreezerThreeHum: 'rci-logo-white.png',
-        imFridgeOneTemp: 'rci-logo-white.png',
-        imFridgeOneHum: 'rci-logo-white.png',
-        imFridgeTwoTemp: 'rci-logo-white.png',
-        imFridgeTwoHum: 'rci-logo-white.png',
-        imIncubatorOneTemp: 'rci-logo-white.png',
-        imIncubatorOneHum: 'rci-logo-white.png',
-        imIncubatorTwoTemp: 'rci-logo-white.png',
-        imIncubatorTwoHum: 'rci-logo-white.png',
       },
     };
 
@@ -748,8 +694,6 @@ const ChartWrapper = ({
         metric={metric}
         onChartChange={handleChartTypeChange}
         chartID={chartID}
-        // chartType={chartType}
-        // adjustTimePeriod={adjustTimePeriod}
         handleTimePeriodChange={handleTimePeriodChange}
         currentTimePeriod={currentTimePeriod}
         setCurrentTimePeriod={setCurrentTimePeriod}
@@ -758,12 +702,6 @@ const ChartWrapper = ({
         typeOfChart={typeOfChart}
         chartLocation={newTitle || chartDataForMetric?.location}
         runModalTour={runModalTour}
-        // runThresholdTour={runThresholdTour}
-        // setRunThresholdTour={setRunThresholdTour}
-        // isTourRunning={isTourRunning}
-        // setIsTourRunning={setIsTourRunning}
-        // activeChartID={activeChartID}
-        // setActiveChartID={setActiveChartID}
       />
     </>
   );

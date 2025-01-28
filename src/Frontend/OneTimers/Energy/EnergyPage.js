@@ -30,7 +30,11 @@ import { AddIcon, EditIcon } from '@chakra-ui/icons';
 import { FaTrash, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { MdLocationOn } from 'react-icons/md';
 import EnergyCalculatorModal from './EnergyCalculatorModal.js';
-import { useAuth } from '../AuthComponents/AuthContext.js';
+import { useAuth } from '../../AuthComponents/AuthContext.js';
+import { motion } from 'framer-motion';
+
+const MotionBox = motion(Box);
+const MotionFlex = motion(Flex);
 
 const EnergyPage = ({ statusOfAlerts }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -183,15 +187,21 @@ const EnergyPage = ({ statusOfAlerts }) => {
   };
 
   return (
-    <Box
+    <MotionBox
       minHeight="100vh"
       display="flex"
       flexDirection="column"
       alignItems="center"
       pt={statusOfAlerts ? '10px' : '74px'}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
     >
       <Flex justifyContent="space-between" alignItems="center">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
         <Heading>Energy Cost Calculator</Heading>
+        </motion.div>
         <Icon
           as={AddIcon}
           onClick={onOpen}
@@ -209,7 +219,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
       {error && <Text color="red.500">{error}</Text>}
 
       {/* User Profile Card */}
-      <Box
+      <MotionBox
         maxW="700px"
         w="100%"
         p={6}
@@ -224,6 +234,10 @@ const EnergyPage = ({ statusOfAlerts }) => {
         alignItems="center"
         textAlign="center"
         position="relative"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 1 }}
       >
         <Flex alignItems="center" mb={4}>
           <Icon as={MdLocationOn} w={8} h={8} color="teal.400" />
@@ -339,12 +353,12 @@ const EnergyPage = ({ statusOfAlerts }) => {
             </Stat>
           </SimpleGrid>
         </Collapse>
-      </Box>
+      </MotionBox>
 
       {/* Equipment Cards in Grid */}
       <SimpleGrid columns={[1, null, 1]} spacing={4} maxW="800px" w="100%">
-        {equipment.map(device => (
-          <Flex
+        {equipment.map((device, index) => (
+          <MotionFlex
             key={device.id}
             p={4}
             pb={statsVisible[device.id] ? 4 : 0}
@@ -357,6 +371,10 @@ const EnergyPage = ({ statusOfAlerts }) => {
             alignItems="stretch"
             justify="space-between"
             position="relative"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.9, delay: index * 0.3 }}
           >
             <Box mb={2} position="relative">
               <Heading size="md" mb={2} textDecoration={'underline'} color={'white'}>
@@ -459,7 +477,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
                 </Stat>
               </SimpleGrid>
             </Collapse>
-          </Flex>
+          </MotionFlex>
         ))}
       </SimpleGrid>
 
@@ -476,7 +494,7 @@ const EnergyPage = ({ statusOfAlerts }) => {
         currentUser={currentUser}
         calculateCosts={calculateCosts}
       />
-    </Box>
+    </MotionBox>
   );
 };
 

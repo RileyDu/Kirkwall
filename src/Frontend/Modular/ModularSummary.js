@@ -16,7 +16,7 @@ import {
   TabPanel,
   SimpleGrid,
 } from '@chakra-ui/react';
-import { FaChessRook } from 'react-icons/fa';
+import { FaChessRook, FaTrash } from 'react-icons/fa';
 import { useColorMode } from '@chakra-ui/color-mode';
 import { useMediaQuery } from '@chakra-ui/media-query';
 import { useAuth } from '../AuthComponents/AuthContext.js';
@@ -24,9 +24,14 @@ import { SummaryMetrics } from './SummaryMetrics.js';
 import { CustomerSettings } from './CustomerSettings.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { keyframes } from '@emotion/react';
-import { motion } from 'framer-motion';
+import { animate, motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const ModularSummary = ({ statusOfAlerts }) => {
+  const [initialMount, setInitialMount] = useState(true);
+  const [activeTab, setActiveTab] = useState(0);
+
   const { colorMode } = useColorMode();
   const { currentUser } = useAuth();
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
@@ -44,33 +49,22 @@ const ModularSummary = ({ statusOfAlerts }) => {
     userMetrics.includes(metric.metric)
   );
 
+  const clearAlerts = async id => {
+    try {
+      axios.delete(`/api/delete_alert/${id}`); 
+    } catch (error) {
+      console.error('Error deleting alert:', error);
+    }
+  };
+
   const isGrandFarm = currentUser.email === 'pmo@grandfarm.com';
 
   const getLabelForMetric = metric => {
     const metricLabels = {
       temperature: { label: '°F', addSpace: false },
       temp: { label: '°F', addSpace: false },
-      rctemp: { label: '°F', addSpace: false },
-
-      imFreezerOneTemp: { label: '°C', addSpace: false },
-      imFreezerTwoTemp: { label: '°C', addSpace: false },
-      imFreezerThreeTemp: { label: '°C', addSpace: false },
-      imFridgeOneTemp: { label: '°C', addSpace: false },
-      imFridgeTwoTemp: { label: '°C', addSpace: false },
-      imIncubatorOneTemp: { label: '°C', addSpace: false },
-      imIncubatorTwoTemp: { label: '°C', addSpace: false },
-
-      imFreezerOneHum: { label: '%', addSpace: false },
-      imFreezerTwoHum: { label: '%', addSpace: false },
-      imFreezerThreeHum: { label: '%', addSpace: false },
-      imFridgeOneHum: { label: '%', addSpace: false },
-      imFridgeTwoHum: { label: '%', addSpace: false },
-      imIncubatorOneHum: { label: '%', addSpace: false },
-      imIncubatorTwoHum: { label: '%', addSpace: false },
-
       hum: { label: '%', addSpace: false },
       percent_humidity: { label: '%', addSpace: false },
-      humidity: { label: '%', addSpace: false },
       rain_15_min_inches: { label: 'inches', addSpace: true },
       wind_speed: { label: 'MPH', addSpace: true },
       soil_moisture: { label: 'centibars', addSpace: true },
@@ -85,6 +79,16 @@ const ModularSummary = ({ statusOfAlerts }) => {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 `;
+
+  const handleTabChange = index => {
+    setActiveTab(index);
+  };
+
+  useEffect(() => {
+    setInterval(() => {
+      setInitialMount(false);
+    }, 2000);
+  }, []);
 
   if (loading) {
     return (
@@ -115,6 +119,7 @@ const ModularSummary = ({ statusOfAlerts }) => {
         isFitted
         variant="solid-rounded"
         colorScheme={colorMode === 'light' ? 'gray' : 'gray'}
+        onChange={handleTabChange}
       >
         <TabList mb="1em">
           <Tab>Statistics Overview</Tab>
@@ -122,9 +127,15 @@ const ModularSummary = ({ statusOfAlerts }) => {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <Heading size="lg" mb="4" textAlign="center">
-              Statistics Overview
-            </Heading>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1.2 }}
+            >
+              <Heading size="lg" mb="4" textAlign="center">
+                Statistics Overview
+              </Heading>
+            </motion.div>
             <Grid
               templateColumns={{
                 base: 'repeat(1, 1fr)',
@@ -146,37 +157,47 @@ const ModularSummary = ({ statusOfAlerts }) => {
                       boxShadow="xl"
                       p={4}
                       color="white"
-                      _hover={{ boxShadow: '2xl', transform: 'scale(1.02)' }}
+                      _hover={{ boxShadow: '2xl', transform: 'scale(1.05)' }}
+                      initial={initialMount ? { opacity: 0, y: 80 } : {}}
+                      animate={initialMount ? { opacity: 1, y: 0 } : {}}
+                      transition={
+                        initialMount
+                          ? { duration: 0.7, delay: index * 0.1 }
+                          : {}
+                      }
                     >
-                        <Stat>
+                      <Stat>
+                        <Box>
+                          <StatNumber
+                            fontSize={['lg', 'xl']}
+                            textDecoration="underline"
+                          >
+                            {metric.label} for {metric.timeOfData}
+                          </StatNumber>
+                        </Box>
+                        <SimpleGrid columns={2} spacing={4}>
                           <Box>
-                            <StatNumber fontSize={['lg', 'xl']} textDecoration="underline">
-                              {metric.label} for {metric.timeOfData}
+                            <StatNumber fontSize={['md', 'lg']}>
+                              {formatValue(metric.current)} Now
                             </StatNumber>
                           </Box>
-                          <SimpleGrid columns={2} spacing={4}>
-                            <Box>
-                              <StatNumber fontSize={['md', 'lg']}>
-                                {formatValue(metric.current)} Now
-                              </StatNumber>
-                            </Box>
-                            <Box>
+                          <Box>
                             <StatNumber fontSize={['md', 'lg']}>
-                            {formatValue(metric.high)} Hi
-                              </StatNumber>
-                            </Box>
-                            <Box>
+                              {formatValue(metric.high)} Hi
+                            </StatNumber>
+                          </Box>
+                          <Box>
                             <StatNumber fontSize={['md', 'lg']}>
-                            {formatValue(metric.average)} Avg
-                              </StatNumber>
-                            </Box>
-                            <Box>
+                              {formatValue(metric.average)} Avg
+                            </StatNumber>
+                          </Box>
+                          <Box>
                             <StatNumber fontSize={['md', 'lg']}>
-                            {formatValue(metric.low)} Lo
-                              </StatNumber>
-                            </Box>
-                          </SimpleGrid>
-                        </Stat>
+                              {formatValue(metric.low)} Lo
+                            </StatNumber>
+                          </Box>
+                        </SimpleGrid>
+                      </Stat>
                       {/* )} */}
                     </MotionBox>
                   </GridItem>
@@ -185,54 +206,79 @@ const ModularSummary = ({ statusOfAlerts }) => {
             </Grid>
           </TabPanel>
           <TabPanel>
-            <Heading size="lg" mb="4" textAlign="center">
-              Alerts Backlog
-            </Heading>
-            <Box
-              display={'flex'}
-              justifyContent={'center'}
-              alignItems={'center'}
-            >
-              <Box
-                bg={colorMode === 'light' ? '#212121' : 'gray.800'}
-                borderRadius="lg"
-                p={4}
-                boxShadow="xl"
-                maxH={'calc(100vh - 250px)'}
-                overflowY="scroll"
-                maxW={'fit-content'}
-              >
-                <Stack spacing={4}>
-                  {alertsThreshold?.length > 0 ? (
-                    alertsThreshold.map((alert, alertIndex) => (
-                      <Box
-                        key={alertIndex}
-                        bg="#cee8ff"
-                        p={3}
-                        borderRadius="md"
-                        boxShadow="md"
-                        _hover={{ transform: 'scale(1.01)' }}
-                        maxWidth="fit-content"
-                      >
-                        <Flex justify="space-between" align="center">
-                          <Text color="#212121" fontSize="lg">
-                            {alert.message}
-                          </Text>
-                        </Flex>
-                      </Box>
-                    ))
-                  ) : (
-                    <Box bg="orange.400" p={3} borderRadius="md" boxShadow="md">
-                      <Flex justify="space-between" align="center">
-                        <Text color="#212121" fontSize="sm">
-                          No Alerts
-                        </Text>
-                      </Flex>
-                    </Box>
-                  )}
-                </Stack>
-              </Box>
-            </Box>
+            {activeTab === 1 && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1 }}
+                >
+                  <Heading size="lg" mb="4" textAlign="center">
+                    Alerts Backlog
+                  </Heading>
+                </motion.div>
+                <MotionBox
+                  display={'flex'}
+                  justifyContent={'center'}
+                  alignItems={'center'}
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1.5 }}
+                >
+                  <Box
+                    bg={colorMode === 'light' ? '#212121' : 'gray.800'}
+                    borderRadius="lg"
+                    p={4}
+                    boxShadow="xl"
+                    maxH={'calc(100vh - 250px)'}
+                    overflowY="scroll"
+                    maxW={'fit-content'}
+                  >
+                    <Stack spacing={4}>
+                      {alertsThreshold?.length > 0 ? (
+                        alertsThreshold.map((alert, alertIndex) => (
+                          <Box
+                            key={alertIndex}
+                            bg="#cee8ff"
+                            p={3}
+                            borderRadius="md"
+                            boxShadow="md"
+                            _hover={{ transform: 'scale(1.01)' }}
+                            maxWidth="fit-content"
+                          >
+                            <Flex justify="space-between" align="center">
+                              <Text color="#212121" fontSize="lg">
+                                {alert.message}
+                              </Text>
+                              {/* <FaTrash
+                                color="#212121"
+                                onClick={() => clearAlerts(alert.id)}
+                                aria-label="Delete alert"
+                                cursor="pointer"
+                                size={20}
+                              /> */}
+                            </Flex>
+                          </Box>
+                        ))
+                      ) : (
+                        <Box
+                          bg="orange.400"
+                          p={3}
+                          borderRadius="md"
+                          boxShadow="md"
+                        >
+                          <Flex justify="space-between" align="center">
+                            <Text color="#212121" fontSize="sm">
+                              No Alerts
+                            </Text>
+                          </Flex>
+                        </Box>
+                      )}
+                    </Stack>
+                  </Box>
+                </MotionBox>
+              </>
+            )}
           </TabPanel>
         </TabPanels>
       </Tabs>

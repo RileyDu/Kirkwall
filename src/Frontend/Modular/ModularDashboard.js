@@ -25,6 +25,7 @@ import {
   MenuList,
   Checkbox,
   useDisclosure,
+  Text,
 } from '@chakra-ui/react';
 import ChartWrapper from '../Charts/ChartWrapper.js';
 import { LineChart, BarChart } from '../Charts/Charts.js';
@@ -35,8 +36,10 @@ import { FaChevronDown } from 'react-icons/fa';
 import { useWeatherData } from '../WeatherDataContext.js';
 import { keyframes } from '@emotion/react';
 import axios from 'axios'; // Import Axios
+import { useNavigate } from 'react-router-dom';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import ChatGPTComponent from '../AI/ChatGPTComponent.js';
 const MotionBox = motion(Box);
 const MotionGrid = motion(Grid);
 const MotionGridItem = motion(GridItem);
@@ -68,11 +71,14 @@ const ModularDashboard = ({
   const [chartLayoutIcon, setChartLayoutIcon] = useState(TbColumns2);
   const [chartLayout, setChartLayout] = useState(2);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [showNewUserText, setShowNewUserText] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
   const { currentUser } = useAuth();
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
+
+  const navigate = useNavigate();
 
   const {
     chartData,
@@ -138,6 +144,18 @@ const ModularDashboard = ({
     }, 1);
   };
 
+  useEffect(() => {
+    let timer;
+
+    if (loading) {
+      timer = setTimeout(() => setShowNewUserText(true), 2500); // 3-second delay
+    } else {
+      setShowNewUserText(false);
+    }
+
+    return () => clearTimeout(timer);
+  }, [loading]);
+
   const spin = keyframes`
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -145,18 +163,48 @@ const ModularDashboard = ({
 
   if (loading) {
     return (
-      <Flex justify="center" align="center" height="100%">
+      <Flex
+        direction="column"
+        justify="center"
+        align="center"
+        height="100vh"
+        textAlign="center"
+        padding="4"
+      >
         <Box
           as={FaChessRook}
           animation={`${spin} infinite 2s linear`}
           fontSize="6xl"
           color={getLogoColor()}
+          mb={4}
         />
+        {showNewUserText && (
+          <>
+            <Text fontSize="lg">
+              New User? Please schedule an onboarding meeting to get you fully
+              registered!
+            </Text>
+            <Text
+              fontSize="lg"
+              textDecor="underline"
+              cursor="pointer"
+              onClick={() => navigate('/onboarding')}
+              mt={2}
+            >
+              Click here!
+            </Text>
+          </>
+        )}
       </Flex>
     );
   }
 
-  if (!chartData || metricSettings.length === 0 || filteredChartData.length === 0 || loading === true) {
+  if (
+    !chartData ||
+    metricSettings.length === 0 ||
+    filteredChartData.length === 0 ||
+    loading === true
+  ) {
     return (
       <Flex justify="center" align="center" height="100%">
         <Box
@@ -180,7 +228,9 @@ const ModularDashboard = ({
     // console.log('Updated filteredChartData:', filteredChartData);
 
     // Find chartData based on metric
-    const chartDataForMetric = filteredChartData.find(chart => chart.metric === metric);
+    const chartDataForMetric = filteredChartData.find(
+      chart => chart.metric === metric
+    );
 
     if (chartDataForMetric) {
       const updatedHiddenState = !chartDataForMetric.hidden;
@@ -218,11 +268,6 @@ const ModularDashboard = ({
       const response = await axios.put(
         `/api/update_chart`,
         updatedChartDetails,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
       );
 
       // Log the updated chart data returned from the server
@@ -402,7 +447,7 @@ const ModularDashboard = ({
             }}
             gap="4"
           >
-            {customerMetrics.map(metric => {
+            {customerMetrics.map((metric, index) => {
               const settingsOfMetric = metricSettings.find(
                 m => m.metric === metric
               );
@@ -423,14 +468,14 @@ const ModularDashboard = ({
               const ChartComponent = chartComponents[chartType] || LineChart;
 
               return (
-                <AnimatePresence key={metric}>
+                <AnimatePresence key={index}>
                   {!isChartHidden && (
                     <MotionBox
                       layout // This will ensure smooth position transitions
                       initial={{ opacity: 0, height: 'auto', scale: 0.5 }}
                       animate={{ opacity: 1, height: 'auto', scale: 1 }}
                       exit={{ opacity: 0, height: 0, scale: 0 }}
-                      transition={{ duration: 1 }}
+                      transition={{ duration: 2 }}
                     >
                       <MotionGridItem
                         layout

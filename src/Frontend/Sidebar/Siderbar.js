@@ -21,9 +21,13 @@ import {
   FaBook,
   FaBookOpen,
   FaCalendarWeek,
+  FaVideo,
+  FaTractor,
+  FaLock,
+  FaAtom
 } from 'react-icons/fa';
 import { MdElectricBolt } from 'react-icons/md';
-
+import { TbFridge } from "react-icons/tb";
 import { GiGroundSprout } from 'react-icons/gi';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -89,48 +93,22 @@ const buttonConfig = {
     { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
 
   ],
-  'russell@rjenergysolutions.com': [
-    {
-      icon: <FaSnowflake size="30" />,
-      label: 'Rivercity',
-      route: '/RivercitySensors',
-    },
-    { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
-    { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' },
-    { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
-    { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
-
-  ],
-  'trey@watchdogprotect.com': [
-    { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
-    { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
-    {
-      icon: <FaGlobe size="30" />,
-      label: 'Map',
-      route: '/watchdogprotect/map',
-    },
-    { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
-    {
-      icon: <FaCalendarWeek size="30" />,
-      label: 'Weekly Recap',
-      route: '/weeklyrecap',
-    },
-  ],
   default: [
     { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
-    {
-      icon: <FaSnowflake size="30" />,
-      label: 'Rivercity',
-      route: '/RivercitySensors',
-    },
     { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' },
-    { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
+    // { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
     {
       icon: <FaCalendarWeek size="30" />,
       label: 'Weekly Recap',
       route: '/weeklyrecap',
     },
+    // { icon: <FaVideo size="30" />, label: 'Video Feeds', route: '/videofeed' },
+    // { icon: <FaTractor size="30" />, label: 'AgSraper', route: '/agscraper' },
+    // { icon: <TbFridge size="30" />, label: 'Cold Chain', route: '/coldchain' },
+    { icon: <FaLock size="30" />, label: 'Security', route: '/soalerts' },
+    // { icon: <FaAtom size="30" />, label: 'Bioworx', route: '/bioworx' },
+
   ],
 };
 

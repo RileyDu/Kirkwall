@@ -8,6 +8,7 @@ import {
   Marker,
 } from '@vis.gl/react-google-maps';
 import { Heading, Box, useMediaQuery, useColorMode } from '@chakra-ui/react';
+import { motion } from 'framer-motion';
 
 const center = {
   lat: 37.4207034,
@@ -21,7 +22,7 @@ const locations = [
     info: 'ImpriMed',
     details: 'Temperature & Humidity',
     dataReading: 'Sends data every 10 minutes',
-  }
+  },
 ];
 
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
@@ -64,11 +65,25 @@ const ImpriMedMap = ({ statusOfAlerts }) => {
         pt={statusOfAlerts ? '10px' : '74px'}
         color={colorMode === 'light' ? 'black' : 'white'}
       >
-        <Heading size="xl" pb={'4'}>
-          ImpriMed Sensor Map
-        </Heading>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Heading size="xl" pb={'4'}>
+            ImpriMed Sensor Map
+          </Heading>
+        </motion.div>
       </Box>
-      <div className="map-container" style={mapContainerStyles}>
+      <motion.div
+        className="map-container"
+        style={mapContainerStyles}
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 1.5 }}
+      >
         <Map
           defaultCenter={center}
           defaultZoom={10}
@@ -115,7 +130,7 @@ const ImpriMedMap = ({ statusOfAlerts }) => {
             </AdvancedMarker>
           ))}
         </Map>
-      </div>
+      </motion.div>
     </APIProvider>
   );
 };

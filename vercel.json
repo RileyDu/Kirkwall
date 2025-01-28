@@ -32,5 +32,16 @@
          "path": "/api/run-weekly-recap",
          "schedule": "1 0 * * 1"
       }
+   ],
+   "headers": [
+      {
+         "source": "/(.*)",
+         "headers": [
+            {
+               "key": "Content-Security-Policy",
+               "value": "frame-ancestors 'self' https://player.twitch.tv"
+            }
+         ]
+      }
    ]
-}
+   }

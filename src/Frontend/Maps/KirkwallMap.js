@@ -8,6 +8,7 @@ import {
   Marker,
 } from '@vis.gl/react-google-maps';
 import { Heading, Box, useMediaQuery, useColorMode } from '@chakra-ui/react';
+import { motion } from 'framer-motion';
 
 const center = {
   lat: 46.877186,
@@ -78,11 +79,25 @@ const MapComponent = ({ statusOfAlerts }) => {
         pt={statusOfAlerts ? '10px' : '74px'}
         color={colorMode === 'light' ? 'black' : 'white'}
       >
-        <Heading size="xl" pb={'4'}>
-          Sensor Map
-        </Heading>
+        <motion.div
+          animate={{ opacity: 1 }}
+          initial={{ opacity: 0 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Heading size="xl" pb={'4'}>
+            Sensor Map
+          </Heading>
+        </motion.div>
       </Box>
-      <div className="map-container" style={mapContainerStyles}>
+      <motion.div
+        className="map-container"
+        style={mapContainerStyles}
+        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, scale: 0.5 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 1.5 }}
+      >
         <Map
           defaultCenter={center}
           defaultZoom={10}
@@ -129,7 +144,7 @@ const MapComponent = ({ statusOfAlerts }) => {
             </AdvancedMarker>
           ))}
         </Map>
-      </div>
+      </motion.div>
     </APIProvider>
   );
 };

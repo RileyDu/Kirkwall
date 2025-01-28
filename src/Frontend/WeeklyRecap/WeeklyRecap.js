@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -11,13 +11,12 @@ import {
   Stat,
   Button,
   useToast,
-  Badge,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
   useMediaQuery,
-  StatHelpText
+  StatHelpText,
 } from '@chakra-ui/react';
 import { CustomerSettings } from '../Modular/CustomerSettings.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
@@ -25,6 +24,70 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import ChatbotModal from './WeeklyRecapAiModal.js';
+import { LineChart } from '../Charts/Charts.js';
+import RecapChartWrapper from './RecapChartWrapper.js';
+
+const MotionBox = motion(Box);
+
+// Helper function to adjust dates
+const adjustWeekStartDate = date => {
+  const targetDate = '2024-09-16'; // The date format to compare
+  const currentDate = new Date(date);
+  const formattedCurrentDate = currentDate.toISOString().split('T')[0]; // Get YYYY-MM-DD format
+
+  // If the date does not match the target, subtract 6 days
+  if (formattedCurrentDate !== targetDate) {
+    currentDate.setDate(currentDate.getDate() - 6);
+  }
+
+  return currentDate.toISOString().split('T')[0]; // Return adjusted date in YYYY-MM-DD format
+};
+
+const calculateDifferential = (current, previous) => {
+  if (previous === undefined || current === undefined) return null; // Safety check for undefined data
+
+  // console.log('current and previous', current, previous);
+
+  const difference = current - previous;
+  const percentage = ((difference / previous) * 100).toFixed(2);
+
+  if (difference > 0) {
+    return { value: `${percentage}% ▲`, color: 'green' };
+  } else if (difference < 0) {
+    return { value: `${percentage}% ▼`, color: 'red' };
+  } else {
+    return { value: 'No change', color: 'gray' };
+  }
+};
+
+const calculateAlertDifferential = (current, previous) => {
+  console.log('current and previous', current, previous);
+  if (previous === 0 && current === 0)
+    return { value: 'No change', color: 'gray' }; // Both weeks have zero alerts
+  if (previous === undefined || current === undefined)
+    return { value: 'No change', color: 'gray' }; // Handle undefined data
+
+  // When there were no alerts in the previous week but there are alerts in the current week
+  if (previous === 0 && current > 0) {
+    return { value: '100% ▲', color: 'green' };
+  }
+
+  // When there were alerts in the previous week but none in the current week
+  if (previous > 0 && current === 0) {
+    return { value: '100% ▼', color: 'red' };
+  }
+
+  const difference = current - previous;
+  const percentage = ((difference / previous) * 100).toFixed(2);
+
+  if (difference > 0) {
+    return { value: `${percentage}% ▲`, color: 'green' };
+  } else if (difference < 0) {
+    return { value: `${Math.abs(percentage)}% ▼`, color: 'red' };
+  } else {
+    return { value: 'No change', color: 'gray' };
+  }
+};
 
 // Utility functions here (formatDateMMDDYY, getStartOfWeek, getEndDate, getLabelForMetric, metricToName)
 const metricToName = {
@@ -36,8 +99,6 @@ const metricToName = {
   rain_15_min_inches: 'Rainfall',
   temp: 'Temperature (Watchdog)',
   hum: 'Humidity (Watchdog)',
-  rctemp: 'Temperature (Rivercity)',
-  humidity: 'Humidity (Rivercity)',
   imFreezerOneTemp: 'Freezer #1 Temp',
   imFreezerOneHum: 'Freezer #1 Humidity',
   imFreezerTwoTemp: 'Freezer #2 Temp',
@@ -72,27 +133,8 @@ const getLabelForMetric = metric => {
   const metricLabels = {
     temperature: { label: '°F', addSpace: false },
     temp: { label: '°F', addSpace: false },
-    rctemp: { label: '°F', addSpace: false },
-
-    imFreezerOneTemp: { label: '°C', addSpace: false },
-    imFreezerTwoTemp: { label: '°C', addSpace: false },
-    imFreezerThreeTemp: { label: '°C', addSpace: false },
-    imFridgeOneTemp: { label: '°C', addSpace: false },
-    imFridgeTwoTemp: { label: '°C', addSpace: false },
-    imIncubatorOneTemp: { label: '°C', addSpace: false },
-    imIncubatorTwoTemp: { label: '°C', addSpace: false },
-
-    imFreezerOneHum: { label: '%', addSpace: false },
-    imFreezerTwoHum: { label: '%', addSpace: false },
-    imFreezerThreeHum: { label: '%', addSpace: false },
-    imFridgeOneHum: { label: '%', addSpace: false },
-    imFridgeTwoHum: { label: '%', addSpace: false },
-    imIncubatorOneHum: { label: '%', addSpace: false },
-    imIncubatorTwoHum: { label: '%', addSpace: false },
-
     hum: { label: '%', addSpace: false },
     percent_humidity: { label: '%', addSpace: false },
-    humidity: { label: '%', addSpace: false },
     rain_15_min_inches: { label: 'inches', addSpace: true },
     wind_speed: { label: 'MPH', addSpace: true },
     soil_moisture: { label: 'centibars', addSpace: true },
@@ -111,24 +153,35 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     [];
 
   const [recapData, setRecapData] = useState({});
+  const [previousRecapData, setPreviousRecapData] = useState({});
   const [recentAlerts, setRecentAlerts] = useState([]);
+  const [previousAlerts, setPreviousAlerts] = useState([]);
   const [alertCounts, setAlertCounts] = useState({});
+  const [previousAlertCounts, setPreviousAlertCounts] = useState({});
   const [weekStartDate, setWeekStartDate] = useState('');
   const [weekEndDate, setWeekEndDate] = useState('');
   const [availableWeeks, setAvailableWeeks] = useState([]); // To store available weeks
   const [selectedSensor, setSelectedSensor] = useState(''); // State for selected sensor
+  const [sensorData, setSensorData] = useState({});
   const [hasCopied, setHasCopied] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
   const toast = useToast(); // For showing copy notifications
+  const hasMounted = useRef(false);
 
-  // Fetch available weeks for dropdown on component mount
   useEffect(() => {
     const fetchAvailableWeeks = async () => {
       try {
         const response = await axios.get('/api/weekly-recap/weeks');
-        setAvailableWeeks(response.data.map(week => week.week_start_date));
-        if (response.data.length > 0) {
-          const mostRecentWeek = response.data[0].week_start_date;
+        const adjustedWeeks = response.data.map(week => ({
+          ...week,
+          week_start_date: adjustWeekStartDate(week.week_start_date),
+        }));
+
+        setAvailableWeeks(adjustedWeeks.map(week => week.week_start_date));
+        console.log('Available weeks:', adjustedWeeks);
+
+        if (adjustedWeeks.length > 0) {
+          const mostRecentWeek = adjustedWeeks[0].week_start_date;
           setWeekStartDate(mostRecentWeek);
           setWeekEndDate(
             formatDateMMDDYY(getEndDate(new Date(mostRecentWeek)))
@@ -146,9 +199,21 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     const fetchWeeklyRecapData = async () => {
       if (!userEmail || userMetrics.length === 0 || !weekStartDate) return;
 
+      let adjustedWeekStartDate = weekStartDate;
+
+      // Check if weekStartDate doesn't match "2024-09-16"
+      if (weekStartDate !== '2024-09-16') {
+        const date = new Date(weekStartDate);
+        date.setDate(date.getDate() + 6); // Add 6 days to the weekStartDate
+        adjustedWeekStartDate = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+      }
+
       try {
         const recapResponse = await axios.get('/api/weekly-recap', {
-          params: { user_email: userEmail, week_start_date: weekStartDate },
+          params: {
+            user_email: userEmail,
+            week_start_date: adjustedWeekStartDate,
+          },
         });
         setRecapData(recapResponse.data);
 
@@ -168,9 +233,15 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
         }, {});
         setAlertCounts(alertCount);
 
-        // Set initial selected sensor to the first metric in the list
-        if (recapResponse.data && Object.keys(recapResponse.data).length > 0) {
-          setSelectedSensor(Object.keys(recapResponse.data)[0]);
+        // Set initial selected sensor only on initial page load
+        if (!hasMounted.current) {
+          if (
+            recapResponse.data &&
+            Object.keys(recapResponse.data).length > 0
+          ) {
+            setSelectedSensor(Object.keys(recapResponse.data)[0]);
+          }
+          hasMounted.current = true; // Mark that the component has mounted
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -178,6 +249,70 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     };
 
     fetchWeeklyRecapData();
+  }, [userEmail, userMetrics, weekStartDate]);
+
+  useEffect(() => {
+    const fetchSensorData = async () => {
+      if (!selectedSensor || !weekStartDate || !weekEndDate) return;
+
+      try {
+        const response = await axios.get('/api/sensor_data', {
+          params: {
+            sensor: recapData[selectedSensor]?.metric, // Send as a string, not an array
+            start_date: new Date(weekStartDate).toISOString().split('T')[0], // Format as YYYY-MM-DD
+            end_date: new Date(weekEndDate).toISOString().split('T')[0], // Format as YYYY-MM-DD
+          },
+        });
+
+        setSensorData(response.data);
+        console.log('Fetched sensor data for graph:', response.data);
+        // Set state to handle the graph data
+      } catch (error) {
+        console.error('Error fetching sensor data:', error);
+      }
+    };
+
+    fetchSensorData();
+  }, [selectedSensor, weekStartDate, weekEndDate]);
+
+  useEffect(() => {
+    const fetchPreviousWeekData = async () => {
+      if (!userEmail || !userMetrics.length || !weekStartDate) return;
+
+      const previousWeekStartDate = new Date(weekStartDate);
+      previousWeekStartDate.setDate(previousWeekStartDate.getDate() - 7); // Move back one week
+
+      try {
+        const previousRecapResponse = await axios.get('/api/weekly-recap', {
+          params: {
+            user_email: userEmail,
+            week_start_date: previousWeekStartDate.toISOString().split('T')[0],
+          },
+        });
+        setPreviousRecapData(previousRecapResponse.data);
+        const alertResponse = await axios.get('/api/alerts/recap', {
+          params: {
+            start_date: previousWeekStartDate.toISOString().split('T')[0],
+          },
+        });
+        const filteredAlerts = alertResponse.data.filter(alert =>
+          userMetrics.includes(alert.metric)
+        );
+
+        setPreviousAlerts(filteredAlerts);
+
+        // Count alerts by metric
+        const alertCount = filteredAlerts.reduce((count, alert) => {
+          count[alert.metric] = (count[alert.metric] || 0) + 1;
+          return count;
+        }, {});
+        setPreviousAlertCounts(alertCount);
+      } catch (error) {
+        console.error('Error fetching previous week data:', error);
+      }
+    };
+
+    fetchPreviousWeekData();
   }, [userEmail, userMetrics, weekStartDate]);
 
   const handleWeekChange = e => {
@@ -195,7 +330,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
   };
 
   const copyToClipboard = () => {
-    setHasCopied(true);
+    setShowChatbot(true);
     const combinedData = {
       recapData: recapData,
       recentAlerts: recentAlerts,
@@ -262,6 +397,14 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
     document.body.removeChild(textArea);
   };
 
+  const currentAlertCount = alertCounts[recapData[selectedSensor]?.metric] || 0;
+  const previousAlertCount =
+    previousAlertCounts[recapData[selectedSensor]?.metric] || 0;
+  const alertDifferential = calculateAlertDifferential(
+    currentAlertCount,
+    previousAlertCount
+  );
+
   return (
     <Box
       minHeight="100vh"
@@ -279,10 +422,22 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
           mb={4}
           px={1}
         >
-          <Heading size="lg" fontWeight="bold" mb={!isLargerThan768 ? 4 : 0}>
-            Recap for {formatDateMMDDYY(new Date(weekStartDate))} -{' '}
-            {formatDateMMDDYY(new Date(weekEndDate))}{' '}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.4 }}
+          >
+          <Heading
+            size={isLargerThan768 ? 'lg' : 'md'}
+            fontWeight="bold"
+            mb={!isLargerThan768 ? 4 : 0}
+          >
+            Recap for{' '}
+            {metricToName[recapData[selectedSensor]?.metric] || selectedSensor}{' '}
+            ({formatDateMMDDYY(new Date(weekStartDate))} -{' '}
+            {formatDateMMDDYY(new Date(weekEndDate))})
           </Heading>
+          </motion.div>
           <Box display="flex" gap={4}>
             <Menu>
               <MenuButton
@@ -295,7 +450,6 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                 color="white"
                 _hover={{ shadow: 'md' }}
                 _focus={{ borderColor: 'teal.500' }}
-                // border={'2px solid whiteAlpha.200'}
               >
                 {metricToName[recapData[selectedSensor]?.metric] ||
                   selectedSensor ||
@@ -308,6 +462,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     onClick={() =>
                       handleSensorChange({ target: { value: sensor } })
                     }
+                    bg={sensor === selectedSensor ? 'gray.900' : 'gray.700'}
                     _hover={{ bg: 'gray.600' }}
                     _focus={{ bg: '#3D5A80' }}
                   >
@@ -316,7 +471,6 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                 ))}
               </MenuList>
             </Menu>
-
             <Menu>
               <MenuButton
                 as={Button}
@@ -345,6 +499,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     onClick={() =>
                       handleWeekChange({ target: { value: week } })
                     }
+                    bg={week === weekStartDate ? 'gray.900' : 'gray.700'}
                     _hover={{ bg: 'gray.600' }}
                     _focus={{ bg: '#3D5A80' }}
                   >
@@ -357,14 +512,19 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
           </Box>
         </Flex>
       )}
+
       {recapData && selectedSensor && (
-        <Box
+        <MotionBox
           p={6}
           borderWidth="1px"
           borderRadius="xl"
           shadow="lg"
           bg="gray.900"
           color="white"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0}}
+          transition={{ duration: 1 }}
         >
           {/* Box for both rows of cards */}
           <Box width="100%">
@@ -373,16 +533,27 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                 const { label, addSpace } = getLabelForMetric(
                   recapData[selectedSensor]?.metric
                 );
+
+                // Get the current and previous week's values
+                const currentValue = recapData[selectedSensor]?.[type];
+                const previousValue = previousRecapData[selectedSensor]?.[type];
+
+                // Calculate the differential
+                const differential = calculateDifferential(
+                  currentValue,
+                  previousValue
+                );
                 return (
                   <motion.div
                     key={type}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    transition={{ duration: 0.9, delay: index * 0.3 }}
                   >
                     <Box
                       p={6}
+                      borderColor={differential?.color || 'gray.400'}
                       borderWidth="1px"
                       borderRadius="xl"
                       shadow="lg"
@@ -400,12 +571,16 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                           {addSpace ? ' ' : ''}
                           {label}
                         </StatNumber>
-                        <StatHelpText color="green">
-                          100% ▲
-                        </StatHelpText>
-                        <StatHelpText color="gray.400" fontSize={'md'}>
-                          vs last week
-                        </StatHelpText>
+                        {differential && (
+                          <>
+                            <StatHelpText color={differential.color}>
+                              {differential.value}
+                            </StatHelpText>
+                            <StatHelpText color="gray.400" fontSize={'md'}>
+                              vs previous week
+                            </StatHelpText>
+                          </>
+                        )}
                       </Stat>
                     </Box>
                   </motion.div>
@@ -415,12 +590,13 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.3, delay: 0.3 }}
+                transition={{ duration: 0.3, delay: 0.9 }}
               >
                 <Box
                   p={6}
                   borderWidth="1px"
                   borderRadius="xl"
+                  borderColor={alertDifferential?.color || 'gray.400'}
                   shadow="lg"
                   bg="gray.800"
                   color="white"
@@ -432,19 +608,39 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                       Alerts
                     </StatLabel>
                     <StatNumber fontSize="4xl" color="white" mb={1}>
-                      {alertCounts[recapData[selectedSensor]?.metric] || 0}
+                      {currentAlertCount}
                     </StatNumber>
-                    <StatHelpText color="red">100% ▼</StatHelpText>
-                    <StatHelpText color="gray.400" fontSize={'md'}>
-                      vs last week
-                    </StatHelpText>
+                    {alertDifferential && (
+                      <>
+                        <StatHelpText color={alertDifferential.color}>
+                          {alertDifferential.value}
+                        </StatHelpText>
+                        <StatHelpText color="gray.400" fontSize={'md'}>
+                          vs previous week
+                        </StatHelpText>
+                      </>
+                    )}
                   </Stat>
                 </Box>
               </motion.div>
             </SimpleGrid>
+            {sensorData && sensorData.length > 0 && recapData && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.5 }}
+              >
+                <RecapChartWrapper>
+                  <LineChart
+                    data={sensorData}
+                    metric={recapData[selectedSensor]?.metric}
+                  />
+                </RecapChartWrapper>
+              </motion.div>
+            )}
 
             {/* Second row of cards */}
-            {recentAlerts.length > 0 && (
+            {recentAlerts && (
               <SimpleGrid
                 columns={{ base: 1, sm: 1, md: 2 }}
                 spacing={6}
@@ -453,7 +649,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 2 }}
+                  transition={{ duration: 2, delay: 1.5 }}
                 >
                   <Box
                     p={6}
@@ -465,7 +661,7 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     maxWidth="100%"
                     textAlign="left"
                     position="relative"
-                    maxHeight="335px"
+                    height="335px"
                   >
                     <Heading
                       size="md"
@@ -474,24 +670,39 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                       textDecoration="underline"
                       color={'white'}
                     >
-                      Alerts for Selected Week
+                      All Alerts for Selected Week
                     </Heading>
                     <Box overflowY={'scroll'} maxHeight="250px">
-                      {recentAlerts.map(alert => (
-                        <Box key={alert.id} mb={2}>
-                          <Text fontSize="sm" color="white">
-                            {alert.message}
-                          </Text>
-                          <Divider mb={2} mt={2} borderColor="whiteAlpha.600" />
-                        </Box>
-                      ))}
+                      {recentAlerts.length > 0 ? (
+                        recentAlerts.map(alert => (
+                          <Box key={alert.id} mb={2}>
+                            <Text fontSize="sm" color="white">
+                              {alert.message}
+                            </Text>
+                            <Divider
+                              mb={2}
+                              mt={2}
+                              borderColor="whiteAlpha.600"
+                            />
+                          </Box>
+                        ))
+                      ) : (
+                        <Text
+                          fontSize="2xl"
+                          color="white"
+                          textAlign="center"
+                          mt={12}
+                        >
+                          No alerts for this week.
+                        </Text>
+                      )}
                     </Box>
                   </Box>
                 </motion.div>
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 2 }}
+                  transition={{ duration: 2, delay: 1.5 }}
                 >
                   <Box
                     bg={'gray.700'}
@@ -499,58 +710,49 @@ const WeeklyRecap = ({ statusOfAlerts }) => {
                     borderWidth={'1px'}
                     p={6}
                     alignSelf="flex-start"
-                    height={'auto'}
+                    height="335px"
+                    position={'relative'}
                   >
-                    <Heading fontSize="lg" mb={2} color={'white'}>
-                      Recap Data
+                    <Heading
+                      size={'md'}
+                      mb={2}
+                      color={'white'}
+                      textDecoration={'underline'}
+                    >
+                      AI Analysis
                     </Heading>
                     <Box
                       p={4}
                       bg="gray.700"
                       borderRadius="md"
-                      maxHeight="200px"
-                      overflowY="scroll"
                       mb={4}
+                      color="white"
+                      fontSize={'lg'}
                     >
-                      <Text fontSize="xs" color="white">
-                        {JSON.stringify(recapData, null, 2)}
-                      </Text>
-                      <Text fontSize="xs" color="white">
-                        {JSON.stringify(recentAlerts, null, 2)}
-                      </Text>
+                      If you would like to analyze the data for this week for
+                      all sensors, please click the button below. It will copy
+                      the data into your clipboard. A chatbot will be launched
+                      to analyze the data, please paste the data into the
+                      chatbot to analyze it.
                     </Box>
                     <Button
-                      variant="blue"
-                      onClick={copyToClipboard}
-                      width={isLargerThan768 ? 'auto' : '100%'}
-                    >
-                      Copy to Clipboard
-                    </Button>
-                    <Button
                       variant={'blue'}
-                      isDisabled={!hasCopied}
-                      onClick={() => setShowChatbot(true)}
-                      width={isLargerThan768 ? 'auto' : '100%'}
+                      onClick={() => copyToClipboard()}
+                      width={'99%'}
                       mt={isLargerThan768 ? 0 : 4}
+                      size={isLargerThan768 ? 'lg' : 'md'}
+                      position="absolute"
+                      bottom="4"
+                      left="1"
                     >
                       Analyze Recap
                     </Button>
-                    {!hasCopied && (
-                      <Badge
-                        ml={isLargerThan768 ? 12 : 0}
-                        colorScheme="green"
-                        fontSize={'sm'}
-                        mt={isLargerThan768 ? 0 : 4}
-                      >
-                        Please copy to clipboard to access AI Analytics
-                      </Badge>
-                    )}
                   </Box>
                 </motion.div>
               </SimpleGrid>
             )}
           </Box>
-        </Box>
+        </MotionBox>
       )}
       {showChatbot && (
         <ChatbotModal

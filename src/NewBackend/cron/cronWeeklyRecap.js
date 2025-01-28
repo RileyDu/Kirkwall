@@ -54,7 +54,6 @@ const calculateWeeklyRecap = async userMetrics => {
     'leaf_wetness',
   ];
   const watchdogMetrics = ['temp', 'hum'];
-  const rivercityMetrics = ['rctemp', 'humidity'];
   const impriMedMetrics = [
     'imFreezerOneTemp',
     'imFreezerOneHum',
@@ -75,7 +74,6 @@ const calculateWeeklyRecap = async userMetrics => {
   const allMetrics = [
     ...weatherMetrics,
     ...watchdogMetrics,
-    ...rivercityMetrics,
     ...impriMedMetrics,
   ];
 
@@ -127,10 +125,6 @@ const fetchSpecificData = async metric => {
         params: { deveui: deveui, limit: 1009 },
       });
       response.data = renameKeyToMetric(response.data, metric);
-    } else if (metric === 'rctemp' || metric === 'humidity') {
-      response = await axios.get(`${baseURL}/api/rivercity_data`, {
-        params: { type: metric, limit: 1009 },
-      });
     } else {
       response = await axios.get(`${baseURL}/api/weather_data`, {
         params: { type: metric, limit: 2017 },

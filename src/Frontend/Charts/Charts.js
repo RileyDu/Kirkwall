@@ -170,25 +170,8 @@ const createCustomChartOptions = (metric, data, colorMode) => {
             const labelMap = {
               temperature: '°F',
               temp: '°F',
-              rctemp: '°F',
-              impriTemp: '°C',
-              imFreezerOneTemp: '°C',
-              imFreezerTwoTemp: '°C',
-              imFreezerThreeTemp: '°C',
-              imFridgeOneTemp: '°C',
-              imFridgeTwoTemp: '°C',
-              imIncubatorOneTemp: '°C',
-              imIncubatorTwoTemp: '°C',
-              imFreezerOneHum: '% Humidity',
-              imFreezerTwoHum: '% Humidity',
-              imFreezerThreeHum: '% Humidity',
-              imFridgeOneHum: '% Humidity',
-              imFridgeTwoHum: '% Humidity',
-              imIncubatorOneHum: '% Humidity',
-              imIncubatorTwoHum: '% Humidity',
               hum: '% Humidity',
               percent_humidity: '% Humidity',
-              humidity: '% Humidity',
               rain_15_min_inches: 'inches',
               wind_speed: 'MPH',
               soil_moisture: 'centibars',
@@ -215,6 +198,8 @@ const createCustomChartOptions = (metric, data, colorMode) => {
 // These components take in data and metric as props
 // These are what are actually rendered in the app
 export const LineChart = ({ data, metric }) => {
+  // console.log('data:', data);
+  // console.log('metric:', metric);
   const { colorMode } = useColorMode();
   const chartData = processWeatherData(data, metric, colorMode);
   if (!chartData) return <Spinner size="xl" />;

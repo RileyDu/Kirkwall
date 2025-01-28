@@ -6,27 +6,8 @@ export const getLabelForMetric = metric => {
   const metricLabels = {
     temperature: { label: '°F', addSpace: false },
     temp: { label: '°F', addSpace: false },
-    rctemp: { label: '°F', addSpace: false },
-
-    imFreezerOneTemp: { label: '°C', addSpace: false },
-    imFreezerTwoTemp: { label: '°C', addSpace: false },
-    imFreezerThreeTemp: { label: '°C', addSpace: false },
-    imFridgeOneTemp: { label: '°C', addSpace: false },
-    imFridgeTwoTemp: { label: '°C', addSpace: false },
-    imIncubatorOneTemp: { label: '°C', addSpace: false },
-    imIncubatorTwoTemp: { label: '°C', addSpace: false },
-
-    imFreezerOneHum: { label: '%', addSpace: false },
-    imFreezerTwoHum: { label: '%', addSpace: false },
-    imFreezerThreeHum: { label: '%', addSpace: false },
-    imFridgeOneHum: { label: '%', addSpace: false },
-    imFridgeTwoHum: { label: '%', addSpace: false },
-    imIncubatorOneHum: { label: '%', addSpace: false },
-    imIncubatorTwoHum: { label: '%', addSpace: false },
-
     hum: { label: '%', addSpace: false },
     percent_humidity: { label: '%', addSpace: false },
-    humidity: { label: '%', addSpace: false },
     rain_15_min_inches: { label: 'inches', addSpace: true },
     wind_speed: { label: 'MPH', addSpace: true },
     soil_moisture: { label: 'centibars', addSpace: true },

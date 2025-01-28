@@ -80,26 +80,6 @@ export const MetricSettings = [
         sourceData: "watchdogData"
     },
     {
-        id:9,
-        metric:"rctemp",
-        name:"Temperature",
-        unit:"°F",
-        color:"blue",
-        company:"River City",
-        soloData:"rivercityTempData",
-        sourceData: "rivercityData"
-    },
-    {
-        id:10,
-        metric:"humidity",
-        name:"Humidity",
-        unit:"%",
-        color:"blue",
-        company:"River City",
-        soloData:"rivercityHumData",
-        sourceData: "rivercityData"
-    },
-    {
         id:11,
         metric:"imFreezerOneTemp",
         name:"Freezer #1 (°C)",

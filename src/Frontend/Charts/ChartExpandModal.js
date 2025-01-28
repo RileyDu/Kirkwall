@@ -17,6 +17,7 @@ import {
   CircularProgress,
   SimpleGrid,
   Stack,
+  VStack,
   FormControl,
   FormLabel,
   Input,
@@ -31,7 +32,13 @@ import {
   PopoverCloseButton,
   PopoverBody,
   PopoverFooter,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  useMediaQuery,
 } from '@chakra-ui/react';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import MiniDashboard from './ChartDashboard.js';
 import { FaChartLine, FaChartBar, FaBell, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
@@ -67,6 +74,7 @@ const ChartExpandModal = ({
   const [emailsForThreshold, setEmailsForThreshold] = useState(['']);
   const [highThreshold, setHighThreshold] = useState('');
   const [lowThreshold, setLowThreshold] = useState('');
+  const [alertFrequency, setAlertFrequency] = useState('');
   const [currentValue, setCurrentValue] = useState(null);
   const [threshKill, setThreshKill] = useState(false);
   const [timeframe, setTimeframe] = useState('');
@@ -85,6 +93,8 @@ const ChartExpandModal = ({
   const { thresholds, alertsThreshold, fetchAlertsThreshold } =
     useWeatherData();
 
+  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
+
   // Find the latest threshold for the selected metric, assign a graph to the threshold
   const findLatestThreshold = metric => {
     const threshold = thresholds.find(threshold => threshold.metric === metric);
@@ -95,6 +105,7 @@ const ChartExpandModal = ({
     const timeframe = threshold?.timeframe ?? '';
     const threshkill = threshold?.thresh_kill ?? false;
     const timestamp = threshold?.timestamp ?? '';
+    const alertInterval = threshold?.alert_interval ?? '';
     return {
       highThreshold,
       lowThreshold,
@@ -103,19 +114,24 @@ const ChartExpandModal = ({
       timeframe,
       threshkill,
       timestamp,
+      alertInterval,
     };
   };
 
   useEffect(() => {
     const latestThreshold = findLatestThreshold(metric);
-  
+
     // Check if the timeframe is "99 days" and treat it as an indefinite pause
     const isIndefinitePause = latestThreshold?.timeframe.days === 99;
     // console.log(isIndefinitePause)
     // console.log(latestThreshold?.timeframe)
-  
+
     // If there's a timestamp and a timeframe and it's not an indefinite pause
-    if (latestThreshold?.timestamp && latestThreshold?.timeframe && !isIndefinitePause) {
+    if (
+      latestThreshold?.timestamp &&
+      latestThreshold?.timeframe &&
+      !isIndefinitePause
+    ) {
       const { formatted, date } = calculateTimeOfToggle(
         latestThreshold?.timestamp,
         latestThreshold?.timeframe
@@ -123,17 +139,18 @@ const ChartExpandModal = ({
       setTimeOfToggle(formatted);
       setToggleTimeAsDate(date);
     } else if (isIndefinitePause) {
-      setTimeOfToggle("Indefinitely Paused");
+      setTimeOfToggle('Indefinitely Paused');
       setToggleTimeAsDate(null); // Clear the date since it's paused indefinitely
     }
-  
+
     // Set other threshold-related states
     setHighThreshold(latestThreshold.highThreshold);
     setLowThreshold(latestThreshold.lowThreshold);
     setThreshKill(latestThreshold.threshkill);
     setTimeframe(latestThreshold.timeframe);
     setTimestamp(latestThreshold.timestamp);
-  
+    setAlertFrequency(latestThreshold.alertInterval);
+
     setPhoneNumbers(
       latestThreshold.phone?.split(',').map(phone => phone.trim()) || ['']
     );
@@ -141,7 +158,6 @@ const ChartExpandModal = ({
       latestThreshold.email?.split(',').map(email => email.trim()) || ['']
     );
   }, [metric, thresholds]);
-  
 
   // If the time of toggle is set, start polling for the threshold timeframe to be met and reverse thresh_kill
   useEffect(() => {
@@ -225,12 +241,15 @@ const ChartExpandModal = ({
     const emailsString = emailsForThreshold.join(', '); // Join emails into a single string
 
     // Use the newTimeframe if it's available, otherwise use the cleared timeframe when pause is off
-    console.log('threshKill', threshKill);
-    console.log('newTimeframe', newTimeframe);
-    console.log('timeframe', timeframe);
+    // console.log('threshKill', threshKill);
+    // console.log('newTimeframe', newTimeframe);
+    // console.log('timeframe', timeframe);
     const timeOfPause = threshKill ? newTimeframe || timeframe : null; // Ensure `null` when threshKill is off
-    console.log('timeOfPause', timeOfPause);
+    // console.log('timeOfPause', timeOfPause);
 
+    console.log('alert_interval', alertFrequency);
+
+    // Send the new threshold to the backend
     try {
       // Perform Axios POST request to create the threshold
       await axios.post('/api/create_threshold', {
@@ -242,6 +261,7 @@ const ChartExpandModal = ({
         timestamp: timestamp,
         thresh_kill: threshKill, // Send the correct boolean
         timeframe: timeOfPause, // Send `null` if `threshKill` is off
+        alert_interval: alertFrequency || 10,
       });
 
       console.log('Alerts Set or Cleared');
@@ -268,6 +288,7 @@ const ChartExpandModal = ({
         timestamp: timestamp,
         thresh_kill: false, // Turn off thresh_kill
         timeframe: null, // Clear the timeframe
+        alert_interval: alertFrequency || 10,
       });
       console.log(
         'Threshold updated: thresh_kill turned off and timeframe cleared.'
@@ -287,7 +308,7 @@ const ChartExpandModal = ({
     setLowThreshold('');
     setPhoneNumbers([]);
     setEmailsForThreshold([]);
-
+    setAlertFrequency(null);
     try {
       // Create a new threshold with empty values to clear the current threshold
       await axios.post('/api/create_threshold', {
@@ -299,6 +320,7 @@ const ChartExpandModal = ({
         timestamp: timestamp,
         thresh_kill: false, // Ensure thresh_kill is off
         timeframe: null, // Clear timeframe
+        alert_interval: null,
       });
       console.log('Alerts Cleared');
     } catch (error) {
@@ -687,7 +709,7 @@ const ChartExpandModal = ({
                   bg="gray.700"
                   borderRadius="md"
                   boxShadow="md"
-                  p={4}
+                  p={3}
                   height="430px"
                   className="thresholds-display"
                 >
@@ -702,7 +724,7 @@ const ChartExpandModal = ({
                           fontSize="xl"
                           fontWeight="bold"
                           textDecor={'underline'}
-                          pb="2"
+                          pb="1"
                           // textAlign={'center'}
                           color="white"
                         >
@@ -725,29 +747,72 @@ const ChartExpandModal = ({
                         alignItems={'center'}
                         flexWrap={'nowrap'}
                       >
-                        <HStack gap={6} justify={'flex-start'} width={'75%'}>
-                          {highThreshold ? (
-                            <Text color="white" fontSize={['xs', 'md']}>
-                              <strong>High:</strong> {highThreshold}
-                            </Text>
-                          ) : null}
-                          {lowThreshold ? (
-                            <Text color="white" fontSize={['xs', 'md']}>
-                              <strong>Low:</strong> {lowThreshold}
-                            </Text>
-                          ) : null}
-                          {phoneNumbers?.length > 0 ? (
-                            <Text color="white" fontSize={['xs', 'md']}>
-                              <strong>Phone:</strong> {phoneNumbers.join(', ')}
-                            </Text>
-                          ) : null}
-                          {emailsForThreshold?.length > 0 ? (
-                            <Text color="white" fontSize={['xs', 'md']}>
-                              <strong>Email:</strong>{' '}
-                              {emailsForThreshold.join(', ')}
-                            </Text>
-                          ) : null}
-                        </HStack>
+                        {isLargerThan768 ? (
+                          <HStack gap={6} justify={'flex-start'} width={'75%'}>
+                            {highThreshold ? (
+                              <Text color="white" fontSize={['xs', 'md']}>
+                                <strong>High:</strong> {highThreshold}
+                              </Text>
+                            ) : null}
+                            {lowThreshold ? (
+                              <Text color="white" fontSize={['xs', 'md']}>
+                                <strong>Low:</strong> {lowThreshold}
+                              </Text>
+                            ) : null}
+                            {phoneNumbers?.length > 0 ? (
+                              <Text color="white" fontSize={['xs', 'md']}>
+                                <strong>Phone:</strong>{' '}
+                                {phoneNumbers.join(', ')}
+                              </Text>
+                            ) : null}
+                            {emailsForThreshold?.length > 0 &&
+                            !emailsForThreshold.every(email => email === '') ? (
+                              <Text color="white" fontSize={['xs', 'md']}>
+                                <strong>Email:</strong>{' '}
+                                {emailsForThreshold.join(', ')}
+                              </Text>
+                            ) : null}
+
+                            {alertFrequency ? (
+                              <Text color="white" fontSize={['xs', 'md']}>
+                                <strong>Frequency:</strong> {alertFrequency}{' '}
+                                mins
+                              </Text>
+                            ) : null}
+                          </HStack>
+                        ) : (
+                          <VStack gap={0} align={'flex-start'} width={'100%'}>
+                            {highThreshold ? (
+                              <Text color="white" fontSize="2xs">
+                                <strong>High:</strong> {highThreshold}
+                              </Text>
+                            ) : null}
+                            {lowThreshold ? (
+                              <Text color="white" fontSize="2xs">
+                                <strong>Low:</strong> {lowThreshold}
+                              </Text>
+                            ) : null}
+                            {phoneNumbers?.length > 0 ? (
+                              <Text color="white" fontSize="2xs">
+                                <strong>Phone:</strong>{' '}
+                                {phoneNumbers.join(', ')}
+                              </Text>
+                            ) : null}
+                            {emailsForThreshold?.length > 0 ? (
+                              <Text color="white" fontSize="2xs">
+                                <strong>Email:</strong>{' '}
+                                {emailsForThreshold.join(', ')}
+                              </Text>
+                            ) : null}
+                            {alertFrequency ? (
+                              <Text color="white" fontSize="2xs">
+                                <strong>Frequency:</strong> {alertFrequency}{' '}
+                                mins
+                              </Text>
+                            ) : null}
+                          </VStack>
+                        )}
+
                         <Box
                           fontSize={['xs', 'md']}
                           ml={8}
@@ -857,7 +922,7 @@ const ChartExpandModal = ({
                                   setNewTimeframe('99 days'); // Set timeframe to "indefinite"
                                   setUserHasChosenTimeframe(true); // Submit the new threshold state
                                   setIsTimePickerOpen(false);
-                                  setTimeOfToggle('Indefinitely Paused')
+                                  setTimeOfToggle('Indefinitely Paused');
                                 }}
                               >
                                 Pause Indefinitely
@@ -1042,6 +1107,39 @@ const ChartExpandModal = ({
                   color={'#212121'}
                 />
               </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>Alert Frequency</FormLabel>
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    rightIcon={<ChevronDownIcon />}
+                    bg={'white'}
+                    color={'#212121'}
+                    w={'100%'}
+                  >
+                    {alertFrequency
+                      ? `${alertFrequency} Minutes`
+                      : 'Select Frequency'}
+                  </MenuButton>
+                  <MenuList
+                    bg="gray.700"
+                    color="white"
+                    border={'2px solid #3D5A80'}
+                  >
+                    {[10, 20, 30, 40, 50, 60].map(freq => (
+                      <MenuItem
+                        key={freq}
+                        onClick={() => setAlertFrequency(freq)}
+                        bg={freq === alertFrequency ? 'gray.900' : 'gray.700'}
+                        _hover={{ bg: 'gray.600' }}
+                        _focus={{ bg: '#3D5A80' }}
+                      >
+                        {freq} Minutes
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
+              </FormControl>
             </ModalBody>
             <ModalFooter>
               <Button
@@ -1066,7 +1164,14 @@ const ChartExpandModal = ({
               >
                 Cancel
               </Button>
-              <Button variant="blue" color="black" onClick={handleFormSubmit}>
+              <Button
+                variant="blue"
+                color="black"
+                onClick={handleFormSubmit}
+                isDisabled={
+                  !alertFrequency || (!highThreshold && !lowThreshold)
+                }
+              >
                 Save
               </Button>
             </ModalFooter>

@@ -35,6 +35,7 @@ import {
   FaSnowflake,
   FaBookOpen,
   FaCalendarWeek,
+  FaFileDownload,
 } from 'react-icons/fa';
 import { GiGroundSprout } from 'react-icons/gi';
 import { FiAlertTriangle } from 'react-icons/fi';
@@ -44,7 +45,7 @@ import {
   WiRain,
   WiHumidity,
 } from 'react-icons/wi';
-import { RiAdminLine } from "react-icons/ri";
+import { RiAdminLine } from 'react-icons/ri';
 
 import Logout from '../../Frontend/AuthComponents/Logout.js';
 import { useNavigate } from 'react-router-dom';
@@ -53,6 +54,7 @@ import WeatherAlerts from '../Alert/WeatherAlerts.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
 import Admin from './Admin.js';
 import AdminExpandModal from '../Modals/AdminExpandModal.js';
+import ExportDataModal from '../Modals/ExportDataModal.js';
 
 const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
@@ -61,8 +63,18 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
   const [isSummaryOpen, setSummaryOpen] = useState(false);
   const [customerRole, setCustomerRole] = useState('');
   const { colorMode, toggleColorMode } = useColorMode();
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const {
+    isOpen: isAdminOpen,
+    onOpen: onAdminOpen,
+    onClose: onAdminClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isExportOpen,
+    onOpen: onExportOpen,
+    onClose: onExportClose,
+  } = useDisclosure();
 
   const { currentUser } = useAuth();
   const user = currentUser;
@@ -70,53 +82,61 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
 
   const buttonConfig = {
     'pmo@grandfarm.com': [
-      { icon: <WiThermometer size="30" />, label: 'Temperature', route: '/TempSensors' },
-      { icon: <WiHumidity size="30" />, label: 'Humidity', route: '/HumiditySensors' },
-      { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
-      { icon: <GiGroundSprout size="30" />, label: 'Soil', route: '/SoilMoistureSensors' },
+      {
+        icon: <WiThermometer size="30" />,
+        label: 'Temperature',
+        route: '/TempSensors',
+      },
+      {
+        icon: <WiHumidity size="30" />,
+        label: 'Humidity',
+        route: '/HumiditySensors',
+      },
+      {
+        icon: <WiStrongWind size="30" />,
+        label: 'Wind',
+        route: '/WindSensors',
+      },
+      {
+        icon: <GiGroundSprout size="30" />,
+        label: 'Soil',
+        route: '/SoilMoistureSensors',
+      },
       { icon: <WiRain size="30" />, label: 'Rain', route: '/RainSensors' },
       // { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/grandfarm/map' },
-      { icon: <MdElectricBolt size="30"/>, label: 'Energy', route: '/energy' },
-      { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
-
-
-  
+      { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
+      {
+        icon: <FaCalendarWeek size="30" />,
+        label: 'Weekly Recap',
+        route: '/weeklyrecap',
+      },
     ],
     'jerrycromarty@imprimedicine.com': [
       { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' },
-      { icon: <MdElectricBolt size="30"/>, label: 'Energy', route: '/energy' },
-      { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
-
-
+      { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
+      {
+        icon: <FaCalendarWeek size="30" />,
+        label: 'Weekly Recap',
+        route: '/weeklyrecap',
+      },
     ],
-    'russell@rjenergysolutions.com': [
-      { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
-      { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
-      { icon: <FaGlobe size="30" />, label: 'Map', route: '/rjenergy/map' },
-      // { icon: <MdElectricBolt size="30"/>, label: 'Energy', route: '/energy' },
-      // { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
-
-
-    ],
-    'trey@watchdogprotect.com': [
-    { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
-    { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
-    { icon: <FaGlobe size="30" />, label: 'Map', route: '/watchdogprotect/map' },
-    { icon: <MdElectricBolt size="30"/>, label: 'Energy', route: '/energy' },
-    { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
-
-
-  ],
-    'default': [
-      { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
-      { icon: <FaSnowflake size="30" />, label: 'Rivercity', route: '/RivercitySensors' },
+    default: [
+      {
+        icon: <FaDog size="30" />,
+        label: 'Watchdog',
+        route: '/WatchdogSensors',
+      },
       { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
       { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' },
-      { icon: <MdElectricBolt size="30"/>, label: 'Energy', route: '/energy' },
-      { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
-    ]
+      { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
+      {
+        icon: <FaCalendarWeek size="30" />,
+        label: 'Weekly Recap',
+        route: '/weeklyrecap',
+      },
+    ],
   };
 
   const MotionIconButton = motion(IconButton);
@@ -140,10 +160,10 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           {button.label}
         </Button>
       </motion.div>
-    ))
+    ));
   };
 
-  const handleUserNavigation = () => {  
+  const handleUserNavigation = () => {
     switch (customerRole) {
       case 'gf':
         navigate('/grandfarm');
@@ -155,7 +175,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         navigate('/rjenergy');
         break;
       case 'wdp':
-        navigate('/watchdogprotect')
+        navigate('/watchdogprotect');
       default:
         navigate('/dashboard');
         break;
@@ -188,9 +208,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     mb: 4,
     bg: '#cee8ff',
     color: '#212121',
-    _hover: {
-      bg: '#d7a247',
-    },
     boxShadow: 'md',
   };
 
@@ -222,26 +239,46 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
           </Box>
         </motion.div>
         <Flex align="center">
-        {/* {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && (
+          {/* {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && (
           <SummaryButton isSummaryOpen={isSummaryOpen} onSummaryToggle={onSummaryToggle} summaryMetrics={filteredSummaryMetrics} />
         )} */}
           {isLargerThan768 && (
-            <motion.div {...motionProps}>
-              <Tooltip label="Toggle Weather Alerts">
-                <MotionIconButton
-                  icon={<FiAlertTriangle />}
-                  isRound
-                  size="lg"
-                  onClick={toggleAlerts}
-                  bg="transparent"
-                  color="whitesmoke"
-                  aria-label="Toggle Weather Alerts"
-                  _hover={{ bg: 'transparent' }}
-                  whileHover={{ scale: 1.4 }}
-                  whileTap={{ scale: 0.9 }}
-                />
-              </Tooltip>
-            </motion.div>
+            <>
+              {currentUser && currentUser.email === 'test@kirkwall.io' && (
+                <motion.div {...motionProps}>
+                  <Tooltip label="Export Data">
+                    <MotionIconButton
+                      icon={<FaFileDownload />}
+                      isRound
+                      size="lg"
+                      onClick={onExportOpen}
+                      bg="transparent"
+                      color="whitesmoke"
+                      aria-label="Export Data"
+                      _hover={{ bg: 'transparent' }}
+                      whileHover={{ scale: 1.4 }}
+                      whileTap={{ scale: 0.9 }}
+                    />
+                  </Tooltip>
+                </motion.div>
+              )}
+              <motion.div {...motionProps}>
+                <Tooltip label="Toggle Weather Alerts">
+                  <MotionIconButton
+                    icon={<FiAlertTriangle />}
+                    isRound
+                    size="lg"
+                    onClick={toggleAlerts}
+                    bg="transparent"
+                    color="whitesmoke"
+                    aria-label="Toggle Weather Alerts"
+                    _hover={{ bg: 'transparent' }}
+                    whileHover={{ scale: 1.4 }}
+                    whileTap={{ scale: 0.9 }}
+                  />
+                </Tooltip>
+              </motion.div>
+            </>
           )}
           <motion.div {...motionProps}>
             <Tooltip label="Toggle Dark Mode">
@@ -273,13 +310,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                           : currentUser.email ===
                             'jerrycromarty@imprimedicine.com'
                           ? '/ImpriMedLogo.png'
-                          : currentUser.email === 'russell@rjenergysolutions.com'
-                          ? '/RJLogo.jpeg'
-                          : currentUser.email === 'trey@watchdogprotect.com'
-                          ? '/RookLogoWhite.png'
                           : '/RookLogoWhite.png'
-                          
-
                       }
                       cursor="pointer"
                       ml="4"
@@ -287,7 +318,7 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                   </PopoverTrigger>
                   <PopoverContent
                     bg="#2D3748"
-                    borderColor="#F4B860"
+                    borderColor="whiteAlpha.600"
                     zIndex={1005}
                   >
                     <PopoverCloseButton size="lg" />
@@ -299,21 +330,20 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                     >
                       {currentUser.email === 'pmo@grandfarm.com'
                         ? 'Grand Farm'
-                        : currentUser.email === 'jerrycromarty@imprimedicine.com'
+                        : currentUser.email ===
+                          'jerrycromarty@imprimedicine.com'
                         ? 'ImpriMed'
-                        : currentUser.email === 'russell@rjenergysolutions.com'
-                        ? 'RJ Energy Solutions'
-                        : currentUser.email === 'trey@watchdogprotect.com'
-                        ? 'Watch Dog Protect'
                         : 'Kirkwall'}
                     </PopoverHeader>
                     <PopoverBody>
-                      
-                      <Admin onClick={onOpen}>Admin</Admin>
-                      <AdminExpandModal isOpen={isOpen} onClose={onClose} title="Admin Panel" userEmail={currentUser.email} />
-                      
+                      <Admin onClick={onAdminOpen}>Admin</Admin>
+                      <AdminExpandModal
+                        isOpen={isAdminOpen}
+                        onClose={onAdminClose}
+                        title="Admin Panel"
+                        userEmail={currentUser.email}
+                      />
                       <Logout />
-                                            
                     </PopoverBody>
                   </PopoverContent>
                 </Popover>
@@ -350,37 +380,49 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
               {renderButtons()}
               {user && (
                 <>
-                <motion.div {...motionProps}>
-                <Button
-                  leftIcon={<RiAdminLine size="30" />}
-                  {...buttonStyleProps}
-                  onClick={onOpen}
-                >
-                  Admin
-                </Button>
-              </motion.div>
-                <motion.div {...motionProps}>
-                  <Button
-                    // leftIcon={
-                    //   <Avatar
-                    //     size="sm"
-                    //     name="Kirkwall Logo"
-                    //     src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
-                    //   />
-                    // }
-                    {...buttonStyleProps}
-                    onClick={() => handleNavigation('/')}
-                  >
-                    LOGOUT
-                  </Button>
-                </motion.div>
-              <AdminExpandModal isOpen={isOpen} onClose={onClose} title="Admin Panel" userEmail={currentUser.email} />
-              </>
+                  <motion.div {...motionProps}>
+                    <Button
+                      leftIcon={<RiAdminLine size="30" />}
+                      {...buttonStyleProps}
+                      onClick={onAdminOpen}
+                    >
+                      Admin
+                    </Button>
+                  </motion.div>
+                  <motion.div {...motionProps}>
+                    <Button
+                      // leftIcon={
+                      //   <Avatar
+                      //     size="sm"
+                      //     name="Kirkwall Logo"
+                      //     src={`${process.env.PUBLIC_URL}/RookLogoWhite.png`}
+                      //   />
+                      // }
+                      {...buttonStyleProps}
+                      onClick={() => handleNavigation('/')}
+                    >
+                      LOGOUT
+                    </Button>
+                  </motion.div>
+                </>
               )}
             </Stack>
           </DrawerBody>
         </DrawerContent>
       </Drawer>
+
+      {/* Move Modals Outside DrawerBody */}
+      {user && (
+        <>
+          <AdminExpandModal
+            isOpen={isAdminOpen}
+            onClose={onAdminClose}
+            title="Admin Panel"
+            userEmail={currentUser.email}
+          />
+          <ExportDataModal isOpen={isExportOpen} onClose={onExportClose} />
+        </>
+      )}
 
       {isVisible && isLargerThan768 && (
         <motion.div

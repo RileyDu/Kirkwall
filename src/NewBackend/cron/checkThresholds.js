@@ -6,8 +6,7 @@ import moment from 'moment-timezone';
 import axios from 'axios';
 const baseURL = process.env.BACKEND_URL || 'https://kirkwall-demo.vercel.app/'; // Set your backend URL
 
-console.log('BACKEND_URL from .env:', process.env.BACKEND_URL);
-
+console.log('BACKEND_URL from .env:', baseURL);
 
 // Initialize only when the function is called
 export const checkThresholds = async () => {
@@ -23,13 +22,82 @@ export const checkThresholds = async () => {
   const sendGridApiKey = process.env.SENDGRID_API_KEY;
   sgMail.setApiKey(sendGridApiKey);
 
+  const sendAlert = async (alertMessage, metric, phone, email, id, type = 'threshold') => {
+    // Log alert to the database if it's a sensor stoppage
+    const location = await getLocationforAlert(metric);
+    // if (type === 'sensor_stoppage') {
+    //   await sendAlertToDB(metric, `Sensor stoppage: ${alertMessage} for ${location}.`, new Date());
+    //   await sendSMSAlert(['7016393862'], `Sensor stoppage: ${alertMessage} for ${location}.`, id, null );
+    //   return; // Abort further execution to prevent sending SMS/Email
+    // }
+  
+    const formattedDateTime = formatDateTime(new Date());
+    const message = `${alertMessage} at ${formattedDateTime} CST for ${location}.`;
+  
+    // Split phone numbers and emails if available
+    const phoneNumbers = phone ? phone.split(',').map(num => num.trim()) : [];
+    const emails = email ? email.split(',').map(em => em.trim()) : [];
+  
+    await sendAlertToDB(metric, message, new Date());
+  
+    // Send SMS if phone numbers are provided
+    if (phoneNumbers.length > 0) await sendSMSAlert(phoneNumbers, message, id, phoneNumbers);
+  
+    // Send Email if emails are provided
+    if (emails.length > 0) await sendEmailAlert(emails, 'Sensor Alert', message, id, phoneNumbers);
+  
+    lastAlertTimes[id] = new Date(); // Update last alert time to avoid redundant alerts
+  };
+  
+  const checkForSensorStoppage = async (metric, responseData) => {
+    if (!responseData || responseData.length === 0) {
+      console.error(`No data available for metric: ${metric}`);
+      return;
+    }
+  
+    let lastDataPoint = responseData[0] || responseData.data[0]; // Most recent reading
+    let lastTimestamp = new Date(
+      lastDataPoint.publishedat || 
+      lastDataPoint.reading_time || 
+      lastDataPoint.message_timestamp
+    );
+  
+    // If the metric starts with 'im' and `publishedat` is used, add 300 minutes (5 hours)
+    if (metric.startsWith('im') && lastDataPoint.publishedat) {
+      lastTimestamp = new Date(lastTimestamp.getTime() + 300 * 60000); // 300 minutes in milliseconds
+    }
+  
+    const currentTime = new Date(); // Always use UTC for comparison
+    const timeDifferenceInMinutes = (currentTime - lastTimestamp) / (1000 * 60); // Convert time difference to minutes
+  
+    if (timeDifferenceInMinutes > 30) {
+      console.log(`Sensor for ${metric} has stopped sending data. Last reading was ${timeDifferenceInMinutes} minutes ago.`);
+      
+      // const alertMessage = `The sensor for ${metric} has not sent data in over 30 minutes. Last reading at ${formatDateTime(lastTimestamp)}, currently at ${formatDateTime(currentTime)}`;
+  
+      // await sendAlert(alertMessage, metric, null, null, null, 'sensor_stoppage');
+    } else {
+      console.log(`Sensor for ${metric} is active. Last reading was ${timeDifferenceInMinutes} minutes ago.`);
+    }
+  };
+  
+  
+  
+
   // Send an SMS alert to the specified phone numbers
-  const sendSMSAlert = async (toNumbers, alertMessage, thresholdId, adminPhone) => {
-    const alertUrl = `https://kirkwall-demo.vercel.app/api/update_threshold/${thresholdId}?thresh_kill=true&timeframe=${encodeURIComponent('99 days')}`;
+  const sendSMSAlert = async (
+    toNumbers,
+    alertMessage,
+    thresholdId,
+    adminPhone
+  ) => {
+    const alertUrl = `https://kirkwall-demo.vercel.app/api/update_threshold/${thresholdId}?thresh_kill=true&timeframe=${encodeURIComponent(
+      '99 days'
+    )}`;
     const disableAll = `https://kirkwall-demo.vercel.app/api/update_admin_thresh/${adminPhone}?thresh_kill=true`;
 
     const smsBody = `${alertMessage}.. Click to disable alerts for this sensor: ${alertUrl}.`;
-  
+
     for (const to of toNumbers) {
       try {
         console.log(`Sending SMS to ${to}: ${smsBody}`);
@@ -43,16 +111,23 @@ export const checkThresholds = async () => {
       }
     }
   };
-  
 
   // Send an Email alert to the specified email addresses
-  const sendEmailAlert = async (toEmails, subject, alertMessage, thresholdId, adminPhone) => {
-    const alertUrl = `https://kirkwall-demo.vercel.app/api/update_threshold/${thresholdId}?thresh_kill=true&timeframe=${encodeURIComponent('99 days')}`;
+  const sendEmailAlert = async (
+    toEmails,
+    subject,
+    alertMessage,
+    thresholdId,
+    adminPhone
+  ) => {
+    const alertUrl = `https://kirkwall-demo.vercel.app/api/update_threshold/${thresholdId}?thresh_kill=true&timeframe=${encodeURIComponent(
+      '99 days'
+    )}`;
     const disableAll = `https://kirkwall-demo.vercel.app/api/update_admin_thresh/${adminPhone}?thresh_kill=true`;
-    console.log(adminPhone)
-    console.log(disableAll)
-    console.log(alertUrl)
-  
+    console.log(adminPhone);
+    console.log(disableAll);
+    console.log(alertUrl);
+
     for (const to of toEmails) {
       const msg = {
         to: to,
@@ -70,7 +145,7 @@ export const checkThresholds = async () => {
                         </a>`,
         },
       };
-  
+
       try {
         console.log(`Sending Email to ${to}: ${subject}`);
         await sgMail.send(msg);
@@ -79,7 +154,6 @@ export const checkThresholds = async () => {
       }
     }
   };
-  
 
   // Send an alert to the database
   const sendAlertToDB = async (metric, message, timestamp) => {
@@ -108,6 +182,52 @@ export const checkThresholds = async () => {
     }
   };
 
+  const checkAlertInterval = async (thresholdId, alertInterval, metric) => {
+    try {
+      const lastAlertResponse = await axios.get(`${baseURL}/api/get_last_alert_time/${thresholdId}`);
+      const lastAlertTime = lastAlertResponse.data.lastAlertTime;
+      const currentTime = new Date();
+  
+      if (lastAlertTime) {
+        // Parse lastAlertTime properly with new Date()
+        const parsedLastAlertTime = new Date(lastAlertTime);
+  
+        if (isNaN(parsedLastAlertTime)) {
+          throw new Error(`Invalid lastAlertTime: ${lastAlertTime}`);
+        }
+  
+        // Manually adjust for the 5-hour time zone difference
+        const adjustedLastAlertTime = new Date(parsedLastAlertTime.getTime()); // Add 5 hours
+  
+        // Calculate the time difference in minutes
+        const timeDiffInMinutes = Math.ceil((currentTime - adjustedLastAlertTime) / (1000 * 60));
+  
+        if (timeDiffInMinutes < alertInterval) {
+          console.log(`Skipping ${metric}, interval of ${alertInterval} minutes not yet passed. Time since last alert: ${timeDiffInMinutes.toFixed(2)} minutes.`);
+          return false; // Don't send alert if interval hasn't passed
+        }
+      }
+  
+      console.log(`${alertInterval} minutes passed since last alert @ ${lastAlertTime || 'N/A'} for ${metric}, alerts can now be sent.`);
+      return true; // Allow the alert to be sent
+    } catch (error) {
+      console.error('Error checking alert interval:', error);
+      return true; // Proceed with sending the alert if there's an error
+    }
+  };
+  
+  
+  // Function to record the time of the first alert
+  const recordAlertTime = async (thresholdId, metric) => {
+    const currentTime = moment.utc().toISOString(); // Current time in UTC format
+    try {
+      await axios.put(`${baseURL}/api/update_last_alert_time/${thresholdId}`, { lastAlertTime: currentTime });
+      console.log(`Recorded new alert time for ${metric}`);
+    } catch (error) {
+      console.error('Error recording alert time:', error);
+    }
+  };
+  
   // Extract the current value of the metric from the response data
   const extractCurrentValue = (response, metric) => {
     if (Array.isArray(response)) {
@@ -144,26 +264,26 @@ export const checkThresholds = async () => {
   // In-memory store for last alert times
   const lastAlertTimes = {};
 
-  const parseTimeframeToDuration = (timeframe) => {
+  const parseTimeframeToDuration = timeframe => {
     // If the timeframe is an object and represents an indefinite pause
     if (typeof timeframe === 'object' && timeframe.days === 99) {
       console.log('Timeframe is an indefinite pause: 99 days');
       return null; // Return null to represent indefinite pause
     }
-  
+
     // Check if timeframe is an object with specific hours, minutes, or seconds
     if (typeof timeframe === 'object') {
       const { days = 0, hours = 0, minutes = 0, seconds = 0 } = timeframe;
       console.log('Processing timeframe object:', timeframe);
       return moment.duration({ days, hours, minutes, seconds });
     }
-  
+
     // Handle string-based timeframe, for example: "2 days, 03:00:00"
     console.log('Processing string timeframe:', timeframe);
-  
+
     let days = 0;
     let timePart = timeframe;
-  
+
     // Extract days if the string includes a 'day' part
     if (timeframe.includes('day')) {
       const dayMatch = timeframe.match(/(\d+) day/);
@@ -173,17 +293,15 @@ export const checkThresholds = async () => {
       // Split the timeframe into the day and time parts
       timePart = timeframe.split(', ')[1] || '0:00:00';
     }
-  
+
     // Split the time part into hours, minutes, and seconds
     const [hours = 0, minutes = 0, seconds = 0] = timePart
       .split(':')
       .map(Number);
-  
+
     // Return a moment duration object with the extracted values
     return moment.duration({ days, hours, minutes, seconds });
   };
-  
-  
 
   function formatDateTime(date) {
     const timezone = 'America/Chicago';
@@ -213,6 +331,7 @@ export const checkThresholds = async () => {
         thresh_kill,
         timeframe,
         timestamp,
+        alert_interval,
       } = threshold;
       // console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=');
       // console.log(`Checking threshold for metric: ${metric}`);
@@ -242,7 +361,6 @@ export const checkThresholds = async () => {
 
       // Check individual threshold killswitch and timeframe
       if (thresh_kill && timeframe) {
-
         if (typeof timeframe === 'object' && timeframe.days === 99) {
           console.log(
             `Skipping threshold check for ${metric} due to indefinite pause at sensor-level.`
@@ -291,6 +409,11 @@ export const checkThresholds = async () => {
         }
       }
 
+      const shouldSendAlert = await checkAlertInterval(id, alert_interval || 10, metric); // Default to 10 minutes if no interval is provided
+
+      if (!shouldSendAlert) continue; // Skip if interval hasn't passed
+
+
       const renameKeyToMetric = (data, metric) => {
         return data.map(d => {
           const value = metric.endsWith('Temp') ? d.rctemp : d.humidity;
@@ -313,26 +436,19 @@ export const checkThresholds = async () => {
         case 'rain_15_min_inches':
         case 'soil_moisture':
         case 'leaf_wetness':
-          responseData = await axios.get(`${baseURL}/api/weather_data?limit=1`);
+          responseData = await axios.get(`${baseURL}/api/weather_data?limit=3`);
           break;
 
         case 'temp':
         case 'hum':
           responseData = await axios.get(
-            `${baseURL}/api/watchdog_data?limit=1`
-          );
-          break;
-
-        case 'rctemp':
-        case 'humidity':
-          responseData = await axios.get(
-            `${baseURL}/api/rivercity_data?limit=1`
+            `${baseURL}/api/watchdog_data?limit=3`
           );
           break;
 
         case 'imFreezerOneTemp':
           response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E1150618C9DE&limit=1`
+            `${baseURL}/api/impriMed_data?deveui=0080E1150618C9DE&limit=3`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerOneTemp');
@@ -340,7 +456,7 @@ export const checkThresholds = async () => {
 
         case 'imFreezerOneHum':
           response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E1150618C9DE&limit=1`
+            `${baseURL}/api/impriMed_data?deveui=0080E1150618C9DE&limit=3`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerOneHum');
@@ -348,7 +464,7 @@ export const checkThresholds = async () => {
 
         case 'imFreezerTwoTemp':
           response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E115054FC6DF&limit=1`
+            `${baseURL}/api/impriMed_data?deveui=0080E115054FC6DF&limit=3`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerTwoTemp');
@@ -356,7 +472,7 @@ export const checkThresholds = async () => {
 
         case 'imFreezerTwoHum':
           response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E115054FC6DF&limit=1`
+            `${baseURL}/api/impriMed_data?deveui=0080E115054FC6DF&limit=3`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerTwoHum');
@@ -364,7 +480,7 @@ export const checkThresholds = async () => {
 
         case 'imFreezerThreeTemp':
           response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E1150618B549&limit=1`
+            `${baseURL}/api/impriMed_data?deveui=0080E1150618B549&limit=3`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerThreeTemp');
@@ -372,7 +488,7 @@ export const checkThresholds = async () => {
 
         case 'imFreezerThreeHum':
           response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E1150618B549&limit=1`
+            `${baseURL}/api/impriMed_data?deveui=0080E1150618B549&limit=3`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFreezerThreeHum');
@@ -380,7 +496,7 @@ export const checkThresholds = async () => {
 
         case 'imFridgeOneTemp':
           response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E1150619155F&limit=1`
+            `${baseURL}/api/impriMed_data?deveui=0080E1150619155F&limit=3`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFridgeOneTemp');
@@ -388,7 +504,7 @@ export const checkThresholds = async () => {
 
         case 'imFridgeOneHum':
           response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E1150619155F&limit=1`
+            `${baseURL}/api/impriMed_data?deveui=0080E1150619155F&limit=3`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFridgeOneHum');
@@ -396,7 +512,7 @@ export const checkThresholds = async () => {
 
         case 'imFridgeTwoTemp':
           response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E115061924EA&limit=1`
+            `${baseURL}/api/impriMed_data?deveui=0080E115061924EA&limit=3`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFridgeTwoTemp');
@@ -404,7 +520,7 @@ export const checkThresholds = async () => {
 
         case 'imFridgeTwoHum':
           response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E115061924EA&limit=1`
+            `${baseURL}/api/impriMed_data?deveui=0080E115061924EA&limit=3`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imFridgeTwoHum');
@@ -412,7 +528,7 @@ export const checkThresholds = async () => {
 
         case 'imIncubatorOneTemp':
           response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E115054FF1DC&limit=1`
+            `${baseURL}/api/impriMed_data?deveui=0080E115054FF1DC&limit=3`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imIncubatorOneTemp');
@@ -420,7 +536,7 @@ export const checkThresholds = async () => {
 
         case 'imIncubatorOneHum':
           response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E115054FF1DC&limit=1`
+            `${baseURL}/api/impriMed_data?deveui=0080E115054FF1DC&limit=3`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imIncubatorOneHum');
@@ -428,7 +544,7 @@ export const checkThresholds = async () => {
 
         case 'imIncubatorTwoTemp':
           response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E1150618B45F&limit=1`
+            `${baseURL}/api/impriMed_data?deveui=0080E1150618B45F&limit=3`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imIncubatorTwoTemp');
@@ -436,7 +552,7 @@ export const checkThresholds = async () => {
 
         case 'imIncubatorTwoHum':
           response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E1150618B45F&limit=1`
+            `${baseURL}/api/impriMed_data?deveui=0080E1150618B45F&limit=3`
           );
           formattedData = response.data;
           responseData = renameKeyToMetric(formattedData, 'imIncubatorTwoHum');
@@ -445,6 +561,8 @@ export const checkThresholds = async () => {
         default:
           console.error('Invalid metric:', metric);
       }
+
+      await checkForSensorStoppage(metric, responseData);
 
       const currentValue = extractCurrentValue(responseData, metric);
       const { label, addSpace } = getLabelForMetric(metric);
@@ -459,24 +577,6 @@ export const checkThresholds = async () => {
         continue;
       }
 
-      const sendAlert = async alertMessage => {
-        const formattedDateTime = formatDateTime(now);
-        const location = await getLocationforAlert(metric);
-        const message = `${alertMessage} at ${formattedDateTime} CST for ${location}.`;
-      
-        const phoneNumbers = phone ? phone.split(',').map(num => num.trim()) : [];
-        const emails = email ? email.split(',').map(em => em.trim()) : [];
-      
-        if (phoneNumbers.length > 0)
-          await sendSMSAlert(phoneNumbers, message, id, phoneNumbers);  // Pass the threshold ID here
-        if (emails.length > 0)
-          await sendEmailAlert(emails, 'Threshold Alert', message, id, phoneNumbers);  // Pass the threshold ID here
-        if (phoneNumbers.length > 0 || emails.length > 0)
-          await sendAlertToDB(metric, message, now);
-      
-        lastAlertTimes[id] = now;
-      };
-      
       if (high !== null) {
         if (currentValue > high) {
           console.log(
@@ -485,8 +585,13 @@ export const checkThresholds = async () => {
           await sendAlert(
             `Alert: The ${metric} value of ${formatValue(
               currentValue
-            )} exceeds the high threshold of ${formatValue(high)}`
+            )} exceeds the high threshold of ${formatValue(high)}`,
+            metric,
+            phone,
+            email,
+            id
           );
+          await recordAlertTime(id, metric);
         } else {
           console.log(
             `${metric} High threshold NOT exceeded: CURRENT = ${currentValue} // HIGH THRESHOLD = ${high}`
@@ -503,8 +608,14 @@ export const checkThresholds = async () => {
           await sendAlert(
             `Alert: The ${metric} value of ${formatValue(
               currentValue
-            )} is below the low threshold of ${formatValue(low)}`
+            )} is below the low threshold of ${formatValue(low)}`,
+            metric,
+            phone,
+            email,
+            id
           );
+          await recordAlertTime(id, metric);
+
         } else {
           console.log(
             `${metric} LOW threshold NOT exceeded: CURRENT = ${currentValue} // LOW THRESHOLD = ${low}`
