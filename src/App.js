@@ -30,7 +30,7 @@ import MobileMenu from './Frontend/MobileMenu/MobileMenu.js';
 import customTheme from './Frontend/Styles/theme.js';
 import { WeatherDataProvider } from './Frontend/WeatherDataContext.js';
 import { FaChessRook, FaQuestion } from 'react-icons/fa';
-import { IoSparkles } from "react-icons/io5";
+import { IoSparkles } from 'react-icons/io5';
 
 import { keyframes } from '@emotion/react';
 import WatchdogSensors from './Frontend/Sensors/WatchdogSensors/WatchdogSensors.js';
@@ -55,6 +55,7 @@ import ChatBotModal from './Frontend/Modals/ChatBotModal.js';
 import BioWorx from './Frontend/Clients/BioWorx/BioWorx.js';
 import PrivacyPolicy from './Frontend/Privacy/PrivacyPolicy.js';
 import Onboarding from './Frontend/AuthComponents/Onboarding.js';
+import DisasterShieldLogin from './Frontend/AuthComponents/DisasterShieldLogin.js';
 
 import { useAuth } from './Frontend/AuthComponents/AuthContext.js';
 
@@ -78,7 +79,8 @@ const Layout = ({
   const shouldShowSidebar =
     location.pathname !== '/' &&
     location.pathname !== '/signup' &&
-    location.pathname !== '/landing';
+    location.pathname !== '/landing' &&
+    location.pathname !== '/dslogin';
 
   const { colorMode } = useColorMode();
 
@@ -161,29 +163,32 @@ const Layout = ({
             left="20px"
             zIndex="1000"
           />
-          
-          {currentUser?.email === 'test@kirkwall.io' && (
-          <MotionIconButton
-            icon={<IoSparkles />}
-            variant="outline"
-            color="#212121"
-            height={10}
-            width={10}
-            bg={'#cee8ff'}
-            _hover={{ bg: '#3D5A80', color: 'white' }}
-            border={'2px solid #3D5A80'}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            ml={2}
-            onClick={handleOpenChatBotModal}
-            position="fixed"
-            bottom="20px"
-            right="20px"
-            zIndex="1000"
-          />
-        )}
 
-          <ChatBotModal isOpen={isChatBotModalOpen} onClose={handleCloseChatBotModal} />
+          {currentUser?.email === 'test@kirkwall.io' && (
+            <MotionIconButton
+              icon={<IoSparkles />}
+              variant="outline"
+              color="#212121"
+              height={10}
+              width={10}
+              bg={'#cee8ff'}
+              _hover={{ bg: '#3D5A80', color: 'white' }}
+              border={'2px solid #3D5A80'}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              ml={2}
+              onClick={handleOpenChatBotModal}
+              position="fixed"
+              bottom="20px"
+              right="20px"
+              zIndex="1000"
+            />
+          )}
+
+          <ChatBotModal
+            isOpen={isChatBotModalOpen}
+            onClose={handleCloseChatBotModal}
+          />
 
           <OptionsModal
             isOpen={isOptionsModalOpen}
@@ -264,7 +269,8 @@ const MainApp = () => {
       {location.pathname !== '/' &&
         location.pathname !== '/signup' &&
         location.pathname !== '/privacypolicy' &&
-        location.pathname !== '/landing' && (
+        location.pathname !== '/landing' &&
+        location.pathname !== '/dslogin' && (
           <Header
             toggleMobileMenu={toggleMobileMenu}
             isMinimized={isMinimized}
@@ -288,6 +294,7 @@ const MainApp = () => {
           {/* <Route path="/signup" element={<SignUp />} /> */}
           <Route path="/privacypolicy" element={<PrivacyPolicy />} />
           <Route path="/" element={<Login />} />
+          <Route path="/dslogin" element={<DisasterShieldLogin />} />
           <Route
             path="/dashboard"
             element={
@@ -413,11 +420,42 @@ const MainApp = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="/agscraper"  element={<AgScrapper statusOfAlerts={showAlerts} />} />
-          <Route path='/videofeed' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><VideoPlayerPage /></ProtectedRoute>} />
-          <Route path='/coldchain' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><ColdChainDash /></ProtectedRoute>} />
-          <Route path='/soalerts' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><SOAlerts /></ProtectedRoute>} />
-          <Route path='/bioworx' element={<ProtectedRoute allowedUsers={['test@kirkwall.io']}><BioWorx /></ProtectedRoute>} />
+          <Route
+            path="/agscraper"
+            element={<AgScrapper statusOfAlerts={showAlerts} />}
+          />
+          <Route
+            path="/videofeed"
+            element={
+              <ProtectedRoute allowedUsers={['test@kirkwall.io']}>
+                <VideoPlayerPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/coldchain"
+            element={
+              <ProtectedRoute allowedUsers={['test@kirkwall.io']}>
+                <ColdChainDash />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/soalerts"
+            element={
+              <ProtectedRoute allowedUsers={['test@kirkwall.io']}>
+                <SOAlerts />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/bioworx"
+            element={
+              <ProtectedRoute allowedUsers={['test@kirkwall.io']}>
+                <BioWorx />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<RedirectBasedOnAuth />} />
         </Routes>
       </Layout>

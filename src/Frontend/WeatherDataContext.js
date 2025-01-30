@@ -88,7 +88,8 @@ export const WeatherDataProvider = ({ children }) => {
     if (
       currentUser &&
       (currentUser?.email === 'pmo@grandfarm.com' ||
-        currentUser?.email === 'test@kirkwall.io')
+        currentUser?.email === 'test@kirkwall.io' ||
+        currentUser?.email === 'nathalia@futureinnox.com')
     ) {
       const fetchData = async () => {
         try {
@@ -127,11 +128,12 @@ export const WeatherDataProvider = ({ children }) => {
     if (
       currentUser &&
       (currentUser?.email === 'test@kirkwall.io' ||
-        currentUser?.email === 'trey@watchdogprotect.com')
+        currentUser?.email === 'trey@watchdogprotect.com' ||
+        currentUser?.email === 'nathalia@futureinnox.com')
     ) {
       const fetchData = async () => {
         try {
-          if (currentUser.email === 'test@kirkwall.io') {
+          if (currentUser.email === 'test@kirkwall.io' || currentUser.email === 'nathalia@futureinnox.com') {
             const [watchdogResponse] = await Promise.all([
               axios.get('/api/watchdog_data', {
                 params: { type: 'all', limit: '19' },

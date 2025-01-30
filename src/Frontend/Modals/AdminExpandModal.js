@@ -314,6 +314,16 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
       { label: 'Leaf Wetness (GF)', metric: 'leaf_wetness' },
       { label: 'Rainfall (GF)', metric: 'rain_15_min_inches' },
     ],
+    'nathalia@futureinnox.com': [
+      { label: 'Temperature (Watchdog)', metric: 'temp' },
+      { label: 'Humidity (Watchdog)', metric: 'hum' },
+      { label: 'Temperature (GF)', metric: 'temperature' },
+      { label: 'Humidity (GF)', metric: 'percent_humidity' },
+      { label: 'Wind Speed (GF)', metric: 'wind_speed' },
+      { label: 'Soil Moisture (GF)', metric: 'soil_moisture' },
+      { label: 'Leaf Wetness (GF)', metric: 'leaf_wetness' },
+      { label: 'Rainfall (GF)', metric: 'rain_15_min_inches' },
+    ],
   };
 
   const metricToName = {
