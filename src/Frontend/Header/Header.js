@@ -112,15 +112,29 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         route: '/weeklyrecap',
       },
     ],
-    'jerrycromarty@imprimedicine.com': [
-      { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
-      { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' },
-      { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
+    'nathalia@futureinnox.com': [
       {
-        icon: <FaCalendarWeek size="30" />,
-        label: 'Weekly Recap',
-        route: '/weeklyrecap',
+        icon: <WiThermometer size="30" />,
+        label: 'Temperature',
+        route: '/TempSensors',
       },
+      {
+        icon: <WiHumidity size="30" />,
+        label: 'Humidity',
+        route: '/HumiditySensors',
+      },
+      {
+        icon: <WiStrongWind size="30" />,
+        label: 'Wind',
+        route: '/WindSensors',
+      },
+      {
+        icon: <FaDog size="30" />,
+        label: 'Watchdog',
+        route: '/WatchdogSensors',
+      },
+      { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
+      { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' },
     ],
     default: [
       {
@@ -230,22 +244,24 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
       >
         <motion.div {...motionProps}>
           <Box>
-            {currentUser && currentUser.email === 'nathalia@futureinnox.com' && (
-              <img
-              src={`${process.env.PUBLIC_URL}/DisasterShieldShieldLogo.jpg`}
-              alt="Disaster Shield logo"
-              style={{ height: '60px', width: 'auto', cursor: 'pointer' }}
-              onClick={() => handleUserNavigation()}
-            />
-            )}
-            {currentUser && currentUser.email !== 'nathalia@futureinnox.com'  && (
-            <img
-              src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
-              alt="kirkwall logo"
-              style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
-              onClick={() => handleUserNavigation()}
-            />
-            )}
+            {currentUser &&
+              currentUser.email === 'nathalia@futureinnox.com' && (
+                <img
+                  src={`${process.env.PUBLIC_URL}/DisasterShieldShieldLogo.jpg`}
+                  alt="Disaster Shield logo"
+                  style={{ height: '60px', width: 'auto', cursor: 'pointer' }}
+                  onClick={() => handleUserNavigation()}
+                />
+              )}
+            {currentUser &&
+              currentUser.email !== 'nathalia@futureinnox.com' && (
+                <img
+                  src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
+                  alt="kirkwall logo"
+                  style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
+                  onClick={() => handleUserNavigation()}
+                />
+              )}
           </Box>
         </motion.div>
         <Flex align="center">
