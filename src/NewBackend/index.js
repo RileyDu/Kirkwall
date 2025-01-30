@@ -21,10 +21,10 @@ import { createObjectCsvStringifier } from 'csv-writer';
 // Middleware to parse incoming JSON
 
 // FOR SOME REASONE THIS NEEDS TO BE COMMENTED OUT FOR LOCAL VERCEL DEV, BUT NEEDS TO EXIST FOR PROD
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.json());
-}
+// if (process.env.NODE_ENV === 'production') {
+// }
 
+app.use(express.json());
 app.use(cors());
 
 const client = new Client({
@@ -440,6 +440,35 @@ app.put('/api/update_admin/:id', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while updating admin' });
   }
 });
+
+// POST route to create a new admin
+// app.post('/api/create_admin', async (req, res) => {
+//   const { firstname, lastname, email, phone, company, thresh_kill } = req.body;
+
+//   // SQL query to insert a new admin
+//   const query = `
+//     INSERT INTO admin (firstname, lastname, email, phone, company, thresh_kill)
+//     VALUES ($1, $2, $3, $4, $5, $6)
+//     RETURNING *;
+//   `;
+
+//   try {
+//     const result = await client.query(query, [
+//       firstname,
+//       lastname,
+//       email,
+//       phone,
+//       company,
+//       thresh_kill,
+//     ]);
+
+//     // Respond with the newly created admin
+//     res.status(201).json(result.rows[0]);
+//   } catch (error) {
+//     console.error('Error creating admin:', error);
+//     res.status(500).json({ error: 'An error occurred while creating admin' });
+//   }
+// });
 
 // New backend route to update the admin's profile URL
 app.put('/api/update_profile_url/:id', async (req, res) => {
