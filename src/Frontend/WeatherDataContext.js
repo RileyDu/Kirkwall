@@ -180,7 +180,7 @@ export const WeatherDataProvider = ({ children }) => {
     )?.metric;
 
     try {
-      const response = await axios.get('/api/alerts_per_user', {
+      const response = await axios.get('/api/alerts/alerts_per_user', {
         params: {
           userMetrics: [...userMetrics],  // Ensure this is an array
         },

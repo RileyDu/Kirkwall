@@ -27,7 +27,7 @@ import {
     useEffect(() => {
       const fetchSecurityAlerts = async () => {
         try {
-          const response = await axios.get('/api/soalerts');
+          const response = await axios.get('/api/alerts/soalerts');
           setSecurityAlerts(response.data);
         } catch (error) {
           console.error('Error fetching security alerts:', error);

@@ -103,7 +103,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     const fetchAlertsLastHour = async () => {
       setLoadingAlerts(true);
       try {
-        const response = await axios.get('/api/alerts_last_hour'); // Use Axios to call the new backend route
+      const response = await axios.get('/api/alerts/alerts_last_hour'); // Use Axios to call the new backend route
         const result = response.data;
         // console.log('result', result);
         if (result && result.length > 0) {

@@ -73,7 +73,7 @@ app.use('/api/weather_data', weatherRoutes);
 app.use('/api/watchdog_data', watchdogRoutes);
 app.use('/api/thresholds', thresholdsRoutes);
 app.use('/api/alerts', alertsRoutes);
-app.use('/api/admins', adminRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/charts', chartsRoutes);
 app.use('/api/send-enquiry', emailEnquiryRoutes);
 app.use('/api/equipment', equipmentRoutes);
