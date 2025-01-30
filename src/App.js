@@ -55,6 +55,7 @@ import ChatBotModal from './Frontend/Modals/ChatBotModal.js';
 import BioWorx from './Frontend/Clients/BioWorx/BioWorx.js';
 import PrivacyPolicy from './Frontend/Privacy/PrivacyPolicy.js';
 import Onboarding from './Frontend/AuthComponents/Onboarding.js';
+import DisasterShieldLogin from './Frontend/AuthComponents/DisasterShieldLogin.js';
 
 import { useAuth } from './Frontend/AuthComponents/AuthContext.js';
 
@@ -78,7 +79,8 @@ const Layout = ({
   const shouldShowSidebar =
     location.pathname !== '/' &&
     location.pathname !== '/signup' &&
-    location.pathname !== '/landing';
+    location.pathname !== '/landing' &&
+    location.pathname !== '/dslogin';
 
   const { colorMode } = useColorMode();
 
@@ -264,7 +266,8 @@ const MainApp = () => {
       {location.pathname !== '/' &&
         location.pathname !== '/signup' &&
         location.pathname !== '/privacypolicy' &&
-        location.pathname !== '/landing' && (
+        location.pathname !== '/landing' &&
+        location.pathname !== '/dslogin' && (
           <Header
             toggleMobileMenu={toggleMobileMenu}
             isMinimized={isMinimized}
@@ -285,9 +288,10 @@ const MainApp = () => {
       >
         <Routes>
           {/* <Route path="/landing" element={<LandingPage />} /> */}
-          <Route path="/signup" element={<SignUp />} />
+          {/* <Route path="/signup" element={<SignUp />} /> */}
           <Route path="/privacypolicy" element={<PrivacyPolicy />} />
           <Route path="/" element={<Login />} />
+          <Route path='/dslogin' element={<DisasterShieldLogin />} />
           <Route
             path="/dashboard"
             element={
