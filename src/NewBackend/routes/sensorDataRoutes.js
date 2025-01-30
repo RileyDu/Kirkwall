@@ -24,25 +24,6 @@ router.get('/', async (req, res) => {
     return res.status(400).json({ error: 'Missing required query parameters' });
   }
 
-  // Define the deveui mapping object
-  const deveuiPerMetric = {
-    rctemp: '0080E115054FF0B7',
-    humidity: '0080E115054FF0B7',
-    imFreezerOneTemp: '0080E1150618C9DE',
-    imFreezerOneHum: '0080E1150618C9DE',
-    imFreezerTwoTemp: '0080E115054FC6DF',
-    imFreezerTwoHum: '0080E115054FC6DF',
-    imFreezerThreeTemp: '0080E1150618B549',
-    imFreezerThreeHum: '0080E1150618B549',
-    imFridgeOneTemp: '0080E1150619155F',
-    imFridgeOneHum: '0080E1150619155F',
-    imFridgeTwoTemp: '0080E115061924EA',
-    imFridgeTwoHum: '0080E115061924EA',
-    imIncubatorOneTemp: '0080E115054FF1DC',
-    imIncubatorOneHum: '0080E115054FF1DC',
-    imIncubatorTwoTemp: '0080E1150618B45F',
-    imIncubatorTwoHum: '0080E1150618B45F',
-  };
 
   let query = '';
   let params = [];
@@ -104,14 +85,6 @@ router.get('/', async (req, res) => {
       WHERE reading_time BETWEEN $1 AND $2 
       ORDER BY reading_time ASC`;
     params = [start_date, end_date];
-  } else if (deveuiPerMetric[sensor]) {
-    // Use the deveui from the mapping object
-    query = `
-      SELECT rctemp, humidity, publishedat 
-      FROM rivercity_data 
-      WHERE deveui = $1 AND publishedat BETWEEN $2 AND $3 
-      ORDER BY publishedat ASC`;
-    params = [deveuiPerMetric[sensor], start_date, end_date];
   } else {
     return res.status(400).json({ error: 'Invalid sensor selected' });
   }
@@ -119,76 +92,7 @@ router.get('/', async (req, res) => {
   try {
     const result = await client.query(query, params);
 
-    // Map through the result to rename keys dynamically
-    const renamedData = result.rows.map(row => {
-      const newRow = { ...row };
-
-      // Rename fields based on sensor type
-      switch (sensor) {
-        case 'imFreezerOneTemp':
-          newRow.imFreezerOneTemp = newRow.rctemp;
-          delete newRow.rctemp;
-          break;
-        case 'imFreezerOneHum':
-          newRow.imFreezerOneHum = newRow.humidity;
-          delete newRow.humidity;
-          break;
-        case 'imFreezerTwoTemp':
-          newRow.imFreezerTwoTemp = newRow.rctemp;
-          delete newRow.rctemp;
-          break;
-        case 'imFreezerTwoHum':
-          newRow.imFreezerTwoHum = newRow.humidity;
-          delete newRow.humidity;
-          break;
-        case 'imFreezerThreeTemp':
-          newRow.imFreezerThreeTemp = newRow.rctemp;
-          delete newRow.rctemp;
-          break;
-        case 'imFreezerThreeHum':
-          newRow.imFreezerThreeHum = newRow.humidity;
-          delete newRow.humidity;
-          break;
-        case 'imFridgeOneTemp':
-          newRow.imFridgeOneTemp = newRow.rctemp;
-          delete newRow.rctemp;
-          break;
-        case 'imFridgeOneHum':
-          newRow.imFridgeOneHum = newRow.humidity;
-          delete newRow.humidity;
-          break;
-        case 'imFridgeTwoTemp':
-          newRow.imFridgeTwoTemp = newRow.rctemp;
-          delete newRow.rctemp;
-          break;
-        case 'imFridgeTwoHum':
-          newRow.imFridgeTwoHum = newRow.humidity;
-          delete newRow.humidity;
-          break;
-        case 'imIncubatorOneTemp':
-          newRow.imIncubatorOneTemp = newRow.rctemp;
-          delete newRow.rctemp;
-          break;
-        case 'imIncubatorOneHum':
-          newRow.imIncubatorOneHum = newRow.humidity;
-          delete newRow.humidity;
-          break;
-        case 'imIncubatorTwoTemp':
-          newRow.imIncubatorTwoTemp = newRow.rctemp;
-          delete newRow.rctemp;
-          break;
-        case 'imIncubatorTwoHum':
-          newRow.imIncubatorTwoHum = newRow.humidity;
-          delete newRow.humidity;
-          break;
-        default:
-          // No renaming needed for other sensors
-          break;
-      }
-      return newRow;
-    });
-
-    res.status(200).json(renamedData);
+    res.status(200).json(result.rows);
   } catch (error) {
     console.error('Sensor Data Routes: Error fetching sensor data:', error);
     res

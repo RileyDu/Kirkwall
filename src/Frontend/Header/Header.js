@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MdElectricBolt } from 'react-icons/md';
-import SummaryButton from '../SummaryComponent/SummaryButton.js';
 import {
   useMediaQuery,
   Flex,
@@ -112,16 +111,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         route: '/weeklyrecap',
       },
     ],
-    'jerrycromarty@imprimedicine.com': [
-      { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
-      { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' },
-      { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
-      {
-        icon: <FaCalendarWeek size="30" />,
-        label: 'Weekly Recap',
-        route: '/weeklyrecap',
-      },
-    ],
     default: [
       {
         icon: <FaDog size="30" />,
@@ -167,9 +156,6 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
     switch (customerRole) {
       case 'gf':
         navigate('/grandfarm');
-        break;
-      case 'imprimed':
-        navigate('/imprimed');
         break;
       case 'rj':
         navigate('/rjenergy');
@@ -226,22 +212,31 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
         width="100%"
         zIndex="1001"
         borderBottom="3px solid #cee8ff"
-        height="64px"
+        height="70px"
       >
         <motion.div {...motionProps}>
           <Box>
-            <img
-              src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
-              alt="kirkwall logo"
-              style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
-              onClick={() => handleUserNavigation()}
-            />
+            {currentUser &&
+              currentUser.email === 'nathalia@futureinnox.com' && (
+                <img
+                  src={`${process.env.PUBLIC_URL}/DisasterShieldShieldLogo.jpg`}
+                  alt="Disaster Shield logo"
+                  style={{ height: '60px', width: 'auto', cursor: 'pointer' }}
+                  onClick={() => handleUserNavigation()}
+                />
+              )}
+            {currentUser &&
+              currentUser.email !== 'nathalia@futureinnox.com' && (
+                <img
+                  src={`${process.env.PUBLIC_URL}/kirkwall_logo_1_white.png`}
+                  alt="kirkwall logo"
+                  style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
+                  onClick={() => handleUserNavigation()}
+                />
+              )}
           </Box>
         </motion.div>
         <Flex align="center">
-          {/* {currentUser && currentUser.email !== 'jerrycromarty@imprimedicine.com' && (
-          <SummaryButton isSummaryOpen={isSummaryOpen} onSummaryToggle={onSummaryToggle} summaryMetrics={filteredSummaryMetrics} />
-        )} */}
           {isLargerThan768 && (
             <>
               {currentUser && currentUser.email === 'test@kirkwall.io' && (
@@ -307,9 +302,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                       src={
                         currentUser.email === 'pmo@grandfarm.com'
                           ? '/GrandFarmLogo.jpg'
-                          : currentUser.email ===
-                            'jerrycromarty@imprimedicine.com'
-                          ? '/ImpriMedLogo.png'
+                          : currentUser.email === 'nathalia@futureinnox.com'
+                          ? '/DisasterSHIELD.jpg'
                           : '/RookLogoWhite.png'
                       }
                       cursor="pointer"
@@ -330,9 +324,8 @@ const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
                     >
                       {currentUser.email === 'pmo@grandfarm.com'
                         ? 'Grand Farm'
-                        : currentUser.email ===
-                          'jerrycromarty@imprimedicine.com'
-                        ? 'ImpriMed'
+                        : currentUser.email === 'nathalia@futureinnox.com'
+                        ? 'Disaster Shield'
                         : 'Kirkwall'}
                     </PopoverHeader>
                     <PopoverBody>

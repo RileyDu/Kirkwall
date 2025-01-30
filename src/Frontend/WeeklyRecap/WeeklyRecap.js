@@ -99,20 +99,6 @@ const metricToName = {
   rain_15_min_inches: 'Rainfall',
   temp: 'Temperature (Watchdog)',
   hum: 'Humidity (Watchdog)',
-  imFreezerOneTemp: 'Freezer #1 Temp',
-  imFreezerOneHum: 'Freezer #1 Humidity',
-  imFreezerTwoTemp: 'Freezer #2 Temp',
-  imFreezerTwoHum: 'Freezer #2 Humidity',
-  imFreezerThreeTemp: 'Freezer #3 Temp',
-  imFreezerThreeHum: 'Freezer #3 Humidity',
-  imFridgeOneTemp: 'Fridge #1 Temp',
-  imFridgeOneHum: 'Fridge #1 Humidity',
-  imFridgeTwoTemp: 'Fridge #2 Temp',
-  imFridgeTwoHum: 'Fridge #2 Humidity',
-  imIncubatorOneTemp: 'Incubator #1 Temp',
-  imIncubatorOneHum: 'Incubator #1 Humidity',
-  imIncubatorTwoTemp: 'Incubator #2 Temp',
-  imIncubatorTwoHum: 'Incubator #2 Humidity',
 };
 
 // Utility function to format date as MM/DD/YY

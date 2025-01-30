@@ -29,6 +29,20 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET route for all security alerts
+router.get('/soalerts', async (req, res) => {
+  try {
+    const result = await client.query('SELECT * FROM soalerts');
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching security alerts:', error);
+    res
+      .status(500)
+      .json({ error: 'An error occurred while fetching security alerts' });
+  }
+});
+
+
 // GET /api/alerts/recap
 router.get('/recap', async (req, res) => {
   const { start_date } = req.query; // Get the start date from query params

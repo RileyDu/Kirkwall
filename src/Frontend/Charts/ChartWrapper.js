@@ -34,7 +34,6 @@ import { getLabelForMetric } from './ChartDashboard.js';
 import { useColorMode } from '@chakra-ui/react';
 import MiniMap from '../Maps/GrandFarmMiniMap.js';
 import { useAuth } from '../AuthComponents/AuthContext.js';
-import ImpriMiniMap from '../Maps/ImpriMiniMap.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import axios from 'axios';
 import WatchdogMap from '../Maps/WatchdogMiniMap.js';
@@ -97,7 +96,6 @@ const ChartWrapper = ({
 
   const mapComponents = {
     grandfarm: MiniMap,
-    imprimed: ImpriMiniMap,
     garage: WatchdogMap,
   };
 
@@ -109,13 +107,12 @@ const ChartWrapper = ({
   const { colorMode } = useColorMode();
 
   // Function to render close button on the chart
-  // Close button is rendered only on the home page and grandfarm, watchdogprotect, imprimed pages for now
+  // Close button is rendered only on the home page and grandfarm, watchdogprotect pages for now
   const renderCloseButton = () => {
     const routesWithCloseButton = [
       '/dashboard',
       '/grandfarm',
       '/watchdogprotect',
-      '/imprimed',
     ];
     return isLargerThan768 && routesWithCloseButton.includes(location.pathname);
   };
@@ -132,13 +129,6 @@ const ChartWrapper = ({
   // Function to set the map to display based on the metric
   const setMapToDisplay = (metric, currentUser) => {
     // Check for special case
-    if (
-      currentUser &&
-      currentUser.email === 'jerrycromarty@imprimedicine.com'
-    ) {
-      setSensorMap('imprimed');
-      return;
-    }
     switch (metric) {
       case 'temperature':
       case 'percent_humidity':

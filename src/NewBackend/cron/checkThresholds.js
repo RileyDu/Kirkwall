@@ -414,16 +414,6 @@ export const checkThresholds = async () => {
       if (!shouldSendAlert) continue; // Skip if interval hasn't passed
 
 
-      const renameKeyToMetric = (data, metric) => {
-        return data.map(d => {
-          const value = metric.endsWith('Temp') ? d.rctemp : d.humidity;
-          return {
-            [metric]: value,
-            publishedat: d.publishedat,
-          };
-        });
-      };
-
       // Get the latest data for the metric
       let responseData;
       let response;
@@ -445,119 +435,6 @@ export const checkThresholds = async () => {
             `${baseURL}/api/watchdog_data?limit=3`
           );
           break;
-
-        case 'imFreezerOneTemp':
-          response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E1150618C9DE&limit=3`
-          );
-          formattedData = response.data;
-          responseData = renameKeyToMetric(formattedData, 'imFreezerOneTemp');
-          break;
-
-        case 'imFreezerOneHum':
-          response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E1150618C9DE&limit=3`
-          );
-          formattedData = response.data;
-          responseData = renameKeyToMetric(formattedData, 'imFreezerOneHum');
-          break;
-
-        case 'imFreezerTwoTemp':
-          response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E115054FC6DF&limit=3`
-          );
-          formattedData = response.data;
-          responseData = renameKeyToMetric(formattedData, 'imFreezerTwoTemp');
-          break;
-
-        case 'imFreezerTwoHum':
-          response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E115054FC6DF&limit=3`
-          );
-          formattedData = response.data;
-          responseData = renameKeyToMetric(formattedData, 'imFreezerTwoHum');
-          break;
-
-        case 'imFreezerThreeTemp':
-          response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E1150618B549&limit=3`
-          );
-          formattedData = response.data;
-          responseData = renameKeyToMetric(formattedData, 'imFreezerThreeTemp');
-          break;
-
-        case 'imFreezerThreeHum':
-          response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E1150618B549&limit=3`
-          );
-          formattedData = response.data;
-          responseData = renameKeyToMetric(formattedData, 'imFreezerThreeHum');
-          break;
-
-        case 'imFridgeOneTemp':
-          response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E1150619155F&limit=3`
-          );
-          formattedData = response.data;
-          responseData = renameKeyToMetric(formattedData, 'imFridgeOneTemp');
-          break;
-
-        case 'imFridgeOneHum':
-          response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E1150619155F&limit=3`
-          );
-          formattedData = response.data;
-          responseData = renameKeyToMetric(formattedData, 'imFridgeOneHum');
-          break;
-
-        case 'imFridgeTwoTemp':
-          response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E115061924EA&limit=3`
-          );
-          formattedData = response.data;
-          responseData = renameKeyToMetric(formattedData, 'imFridgeTwoTemp');
-          break;
-
-        case 'imFridgeTwoHum':
-          response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E115061924EA&limit=3`
-          );
-          formattedData = response.data;
-          responseData = renameKeyToMetric(formattedData, 'imFridgeTwoHum');
-          break;
-
-        case 'imIncubatorOneTemp':
-          response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E115054FF1DC&limit=3`
-          );
-          formattedData = response.data;
-          responseData = renameKeyToMetric(formattedData, 'imIncubatorOneTemp');
-          break;
-
-        case 'imIncubatorOneHum':
-          response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E115054FF1DC&limit=3`
-          );
-          formattedData = response.data;
-          responseData = renameKeyToMetric(formattedData, 'imIncubatorOneHum');
-          break;
-
-        case 'imIncubatorTwoTemp':
-          response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E1150618B45F&limit=3`
-          );
-          formattedData = response.data;
-          responseData = renameKeyToMetric(formattedData, 'imIncubatorTwoTemp');
-          break;
-
-        case 'imIncubatorTwoHum':
-          response = await axios.get(
-            `${baseURL}/api/impriMed_data?deveui=0080E1150618B45F&limit=3`
-          );
-          formattedData = response.data;
-          responseData = renameKeyToMetric(formattedData, 'imIncubatorTwoHum');
-          break;
-
         default:
           console.error('Invalid metric:', metric);
       }
@@ -633,24 +510,8 @@ const getLabelForMetric = metric => {
   const metricLabels = {
     temperature: { label: '°F', addSpace: false },
     temp: { label: '°F', addSpace: false },
-    rctemp: { label: '°F', addSpace: false },
-    imFreezerOneTemp: { label: '°C', addSpace: false },
-    imFreezerTwoTemp: { label: '°C', addSpace: false },
-    imFreezerThreeTemp: { label: '°C', addSpace: false },
-    imFridgeOneTemp: { label: '°C', addSpace: false },
-    imFridgeTwoTemp: { label: '°C', addSpace: false },
-    imIncubatorOneTemp: { label: '°C', addSpace: false },
-    imIncubatorTwoTemp: { label: '°C', addSpace: false },
-    imFreezerOneHum: { label: '%', addSpace: false },
-    imFreezerTwoHum: { label: '%', addSpace: false },
-    imFreezerThreeHum: { label: '%', addSpace: false },
-    imFridgeOneHum: { label: '%', addSpace: false },
-    imFridgeTwoHum: { label: '%', addSpace: false },
-    imIncubatorOneHum: { label: '%', addSpace: false },
-    imIncubatorTwoHum: { label: '%', addSpace: false },
     hum: { label: '%', addSpace: false },
     percent_humidity: { label: '%', addSpace: false },
-    humidity: { label: '%', addSpace: false },
     rain_15_min_inches: { label: 'inches', addSpace: true },
     wind_speed: { label: 'MPH', addSpace: true },
     soil_moisture: { label: 'centibars', addSpace: true },

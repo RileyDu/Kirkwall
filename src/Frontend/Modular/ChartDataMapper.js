@@ -13,20 +13,6 @@ const ChartDataMapper = ({ dataForMetric }) => {
     watchdogTempData,
     watchdogHumData,
     watchdogData,
-    impriFreezerOneTempData,
-    impriFreezerOneHumData,
-    impriFreezerTwoTempData,
-    impriFreezerTwoHumData,
-    impriFreezerThreeTempData,
-    impriFreezerThreeHumData,
-    impriFridgeOneTempData,
-    impriFridgeOneHumData,
-    impriFridgeTwoTempData,
-    impriFridgeTwoHumData,
-    impriIncuOneTempData,
-    impriIncuOneHumData,
-    impriIncuTwoTempData,
-    impriIncuTwoHumData,
   } = useWeatherData();
 
   let dataForChart;
@@ -54,48 +40,6 @@ const ChartDataMapper = ({ dataForMetric }) => {
       break;
     case 'watchdogHumData':
       dataForChart = watchdogHumData || watchdogData;
-      break;
-    case 'imFreezerOneTempData':
-      dataForChart = impriFreezerOneTempData;
-      break;
-    case 'imFreezerOneHumData':
-      dataForChart = impriFreezerOneHumData;
-      break;
-    case 'imFreezerTwoTempData':
-      dataForChart = impriFreezerTwoTempData;
-      break;
-    case 'imFreezerTwoHumData':
-      dataForChart = impriFreezerTwoHumData;
-      break;
-    case 'imFreezerThreeTempData':
-      dataForChart = impriFreezerThreeTempData;
-      break;
-    case 'imFreezerThreeHumData':
-      dataForChart = impriFreezerThreeHumData;
-      break;
-    case 'imFridgeOneTempData':
-      dataForChart = impriFridgeOneTempData;
-      break;
-    case 'imFridgeOneHumData':
-      dataForChart = impriFridgeOneHumData;
-      break;
-    case 'imFridgeTwoTempData':
-      dataForChart = impriFridgeTwoTempData;
-      break;
-    case 'imFridgeTwoHumData':
-      dataForChart = impriFridgeTwoHumData;
-      break;
-    case 'imIncubatorOneTempData':
-      dataForChart = impriIncuOneTempData;
-      break;
-    case 'imIncubatorOneHumData':
-      dataForChart = impriIncuOneHumData;
-      break;
-    case 'imIncubatorTwoTempData':
-      dataForChart = impriIncuTwoTempData;
-      break;
-    case 'imIncubatorTwoHumData':
-      dataForChart = impriIncuTwoHumData;
       break;
     default:
       dataForChart = weatherData;

@@ -54,27 +54,10 @@ const calculateWeeklyRecap = async userMetrics => {
     'leaf_wetness',
   ];
   const watchdogMetrics = ['temp', 'hum'];
-  const impriMedMetrics = [
-    'imFreezerOneTemp',
-    'imFreezerOneHum',
-    'imFreezerTwoTemp',
-    'imFreezerTwoHum',
-    'imFreezerThreeTemp',
-    'imFreezerThreeHum',
-    'imFridgeOneTemp',
-    'imFridgeOneHum',
-    'imFridgeTwoTemp',
-    'imFridgeTwoHum',
-    'imIncubatorOneTemp',
-    'imIncubatorOneHum',
-    'imIncubatorTwoTemp',
-    'imIncubatorTwoHum',
-  ];
 
   const allMetrics = [
     ...weatherMetrics,
     ...watchdogMetrics,
-    ...impriMedMetrics,
   ];
 
   const userAssignedMetrics = allMetrics.filter(metric =>
@@ -92,22 +75,6 @@ const calculateWeeklyRecap = async userMetrics => {
 
 // Fetch specific data based on the metric type
 const fetchSpecificData = async metric => {
-  const deveuiPerMetric = {
-    imFreezerOneTemp: '0080E1150618C9DE',
-    imFreezerOneHum: '0080E1150618C9DE',
-    imFreezerTwoTemp: '0080E115054FC6DF',
-    imFreezerTwoHum: '0080E115054FC6DF',
-    imFreezerThreeTemp: '0080E1150618B549',
-    imFreezerThreeHum: '0080E1150618B549',
-    imFridgeOneTemp: '0080E1150619155F',
-    imFridgeOneHum: '0080E1150619155F',
-    imFridgeTwoTemp: '0080E115061924EA',
-    imFridgeTwoHum: '0080E115061924EA',
-    imIncubatorOneTemp: '0080E115054FF1DC',
-    imIncubatorOneHum: '0080E115054FF1DC',
-    imIncubatorTwoTemp: '0080E1150618B45F',
-    imIncubatorTwoHum: '0080E1150618B45F',
-  };
 
   try {
     let response;
@@ -115,16 +82,6 @@ const fetchSpecificData = async metric => {
       response = await axios.get(`${baseURL}/api/watchdog_data`, {
         params: { type: metric, limit: 1009 },
       });
-    } else if (
-      metric.startsWith('imFreezer') ||
-      metric.startsWith('imFridge') ||
-      metric.startsWith('imIncubator')
-    ) {
-      const deveui = deveuiPerMetric[metric];
-      response = await axios.get(`${baseURL}/api/impriMed_data`, {
-        params: { deveui: deveui, limit: 1009 },
-      });
-      response.data = renameKeyToMetric(response.data, metric);
     } else {
       response = await axios.get(`${baseURL}/api/weather_data`, {
         params: { type: metric, limit: 2017 },
@@ -159,32 +116,3 @@ const calculateMetrics = data => {
 
   return { high, low, avg };
 };
-
-// Rename key to metric for impriMed data
-const renameKeyToMetric = (data, metric) => {
-  return data.map(d => {
-    const value = metric.endsWith('Temp') ? d.rctemp : d.humidity;
-    return { [metric]: value, publishedat: d.publishedat };
-  });
-};
-
-
-// axios
-//         .get('/api/alerts/recap')
-//         .then(response => {
-//           // Filter alerts based on user metrics
-//           const filteredAlerts = response.data.filter(alert =>
-//             userMetrics.includes(alert.metric)
-//           );
-//           setRecentAlerts(filteredAlerts);
-
-//           // Count alerts by metric
-//           const alertCount = filteredAlerts.reduce((count, alert) => {
-//             count[alert.metric] = (count[alert.metric] || 0) + 1;
-//             return count;
-//           }, {});
-//           setAlertCounts(alertCount);
-//         })
-//         .catch(error => {
-//           console.error('Error fetching alerts:', error);
-//         });

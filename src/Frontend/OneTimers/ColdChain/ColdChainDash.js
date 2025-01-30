@@ -33,12 +33,7 @@ const ColdChainDash = () => {
       locations: ['Grand Farm'],
       sensors: ['Temperature Sensor', 'Pressure Sensor'],
       alerts: ['Pressure Alert', 'Humidity Alert', 'Sensor Stoppage Alert'],
-    },
-    'jerrycromarty@imprimedicine.com': {
-      locations: ['ImpriMed'],
-      sensors: ['Light Sensor', 'CO2 Sensor'],
-      alerts: ['CO2 Alert', 'Light Intensity Alert'],
-    },
+    }
   };
 
   // Local state to track selected customer

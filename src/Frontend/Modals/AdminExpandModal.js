@@ -103,7 +103,7 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     const fetchAlertsLastHour = async () => {
       setLoadingAlerts(true);
       try {
-        const response = await axios.get('/api/alerts_last_hour'); // Use Axios to call the new backend route
+      const response = await axios.get('/api/alerts/alerts_last_hour'); // Use Axios to call the new backend route
         const result = response.data;
         // console.log('result', result);
         if (result && result.length > 0) {
@@ -304,23 +304,17 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
       { label: 'Leaf Wetness', metric: 'leaf_wetness' },
       { label: 'Rainfall', metric: 'rain_15_min_inches' },
     ],
-    'jerrycromarty@imprimedicine.com': [
-      { label: 'Freezer #1 Temp', metric: 'imFreezerOneTemp' },
-      { label: 'Freezer #1 Hum', metric: 'imFreezerOneHum' },
-      { label: 'Freezer #2 Temp', metric: 'imFreezerTwoTemp' },
-      { label: 'Freezer #2 Hum', metric: 'imFreezerTwoHum' },
-      { label: 'Freezer #3 Temp', metric: 'imFreezerThreeTemp' },
-      { label: 'Freezer #3 Hum', metric: 'imFreezerThreeHum' },
-      { label: 'Fridge #1 Temp', metric: 'imFridgeOneTemp' },
-      { label: 'Fridge #1 Hum', metric: 'imFridgeOneHum' },
-      { label: 'Fridge #2 Temp', metric: 'imFridgeTwoTemp' },
-      { label: 'Fridge #2 Hum', metric: 'imFridgeTwoHum' },
-      { label: 'Incu #1 Temp', metric: 'imIncubatorOneTemp' },
-      { label: 'Incu #1 Hum', metric: 'imIncubatorOneHum' },
-      { label: 'Incu #2 Temp', metric: 'imIncubatorTwoTemp' },
-      { label: 'Incu #2 Hum', metric: 'imIncubatorTwoHum' },
-    ],
     'test@kirkwall.io': [
+      { label: 'Temperature (Watchdog)', metric: 'temp' },
+      { label: 'Humidity (Watchdog)', metric: 'hum' },
+      { label: 'Temperature (GF)', metric: 'temperature' },
+      { label: 'Humidity (GF)', metric: 'percent_humidity' },
+      { label: 'Wind Speed (GF)', metric: 'wind_speed' },
+      { label: 'Soil Moisture (GF)', metric: 'soil_moisture' },
+      { label: 'Leaf Wetness (GF)', metric: 'leaf_wetness' },
+      { label: 'Rainfall (GF)', metric: 'rain_15_min_inches' },
+    ],
+    'nathalia@futureinnox.com': [
       { label: 'Temperature (Watchdog)', metric: 'temp' },
       { label: 'Humidity (Watchdog)', metric: 'hum' },
       { label: 'Temperature (GF)', metric: 'temperature' },
@@ -341,20 +335,6 @@ const AdminExpandModal = ({ isOpen, onClose, userEmail }) => {
     rain_15_min_inches: 'Rainfall',
     temp: 'Temperature (Watchdog)',
     hum: 'Humidity (Watchdog)',
-    imFreezerOneTemp: 'Freezer #1 Temp (°C)',
-    imFreezerOneHum: 'Freezer #1 Humidity (%)',
-    imFreezerTwoTemp: 'Freezer #2 Temp (°C)',
-    imFreezerTwoHum: 'Freezer #2 Humidity (%)',
-    imFreezerThreeTemp: 'Freezer #3 Temp (°C)',
-    imFreezerThreeHum: 'Freezer #3 Humidity (%)',
-    imFridgeOneTemp: 'Fridge #1 Temp (°C)',
-    imFridgeOneHum: 'Fridge #1 Humidity (%)',
-    imFridgeTwoTemp: 'Fridge #2 Temp (°C)',
-    imFridgeTwoHum: 'Fridge #2 Humidity (%)',
-    imIncubatorOneTemp: 'Incubator #1 Temp (°C)',
-    imIncubatorOneHum: 'Incubator #1 Humidity (%)',
-    imIncubatorTwoTemp: 'Incubator #2 Temp (°C)',
-    imIncubatorTwoHum: 'Incubator #2 Humidity (%)',
   };
   const nameToMetric = Object.fromEntries(
     Object.entries(metricToName).map(([key, value]) => [

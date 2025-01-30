@@ -24,10 +24,10 @@ import {
   FaVideo,
   FaTractor,
   FaLock,
-  FaAtom
+  FaAtom,
 } from 'react-icons/fa';
 import { MdElectricBolt } from 'react-icons/md';
-import { TbFridge } from "react-icons/tb";
+import { TbFridge } from 'react-icons/tb';
 import { GiGroundSprout } from 'react-icons/gi';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -83,32 +83,43 @@ const buttonConfig = {
     // { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/grandfarm/map' },
     { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
-    { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
-
+    // {
+    //   icon: <FaCalendarWeek size="30" />,
+    //   label: 'Weekly Recap',
+    //   route: '/weeklyrecap',
+    // },
   ],
-  'jerrycromarty@imprimedicine.com': [
+  'nathalia@futureinnox.com': [
+    {
+      icon: <WiThermometer size="30" />,
+      label: 'Temperature',
+      route: '/TempSensors',
+    },
+    {
+      icon: <WiHumidity size="30" />,
+      label: 'Humidity',
+      route: '/HumiditySensors',
+    },
+    { icon: <WiStrongWind size="30" />, label: 'Wind', route: '/WindSensors' },
+    { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
     { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
-    { icon: <FaGlobe size="30" />, label: 'Map', route: '/imprimed/map' },
-    { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
-    { icon: <FaCalendarWeek size="30" />, label: 'Weekly Recap', route: '/weeklyrecap' },
-
+    { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' },
   ],
   default: [
     { icon: <FaDog size="30" />, label: 'Watchdog', route: '/WatchdogSensors' },
     { icon: <FaBookOpen size="30" />, label: 'Summary', route: '/summary' },
     { icon: <FaGlobe size="30" />, label: 'Map', route: '/map' },
-    // { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
+    { icon: <MdElectricBolt size="30" />, label: 'Energy', route: '/energy' },
     {
       icon: <FaCalendarWeek size="30" />,
       label: 'Weekly Recap',
       route: '/weeklyrecap',
     },
-    // { icon: <FaVideo size="30" />, label: 'Video Feeds', route: '/videofeed' },
-    // { icon: <FaTractor size="30" />, label: 'AgSraper', route: '/agscraper' },
-    // { icon: <TbFridge size="30" />, label: 'Cold Chain', route: '/coldchain' },
+    { icon: <FaVideo size="30" />, label: 'Video Feeds', route: '/videofeed' },
+    { icon: <FaTractor size="30" />, label: 'AgSraper', route: '/agscraper' },
+    { icon: <TbFridge size="30" />, label: 'Cold Chain', route: '/coldchain' },
     { icon: <FaLock size="30" />, label: 'Security', route: '/soalerts' },
-    // { icon: <FaAtom size="30" />, label: 'Bioworx', route: '/bioworx' },
-
+    { icon: <FaAtom size="30" />, label: 'Bioworx', route: '/bioworx' },
   ],
 };
 
