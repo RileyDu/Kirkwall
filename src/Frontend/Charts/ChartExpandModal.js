@@ -252,7 +252,7 @@ const ChartExpandModal = ({
     // Send the new threshold to the backend
     try {
       // Perform Axios POST request to create the threshold
-      await axios.post('/api/create_threshold', {
+      await axios.post('/api/thresholds/create_threshold', {
         metric,
         high: parseFloat(highThreshold),
         low: parseFloat(lowThreshold),
