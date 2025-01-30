@@ -52,4 +52,20 @@ export const CustomerSettings = [
       'imIncubatorTwoHum',
     ],
   },
+  {
+    id: 7,
+    name: 'Disaster Shield',
+    email: 'nathalia@futureinnox.com',
+    phone: '',
+    metric: [
+      'temp',
+      'hum',
+      'temperature',
+      'percent_humidity',
+      'wind_speed',
+      'soil_moisture',
+      'rain_15_min_inches',
+      'leaf_wetness',
+    ],
+  },
 ];
