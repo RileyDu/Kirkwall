@@ -4,12 +4,14 @@ import express from 'express';
 const router = express.Router();
 import pkg from 'pg';
 const { Client } = pkg;
+import { checkThresholds } from '../cron/checkThresholds.js';
 
 // Initialize PostgreSQL client
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }, // Required for Azure
 });
+
 
 client
   .connect()
@@ -138,6 +140,18 @@ router.put('/update_last_alert_time/:id', async (req, res) => {
     res
       .status(500)
       .json({ error: 'An error occurred while updating the last alert time' });
+  }
+});
+
+// Route to manually trigger the threshold check cron job
+// GET /api/thresholds/run-check-thresholds
+router.get('/run-check-thresholds', async (req, res) => {
+  try {
+    await checkThresholds(); // Call your cron job logic
+    res.status(200).json({ message: 'Threshold check completed.' });
+  } catch (error) {
+    console.error('Server: Error running threshold check:', error);
+    res.status(500).json({ error: 'Failed to run threshold check' });
   }
 });
 
