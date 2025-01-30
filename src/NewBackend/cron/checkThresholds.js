@@ -91,10 +91,10 @@ export const checkThresholds = async () => {
     thresholdId,
     adminPhone
   ) => {
-    const alertUrl = `https://kirkwall-demo.vercel.app/api/update_threshold/${thresholdId}?thresh_kill=true&timeframe=${encodeURIComponent(
+    const alertUrl = `https://kirkwall-demo.vercel.app/api/thresholds/update_threshold/${thresholdId}?thresh_kill=true&timeframe=${encodeURIComponent(
       '99 days'
     )}`;
-    const disableAll = `https://kirkwall-demo.vercel.app/api/update_admin_thresh/${adminPhone}?thresh_kill=true`;
+    const disableAll = `https://kirkwall-demo.vercel.app/api/thresholds/update_admin_thresh/${adminPhone}?thresh_kill=true`;
 
     const smsBody = `${alertMessage}.. Click to disable alerts for this sensor: ${alertUrl}.`;
 
@@ -120,10 +120,10 @@ export const checkThresholds = async () => {
     thresholdId,
     adminPhone
   ) => {
-    const alertUrl = `https://kirkwall-demo.vercel.app/api/update_threshold/${thresholdId}?thresh_kill=true&timeframe=${encodeURIComponent(
+    const alertUrl = `https://kirkwall-demo.vercel.app/api/thresholds/update_threshold/${thresholdId}?thresh_kill=true&timeframe=${encodeURIComponent(
       '99 days'
     )}`;
-    const disableAll = `https://kirkwall-demo.vercel.app/api/update_admin_thresh/${adminPhone}?thresh_kill=true`;
+    const disableAll = `https://kirkwall-demo.vercel.app/api/thresholds/update_admin_thresh/${adminPhone}?thresh_kill=true`;
     console.log(adminPhone);
     console.log(disableAll);
     console.log(alertUrl);
@@ -159,7 +159,7 @@ export const checkThresholds = async () => {
   const sendAlertToDB = async (metric, message, timestamp) => {
     try {
       console.log(`Sending alert to database: ${message}`);
-      await axios.post(`${baseURL}/api/create_alert`, {
+      await axios.post(`${baseURL}/api/alerts/create_alert`, {
         metric: metric,
         message: message,
         timestamp: timestamp,
@@ -184,7 +184,7 @@ export const checkThresholds = async () => {
 
   const checkAlertInterval = async (thresholdId, alertInterval, metric) => {
     try {
-      const lastAlertResponse = await axios.get(`${baseURL}/api/get_last_alert_time/${thresholdId}`);
+      const lastAlertResponse = await axios.get(`${baseURL}/api/thresholds/get_last_alert_time/${thresholdId}`);
       const lastAlertTime = lastAlertResponse.data.lastAlertTime;
       const currentTime = new Date();
   
@@ -221,7 +221,7 @@ export const checkThresholds = async () => {
   const recordAlertTime = async (thresholdId, metric) => {
     const currentTime = moment.utc().toISOString(); // Current time in UTC format
     try {
-      await axios.put(`${baseURL}/api/update_last_alert_time/${thresholdId}`, { lastAlertTime: currentTime });
+      await axios.put(`${baseURL}/api/thresholds/update_last_alert_time/${thresholdId}`, { lastAlertTime: currentTime });
       console.log(`Recorded new alert time for ${metric}`);
     } catch (error) {
       console.error('Error recording alert time:', error);
@@ -312,7 +312,7 @@ export const checkThresholds = async () => {
   const debounceTime = 5 * 60 * 1000; // 5 minutes in milliseconds
 
   try {
-    const admins = await axios.get(`${baseURL}/api/admins`);
+    const admins = await axios.get(`${baseURL}/api/admin`);
     // console.log('Admins data:', admins.data);
     const thresholds = await axios.get(`${baseURL}/api/thresholds`);
     // console.log('Thresholds data:', thresholds.data);
@@ -387,7 +387,7 @@ export const checkThresholds = async () => {
 
           const timestampNow = new Date().toISOString();
           try {
-            await axios.post(`${baseURL}/api/create_threshold`, {
+            await axios.post(`${baseURL}/api/thresholds/create_threshold`, {
               metric,
               high: high,
               low: low,
