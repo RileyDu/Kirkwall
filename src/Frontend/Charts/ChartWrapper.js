@@ -21,7 +21,6 @@ import {
 } from '@chakra-ui/react';
 import {
   FaExpandAlt,
-  FaTimes,
   FaChartBar,
   FaChartLine,
   FaMap,
@@ -57,11 +56,37 @@ const ChartWrapper = ({
   const [sensorMap, setSensorMap] = useState('grandfarm'); // State to toggle between map and chart
   const [userTitle, setUserTitle] = useState('Location');
   const { chartData, setChartData } = useWeatherData();
-  const isMounted = useRef(false);
   const [newTitle, setNewTitle] = useState(chartDataForMetric?.location);
   const [chartType, setChartType] = useState(chartDataForMetric?.type);
   const [chartID, setChartID] = useState(chartDataForMetric?.id);
   const [isTitlePopoverOpen, setIsTitlePopoverOpen] = useState(false);
+  const { currentUser } = useAuth();
+  const location = useLocation();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
+  const { colorMode } = useColorMode();
+  const mapComponents = {
+    grandfarm: MiniMap,
+    garage: WatchdogMap,
+  };
+  const MapComponent = mapComponents[sensorMap] || null;
+  const fontSize = useBreakpointValue({
+    base: 'xs',
+    md: 'sm',
+    lg: 'sm',
+    xl: 'md',
+    xxl: 'lg',
+  });
+  const titleSize = useBreakpointValue({ base: 'sm', md: 'lg' });
+  const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
+  const iconSize = useBreakpointValue({ base: 'xs', md: 'sm' });
+  const closeSize = useBreakpointValue({ base: 'sm', md: 'lg' });
+  const MotionButton = motion(Button);
+  const MotionIconButton = motion(IconButton);
+  const [runModalTour, setRunModalTour] = useState(false);
+  const isUserAction = useRef(false);
+  const [logo, setLogo] = useState('');
+
 
   // Function to handle chart type change and switch between bar and line chart
   // User can switch between bar and line chart by button click
@@ -82,29 +107,6 @@ const ChartWrapper = ({
       )
     );
   };
-
-  const isUserAction = useRef(false);
-
-  useEffect(() => {
-    if (isUserAction.current) {
-      handleChartEdit();
-      isUserAction.current = false; // Reset the flag after the update
-    }
-  }, [chartType, chartData]);
-
-  const { currentUser } = useAuth();
-
-  const mapComponents = {
-    grandfarm: MiniMap,
-    garage: WatchdogMap,
-  };
-
-  const MapComponent = mapComponents[sensorMap] || null;
-
-  const location = useLocation();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const toast = useToast();
-  const { colorMode } = useColorMode();
 
   // Function to render close button on the chart
   // Close button is rendered only on the home page and grandfarm, watchdogprotect pages for now
@@ -147,11 +149,6 @@ const ChartWrapper = ({
     }
   };
 
-  // Set the map to display based on the metric on page load
-  useEffect(() => {
-    setMapToDisplay(metric, currentUser);
-  }, [metric, currentUser]);
-
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
 
   const getBackgroundColor = colorMode =>
@@ -191,28 +188,10 @@ const ChartWrapper = ({
     return logoMap[colorMode][metric] || '';
   };
 
-  const [logo, setLogo] = useState('');
-
-  useEffect(() => {
-    setLogo(getLogoToDisplay(metric, colorMode));
-  }, [metric, colorMode]);
-
   const mostRecentValue =
     weatherData && weatherData.length > 0 ? weatherData[0][metric] : 'N/A';
   const { label, addSpace } = getLabelForMetric(metric);
   const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
-
-  const fontSize = useBreakpointValue({
-    base: 'xs',
-    md: 'sm',
-    lg: 'sm',
-    xl: 'md',
-    xxl: 'lg',
-  });
-  const titleSize = useBreakpointValue({ base: 'sm', md: 'lg' });
-  const paddingBottom = useBreakpointValue({ base: '16', md: '16' });
-  const iconSize = useBreakpointValue({ base: 'xs', md: 'sm' });
-  const closeSize = useBreakpointValue({ base: 'sm', md: 'lg' });
 
   const calculateTimePeriod = dataLength => {
     const totalMinutes =
@@ -239,6 +218,9 @@ const ChartWrapper = ({
     }
   };
 
+  const timeOfGraph =
+  weatherData && calculateTimePeriod(weatherData.length - 1);
+
   const getChartIcon = () => {
     switch (chartType) {
       case 'bar':
@@ -250,46 +232,17 @@ const ChartWrapper = ({
     }
   };
 
-  // const showLoadingToast = () => {
-  //   toast({
-  //     title: 'Loading Data',
-  //     description: 'We are fetching the latest data for you.',
-  //     status: 'info',
-  //     duration: null, // Keeps the toast open until manually closed
-  //     isClosable: true,
-  //     size: 'lg',
-  //     position: 'top',
-  //   });
-  // };
-
   const handleTimeButtonClick = async timePeriod => {
-    if (timePeriod === currentTimePeriod) return; // Prevent fetching if the time period is already selected
-
-    // showLoadingToast();
+    if (timePeriod === currentTimePeriod) return;
     setLoading(true);
-
     try {
       const result = await handleTimePeriodChange(metric, timePeriod);
-      setCurrentTimePeriod(timePeriod); // Update the current time period after successful fetch
+      setCurrentTimePeriod(timePeriod);
     } catch (error) {
-      // Handle error
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (!loading) {
-      toast.closeAll(); // Close all toasts when loading is complete
-    }
-  }, [loading, toast]);
-
-  const timeOfGraph =
-    weatherData && calculateTimePeriod(weatherData.length - 1);
-
-  const MotionButton = motion(Button);
-
-  const MotionIconButton = motion(IconButton);
 
   const editChart = async (id, metric, timeperiod, type, location, hidden) => {
     try {
@@ -334,7 +287,27 @@ const ChartWrapper = ({
     editChart(id, metric, timeperiod, type, location, hidden);
   };
 
-  const [runModalTour, setRunModalTour] = useState(false);
+  useEffect(() => {
+    setLogo(getLogoToDisplay(metric, colorMode));
+  }, [metric, colorMode]);
+
+  useEffect(() => {
+    if (isUserAction.current) {
+      handleChartEdit();
+      isUserAction.current = false; // Reset the flag after the update
+    }
+  }, [chartType, chartData]);
+
+  useEffect(() => {
+    if (!loading) {
+      toast.closeAll(); // Close all toasts when loading is complete
+    }
+  }, [loading, toast]);
+
+    // Set the map to display based on the metric on page load
+    useEffect(() => {
+      setMapToDisplay(metric, currentUser);
+    }, [metric, currentUser]);
 
   return (
     <>
@@ -350,13 +323,7 @@ const ChartWrapper = ({
         w="100%"
       >
         <Flex justify="space-between" mb="4" align="center">
-          <Box
-            fontSize={titleSize}
-            fontWeight="bold"
-            whiteSpace="nowrap"
-            // overflow="hidden"
-            // textOverflow="ellipsis"
-          >
+          <Box fontSize={titleSize} fontWeight="bold" whiteSpace="nowrap">
             {logo && (
               <img
                 src={logo}
@@ -522,10 +489,10 @@ const ChartWrapper = ({
                       <PopoverBody color="#212121" p={0}>
                         <Box
                           display="flex"
-                          flexWrap="wrap" // Allows buttons to wrap if they don't fit in one line
+                          flexWrap="wrap"
                           gap={0.5}
-                          p={2} // Add some padding inside the Box for spacing
-                          w="100%" // Ensure the Box takes full width
+                          p={2}
+                          w="100%"
                         >
                           {['1H', '3H', '6H', '12H', '1D', '3D', '1W'].map(
                             timePeriod => (
@@ -549,8 +516,8 @@ const ChartWrapper = ({
                                     : 'black'
                                 }
                                 fontSize={fontSize}
-                                flex="1 1 0" // Ensures buttons take equal space and grow
-                                m={0} // Remove margin
+                                flex="1 1 0"
+                                m={0}
                               >
                                 {timePeriod}
                               </MotionButton>
@@ -631,7 +598,7 @@ const ChartWrapper = ({
                     border={'2px solid #3D5A80'}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    mb={[.5, 0]}
+                    mb={[0.5, 0]}
                   />
                 </Tooltip>
               </motion.div>
