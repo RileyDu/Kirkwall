@@ -41,10 +41,10 @@ const processWeatherData = (data, key, colorMode) => {
 
   const chartData = {
     labels: reversedData.map(item => {
-      let date = new Date(item.message_timestamp || item.reading_time || item.publishedat);
+      let date = new Date(item.message_timestamp || item.reading_time || item.publishedat || item.last_communication_date);
     
       // If the date is from `reading_time` or `publishedat`, adjust it by 5 hours (assuming they are 5 hours behind)
-      if (item.reading_time || item.publishedat) {
+      if (item.reading_time || item.publishedat || item.last_communication_date) {
         date.setHours(date.getHours() + 5);
       }
     

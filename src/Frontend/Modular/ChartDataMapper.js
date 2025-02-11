@@ -13,6 +13,9 @@ const ChartDataMapper = ({ dataForMetric }) => {
     watchdogTempData,
     watchdogHumData,
     watchdogData,
+    monnitBathroomData,
+    monnitFridgeData,
+    monnitFreezerData,
   } = useWeatherData();
 
   let dataForChart;
@@ -40,6 +43,15 @@ const ChartDataMapper = ({ dataForMetric }) => {
       break;
     case 'watchdogHumData':
       dataForChart = watchdogHumData || watchdogData;
+      break;
+    case 'monnitBathroomData':
+      dataForChart = monnitBathroomData || monnitBathroomData;
+      break;
+    case 'monnitFridgeData':
+      dataForChart = monnitFridgeData || monnitFridgeData;
+      break;
+    case 'monnitFreezerData':
+      dataForChart = monnitFreezerData || monnitFreezerData;
       break;
     default:
       dataForChart = weatherData;

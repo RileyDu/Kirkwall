@@ -142,6 +142,9 @@ const ChartWrapper = ({
         break;
       case 'temp':
       case 'hum':
+      case 'monnit_bathroom':
+      case 'monnit_fridge':
+      case 'monnit_freezer':
         setSensorMap('garage');
         break;
       default:

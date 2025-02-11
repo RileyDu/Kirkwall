@@ -176,6 +176,31 @@ export const WeatherDataProvider = ({ children }) => {
     }
   }, [currentUser]);
 
+  useEffect(() => {
+    if (currentUser && currentUser.email === 'test@kirkwall.io') {
+      const fetchAllMonnitData = () => {
+        fetchMonnitData('monnit_bathroom', selectedTimePeriodMonnitBathroom);
+        fetchMonnitData('monnit_fridge', selectedTimePeriodMonnitFridge);
+        fetchMonnitData('monnit_freezer', selectedTimePeriodMonnitFreezer);
+      };
+  
+      // Initial fetch
+      fetchAllMonnitData();
+  
+      // Set up interval to fetch data every 30 seconds
+      const intervalId = setInterval(fetchAllMonnitData, 30000);
+  
+      // Cleanup interval on component unmount or if dependencies change
+      return () => clearInterval(intervalId);
+    }
+  }, [
+    currentUser,
+    selectedTimePeriodMonnitBathroom,
+    selectedTimePeriodMonnitFridge,
+    selectedTimePeriodMonnitFreezer,
+  ]);
+  
+
   const fetchAlertsThreshold = async () => {
     console.log('Received request for alerts per user');
     const userMetrics = CustomerSettings.find(
@@ -298,6 +323,18 @@ export const WeatherDataProvider = ({ children }) => {
         setSelectedTimePeriodWDHum(timePeriod);
         setDataLoaded(prevState => ({ ...prevState, watchdogHum: true }));
         break;
+      case 'monnit_bathroom':
+        setSelectedTimePeriodMonnitBathroom(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, monnitBathroom: true }));
+        break;
+      case 'monnit_fridge':
+        setSelectedTimePeriodMonnitFridge(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, monnitFridge: true }));
+        break;
+      case 'monnit_freezer':
+        setSelectedTimePeriodMonnitFreezer(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, monnitFreezer: true }));
+        break;
       default:
         break;
     }
@@ -362,6 +399,54 @@ export const WeatherDataProvider = ({ children }) => {
     // Return the appropriate limit based on the time period, or the default if time period is not found
     return limits[timePeriod]
   };
+  
+
+// A helper function to rename the "current_reading" key to a new key (e.g., "monnit_bathroom")
+const renameCurrentReadingKey = (data, newKey) => {
+  // Ensure data is an array. Then, for each row, remove "current_reading"
+  // and add a new key with its value.
+  return data.map(item => {
+    const { current_reading, ...rest } = item;
+    return { ...rest, [newKey]: current_reading };
+  });
+};
+
+const fetchMonnitData = async (sensor, timePeriod) => {
+  try {
+    // Convert timePeriod into a limit value
+    const limit = determineLimitBasedOnTimePeriod(sensor, timePeriod);
+    
+    const response = await axios.get('/api/monnit', {
+      params: { sensor, limit }
+    });
+    
+    
+    // Rename "current_reading" key to the sensor name (e.g., "monnit_bathroom")
+    const renamedData = renameCurrentReadingKey(response.data, sensor);
+    
+    // Update the correct state based on the sensor
+    switch (sensor) {
+      case 'monnit_bathroom':
+        setMonnitBathroomData(renamedData);
+        console.log('this is the monnit data', renamedData);
+        break;
+      case 'monnit_fridge':
+        setMonnitFridgeData(renamedData);
+        console.log('this is the monnit data', renamedData);
+
+        break;
+      case 'monnit_freezer':
+        setMonnitFreezerData(renamedData);
+        console.log('this is the monnit data', renamedData);
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    console.error(`Error fetching ${sensor} data:`, error);
+  }
+};
+
   
 
   const fetchSpecificData = async (metric, timePeriod) => {
@@ -448,6 +533,9 @@ export const WeatherDataProvider = ({ children }) => {
         chartData,
         setChartData,
         fetchChartData,
+        monnitBathroomData,
+        monnitFridgeData,
+        monnitFreezerData,
       }}
     >
       {children}

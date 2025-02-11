@@ -79,4 +79,34 @@ export const MetricSettings = [
         soloData:"watchdogHumData",
         sourceData: "watchdogData"
     },
+    {
+        id:9,
+        metric:"monnit_bathroom",
+        name:"Bathroom Temp & Hum",
+        unit:"°F",
+        color:"orange",
+        company:"Monnit",
+        soloData:"monnitBathroomData",
+        sourceData: "monnitBathroomData"
+    },
+    {
+        id:10,
+        metric:"monnit_fridge",
+        name:"Fridge Temp",
+        unit:"°F",
+        color:"orange",
+        company:"Monnit",
+        soloData:"monnitFridgeData",
+        sourceData: "monnitFridgeData"
+    },  
+    {
+        id:11,
+        metric:"monnit_freezer",
+        name:"Freezer Temp",
+        unit:"°F",
+        color:"orange",
+        company:"Monnit",
+        soloData:"monnitFreezerData",
+        sourceData: "monnitFreezerData"
+    }
 ];
