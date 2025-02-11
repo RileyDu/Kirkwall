@@ -24,6 +24,9 @@ export const WeatherDataProvider = ({ children }) => {
     useState('3H');
   const [selectedTimePeriodWDTemp, setSelectedTimePeriodWDTemp] =
     useState('3H');
+    const [selectedTimePeriodMonnitBathroom, setSelectedTimePeriodMonnitBathroom] = useState('3H');
+    const [selectedTimePeriodMonnitFridge, setSelectedTimePeriodMonnitFridge] = useState('3H');
+    const [selectedTimePeriodMonnitFreezer, setSelectedTimePeriodMonnitFreezer] = useState('3H');
   const [selectedTimePeriodWDHum, setSelectedTimePeriodWDHum] = useState('3H');
   const [tempData, setTempData] = useState(null);
   const [humidityData, setHumidityData] = useState(null);
@@ -34,6 +37,9 @@ export const WeatherDataProvider = ({ children }) => {
   const [watchdogData, setWatchdogData] = useState([]);
   const [watchdogTempData, setWatchdogTempData] = useState(null);
   const [watchdogHumData, setWatchdogHumData] = useState(null);
+  const [monnitBathroomData, setMonnitBathroomData] = useState(null);
+  const [monnitFridgeData, setMonnitFridgeData] = useState(null);
+  const [monnitFreezerData, setMonnitFreezerData] = useState(null);
   const [alertsThreshold, setAlertsThreshold] = useState({});
   const [thresholds, setThresholds] = useState([]);
   const [chartData, setChartData] = useState([]);
@@ -46,6 +52,9 @@ export const WeatherDataProvider = ({ children }) => {
     leafWetness: false,
     watchdogTemp: false,
     watchdogHum: false,
+    monnitBathroom: false,
+    monnitFridge: false,
+    monnitFreezer: false,
   });
 
   const { currentUser } = useAuth();
@@ -128,7 +137,6 @@ export const WeatherDataProvider = ({ children }) => {
     if (
       currentUser &&
       (currentUser?.email === 'test@kirkwall.io' ||
-        currentUser?.email === 'trey@watchdogprotect.com' ||
         currentUser?.email === 'nathalia@futureinnox.com')
     ) {
       const fetchData = async () => {
@@ -145,11 +153,6 @@ export const WeatherDataProvider = ({ children }) => {
             } else {
               setWatchdogData([]);
             }
-          } else if (currentUser.email === 'trey@watchdogprotect.com') {
-            const watchdogResponse = await axios.get('/api/watchdog_data', {
-              params: { type: 'all', limit: '19' },
-            });
-
             if (Array.isArray(watchdogResponse.data)) {
               setWatchdogData(watchdogResponse.data);
             } else {
