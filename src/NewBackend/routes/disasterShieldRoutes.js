@@ -19,15 +19,46 @@ client
 // GET /api/disastershield
 // Returns all data from the disastershield table
 router.get('/', async (req, res) => {
-    const query = 'SELECT * FROM disastershield';  // Declare query properly
+  const query = 'SELECT * FROM disastershield ORDER BY id';
 
-    try {
-        const result = await client.query(query);
-        res.status(200).json(result.rows);
-    } catch (error) {
-        console.error('Disaster Shield Routes: Error fetching data:', error);
-        res.status(500).json({ error: 'An error occurred while fetching data' });
+  try {
+    const result = await client.query(query);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Disaster Shield Routes: Error fetching data:', error);
+    res.status(500).json({ error: 'An error occurred while fetching data' });
+  }
+});
+
+// POST /api/disastershield/updateCoordinates
+// Expects a JSON body with { id, latitude, longitude }
+// Updates the specified record in the disastershield table
+router.post('/updateCoordinates', async (req, res) => {
+  const { id, latitude, longitude } = req.body;
+
+  // Validate required fields
+  if (!id || typeof latitude === 'undefined' || typeof longitude === 'undefined') {
+    return res
+      .status(400)
+      .json({ error: 'Missing required fields: id, latitude, and longitude' });
+  }
+
+  const query =
+    'UPDATE disastershield SET latitude = $1, longitude = $2 WHERE id = $3 RETURNING *';
+  const values = [latitude, longitude, id];
+
+  try {
+    const result = await client.query(query, values);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Record not found' });
     }
+    res
+      .status(200)
+      .json({ message: 'Coordinates updated successfully', site: result.rows[0] });
+  } catch (error) {
+    console.error('Disaster Shield Routes: Error updating coordinates:', error);
+    res.status(500).json({ error: 'An error occurred while updating coordinates' });
+  }
 });
 
 export default router;
