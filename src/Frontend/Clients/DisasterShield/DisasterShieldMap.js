@@ -305,7 +305,7 @@ const DisasterShield = () => {
         p={6}
         overflowX="auto"
         mb={8}
-        minHeight="70vh"
+        minHeight="60vh"
       >
         <Flex direction={{ base: 'column', md: 'row' }} gap={4}>
           {/* Table Section */}
@@ -313,7 +313,7 @@ const DisasterShield = () => {
             <Heading size="md" mb={4}>
               Registered Locations
             </Heading>
-            <TableContainer maxHeight="60vh" overflowY="auto">
+            <TableContainer maxHeight="55vh" overflowY="auto">
               <Table variant="simple" size="md">
                 <Thead position="sticky" top={0} bg="gray.500" zIndex={1}>
                   <Tr>
