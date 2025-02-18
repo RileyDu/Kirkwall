@@ -72,14 +72,11 @@ const DisasterShield = () => {
   if (loadError) return <Text>Error loading maps</Text>;
   if (!isLoaded) return <Text>Loading Maps...</Text>;
 
-  // Compute unique cities (extracted from address) and service types
+  // Compute unique cities and service types
   const uniqueCities = Array.from(
-    new Set(
-      disasterSites
-        .map(site => site.address.split(',')[1]?.trim())
-        .filter(city => city)
-    )
+    new Set(disasterSites.map(site => site.city).filter(city => city))
   );
+  
   const uniqueServiceTypes = Array.from(
     new Set(disasterSites.map(site => site.type).filter(type => type))
   );
@@ -91,10 +88,9 @@ const DisasterShield = () => {
     let searchMatch = true;
 
     if (selectedCity !== 'All') {
-      // Assuming city is the second element when splitting by comma
-      const city = site.address.split(',')[1]?.trim();
-      cityMatch = city === selectedCity;
+      cityMatch = site.city === selectedCity;
     }
+    
     if (selectedType !== 'All') {
       typeMatch = site.type === selectedType;
     }
