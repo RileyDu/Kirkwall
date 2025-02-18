@@ -61,4 +61,39 @@ router.post('/updateCoordinates', async (req, res) => {
   }
 });
 
+// PUT /api/disastershield/:id/updateLocation
+// Expects a JSON body with { city, state }
+// Updates the specified record in the disastershield table.
+router.put('/:id/updateLocation', async (req, res) => {
+  const { id } = req.params;
+  const { city, state } = req.body;
+
+  // Validate that both city and state are provided
+  if (!city || !state) {
+    return res.status(400).json({ error: 'City and state are required' });
+  }
+
+  try {
+    const updateQuery =
+      'UPDATE disastershield SET city = $1, state = $2 WHERE id = $3 RETURNING *';
+    const updateValues = [city, state, id];
+
+    const updateResult = await client.query(updateQuery, updateValues);
+
+    if (updateResult.rowCount === 0) {
+      return res.status(404).json({ error: 'Record not found' });
+    }
+
+    res.status(200).json({
+      message: 'City and state updated successfully',
+      site: updateResult.rows[0],
+    });
+  } catch (error) {
+    console.error('Error updating city and state:', error);
+    res
+      .status(500)
+      .json({ error: 'An error occurred while updating the city and state' });
+  }
+});
+
 export default router;

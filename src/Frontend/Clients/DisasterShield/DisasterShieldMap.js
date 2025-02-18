@@ -67,6 +67,7 @@ const DisasterShield = () => {
 
     fetchDisasterSites();
   }, []);
+  // New state to store manual edit values for each site (keyed by site.id)
 
   if (loadError) return <Text>Error loading maps</Text>;
   if (!isLoaded) return <Text>Loading Maps...</Text>;
@@ -261,7 +262,7 @@ const DisasterShield = () => {
         </Flex>
         <TableContainer maxHeight="60vh" overflowY="auto">
           <Table variant="simple" size="md">
-            <Thead position="sticky" top={0} bg={cardBg} zIndex={1}>
+            <Thead position="sticky" top={0} bg="gray.500" zIndex={1}>
               <Tr>
                 <Th>Name</Th>
                 <Th>Address</Th>
@@ -285,7 +286,7 @@ const DisasterShield = () => {
                 ))
               ) : (
                 <Tr>
-                  <Td colSpan={4} textAlign="center">
+                  <Td colSpan={5} textAlign="center">
                     No locations match your criteria.
                   </Td>
                 </Tr>
