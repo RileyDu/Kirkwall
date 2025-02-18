@@ -1,3 +1,6 @@
+/* global google */
+
+
 import {
   Box,
   Heading,
@@ -33,6 +36,88 @@ const center = {
   lat: 44.36, // Center of South Dakota
   lng: -100.165,
 };
+
+// You can adjust the colors and groupings as needed.
+const typeColorMapping = {
+  // Emergency services: Red
+  Ambulance: '#e74c3c',
+  'Emergency Aid': '#e74c3c',
+  'Emergency Management': '#e74c3c',
+  'Fire Department': '#e74c3c',
+  'National Guard': '#e74c3c',
+  'Police Department': '#e74c3c',
+  'U.S. Armed Forces': '#e74c3c',
+  'Veterans Affairs': '#e74c3c',
+
+  // Medical/Health: Blue
+  'Health Department': '#3498db',
+  'Medical/Hospital': '#3498db',
+  'Mental Health Services': '#3498db',
+  Pharmacy: '#3498db',
+
+  // Food-related: Orange
+  'Food Distribution': '#e67e22',
+  'Food/Grocery': '#e67e22',
+  'Food/Pantry': '#e67e22',
+  'Food/Restaurant': '#e67e22',
+
+  // Construction and related services: Purple
+  'Building materials': '#9b59b6',
+  'Construction company': '#9b59b6',
+  'Demolition contractor': '#9b59b6',
+  Electrical: '#9b59b6',
+  'Heating / HVAC': '#9b59b6',
+  Plumber: '#9b59b6',
+  Hardware: '#9b59b6',
+  Lumber: '#9b59b6',
+  Furniture: '#9b59b6',
+  Sanitation: '#9b59b6',
+
+  // Agriculture: Green
+  'Animal Feed': '#27ae60',
+  Farms: '#27ae60',
+  'Farms/Ranches': '#27ae60',
+  Forestry: '#27ae60',
+  Lawn: '#27ae60',
+  USDA: '#27ae60',
+
+  // Transportation-related: Teal
+  Airport: '#1abc9c',
+  'Gas Station': '#1abc9c',
+  'Transportation/Freight': '#1abc9c',
+  'Transportation/Shuttle': '#1abc9c',
+  'Transportation/Truck': '#1abc9c',
+
+  // Community/Public Services: Gray
+  Legal: '#7f8c8d',
+  'Places of Worship': '#7f8c8d',
+  'Salvation Army': '#7f8c8d',
+  School: '#7f8c8d',
+  Shelter: '#7f8c8d',
+  'Social Services': '#7f8c8d',
+
+  // Utilities/Tech: Light Blue
+  Telecommunications: '#2980b9',
+
+  // Miscellaneous/Commercial: Neutral gray-blue
+  'Self-storage facility': '#95a5a6',
+
+  // Energy: Yellow
+  'Wind Energy': '#f1c40f',
+};
+
+const legendData = [
+  { label: 'Emergency Services', color: '#e74c3c' },
+  { label: 'Medical/Health', color: '#3498db' },
+  { label: 'Food', color: '#e67e22' },
+  { label: 'Construction', color: '#9b59b6' },
+  { label: 'Agriculture', color: '#27ae60' },
+  { label: 'Transportation', color: '#1abc9c' },
+  { label: 'Community Services', color: '#7f8c8d' },
+  { label: 'Telecommunications', color: '#2980b9' },
+  { label: 'Miscellaneous', color: '#95a5a6' },
+  { label: 'Energy', color: '#f1c40f' },
+];
 
 const DisasterShield = () => {
   const cardBg = useColorModeValue('gray.500', 'gray.800');
@@ -76,7 +161,7 @@ const DisasterShield = () => {
   const uniqueCities = Array.from(
     new Set(disasterSites.map(site => site.city).filter(city => city))
   );
-  
+
   const uniqueServiceTypes = Array.from(
     new Set(disasterSites.map(site => site.type).filter(type => type))
   );
@@ -90,7 +175,7 @@ const DisasterShield = () => {
     if (selectedCity !== 'All') {
       cityMatch = site.city === selectedCity;
     }
-    
+
     if (selectedType !== 'All') {
       typeMatch = site.type === selectedType;
     }
@@ -176,7 +261,6 @@ const DisasterShield = () => {
         >
           {filteredSites.map(
             site =>
-              // Only render marker if valid coordinates exist
               site.latitude &&
               site.longitude && (
                 <Marker
@@ -185,10 +269,19 @@ const DisasterShield = () => {
                     lat: parseFloat(site.latitude),
                     lng: parseFloat(site.longitude),
                   }}
+                  icon={{
+                    // Using a circle symbol with fillColor from our mapping
+                    path: google.maps.SymbolPath.CIRCLE,
+                    fillColor: typeColorMapping[site.type] || '#000', // fallback color
+                    fillOpacity: 1,
+                    strokeWeight: 0,
+                    scale: 8,
+                  }}
                   onClick={() => setSelectedSite(site)}
                 />
               )
           )}
+
           {selectedSite && (
             <OverlayView
               position={{
@@ -277,7 +370,19 @@ const DisasterShield = () => {
                     <Td>{site.name}</Td>
                     <Td>{site.address}</Td>
                     <Td>{site.phone_number}</Td>
-                    <Td>{site.type}</Td>
+                    <Td>
+                      <Flex alignItems="center">
+                        <Box
+                          w="12px"
+                          h="12px"
+                          borderRadius="full"
+                          bg={typeColorMapping[site.type] || '#000'}
+                          mr={2}
+                        />
+                        {site.type}
+                        
+                      </Flex>
+                    </Td>
                   </Tr>
                 ))
               ) : (
@@ -290,7 +395,25 @@ const DisasterShield = () => {
             </Tbody>
           </Table>
         </TableContainer>
+
       </Box>
+        <Box p={4} border="1px solid gray" borderRadius="md">
+          <Heading size="sm" mb={2}>
+            Legend
+          </Heading>
+          {legendData.map(item => (
+            <Flex key={item.label} alignItems="center" mb={1}>
+              <Box
+                w="12px"
+                h="12px"
+                bg={item.color}
+                borderRadius="full"
+                mr={2}
+              />
+              <Text fontSize="sm">{item.label}</Text>
+            </Flex>
+          ))}
+        </Box>
     </Box>
   );
 };

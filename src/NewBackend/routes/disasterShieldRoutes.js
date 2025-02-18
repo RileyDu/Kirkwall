@@ -30,6 +30,19 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Just GET the type for colorcoding
+router.get('/type', async (req, res) => {
+  const query = 'SELECT DISTINCT type FROM disastershield ORDER BY type';
+
+  try {
+    const result = await client.query(query);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Disaster Shield Routes: Error fetching data:', error);
+    res.status(500).json({ error: 'An error occurred while fetching data' });
+  }
+})
+
 // POST /api/disastershield/updateCoordinates
 // Expects a JSON body with { id, latitude, longitude }
 // Updates the specified record in the disastershield table
