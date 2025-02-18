@@ -1,6 +1,5 @@
 /* global google */
 
-
 import {
   Box,
   Heading,
@@ -29,7 +28,7 @@ import {
 
 const mapContainerStyle = {
   width: '100%',
-  height: '70vh',
+  height: '60vh',
 };
 
 const center = {
@@ -37,7 +36,7 @@ const center = {
   lng: -100.165,
 };
 
-// You can adjust the colors and groupings as needed.
+// Color mapping for individual service types.
 const typeColorMapping = {
   // Emergency services: Red
   Ambulance: '#e74c3c',
@@ -106,6 +105,7 @@ const typeColorMapping = {
   'Wind Energy': '#f1c40f',
 };
 
+// Legend data defining our resource groups.
 const legendData = [
   { label: 'Emergency Services', color: '#e74c3c' },
   { label: 'Medical/Health', color: '#3498db' },
@@ -115,7 +115,7 @@ const legendData = [
   { label: 'Transportation', color: '#1abc9c' },
   { label: 'Community Services', color: '#7f8c8d' },
   { label: 'Telecommunications', color: '#2980b9' },
-  { label: 'Miscellaneous', color: '#95a5a6' },
+  { label: 'Storage', color: '#95a5a6' },
   { label: 'Energy', color: '#f1c40f' },
 ];
 
@@ -127,10 +127,18 @@ const DisasterShield = () => {
 
   // Filtering, sorting, and search state
   const [selectedCity, setSelectedCity] = useState('All');
-  const [selectedType, setSelectedType] = useState('All');
   const [sortBy, setSortBy] = useState(''); // e.g. 'name', 'address', 'type'
   const [sortDirection, setSortDirection] = useState('asc');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // New state: which resource groups (legend items) are active.
+  const [activeLegends, setActiveLegends] = useState(() => {
+    const initial = {};
+    legendData.forEach((item) => {
+      initial[item.label] = true;
+    });
+    return initial;
+  });
 
   // Load Google Maps API
   const { isLoaded, loadError } = useLoadScript({
@@ -152,46 +160,48 @@ const DisasterShield = () => {
 
     fetchDisasterSites();
   }, []);
-  // New state to store manual edit values for each site (keyed by site.id)
+
+  // Helper function: Given a site, determine its resource group based on the legend.
+  const getSiteGroup = (site) => {
+    const color = typeColorMapping[site.type];
+    const groupItem = legendData.find((item) => item.color === color);
+    return groupItem ? groupItem.label : site.type;
+  };
 
   if (loadError) return <Text>Error loading maps</Text>;
   if (!isLoaded) return <Text>Loading Maps...</Text>;
 
-  // Compute unique cities and service types
+  // Compute unique cities
   const uniqueCities = Array.from(
-    new Set(disasterSites.map(site => site.city).filter(city => city))
+    new Set(disasterSites.map((site) => site.city).filter((city) => city))
   );
 
-  const uniqueServiceTypes = Array.from(
-    new Set(disasterSites.map(site => site.type).filter(type => type))
-  );
-
-  // Filter sites based on selected city, service type, and search query
-  const filteredSites = disasterSites.filter(site => {
-    let cityMatch = true;
-    let typeMatch = true;
+  // First, filter sites based on city and search query.
+  const baseFilteredSites = disasterSites.filter((site) => {
+    const cityMatch = selectedCity === 'All' || site.city === selectedCity;
     let searchMatch = true;
-
-    if (selectedCity !== 'All') {
-      cityMatch = site.city === selectedCity;
-    }
-
-    if (selectedType !== 'All') {
-      typeMatch = site.type === selectedType;
-    }
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       searchMatch =
         (site.name && site.name.toLowerCase().includes(query)) ||
         (site.address && site.address.toLowerCase().includes(query)) ||
-        (site.phone_number &&
-          site.phone_number.toLowerCase().includes(query)) ||
+        (site.phone_number && site.phone_number.toLowerCase().includes(query)) ||
         (site.type && site.type.toLowerCase().includes(query));
     }
-    return cityMatch && typeMatch && searchMatch;
+    return cityMatch && searchMatch;
   });
 
-  // Sort filtered sites if a sortBy field is selected
+  // Compute available groups (based on base filters only).
+  const availableGroups = new Set(
+    baseFilteredSites.map((site) => getSiteGroup(site))
+  );
+
+  // Then, only include sites whose group is toggled "on" in our legend.
+  const filteredSites = baseFilteredSites.filter(
+    (site) => activeLegends[getSiteGroup(site)]
+  );
+
+  // Sort the sites if needed.
   if (sortBy) {
     filteredSites.sort((a, b) => {
       const aVal = a[sortBy] ? a[sortBy].toString() : '';
@@ -204,52 +214,10 @@ const DisasterShield = () => {
 
   return (
     <Box mx="auto" display="flex" flexDirection="column" alignItems="center">
-      {/* Filtering & Sorting Controls */}
-      <Box width="90%" mb={4} mt={24} display="flex" flexWrap="wrap" gap={4}>
-        <Select
-          maxW="200px"
-          value={selectedCity}
-          onChange={e => setSelectedCity(e.target.value)}
-        >
-          <option value="All">All Cities</option>
-          {uniqueCities.map(city => (
-            <option key={city} value={city}>
-              {city}
-            </option>
-          ))}
-        </Select>
-        <Select
-          maxW="200px"
-          value={selectedType}
-          onChange={e => setSelectedType(e.target.value)}
-        >
-          <option value="All">All Service Types</option>
-          {uniqueServiceTypes.map(type => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </Select>
-        <Select
-          maxW="200px"
-          placeholder="Sort By"
-          value={sortBy}
-          onChange={e => setSortBy(e.target.value)}
-        >
-          <option value="name">Name</option>
-          <option value="address">Address</option>
-          <option value="type">Type</option>
-        </Select>
-        {sortBy && (
-          <Button
-            onClick={() =>
-              setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
-            }
-          >
-            {sortDirection === 'asc' ? 'Asc' : 'Desc'}
-          </Button>
-        )}
-      </Box>
+      {/* Optional Main Heading */}
+      <Heading size="lg" mt={20} mb={2}>
+        Disaster Shield
+      </Heading>
 
       {/* Google Map Section */}
       <Box width="90%" mb={8} boxShadow={cardShadow}>
@@ -260,7 +228,7 @@ const DisasterShield = () => {
           mapId={mapID}
         >
           {filteredSites.map(
-            site =>
+            (site) =>
               site.latitude &&
               site.longitude && (
                 <Marker
@@ -272,7 +240,7 @@ const DisasterShield = () => {
                   icon={{
                     // Using a circle symbol with fillColor from our mapping
                     path: google.maps.SymbolPath.CIRCLE,
-                    fillColor: typeColorMapping[site.type] || '#000', // fallback color
+                    fillColor: typeColorMapping[site.type] || '#000',
                     fillOpacity: 1,
                     strokeWeight: 0,
                     scale: 8,
@@ -317,7 +285,9 @@ const DisasterShield = () => {
                 <Heading size="xs" color="black">
                   {selectedSite.name}
                 </Heading>
-                <Text textDecoration="underline">{selectedSite.type}</Text>
+                <Text textDecoration="underline">
+                  {getSiteGroup(selectedSite)}
+                </Text>
                 <Text>{selectedSite.address}</Text>
                 <Text>{selectedSite.phone_number}</Text>
               </Box>
@@ -326,94 +296,142 @@ const DisasterShield = () => {
         </GoogleMap>
       </Box>
 
-      {/* Disaster Sites Table */}
+      {/* Disaster Sites Table and Legend Sidebar */}
       <Box
-        width="100%"
-        maxW="1400px"
+        width="90%"
         bg={cardBg}
         borderRadius="20px"
         boxShadow={cardShadow}
         p={6}
         overflowX="auto"
-        height={'100%'}
         mb={8}
-        minHeight={'70vh'}
+        minHeight="70vh"
       >
-        {/* Header with search input */}
-        <Flex justifyContent="space-between" alignItems="center" mb={4}>
-          <Heading size="md">Registered Locations</Heading>
-          <Input
-            maxW="300px"
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-          />
-        </Flex>
-        <TableContainer maxHeight="60vh" overflowY="auto">
-          <Table variant="simple" size="md">
-            <Thead position="sticky" top={0} bg="gray.500" zIndex={1}>
-              <Tr>
-                <Th>Name</Th>
-                <Th>Address</Th>
-                <Th>Phone Number</Th>
-                <Th>Type</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {filteredSites.length > 0 ? (
-                filteredSites.map(site => (
-                  <Tr
-                    key={site.id}
-                    onClick={() => setSelectedSite(site)}
-                    cursor="pointer"
-                  >
-                    <Td>{site.name}</Td>
-                    <Td>{site.address}</Td>
-                    <Td>{site.phone_number}</Td>
-                    <Td>
-                      <Flex alignItems="center">
-                        <Box
-                          w="12px"
-                          h="12px"
-                          borderRadius="full"
-                          bg={typeColorMapping[site.type] || '#000'}
-                          mr={2}
-                        />
-                        {site.type}
-                        
-                      </Flex>
-                    </Td>
+        <Flex direction={{ base: 'column', md: 'row' }} gap={4}>
+          {/* Table Section */}
+          <Box flex="1">
+            <Heading size="md" mb={4}>
+              Registered Locations
+            </Heading>
+            <TableContainer maxHeight="60vh" overflowY="auto">
+              <Table variant="simple" size="md">
+                <Thead position="sticky" top={0} bg="gray.500" zIndex={1}>
+                  <Tr>
+                    <Th>Name</Th>
+                    <Th>Address</Th>
+                    <Th>Phone Number</Th>
+                    <Th>Type</Th>
                   </Tr>
-                ))
-              ) : (
-                <Tr>
-                  <Td colSpan={5} textAlign="center">
-                    No locations match your criteria.
-                  </Td>
-                </Tr>
-              )}
-            </Tbody>
-          </Table>
-        </TableContainer>
+                </Thead>
+                <Tbody>
+                  {filteredSites.length > 0 ? (
+                    filteredSites.map((site) => (
+                      <Tr
+                        key={site.id}
+                        onClick={() => setSelectedSite(site)}
+                        cursor="pointer"
+                        bg={typeColorMapping[site.type]}
+                      >
+                        <Td>{site.name}</Td>
+                        <Td>{site.address}</Td>
+                        <Td>{site.phone_number}</Td>
+                        <Td>
+                          <Flex alignItems="center">
+                            {getSiteGroup(site)}
+                          </Flex>
+                        </Td>
+                      </Tr>
+                    ))
+                  ) : (
+                    <Tr>
+                      <Td colSpan={5} textAlign="center">
+                        No locations match your criteria.
+                      </Td>
+                    </Tr>
+                  )}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </Box>
 
-      </Box>
-        <Box p={4} border="1px solid gray" borderRadius="md">
-          <Heading size="sm" mb={2}>
-            Legend
-          </Heading>
-          {legendData.map(item => (
-            <Flex key={item.label} alignItems="center" mb={1}>
-              <Box
-                w="12px"
-                h="12px"
-                bg={item.color}
-                borderRadius="full"
-                mr={2}
+          {/* Legend Sidebar */}
+          <Box minW="200px" mt={10}>
+            {/* Filters and Sorting Controls */}
+            <Box p={4} border="1px solid gray" borderRadius="md" mb={4}>
+              <Select
+                w="100%"
+                mb={2}
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+              >
+                <option value="All">All Cities</option>
+                {uniqueCities.map((city) => (
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                w="100%"
+                mb={2}
+                placeholder="Sort By"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="name">Name</option>
+                <option value="address">Address</option>
+                <option value="type">Type</option>
+              </Select>
+              <Input
+                w="100%"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <Text fontSize="sm">{item.label}</Text>
-            </Flex>
-          ))}
-        </Box>
+            </Box>
+
+            {/* Legend */}
+            <Box p={4} border="1px solid gray" borderRadius="md">
+              <Heading size="sm" mb={2}>
+                Legend
+              </Heading>
+              {legendData.map((item) => {
+                // If the group isn’t available in the base filter,
+                // show it even dimmer (opacity 0.3) to indicate no matching sites.
+                const legendOpacity = availableGroups.has(item.label)
+                  ? activeLegends[item.label]
+                    ? 1
+                    : 0.5
+                  : 0.3;
+                return (
+                  <Flex
+                    key={item.label}
+                    alignItems="center"
+                    mb={1}
+                    cursor="pointer"
+                    opacity={legendOpacity}
+                    onClick={() =>
+                      setActiveLegends((prev) => ({
+                        ...prev,
+                        [item.label]: !prev[item.label],
+                      }))
+                    }
+                  >
+                    <Box
+                      w="12px"
+                      h="12px"
+                      bg={item.color}
+                      borderRadius="full"
+                      mr={2}
+                    />
+                    <Text fontSize="lg">{item.label}</Text>
+                  </Flex>
+                );
+              })}
+            </Box>
+          </Box>
+        </Flex>
+      </Box>
     </Box>
   );
 };
