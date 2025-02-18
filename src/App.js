@@ -81,7 +81,8 @@ const Layout = ({
     location.pathname !== '/' &&
     location.pathname !== '/signup' &&
     location.pathname !== '/landing' &&
-    location.pathname !== '/dslogin';
+    location.pathname !== '/dslogin' &&
+    location.pathname !== '/disastershield';
 
   const { colorMode } = useColorMode();
 
