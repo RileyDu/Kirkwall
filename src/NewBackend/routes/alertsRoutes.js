@@ -42,6 +42,19 @@ router.get('/soalerts', async (req, res) => {
   }
 });
 
+// GET route for all trialESP32 data
+router.get('/trialESP32', async (req, res) => {
+  try {
+    const result = await client.query('SELECT * FROM trialESP32');
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching trialESP32 data:', error);
+    res
+      .status(500)
+      .json({ error: 'An error occurred while fetching trialESP32 data' });
+  }
+});
+
 
 // GET /api/alerts/recap
 router.get('/recap', async (req, res) => {
