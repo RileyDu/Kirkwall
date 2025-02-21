@@ -57,6 +57,7 @@ import PrivacyPolicy from './Frontend/Privacy/PrivacyPolicy.js';
 import Onboarding from './Frontend/AuthComponents/Onboarding.js';
 import DisasterShieldLogin from './Frontend/AuthComponents/DisasterShieldLogin.js';
 import DisasterShield from './Frontend/Clients/DisasterShield/DisasterShieldMap.js';
+import TrialESP32Data from './Frontend/OneTimers/ESP32/ESPMock.js';
 
 import { useAuth } from './Frontend/AuthComponents/AuthContext.js';
 
@@ -463,6 +464,14 @@ const MainApp = () => {
             element={
               <ProtectedRoute allowedUsers={['test@kirkwall.io', 'nathalia@futureinnox.com']}>
                 <DisasterShield />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/TrialESP32"
+            element={
+              <ProtectedRoute allowedUsers={['test@kirkwall.io']}>
+                <TrialESP32Data />
               </ProtectedRoute>
             }
           />
