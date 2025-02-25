@@ -9,7 +9,7 @@ import {
   Tr,
   Th,
   Td,
-  TableContainer,
+  Tooltip,
   Text,
   useColorModeValue,
   Button,
@@ -134,7 +134,7 @@ const DisasterShield = () => {
   // New state: which resource groups (legend items) are active.
   const [activeLegends, setActiveLegends] = useState(() => {
     const initial = {};
-    legendData.forEach((item) => {
+    legendData.forEach(item => {
       initial[item.label] = true;
     });
     return initial;
@@ -162,9 +162,9 @@ const DisasterShield = () => {
   }, []);
 
   // Helper function: Given a site, determine its resource group based on the legend.
-  const getSiteGroup = (site) => {
+  const getSiteGroup = site => {
     const color = typeColorMapping[site.type];
-    const groupItem = legendData.find((item) => item.color === color);
+    const groupItem = legendData.find(item => item.color === color);
     return groupItem ? groupItem.label : site.type;
   };
 
@@ -173,11 +173,11 @@ const DisasterShield = () => {
 
   // Compute unique cities
   const uniqueCities = Array.from(
-    new Set(disasterSites.map((site) => site.city).filter((city) => city))
+    new Set(disasterSites.map(site => site.city).filter(city => city))
   );
 
   // First, filter sites based on city and search query.
-  const baseFilteredSites = disasterSites.filter((site) => {
+  const baseFilteredSites = disasterSites.filter(site => {
     const cityMatch = selectedCity === 'All' || site.city === selectedCity;
     let searchMatch = true;
     if (searchQuery) {
@@ -185,7 +185,8 @@ const DisasterShield = () => {
       searchMatch =
         (site.name && site.name.toLowerCase().includes(query)) ||
         (site.address && site.address.toLowerCase().includes(query)) ||
-        (site.phone_number && site.phone_number.toLowerCase().includes(query)) ||
+        (site.phone_number &&
+          site.phone_number.toLowerCase().includes(query)) ||
         (site.type && site.type.toLowerCase().includes(query));
     }
     return cityMatch && searchMatch;
@@ -193,12 +194,12 @@ const DisasterShield = () => {
 
   // Compute available groups (based on base filters only).
   const availableGroups = new Set(
-    baseFilteredSites.map((site) => getSiteGroup(site))
+    baseFilteredSites.map(site => getSiteGroup(site))
   );
 
   // Then, only include sites whose group is toggled "on" in our legend.
   const filteredSites = baseFilteredSites.filter(
-    (site) => activeLegends[getSiteGroup(site)]
+    site => activeLegends[getSiteGroup(site)]
   );
 
   // Sort the sites if needed.
@@ -211,229 +212,212 @@ const DisasterShield = () => {
         : bVal.localeCompare(aVal);
     });
   }
-
   return (
-    <Box mx="auto" display="flex" flexDirection="column" alignItems="center">
-      {/* Optional Main Heading */}
-      <Heading size="lg" mt={20} mb={2}>
-        Disaster Shield
-      </Heading>
+    <Box position="relative" width="100vw" height="100vh">
+      {/* Full-page Google Map */}
+      <GoogleMap
+        mapContainerStyle={{ width: '100%', height: '100%' }}
+        zoom={7}
+        center={center}
+        mapId={mapID}
+      >
+        {filteredSites.map(
+          site =>
+            site.latitude &&
+            site.longitude && (
+              <Marker
+                key={site.id}
+                position={{
+                  lat: parseFloat(site.latitude),
+                  lng: parseFloat(site.longitude),
+                }}
+                icon={{
+                  path: google.maps.SymbolPath.CIRCLE,
+                  fillColor: typeColorMapping[site.type] || '#000',
+                  fillOpacity: 1,
+                  strokeWeight: 0,
+                  scale: 8,
+                }}
+                onClick={() => setSelectedSite(site)}
+              />
+            )
+        )}
 
-      {/* Google Map Section */}
-      <Box width="90%" mb={8} boxShadow={cardShadow}>
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          zoom={7}
-          center={center}
-          mapId={mapID}
-        >
-          {filteredSites.map(
-            (site) =>
-              site.latitude &&
-              site.longitude && (
-                <Marker
-                  key={site.id}
-                  position={{
-                    lat: parseFloat(site.latitude),
-                    lng: parseFloat(site.longitude),
-                  }}
-                  icon={{
-                    // Using a circle symbol with fillColor from our mapping
-                    path: google.maps.SymbolPath.CIRCLE,
-                    fillColor: typeColorMapping[site.type] || '#000',
-                    fillOpacity: 1,
-                    strokeWeight: 0,
-                    scale: 8,
-                  }}
-                  onClick={() => setSelectedSite(site)}
-                />
-              )
-          )}
+        {selectedSite && (
+          <OverlayView
+            position={{
+              lat: parseFloat(selectedSite.latitude) || 0,
+              lng: parseFloat(selectedSite.longitude) || 0,
+            }}
+            mapPaneName={OverlayView.FLOAT_PANE}
+            getPixelPositionOffset={(width, height) => ({
+              x: (width - 250) / 2,
+              y: -height - 125,
+            })}
+          >
+            <Box
+              bg="white"
+              color="black"
+              p={3}
+              borderRadius="md"
+              boxShadow="md"
+              position="relative"
+              minWidth="250px"
+              display="inline-block"
+            >
+              <Button
+                position="absolute"
+                top={1}
+                right={1}
+                onClick={() => setSelectedSite(null)}
+                color="black"
+                p={2}
+              >
+                X
+              </Button>
+              <Heading size="xs" color="black">
+                {selectedSite.name}
+              </Heading>
+              <Text textDecoration="underline">
+                {getSiteGroup(selectedSite)}
+              </Text>
+              <Text>{selectedSite.address}</Text>
+              <Text>{selectedSite.phone_number}</Text>
+            </Box>
+          </OverlayView>
+        )}
+      </GoogleMap>
 
-          {selectedSite && (
-            <OverlayView
-              position={{
-                lat: parseFloat(selectedSite.latitude) || 0,
-                lng: parseFloat(selectedSite.longitude) || 0,
-              }}
-              mapPaneName={OverlayView.FLOAT_PANE}
-              getPixelPositionOffset={(width, height) => ({
-                x: (width - 250) / 2,
-                y: -height - 125,
-              })}
+      {/* Micro Table/Filtering Overlay */}
+      <Box
+        position="absolute"
+        bottom="20px"
+        left="20px"
+        width="300px"
+        bg="gray.700"
+        p={3}
+        borderRadius="md"
+        boxShadow="lg"
+        opacity={0.95}
+        zIndex={1000}
+      >
+        <Heading size="sm" mb={2}>
+          Locations
+        </Heading>
+
+        {/* Filters */}
+        <Box mb={2}>
+          <Select
+            w="100%"
+            mb={2}
+            value={selectedCity}
+            onChange={e => setSelectedCity(e.target.value)}
+          >
+            <option value="All">All Cities</option>
+            {uniqueCities.map(city => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </Select>
+          <Select
+            w="100%"
+            mb={2}
+            placeholder="Sort By"
+            value={sortBy}
+            onChange={e => setSortBy(e.target.value)}
+          >
+            <option value="name">Name</option>
+            <option value="address">Address</option>
+            <option value="type">Type</option>
+          </Select>
+          <Input
+            w="100%"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+          />
+        </Box>
+
+        {/* Simplified Table with Hover Tooltip */}
+        <Box maxHeight="200px" overflowY="auto">
+          <Table variant="simple" size="sm">
+            <Thead bg="gray.200">
+              <Tr>
+                <Th>Name</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {filteredSites.length > 0 ? (
+                filteredSites.map(site => (
+                  <Tooltip
+                    key={site.id}
+                    label={
+                      <Box whiteSpace="pre-line">
+                        {`Type: ${site.type}\nAddress: ${site.address}\nPhone: ${site.phone_number}`}
+                      </Box>
+                    }
+                    placement="top"
+                    hasArrow
+                    bg="gray.700"
+                    color="white"
+                  >
+                    <Tr
+                      onClick={() => setSelectedSite(site)}
+                      cursor="pointer"
+                      bg={typeColorMapping[site.type]}
+                    >
+                      <Td>{site.name}</Td>
+                    </Tr>
+                  </Tooltip>
+                ))
+              ) : (
+                <Tr>
+                  <Td colSpan={2} textAlign="center">
+                    No locations match.
+                  </Td>
+                </Tr>
+              )}
+            </Tbody>
+          </Table>
+        </Box>
+
+        {/* Legend */}
+        <Box p={2} border="1px solid gray" borderRadius="md" mt={2}>
+          <Heading size="xs" mb={1}>
+            Legend
+          </Heading>
+          {legendData.map(item => (
+            <Flex
+              key={item.label}
+              cursor="pointer"
+              align="center"
+              opacity={availableGroups.has(item.label)
+                ? activeLegends[item.label]
+                  ? 1
+                  : 0.5
+                : 0.3}
+              mb={1}
+              onClick={() =>
+                setActiveLegends(prev => ({
+                  ...prev,
+                  [item.label]: !prev[item.label],
+                }))
+              }
             >
               <Box
-                bg="white"
-                color="black"
-                p={3}
-                borderRadius="md"
-                boxShadow="md"
-                position="relative"
-                minWidth="250px"
-                display="inline-block"
-              >
-                <Button
-                  position="absolute"
-                  top={1}
-                  right={1}
-                  onClick={() => setSelectedSite(null)}
-                  color="black"
-                  p={2}
-                >
-                  X
-                </Button>
-                <Heading size="xs" color="black">
-                  {selectedSite.name}
-                </Heading>
-                <Text textDecoration="underline">
-                  {getSiteGroup(selectedSite)}
-                </Text>
-                <Text>{selectedSite.address}</Text>
-                <Text>{selectedSite.phone_number}</Text>
-              </Box>
-            </OverlayView>
-          )}
-        </GoogleMap>
-      </Box>
-
-      {/* Disaster Sites Table and Legend Sidebar */}
-      <Box
-        width="90%"
-        bg={cardBg}
-        borderRadius="20px"
-        boxShadow={cardShadow}
-        p={6}
-        overflowX="auto"
-        mb={8}
-        minHeight="60vh"
-      >
-        <Flex direction={{ base: 'column', md: 'row' }} gap={4}>
-          {/* Table Section */}
-          <Box flex="1">
-            <Heading size="md" mb={4}>
-              Registered Locations
-            </Heading>
-            <TableContainer maxHeight="55vh" overflowY="auto">
-              <Table variant="simple" size="md">
-                <Thead position="sticky" top={0} bg="gray.500" zIndex={1}>
-                  <Tr>
-                    <Th>Name</Th>
-                    <Th>Address</Th>
-                    <Th>Phone Number</Th>
-                    <Th>Type</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {filteredSites.length > 0 ? (
-                    filteredSites.map((site) => (
-                      <Tr
-                        key={site.id}
-                        onClick={() => setSelectedSite(site)}
-                        cursor="pointer"
-                        bg={typeColorMapping[site.type]}
-                      >
-                        <Td>{site.name}</Td>
-                        <Td>{site.address}</Td>
-                        <Td>{site.phone_number}</Td>
-                        <Td>
-                          <Flex alignItems="center">
-                            {getSiteGroup(site)}
-                          </Flex>
-                        </Td>
-                      </Tr>
-                    ))
-                  ) : (
-                    <Tr>
-                      <Td colSpan={5} textAlign="center">
-                        No locations match your criteria.
-                      </Td>
-                    </Tr>
-                  )}
-                </Tbody>
-              </Table>
-            </TableContainer>
-          </Box>
-
-          {/* Legend Sidebar */}
-          <Box minW="200px" mt={10}>
-            {/* Filters and Sorting Controls */}
-            <Box p={4} border="1px solid gray" borderRadius="md" mb={4}>
-              <Select
-                w="100%"
-                mb={2}
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
-              >
-                <option value="All">All Cities</option>
-                {uniqueCities.map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </Select>
-              <Select
-                w="100%"
-                mb={2}
-                placeholder="Sort By"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-              >
-                <option value="name">Name</option>
-                <option value="address">Address</option>
-                <option value="type">Type</option>
-              </Select>
-              <Input
-                w="100%"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                w="12px"
+                h="12px"
+                bg={item.color}
+                borderRadius="full"
+                mr={2}
               />
-            </Box>
-
-            {/* Legend */}
-            <Box p={4} border="1px solid gray" borderRadius="md">
-              <Heading size="sm" mb={2}>
-                Legend
-              </Heading>
-              {legendData.map((item) => {
-                // If the group isn’t available in the base filter,
-                // show it even dimmer (opacity 0.3) to indicate no matching sites.
-                const legendOpacity = availableGroups.has(item.label)
-                  ? activeLegends[item.label]
-                    ? 1
-                    : 0.5
-                  : 0.3;
-                return (
-                  <Flex
-                    key={item.label}
-                    alignItems="center"
-                    mb={1}
-                    cursor="pointer"
-                    opacity={legendOpacity}
-                    onClick={() =>
-                      setActiveLegends((prev) => ({
-                        ...prev,
-                        [item.label]: !prev[item.label],
-                      }))
-                    }
-                  >
-                    <Box
-                      w="12px"
-                      h="12px"
-                      bg={item.color}
-                      borderRadius="full"
-                      mr={2}
-                    />
-                    <Text fontSize="lg">{item.label}</Text>
-                  </Flex>
-                );
-              })}
-            </Box>
-          </Box>
-        </Flex>
+              <Text fontSize="xs">{item.label}</Text>
+            </Flex>
+          ))}
+        </Box>
       </Box>
     </Box>
   );
 };
-
 export default DisasterShield;

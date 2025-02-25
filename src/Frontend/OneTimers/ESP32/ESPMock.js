@@ -10,9 +10,7 @@ import {
     Th,
     Td,
     TableContainer,
-    Text,
     useColorModeValue,
-    Tag,
   } from '@chakra-ui/react';
   import { useEffect, useState } from 'react';
   import axios from 'axios';
