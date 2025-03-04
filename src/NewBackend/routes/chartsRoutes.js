@@ -27,6 +27,33 @@ router.get('/', async (req, res) => {
   }
 });
 
+// POST /api/charts
+router.post('/', async (req, res) => {
+  console.log('Charts Routes: Received request to create chart:', req.body);
+
+  const { metric, timeperiod, type, location, hidden } = req.body;
+
+  const query = `
+    INSERT INTO charts (metric, timeperiod, type, location, hidden)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *`;
+
+  try {
+    const result = await client.query(query, [
+      metric,
+      timeperiod,
+      type,
+      location,
+      hidden,
+    ]);
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Charts Routes: Error creating chart:', error);
+    res.status(500).json({ error: 'An error occurred while creating chart' });
+  }
+});
+
+
 // PUT /api/charts/update_chart
 router.put('/update_chart', async (req, res) => {
   console.log('Charts Routes: Received request to update chart:', req.body);

@@ -56,6 +56,8 @@ import BioWorx from './Frontend/Clients/BioWorx/BioWorx.js';
 import PrivacyPolicy from './Frontend/Privacy/PrivacyPolicy.js';
 import Onboarding from './Frontend/AuthComponents/Onboarding.js';
 import DisasterShieldLogin from './Frontend/AuthComponents/DisasterShieldLogin.js';
+import DisasterShield from './Frontend/Clients/DisasterShield/DisasterShieldMap.js';
+import TrialESP32Data from './Frontend/OneTimers/ESP32/ESPMock.js';
 
 import { useAuth } from './Frontend/AuthComponents/AuthContext.js';
 
@@ -80,7 +82,8 @@ const Layout = ({
     location.pathname !== '/' &&
     location.pathname !== '/signup' &&
     location.pathname !== '/landing' &&
-    location.pathname !== '/dslogin';
+    location.pathname !== '/dslogin' &&
+    location.pathname !== '/disastershield';
 
   const { colorMode } = useColorMode();
 
@@ -453,6 +456,22 @@ const MainApp = () => {
             element={
               <ProtectedRoute allowedUsers={['test@kirkwall.io']}>
                 <BioWorx />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/disastershield"
+            element={
+              <ProtectedRoute allowedUsers={['test@kirkwall.io', 'nathalia@futureinnox.com']}>
+                <DisasterShield />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/TrialESP32"
+            element={
+              <ProtectedRoute allowedUsers={['test@kirkwall.io']}>
+                <TrialESP32Data />
               </ProtectedRoute>
             }
           />

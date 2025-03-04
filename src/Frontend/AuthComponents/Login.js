@@ -89,7 +89,11 @@ const Login = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.log('User logged in successfully');
-      navigate('/dashboard');
+      if (email === 'nathalia@futureinnox.com') {
+        navigate('/disastershield');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (error) {
       const errorCode = error.code;
       const errorMessage =
@@ -238,7 +242,7 @@ const Login = () => {
       <Center py={4}>
         <Text color="gray.600">&copy; 2024 Kirkwall. All rights reserved.</Text>
       </Center>
-        {/* <Text color="gray.600" textDecor={'underline'} onClick={() => navigate('/privacypolicy')} cursor={'pointer'}> Privacy Policy</Text> */}
+      {/* <Text color="gray.600" textDecor={'underline'} onClick={() => navigate('/privacypolicy')} cursor={'pointer'}> Privacy Policy</Text> */}
     </Flex>
   );
 };

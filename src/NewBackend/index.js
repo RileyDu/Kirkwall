@@ -65,6 +65,8 @@ import webScrapingRoutes from './routes/webScrapingRoutes.js';
 import mockDataRoutes from './routes/mockDataRoutes.js';
 import dataExportRoutes from './routes/dataExportRoutes.js';
 import naturalLanguageQueryRoutes from './routes/naturalLanguageQueryRoutes.js';
+import monnitRoutes from './routes/monnitRoutes.js';
+import disasterShieldRoutes from './routes/disasterShieldRoutes.js';
 
 // ==============================
 // Mounting Route Modules
@@ -84,6 +86,8 @@ app.use('/api/scrape', webScrapingRoutes);
 app.use('/api/mockdata', mockDataRoutes);
 app.use('/api/export_data', dataExportRoutes);
 app.use('/api/nlquery', naturalLanguageQueryRoutes);
+app.use('/api/monnit', monnitRoutes);
+app.use('/api/disastershield', disasterShieldRoutes);
 
 // ==============================
 // Catch-All Route for Undefined API Endpoints
