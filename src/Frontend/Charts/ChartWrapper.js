@@ -259,7 +259,7 @@ const ChartWrapper = ({
         hidden
       );
       const result = await axios.put(
-        '/api/update_chart',
+        '/api/charts/update_chart',
         {
           id,
           metric,

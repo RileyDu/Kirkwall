@@ -229,7 +229,7 @@ const ModularDashboard = ({
       console.log('Sending chart update:', updatedChartDetails);
 
       // Perform Axios PUT request to update the chart
-      const response = await axios.put(`/api/update_chart`, updatedChartDetails);
+      const response = await axios.put(`/api/charts/update_chart`, updatedChartDetails);
 
       // Log the updated chart data returned from the server
       console.log('Updated chart:', response.data);
