@@ -69,7 +69,7 @@ const ModularSummary = ({ statusOfAlerts }) => {
       wind_speed: { label: 'MPH', addSpace: true },
       soil_moisture: { label: 'centibars', addSpace: true },
       leaf_wetness: { label: 'out of 15', addSpace: true },
-      monnit_bathroom: { label: '???', addSpace: true },
+      monnit_bathroom: { label: '', addSpace: false },
       monnit_fridge: { label: '°F', addSpace: false },
       monnit_freezer: { label: '°F', addSpace: false },
     };

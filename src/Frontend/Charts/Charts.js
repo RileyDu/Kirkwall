@@ -64,10 +64,10 @@ const processWeatherData = (data, key, colorMode) => {
         {
           label: 'Temperature (°F)',
           data: reversedData.map(item => item.temperature),
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderColor: 'rgba(255, 99, 132, 1)',
+          backgroundColor: 'hsl(182, 100.00%, 69.40%)',
+          borderColor: 'hsl(182, 100.00%, 69.40%)',
           borderWidth: 2,
-          pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+          pointBackgroundColor: 'hsl(182, 100.00%, 69.40%)',
           pointRadius: 3,
           yAxisID: 'y-temp',
         },

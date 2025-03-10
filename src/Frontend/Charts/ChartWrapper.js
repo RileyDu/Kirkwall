@@ -194,8 +194,13 @@ const ChartWrapper = ({
   };
 
   const mostRecentValue =
-    weatherData && weatherData.length > 0 ? weatherData[0][metric] : 'N/A';
-  const { label, addSpace } = getLabelForMetric(metric);
+  weatherData && weatherData.length > 0
+    ? metric === 'monnit_bathroom'
+      ? `${weatherData[0].humidity}% @ ${weatherData[0].temperature} °F`
+      : weatherData[0][metric]
+    : 'N/A';
+
+const { label, addSpace } = getLabelForMetric(metric);
   const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
 
   const calculateTimePeriod = dataLength => {
