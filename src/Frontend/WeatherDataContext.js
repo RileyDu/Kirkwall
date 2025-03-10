@@ -351,6 +351,8 @@ export const WeatherDataProvider = ({ children }) => {
   ];
   const watchdogMetrics = ['temp', 'hum'];
 
+  const monnitMetrics = ['monnit_bathroom', 'monnit_fridge', 'monnit_freezer'];
+
 
   const determineLimitBasedOnTimePeriod = (metric, timePeriod) => {
     console.log(timePeriod, metric);
@@ -376,6 +378,17 @@ export const WeatherDataProvider = ({ children }) => {
       '1W': 1009,
       default: 19,
     };
+
+    const monnitLimits = {
+      '1H': 5,
+      '3H': 13,
+      '6H': 25,
+      '12H': 49,
+      '1D': 97,
+      '3D': 289,
+      '1W': 673,
+      default: 73,
+    };
   
     // Define all metric groups
     const weatherMetrics = [
@@ -387,10 +400,18 @@ export const WeatherDataProvider = ({ children }) => {
       'leaf_wetness',
     ];
 
+    const monnitMetrics = [
+      'monnit_bathroom',
+      'monnit_fridge',
+      'monnit_freezer',
+    ];
+
     // Determine which limits to use based on the metric
     let limits;
     if (weatherMetrics.includes(metric)) {
       limits = weatherLimits;
+    } else if (monnitMetrics.includes(metric)) {
+      limits = monnitLimits;
     } else {
       limits = defaultLimits;
     }

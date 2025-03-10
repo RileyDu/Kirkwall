@@ -212,6 +212,8 @@ const { label, addSpace } = getLabelForMetric(metric);
       metric === 'soil_moisture' ||
       metric === 'leaf_wetness'
         ? dataLength * 5
+        : metric === 'monnit_bathroom' || metric === 'monnit_fridge' || metric === 'monnit_freezer'
+        ? dataLength * 15
         : dataLength * 10;
     const totalHours = Math.floor(totalMinutes / 60);
 
