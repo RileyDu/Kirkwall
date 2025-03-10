@@ -177,6 +177,9 @@ const ChartWrapper = ({
         leaf_wetness: 'DavisLogoBlack.png',
         temp: 'WatchdogLogoBlack.png',
         hum: 'WatchdogLogoBlack.png',
+        monnit_fridge: 'monnitlogo.png',
+        monnit_freezer: 'monnitlogo.png',
+        monnit_bathroom: 'monnitlogo.png',
       },
       dark: {
         temperature: 'DavisLogoWhite.png',
@@ -187,6 +190,9 @@ const ChartWrapper = ({
         leaf_wetness: 'DavisLogoWhite.png',
         temp: 'WatchdogLogoWhite.png',
         hum: 'WatchdogLogoWhite.png',
+        monnit_fridge: 'monnitlogo.png',
+        monnit_freezer: 'monnitlogo.png',
+        monnit_bathroom: 'monnitlogo.png',
       },
     };
 
