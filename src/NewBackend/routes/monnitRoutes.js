@@ -49,7 +49,6 @@ router.get('/', async (req, res) => {
     `;
     queryParams = [sensorId, limit];
   } else {
-    // If no sensor is specified, return the latest data from all sensors
     query = `
       SELECT current_reading, last_communication_date, sensor_id
       FROM Monnit_data_kirkwall
@@ -61,7 +60,15 @@ router.get('/', async (req, res) => {
 
   try {
     const result = await client.query(query, queryParams);
-    res.status(200).json(result.rows);
+
+    // Process data to remove labels and extract only raw numbers
+    const processedData = result.rows.map(row => ({
+      current_reading: parseFloat(row.current_reading.toString().replace(/[^0-9.-]/g, '')), // Remove non-numeric characters
+      last_communication_date: row.last_communication_date,
+      sensor_id: row.sensor_id,
+    }));
+
+    res.status(200).json(processedData);
   } catch (error) {
     console.error('Monnit Routes: Error fetching data:', error);
     res.status(500).json({ error: 'An error occurred while fetching data' });

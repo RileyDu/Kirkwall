@@ -44,7 +44,7 @@ const processWeatherData = (data, key, colorMode) => {
       let date = new Date(item.message_timestamp || item.reading_time || item.publishedat || item.last_communication_date);
     
       // If the date is from `reading_time` or `publishedat`, adjust it by 5 hours (assuming they are 5 hours behind)
-      if (item.reading_time || item.publishedat || item.last_communication_date) {
+      if (item.reading_time || item.publishedat) {
         date.setHours(date.getHours() + 5);
       }
     
@@ -199,11 +199,11 @@ const createCustomChartOptions = (metric, data, colorMode) => {
 // These are what are actually rendered in the app
 export const LineChart = ({ data, metric }) => {
   // console.log('data:', data);
-  // console.log('metric:', metric);
+  console.log('metric:', metric);
   const { colorMode } = useColorMode();
   const chartData = processWeatherData(data, metric, colorMode);
   if (!chartData) return <Spinner size="xl" />;
-  // console.log('chartData:', chartData);
+  console.log('chartData:', chartData);
   const dataKey = chartData.datasets[0].data;
   const options = createCustomChartOptions(metric, dataKey, colorMode);
 
@@ -218,7 +218,7 @@ export const BarChart = ({ data, metric }) => {
   const { colorMode } = useColorMode();
   const chartData = processWeatherData(data, metric, colorMode);
   if (!chartData) return <Spinner size="xl" />;
-  // console.log('chartData:', chartData);
+  console.log('chartData:', chartData);
 
   const dataKey = chartData.datasets[0].data;
   const options = createCustomChartOptions(metric, dataKey, colorMode);
