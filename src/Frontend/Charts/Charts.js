@@ -47,6 +47,10 @@ const processWeatherData = (data, key, colorMode) => {
       if (item.reading_time || item.publishedat) {
         date.setHours(date.getHours() + 5);
       }
+
+      if (item.last_communication_date) {
+        date.setHours(date.getHours() - 5);
+      }
     
       // Return the adjusted time as a string
       return date.toLocaleTimeString([], {
