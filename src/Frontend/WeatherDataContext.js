@@ -188,7 +188,7 @@ export const WeatherDataProvider = ({ children }) => {
       fetchAllMonnitData();
   
       // Set up interval to fetch data every 30 seconds
-      const intervalId = setInterval(fetchAllMonnitData, 30000);
+      const intervalId = setInterval(fetchAllMonnitData, 60000);
   
       // Cleanup interval on component unmount or if dependencies change
       return () => clearInterval(intervalId);
