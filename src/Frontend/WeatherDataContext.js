@@ -403,41 +403,37 @@ export const WeatherDataProvider = ({ children }) => {
 
 // A helper function to rename the "current_reading" key to a new key (e.g., "monnit_bathroom")
 const renameCurrentReadingKey = (data, newKey) => {
-  // Ensure data is an array. Then, for each row, remove "current_reading"
-  // and add a new key with its value.
   return data.map(item => {
-    const { current_reading, ...rest } = item;
+    const { current_reading, humidity, temperature, ...rest } = item;
+
+    if (newKey === 'monnit_bathroom' && humidity !== undefined && temperature !== undefined) {
+      return { ...rest, humidity, temperature };
+    }
+
     return { ...rest, [newKey]: current_reading };
   });
 };
 
 const fetchMonnitData = async (sensor, timePeriod) => {
   try {
-    // Convert timePeriod into a limit value
     const limit = determineLimitBasedOnTimePeriod(sensor, timePeriod);
-    
-    const response = await axios.get('/api/monnit', {
-      params: { sensor, limit }
-    });
-    
-    
-    // Rename "current_reading" key to the sensor name (e.g., "monnit_bathroom")
+
+    const response = await axios.get('/api/monnit', { params: { sensor, limit } });
+
     const renamedData = renameCurrentReadingKey(response.data, sensor);
-    
-    // Update the correct state based on the sensor
+
     switch (sensor) {
       case 'monnit_bathroom':
-        setMonnitBathroomData(renamedData);
-        console.log('this is the monnit data', renamedData);
+        setMonnitBathroomData(renamedData); // Contains both `temperature` and `humidity`
+        console.log('Bathroom sensor data:', renamedData);
         break;
       case 'monnit_fridge':
         setMonnitFridgeData(renamedData);
-        console.log('this is the monnit data', renamedData);
-
+        console.log('Fridge sensor data:', renamedData);
         break;
       case 'monnit_freezer':
         setMonnitFreezerData(renamedData);
-        console.log('this is the monnit data', renamedData);
+        console.log('Freezer sensor data:', renamedData);
         break;
       default:
         break;
@@ -447,7 +443,7 @@ const fetchMonnitData = async (sensor, timePeriod) => {
   }
 };
 
-  
+
 
   const fetchSpecificData = async (metric, timePeriod) => {
     try {

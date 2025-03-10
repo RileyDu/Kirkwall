@@ -39,54 +39,74 @@ const processWeatherData = (data, key, colorMode) => {
 
   const reversedData = [...data].reverse();
 
-  const chartData = {
-    labels: reversedData.map(item => {
-      let date = new Date(item.message_timestamp || item.reading_time || item.publishedat || item.last_communication_date);
-    
-      // If the date is from `reading_time` or `publishedat`, adjust it by 5 hours (assuming they are 5 hours behind)
-      if (item.reading_time || item.publishedat) {
-        date.setHours(date.getHours() + 5);
-      }
+  const labels = reversedData.map(item => {
+    let date = new Date(item.message_timestamp || item.reading_time || item.publishedat || item.last_communication_date);
 
-      if (item.last_communication_date) {
-        date.setHours(date.getHours() - 5);
-      }
-    
-      // Return the adjusted time as a string
-      return date.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    }),
-  
+    if (item.reading_time || item.publishedat) {
+      date.setHours(date.getHours() + 5);
+    }
+
+    if (item.last_communication_date) {
+      date.setHours(date.getHours() - 5);
+    }
+
+    return date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  });
+
+  // Special case for bathroom sensor: return two datasets (temperature & humidity)
+  if (key === 'monnit_bathroom') {
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Temperature (°F)',
+          data: reversedData.map(item => item.temperature),
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 2,
+          pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+          pointRadius: 3,
+          yAxisID: 'y-temp',
+        },
+        {
+          label: 'Humidity (%)',
+          data: reversedData.map(item => item.humidity),
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 2,
+          pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+          pointRadius: 3,
+          yAxisID: 'y-humidity',
+        }
+      ]
+    };
+  }
+
+  // Default behavior for all other sensors
+  return {
+    labels,
     datasets: [
       {
         label: key,
         data: reversedData.map(item => item[key]),
         backgroundColor: '#4d648d80',
         borderColor: reversedData.map((item, index) =>
-          index === reversedData.length - 1
-            ? getColorOfLastValue(colorMode)
-            : '#4d648d'
+          index === reversedData.length - 1 ? getColorOfLastValue(colorMode) : '#4d648d'
         ),
         borderWidth: 2,
-        // borderRadius: 30,
         pointBackgroundColor: reversedData.map((item, index) =>
-          index === reversedData.length - 1
-            ? getColorOfLastValue(colorMode)
-            : '#4d648d'
+          index === reversedData.length - 1 ? getColorOfLastValue(colorMode) : '#4d648d'
         ),
-        pointRadius: reversedData.map((item, index) =>
-          index === reversedData.length - 1 ? 5 : 3
-        ),
-        // cubicInterpolationMode: 'monotone', // Add this line to enable smooth curves
-        // tension: 0.4,
+        pointRadius: reversedData.map((item, index) => (index === reversedData.length - 1 ? 5 : 3)),
         fill: 'start',
       },
     ],
   };
-  return chartData;
 };
+
 
 // Helper function to get the min and max values of the data
 const getMinMax = data => {
@@ -99,34 +119,69 @@ const getMinMax = data => {
 const createCustomChartOptions = (metric, data, colorMode) => {
   const { min, max } = getMinMax(data);
   const labelColor = colorMode === 'light' ? '#000000' : '#FFFFFF';
-  const gridLineColor = colorMode === 'light' ? 'whitesmoke' : '#333333'; // Set grid line color based on color mode
+  const gridLineColor = colorMode === 'light' ? 'whitesmoke' : '#333333';
 
-  // Helper function to set the y-axis min value
-  const getYmin = (min, max) => {
-    if (min > 0 && max > 1) {
-      return Math.round(min - 1);
-    } else if (min < 0) {
-      return Math.round(min - 1);
-    } else if (min === 0 && max < 0.09) {
-      return Math.round(min);
-    } else if (min === 0 && max === 0) {
-      return Math.round(min);
-    } 
-  };
+  if (metric === 'monnit_bathroom') {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          ticks: {
+            maxRotation: 90,
+            minRotation: 45,
+            autoSkip: true,
+            maxTicksLimit: 10,
+            color: labelColor,
+          },
+          grid: {
+            color: gridLineColor,
+          },
+        },
+        'y-temp': {
+          type: 'linear',
+          position: 'left',
+          title: {
+            display: true,
+            text: 'Temperature (°F)',
+          },
+          grid: {
+            color: gridLineColor,
+          },
+        },
+        'y-humidity': {
+          type: 'linear',
+          position: 'right',
+          title: {
+            display: true,
+            text: 'Humidity (%)',
+          },
+          grid: {
+            drawOnChartArea: false,
+          },
+        },
+      },
+      plugins: {
+        tooltip: {
+          backgroundColor: '#212121',
+          titleFont: { size: 16 },
+          titleColor: '#ffffff',
+          bodyFont: { size: 16 },
+          bodyColor: '#ffffff',
+          footerFont: { size: 12 },
+          footerColor: '#ffffff',
+          padding: 10,
+          cornerRadius: 4,
+          displayColors: true,
+        },
+        legend: {
+          display: true,
+        },
+      },
+    };
+  }
 
-  // Helper function to set the y-axis max value
-  const getYmax = (min, max) => {
-    if (min === 0 && max === 0) {
-      return 1;
-    } else if (min === 0 && max < 0.09) {
-      return 0.1;
-    } else if (max > 0) {
-      return Math.round(max + 1);
-    } else {
-      return Math.round(max + 1);
-    }
-  };
-
+  // Default settings for all other graphs
   return {
     responsive: true,
     maintainAspectRatio: false,
@@ -137,23 +192,20 @@ const createCustomChartOptions = (metric, data, colorMode) => {
           minRotation: 45,
           autoSkip: true,
           maxTicksLimit: 10,
-          color: labelColor, // Set label color based on color mode
+          color: labelColor,
         },
         grid: {
-          color: gridLineColor, // Set grid line color
+          color: gridLineColor,
         },
       },
       y: {
-        min: getYmin(min, max),
-        max: getYmax(min, max),
+        min: min - 1,
+        max: max + 1,
         ticks: {
-          color: labelColor, // Set label color based on color mode
+          color: labelColor,
         },
         grid: {
-          color: gridLineColor, // Set grid line color
-        },
-        title: {
-          display: false,
+          color: gridLineColor,
         },
       },
     },
@@ -168,35 +220,15 @@ const createCustomChartOptions = (metric, data, colorMode) => {
         footerColor: '#ffffff',
         padding: 10,
         cornerRadius: 4,
-        displayColors: false,
-        callbacks: {
-          label: function (context) {
-            const labelMap = {
-              temperature: '°F',
-              temp: '°F',
-              hum: '% Humidity',
-              percent_humidity: '% Humidity',
-              rain_15_min_inches: 'inches',
-              wind_speed: 'MPH',
-              soil_moisture: 'centibars',
-              leaf_wetness: 'out of 15',
-            };
-
-            const label = labelMap[context.dataset.label] || '';
-            const value = context.raw;
-            return `${value} ${label}`;
-          },
-        },
+        displayColors: true,
       },
       legend: {
-        display: false,
-      },
-      title: {
         display: false,
       },
     },
   };
 };
+
 
 // LineChart and BarChart components
 // These components take in data and metric as props

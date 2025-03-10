@@ -14,9 +14,9 @@ export const CustomerSettings = [
       'soil_moisture',
       'rain_15_min_inches',
       'leaf_wetness',
-      'monnit_bathroom',
       'monnit_fridge',
       'monnit_freezer',
+      'monnit_bathroom',
     ],
   },
   {

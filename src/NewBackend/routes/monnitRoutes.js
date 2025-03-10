@@ -1,5 +1,3 @@
-// routes/monnitRoutes.js
-
 import express from 'express';
 const router = express.Router();
 import pkg from 'pg';
@@ -61,12 +59,29 @@ router.get('/', async (req, res) => {
   try {
     const result = await client.query(query, queryParams);
 
-    // Process data to remove labels and extract only raw numbers
-    const processedData = result.rows.map(row => ({
-      current_reading: parseFloat(row.current_reading.toString().replace(/[^0-9.-]/g, '')), // Remove non-numeric characters
-      last_communication_date: row.last_communication_date,
-      sensor_id: row.sensor_id,
-    }));
+    // Process data to extract correct values
+    const processedData = result.rows.map(row => {
+      let parsedData = {
+        last_communication_date: row.last_communication_date,
+        sensor_id: row.sensor_id,
+      };
+
+      if (row.sensor_id === 1259266) {
+        // Bathroom sensor: Extract humidity and temperature
+        const match = row.current_reading.match(/([\d.]+)% @ ([\d.]+) °F/);
+        if (match) {
+          parsedData.humidity = parseFloat(match[1]); // First capture group is humidity
+          parsedData.temperature = parseFloat(match[2]); // Second capture group is temperature
+        } else {
+          console.error('Unexpected format for bathroom sensor:', row.current_reading);
+        }
+      } else {
+        // For other sensors, extract the numeric value normally
+        parsedData.current_reading = parseFloat(row.current_reading.toString().replace(/[^0-9.-]/g, ''));
+      }
+
+      return parsedData;
+    });
 
     res.status(200).json(processedData);
   } catch (error) {
