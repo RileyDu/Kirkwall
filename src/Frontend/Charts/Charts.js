@@ -64,22 +64,24 @@ const processWeatherData = (data, key, colorMode) => {
         {
           label: 'Temperature (°F)',
           data: reversedData.map(item => item.temperature),
-          backgroundColor: 'hsl(182, 100.00%, 69.40%)',
-          borderColor: 'hsl(182, 100.00%, 69.40%)',
+          backgroundColor: 'rgba(54, 162, 235, .2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
           borderWidth: 2,
-          pointBackgroundColor: 'hsl(182, 100.00%, 69.40%)',
+          pointBackgroundColor: 'rgba(54, 162, 235, .2)',
           pointRadius: 3,
           yAxisID: 'y-temp',
+          fill: 'start',
         },
         {
           label: 'Humidity (%)',
           data: reversedData.map(item => item.humidity),
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          borderColor: 'rgba(54, 162, 235, 1)',
+          backgroundColor: '#4d648d80',
+          borderColor: '#4d648d',
           borderWidth: 2,
-          pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+          pointBackgroundColor: '#4d648d80',
           pointRadius: 3,
           yAxisID: 'y-humidity',
+          fill: 'start',
         }
       ]
     };
