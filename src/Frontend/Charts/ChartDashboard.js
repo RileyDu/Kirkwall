@@ -63,6 +63,8 @@ const MiniDashboard = ({ weatherData, metric, setCurrentValue }) => {
     }
   };
 
+  if (metric === 'monnit_bathroom') return null;
+
   const timePeriod = calculateTimePeriod(currentData.length - 1);
   const { label, addSpace } = getLabelForMetric(metric);
   const formatValue = (value) => `${value}${addSpace ? ' ' : ''}${label}`;
