@@ -46,10 +46,6 @@ const processWeatherData = (data, key, colorMode) => {
       date.setHours(date.getHours() + 5);
     }
 
-    if (item.last_communication_date) {
-      date.setHours(date.getHours() - 5);
-    }
-
     return date.toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
