@@ -15,6 +15,9 @@ export const SummaryMetrics = () => {
     watchdogTempData,
     watchdogHumData,
     watchdogData,
+    monnitBathroomData,
+    monnitFridgeData,
+    monnitFreezerData,
   } = useWeatherData();
 
   const calculateTimePeriod = (metric, dataLength) => {
@@ -26,6 +29,8 @@ export const SummaryMetrics = () => {
       metric === 'soil_moisture' ||
       metric === 'leaf_wetness'
         ? dataLength * 5
+        : metric === 'monnit_bathroom' || metric === 'monnit_fridge' || metric === 'monnit_freezer'
+        ? dataLength * 15
         : dataLength * 10;
     const totalHours = Math.floor(totalMinutes / 60);
 
@@ -116,6 +121,16 @@ export const SummaryMetrics = () => {
       label: 'Garage Humidity',
       ...calculateMetrics(watchdogHumData || watchdogData, 'hum'),
       metric: 'hum',
-    }
+    },
+    {
+      label: 'Fridge Temperature',
+      ...calculateMetrics(monnitFridgeData, 'monnit_fridge'),
+      metric: 'monnit_fridge',
+    },
+    {
+      label: 'Freezer Temperature',
+      ...calculateMetrics(monnitFreezerData, 'monnit_freezer'),
+      metric: 'monnit_freezer',
+    },
   ];
 };

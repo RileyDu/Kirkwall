@@ -188,7 +188,7 @@ export const WeatherDataProvider = ({ children }) => {
       fetchAllMonnitData();
   
       // Set up interval to fetch data every 30 seconds
-      const intervalId = setInterval(fetchAllMonnitData, 30000);
+      const intervalId = setInterval(fetchAllMonnitData, 60000);
   
       // Cleanup interval on component unmount or if dependencies change
       return () => clearInterval(intervalId);
@@ -351,6 +351,8 @@ export const WeatherDataProvider = ({ children }) => {
   ];
   const watchdogMetrics = ['temp', 'hum'];
 
+  const monnitMetrics = ['monnit_bathroom', 'monnit_fridge', 'monnit_freezer'];
+
 
   const determineLimitBasedOnTimePeriod = (metric, timePeriod) => {
     console.log(timePeriod, metric);
@@ -376,6 +378,17 @@ export const WeatherDataProvider = ({ children }) => {
       '1W': 1009,
       default: 19,
     };
+
+    const monnitLimits = {
+      '1H': 5,
+      '3H': 13,
+      '6H': 25,
+      '12H': 49,
+      '1D': 97,
+      '3D': 289,
+      '1W': 673,
+      default: 73,
+    };
   
     // Define all metric groups
     const weatherMetrics = [
@@ -387,10 +400,18 @@ export const WeatherDataProvider = ({ children }) => {
       'leaf_wetness',
     ];
 
+    const monnitMetrics = [
+      'monnit_bathroom',
+      'monnit_fridge',
+      'monnit_freezer',
+    ];
+
     // Determine which limits to use based on the metric
     let limits;
     if (weatherMetrics.includes(metric)) {
       limits = weatherLimits;
+    } else if (monnitMetrics.includes(metric)) {
+      limits = monnitLimits;
     } else {
       limits = defaultLimits;
     }
@@ -403,41 +424,37 @@ export const WeatherDataProvider = ({ children }) => {
 
 // A helper function to rename the "current_reading" key to a new key (e.g., "monnit_bathroom")
 const renameCurrentReadingKey = (data, newKey) => {
-  // Ensure data is an array. Then, for each row, remove "current_reading"
-  // and add a new key with its value.
   return data.map(item => {
-    const { current_reading, ...rest } = item;
+    const { current_reading, humidity, temperature, ...rest } = item;
+
+    if (newKey === 'monnit_bathroom' && humidity !== undefined && temperature !== undefined) {
+      return { ...rest, humidity, temperature };
+    }
+
     return { ...rest, [newKey]: current_reading };
   });
 };
 
 const fetchMonnitData = async (sensor, timePeriod) => {
   try {
-    // Convert timePeriod into a limit value
     const limit = determineLimitBasedOnTimePeriod(sensor, timePeriod);
-    
-    const response = await axios.get('/api/monnit', {
-      params: { sensor, limit }
-    });
-    
-    
-    // Rename "current_reading" key to the sensor name (e.g., "monnit_bathroom")
+
+    const response = await axios.get('/api/monnit', { params: { sensor, limit } });
+
     const renamedData = renameCurrentReadingKey(response.data, sensor);
-    
-    // Update the correct state based on the sensor
+
     switch (sensor) {
       case 'monnit_bathroom':
-        setMonnitBathroomData(renamedData);
-        console.log('this is the monnit data', renamedData);
+        setMonnitBathroomData(renamedData); // Contains both `temperature` and `humidity`
+        console.log('Bathroom sensor data:', renamedData);
         break;
       case 'monnit_fridge':
         setMonnitFridgeData(renamedData);
-        console.log('this is the monnit data', renamedData);
-
+        console.log('Fridge sensor data:', renamedData);
         break;
       case 'monnit_freezer':
         setMonnitFreezerData(renamedData);
-        console.log('this is the monnit data', renamedData);
+        console.log('Freezer sensor data:', renamedData);
         break;
       default:
         break;
@@ -447,7 +464,7 @@ const fetchMonnitData = async (sensor, timePeriod) => {
   }
 };
 
-  
+
 
   const fetchSpecificData = async (metric, timePeriod) => {
     try {

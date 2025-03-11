@@ -36,6 +36,7 @@ import { useAuth } from '../AuthComponents/AuthContext.js';
 import { useWeatherData } from '../WeatherDataContext.js';
 import axios from 'axios';
 import WatchdogMap from '../Maps/WatchdogMiniMap.js';
+import MonnitMiniMap from '../Maps/MonnitMiniMap.js';
 
 const ChartWrapper = ({
   title,
@@ -68,6 +69,7 @@ const ChartWrapper = ({
   const mapComponents = {
     grandfarm: MiniMap,
     garage: WatchdogMap,
+    house: MonnitMiniMap,
   };
   const MapComponent = mapComponents[sensorMap] || null;
   const fontSize = useBreakpointValue({
@@ -86,7 +88,6 @@ const ChartWrapper = ({
   const [runModalTour, setRunModalTour] = useState(false);
   const isUserAction = useRef(false);
   const [logo, setLogo] = useState('');
-
 
   // Function to handle chart type change and switch between bar and line chart
   // User can switch between bar and line chart by button click
@@ -142,11 +143,12 @@ const ChartWrapper = ({
         break;
       case 'temp':
       case 'hum':
+        setSensorMap('garage');
+        break;
       case 'monnit_bathroom':
       case 'monnit_fridge':
       case 'monnit_freezer':
-        setSensorMap('garage');
-        break;
+        setSensorMap('house');
       default:
         console.error(`Unknown metric: ${metric}`);
     }
@@ -175,6 +177,9 @@ const ChartWrapper = ({
         leaf_wetness: 'DavisLogoBlack.png',
         temp: 'WatchdogLogoBlack.png',
         hum: 'WatchdogLogoBlack.png',
+        monnit_fridge: 'monnitlogo.png',
+        monnit_freezer: 'monnitlogo.png',
+        monnit_bathroom: 'monnitlogo.png',
       },
       dark: {
         temperature: 'DavisLogoWhite.png',
@@ -185,6 +190,9 @@ const ChartWrapper = ({
         leaf_wetness: 'DavisLogoWhite.png',
         temp: 'WatchdogLogoWhite.png',
         hum: 'WatchdogLogoWhite.png',
+        monnit_fridge: 'monnitlogo.png',
+        monnit_freezer: 'monnitlogo.png',
+        monnit_bathroom: 'monnitlogo.png',
       },
     };
 
@@ -192,8 +200,13 @@ const ChartWrapper = ({
   };
 
   const mostRecentValue =
-    weatherData && weatherData.length > 0 ? weatherData[0][metric] : 'N/A';
-  const { label, addSpace } = getLabelForMetric(metric);
+  weatherData && weatherData.length > 0
+    ? metric === 'monnit_bathroom'
+      ? `${weatherData[0].humidity}% @ ${weatherData[0].temperature} °F`
+      : weatherData[0][metric]
+    : 'N/A';
+
+const { label, addSpace } = getLabelForMetric(metric);
   const formatValue = value => `${value}${addSpace ? ' ' : ''}${label}`;
 
   const calculateTimePeriod = dataLength => {
@@ -205,6 +218,8 @@ const ChartWrapper = ({
       metric === 'soil_moisture' ||
       metric === 'leaf_wetness'
         ? dataLength * 5
+        : metric === 'monnit_bathroom' || metric === 'monnit_fridge' || metric === 'monnit_freezer'
+        ? dataLength * 15
         : dataLength * 10;
     const totalHours = Math.floor(totalMinutes / 60);
 
@@ -222,7 +237,7 @@ const ChartWrapper = ({
   };
 
   const timeOfGraph =
-  weatherData && calculateTimePeriod(weatherData.length - 1);
+    weatherData && calculateTimePeriod(weatherData.length - 1);
 
   const getChartIcon = () => {
     switch (chartType) {
@@ -307,10 +322,10 @@ const ChartWrapper = ({
     }
   }, [loading, toast]);
 
-    // Set the map to display based on the metric on page load
-    useEffect(() => {
-      setMapToDisplay(metric, currentUser);
-    }, [metric, currentUser]);
+  // Set the map to display based on the metric on page load
+  useEffect(() => {
+    setMapToDisplay(metric, currentUser);
+  }, [metric, currentUser]);
 
   return (
     <>

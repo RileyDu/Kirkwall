@@ -1,5 +1,3 @@
-// routes/monnitRoutes.js
-
 import express from 'express';
 const router = express.Router();
 import pkg from 'pg';
@@ -49,7 +47,6 @@ router.get('/', async (req, res) => {
     `;
     queryParams = [sensorId, limit];
   } else {
-    // If no sensor is specified, return the latest data from all sensors
     query = `
       SELECT current_reading, last_communication_date, sensor_id
       FROM Monnit_data_kirkwall
@@ -61,7 +58,32 @@ router.get('/', async (req, res) => {
 
   try {
     const result = await client.query(query, queryParams);
-    res.status(200).json(result.rows);
+
+    // Process data to extract correct values
+    const processedData = result.rows.map(row => {
+      let parsedData = {
+        last_communication_date: row.last_communication_date,
+        sensor_id: row.sensor_id,
+      };
+
+      if (row.sensor_id === 1259266) {
+        // Bathroom sensor: Extract humidity and temperature
+        const match = row.current_reading.match(/([\d.]+)% @ ([\d.]+) °F/);
+        if (match) {
+          parsedData.humidity = parseFloat(match[1]); // First capture group is humidity
+          parsedData.temperature = parseFloat(match[2]); // Second capture group is temperature
+        } else {
+          console.error('Unexpected format for bathroom sensor:', row.current_reading);
+        }
+      } else {
+        // For other sensors, extract the numeric value normally
+        parsedData.current_reading = parseFloat(row.current_reading.toString().replace(/[^0-9.-]/g, ''));
+      }
+
+      return parsedData;
+    });
+
+    res.status(200).json(processedData);
   } catch (error) {
     console.error('Monnit Routes: Error fetching data:', error);
     res.status(500).json({ error: 'An error occurred while fetching data' });
