@@ -239,9 +239,20 @@ const MainApp = () => {
   const location = useLocation();
   const [showAlerts, setShowAlerts] = useState(false);
   const [runThresholdTour, setRunThresholdTour] = useState(false);
+  const [isChatBotModalOpen, setIsChatBotModalOpen] = useState(false);
+
 
   const expandButtonRef = useRef(null);
   const startTourButtonRef = useRef(null);
+
+
+  const handleOpenChatBotModal = () => {
+    setIsChatBotModalOpen(true);
+  };
+  const handleCloseChatBotModal = () => {
+    setIsChatBotModalOpen(false);
+  };
+  
 
   const toggleAlerts = () => {
     setShowAlerts(!showAlerts);
@@ -279,8 +290,13 @@ const MainApp = () => {
             isMinimized={isMinimized}
             isVisible={showAlerts}
             toggleAlerts={toggleAlerts}
-          />
+            handleOpenChatBotModal={handleOpenChatBotModal}
+            />
         )}
+        <ChatBotModal
+            isOpen={isChatBotModalOpen}
+            onClose={handleCloseChatBotModal}
+          />
       <Layout
         isMinimized={isMinimized}
         toggleSidebar={toggleSidebar}

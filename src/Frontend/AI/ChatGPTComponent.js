@@ -24,8 +24,6 @@ import {
   Tr,
   Th,
   Td,
-  UnorderedList,
-  ListItem,
   Divider,
 } from '@chakra-ui/react';
 import { ArrowRightIcon } from '@chakra-ui/icons';
