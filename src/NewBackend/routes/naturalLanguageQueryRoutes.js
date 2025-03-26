@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
   // Only one supported question now
   if (
     question !==
-    'Give me a summary of the data from WatchDog for the last week.'
+    'Give me a summary of all of my readings for the last week.'
   ) {
     return res.status(400).json({ error: 'Invalid or unsupported question.' });
   }
@@ -103,15 +103,27 @@ async function startWatchdogChat(userEmail) {
   // Query the last 7 days of aggregated data
   const query = `
     SELECT
-      DATE_TRUNC('day', reading_time) AS day,
-      AVG(temp) AS avg_temp,
-      MIN(temp) AS min_temp,
-      MAX(temp) AS max_temp,
-      AVG(hum) AS avg_hum,
-      MIN(hum) AS min_hum,
-      MAX(hum) AS max_hum
-    FROM watchdog_data
-    WHERE reading_time >= NOW() - INTERVAL '7 DAYS'
+      DATE_TRUNC('day', message_timestamp) AS day,
+      AVG(temperature) AS avg_temperature,
+      MIN(temperature) AS min_temperature,
+      MAX(temperature) AS max_temperature,
+      AVG(rain_15_min_inches) AS avg_rain,
+      MIN(rain_15_min_inches) AS min_rain,
+      MAX(rain_15_min_inches) AS max_rain,
+      AVG(percent_humidity) AS avg_humidity,
+      MIN(percent_humidity) AS min_humidity,
+      MAX(percent_humidity) AS max_humidity,
+      AVG(wind_speed) AS avg_wind_speed,
+      MIN(wind_speed) AS min_wind_speed,
+      MAX(wind_speed) AS max_wind_speed,
+      AVG(leaf_wetness) AS avg_leaf_wetness,
+      MIN(leaf_wetness) AS min_leaf_wetness,
+      MAX(leaf_wetness) AS max_leaf_wetness,
+      AVG(soil_moisture) AS avg_soil_moisture,
+      MIN(soil_moisture) AS min_soil_moisture,
+      MAX(soil_moisture) AS max_soil_moisture
+    FROM weather_data
+    WHERE message_timestamp >= NOW() - INTERVAL '7 DAYS'
     GROUP BY 1
     ORDER BY 1 ASC;
   `;

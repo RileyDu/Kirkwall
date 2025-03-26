@@ -54,7 +54,7 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
   const userBg = useColorModeValue('blue.500', 'blue.300');
 
   const starterPrompts = [
-    'Give me a summary of the data from WatchDog for the last week.',
+    'Give me a summary of all of my readings for the last week.',
   ];
 
   useEffect(() => {
