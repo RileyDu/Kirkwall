@@ -261,22 +261,7 @@ const buttonConfig = {
             <>
               {currentUser && currentUser.email === 'test@kirkwall.io' && (
                 <>
-                <motion.div {...motionProps}>
-                <Tooltip label="AI Chat Bot">
-                  <MotionIconButton
-                    icon={<IoSparkles />}
-                    isRound
-                    size="lg"
-                    onClick={handleOpenChatBotModal}
-                    bg="transparent"
-                    color="whitesmoke"
-                    aria-label="AI Chat Bot"
-                    _hover={{ bg: 'transparent' }}
-                    whileHover={{ scale: 1.4 }}
-                    whileTap={{ scale: 0.9 }}
-                  />
-                </Tooltip>
-              </motion.div>
+                
                 <motion.div {...motionProps}>
                   <Tooltip label="Export Data">
                     <MotionIconButton
