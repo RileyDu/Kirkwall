@@ -117,23 +117,20 @@ const Layout = ({
   const handleOpenRecapChatbot = async () => {
     // Fetch recap data before opening the modal
     try {
-      // Get the current user email
       const userEmail = currentUser?.email || 'test@kirkwall.io';
-      
-      // Example API calls to fetch recap data - modify these according to your backend structure
       const recapResponse = await axios.get(`/api/weekly-recap?user_email=${userEmail}`);
       const alertsResponse = await axios.get(`/api/alerts/recent?user_email=${userEmail}`);
-      
+    
+      if (!recapResponse.data || !alertsResponse.data) {
+        throw new Error('Empty data received');
+      }
+    
       setRecapData(recapResponse.data);
       setRecentAlerts(alertsResponse.data);
-      
-      // Open the modal after data is fetched
       setRecapChatbotOpen(true);
     } catch (error) {
-      console.error('Error fetching recap data:', error);
-      // You might want to show a toast notification here
-      
-      // Open the modal anyway with mock data for testing
+      console.error('Error fetching recap data (fallback to mock):', error);
+    
       setRecapData([
         { metric: 'temperature', high: 49.85, low: -22.1, avg: 32.5, alert_count: 4 },
         { metric: 'humidity', high: 91, low: 60, avg: 78.65, alert_count: 0 },
@@ -146,7 +143,7 @@ const Layout = ({
         { sensor_id: 'soil_02', alert_type: 'high_moisture', value: 235, timestamp: '2025-04-11 13:45:00' }
       ]);
       setRecapChatbotOpen(true);
-    }
+    }    
   };
   
   const handleCloseRecapChatbot = () => setRecapChatbotOpen(false);
