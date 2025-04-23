@@ -1,5 +1,3 @@
-// server.js
-
 // ==============================
 // Importing Dependencies
 // ==============================
@@ -25,6 +23,7 @@ dotenv.config(); // Load environment variables
 
 const app = express();
 const port = process.env.PORT || 5000;
+
 
 // Conditional Middleware for Production
 if (process.env.NODE_ENV === 'production') {
@@ -131,11 +130,8 @@ app.get('/', (req, res) => res.send('Express on Vercel'));
 // Server Initialization
 // ==============================
 
-// Start the server only in development mode
-if (process.env.NODE_ENV === 'development') {
-  app.listen(port, () => {
-    console.log(`Server running locally on port ${port}`);
-  });
-}
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
 
 export default app;

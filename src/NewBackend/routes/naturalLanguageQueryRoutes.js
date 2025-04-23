@@ -1,5 +1,3 @@
-// routes/naturalLanguageQueryRoutes.js
-
 import express from 'express';
 const router = express.Router();
 import pkg from 'pg';
@@ -19,22 +17,22 @@ client
 
 // POST /api/nlquery
 router.post('/', async (req, res) => {
+  // Check if the question and userEmail are present in the body
+
+  console.log(req.body)
   const { question, userEmail } = req.body;
 
+  if (!question || !userEmail) {
+    return res.status(400).json({ error: 'Both question and userEmail are required.' });
+  }
+
   // Only one supported question now
-  if (
-    question !==
-    'Give me a summary of all of my readings for the last week.'
-  ) {
+  if (question !== 'Give me a summary of the data from Monnit for the last week.') {
     return res.status(400).json({ error: 'Invalid or unsupported question.' });
   }
 
-  if (!userEmail) {
-    return res.status(400).json({ error: 'User email not provided.' });
-  }
-
   try {
-    const result = await startWatchdogChat(userEmail);
+    const result = await startMonnitChat(userEmail);
     // result contains { response: initialResponse, dailyData: [...] }
     res.json(result);
   } catch (error) {
@@ -46,31 +44,29 @@ router.post('/', async (req, res) => {
 // POST /api/nlquery/followup
 router.post('/followup', async (req, res) => {
   const { lastResponse, question, userEmail, readingsData } = req.body;
+  
   if (!userEmail) {
     return res.status(400).json({ error: 'User email not found in token.' });
   }
 
   try {
-    // Define system prompt for OpenAI
     const systemPrompt = `
       You are a data analysis assistant. Your task is to:
 
-      Analyze the provided data and determine key insights or patterns.
-      Summarize the main trends observed from your analysis.
-      Offer actionable tips or recommendations based on those trends.
+      Analyze the provided data from Monnit sensors and determine key insights or patterns.
+      Your goal is to:
+      - Identify significant trends and anomalies.
+      - Provide actionable recommendations based on these insights.
+      - Ensure the response is clear, concise, and easy for a user to understand, focusing on the actionable insights.
+      - Avoid unnecessary technical jargon, and explain things in simple terms.
+
       Formatting Requirements:
+      - Return your answer in plain text (no Markdown or special formatting).
+      - Organize your key points into logical sections (e.g., "Key Insights", "Recommendations").
 
-      Return your answer in plain text (no Markdown or special formatting).
-      Make the response concise, clear, and easy to parse in a React application.
-      Organize your key points in simple sections or bullet points without using any Markdown syntax.
-      Additional Instructions:
-
-      If you reference specific data points or statistics, provide them in a readable format (e.g., “Sales increased by 20% this quarter.”).
-      Keep your language straightforward and avoid jargon where possible.
-      Only include relevant information that addresses the analysis, trends, and tips.
+      If you reference specific data points or statistics, present them clearly (e.g., “Signal strength dropped by 10% in the past 3 days”).
     `;
 
-    // Make sure to pass strings to the OpenAI endpoint
     const intentResponse = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
@@ -84,7 +80,6 @@ router.post('/followup', async (req, res) => {
 
     const followUpResponse = intentResponse.choices[0].message.content;
 
-    // Respond with the follow-up message
     return res.json({ response: followUpResponse });
   } catch (error) {
     console.error('Natural Language Query Routes: Error processing the follow-up:', error);
@@ -93,40 +88,29 @@ router.post('/followup', async (req, res) => {
 });
 
 /**
- * Initiates a watchdog chat session by aggregating data and interacting with OpenAI.
+ * Initiates a Monnit chat session by aggregating data and interacting with OpenAI.
  * @param {string} userEmail - The email of the user initiating the chat.
  * @returns {object} - Contains the initial response from the assistant and the daily aggregated data.
  */
-async function startWatchdogChat(userEmail) {
-  console.log(`Natural Language Query Routes: Starting watchdog chat for user: ${userEmail}`);
+async function startMonnitChat(userEmail) {
+  console.log(`Natural Language Query Routes: Starting Monnit chat for user: ${userEmail}`);
 
-  // Query the last 7 days of aggregated data
+  // Query the last 7 days of aggregated data from the monnit_data_kirkwall table
   const query = `
     SELECT
-      DATE_TRUNC('day', message_timestamp) AS day,
-      AVG(temperature) AS avg_temperature,
-      MIN(temperature) AS min_temperature,
-      MAX(temperature) AS max_temperature,
-      AVG(rain_15_min_inches) AS avg_rain,
-      MIN(rain_15_min_inches) AS min_rain,
-      MAX(rain_15_min_inches) AS max_rain,
-      AVG(percent_humidity) AS avg_humidity,
-      MIN(percent_humidity) AS min_humidity,
-      MAX(percent_humidity) AS max_humidity,
-      AVG(wind_speed) AS avg_wind_speed,
-      MIN(wind_speed) AS min_wind_speed,
-      MAX(wind_speed) AS max_wind_speed,
-      AVG(leaf_wetness) AS avg_leaf_wetness,
-      MIN(leaf_wetness) AS min_leaf_wetness,
-      MAX(leaf_wetness) AS max_leaf_wetness,
-      AVG(soil_moisture) AS avg_soil_moisture,
-      MIN(soil_moisture) AS min_soil_moisture,
-      MAX(soil_moisture) AS max_soil_moisture
-    FROM weather_data
-    WHERE message_timestamp >= NOW() - INTERVAL '7 DAYS'
+      DATE_TRUNC('day', last_communication_date) AS day,
+      AVG(COALESCE(NULLIF(regexp_replace(signal_strength::text, '[^0-9.-]', '', 'g'), ''), '0')::float) AS avg_signal_strength,
+      MIN(COALESCE(NULLIF(regexp_replace(signal_strength::text, '[^0-9.-]', '', 'g'), ''), '0')::float) AS min_signal_strength,
+      MAX(COALESCE(NULLIF(regexp_replace(signal_strength::text, '[^0-9.-]', '', 'g'), ''), '0')::float) AS max_signal_strength,
+      AVG(COALESCE(NULLIF(regexp_replace(current_reading::text, '[^0-9.-]', '', 'g'), ''), '0')::float) AS avg_current_reading,
+      MIN(COALESCE(NULLIF(regexp_replace(current_reading::text, '[^0-9.-]', '', 'g'), ''), '0')::float) AS min_current_reading,
+      MAX(COALESCE(NULLIF(regexp_replace(current_reading::text, '[^0-9.-]', '', 'g'), ''), '0')::float) AS max_current_reading
+    FROM monnit_data_kirkwall
+    WHERE last_communication_date >= NOW() - INTERVAL '7 DAYS'
     GROUP BY 1
     ORDER BY 1 ASC;
   `;
+
   const result = await client.query(query);
   if (result.rows.length === 0) {
     throw new Error('No data found in the last 7 days.');
@@ -135,26 +119,24 @@ async function startWatchdogChat(userEmail) {
   const dailyData = result.rows;
   let summaryText =
     'Here are the daily aggregated measurements for the past 7 days:\n\n';
+  
+  // Clean the data and generate the summary
   for (const dayRow of dailyData) {
     const dayStr = new Date(dayRow.day).toLocaleDateString();
+
     summaryText += `Date: ${dayStr}\n`;
-    summaryText += `  Temperature: Avg: ${dayRow.avg_temp.toFixed(
-      2
-    )}°F, Min: ${dayRow.min_temp.toFixed(2)}°F, Max: ${dayRow.max_temp.toFixed(
-      2
-    )}°F\n`;
-    summaryText += `  Humidity:    Avg: ${dayRow.avg_hum.toFixed(
-      2
-    )}%, Min: ${dayRow.min_hum.toFixed(2)}%, Max: ${dayRow.max_hum.toFixed(
-      2
-    )}%\n\n`;
+    summaryText += `  Signal Strength: Avg: ${dayRow.avg_signal_strength.toFixed(2)}, 
+    Min: ${dayRow.min_signal_strength.toFixed(2)}, Max: ${dayRow.max_signal_strength.toFixed(2)}\n`;
+
+    summaryText += `  Current Reading: Avg: ${dayRow.avg_current_reading.toFixed(2)}, 
+    Min: ${dayRow.min_current_reading.toFixed(2)}, Max: ${dayRow.max_current_reading.toFixed(2)}\n\n`;
   }
 
   const messages = [
     {
       role: 'system',
       content: `
-        You are a helpful assistant that knows about watchdog sensor data from the past week.
+        You are a helpful assistant that knows about Monnit sensor data from the past week.
         The user has the following daily aggregates:
         ${summaryText}
 
@@ -168,11 +150,10 @@ async function startWatchdogChat(userEmail) {
     {
       role: 'assistant',
       content:
-        'User said: "Give me a summary of the data from WatchDog for the last week."',
+        'User said: "Give me a summary of the data from Monnit for the last week."',
     },
   ];
 
-  // Call OpenAI to get the initial summary
   const completion = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: messages,
@@ -189,8 +170,9 @@ async function startWatchdogChat(userEmail) {
     throw new Error('Invalid JSON from LLM');
   }
 
-  // Return both the parsed LLM data and the daily aggregator data
   return { response: parsedJson, dailyData };
 }
+
+
 
 export default router;

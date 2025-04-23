@@ -51,7 +51,7 @@ import VideoPlayerPage from './Frontend/OneTimers/VideoFeed/VideoPlayerPage.js';
 import AgScrapper from './Frontend/OneTimers/AgScrapper/AgScrapper.js';
 import ColdChainDash from './Frontend/OneTimers/ColdChain/ColdChainDash.js';
 import SOAlerts from './Frontend/SOAlerts/soalerts.js';
-import ChatBotModal from './Frontend/Modals/ChatBotModal.js';
+import RecapChatbot from './Frontend/WeeklyRecap/RecapChatbot.js'; // Import RecapChatbot
 import BioWorx from './Frontend/Clients/BioWorx/BioWorx.js';
 import PrivacyPolicy from './Frontend/Privacy/PrivacyPolicy.js';
 import Onboarding from './Frontend/AuthComponents/Onboarding.js';
@@ -61,6 +61,7 @@ import TrialESP32Data from './Frontend/OneTimers/ESP32/ESPMock.js';
 import CssTrial from './Frontend/Clients/CubeSatSim/CssTrial.js';
 
 import { useAuth } from './Frontend/AuthComponents/AuthContext.js';
+import axios from 'axios'; // For fetching recap data
 
 const Layout = ({
   children,
@@ -93,7 +94,11 @@ const Layout = ({
   const [isOptionsModalOpen, setOptionsModalOpen] = useState(false); // State for OptionsModal
   const [isFaqsModalOpen, setFaqsModalOpen] = useState(false);
   const [isHelpModalOpen, setHelpModalOpen] = useState(false);
-  const [isChatBotModalOpen, setChatBotModalOpen] = useState(false);
+  const [isRecapChatbotOpen, setRecapChatbotOpen] = useState(false);
+  
+  // State for RecapChatbot data
+  const [recapData, setRecapData] = useState(null);
+  const [recentAlerts, setRecentAlerts] = useState([]);
 
   const handleOpenOptionsModal = () => setOptionsModalOpen(true);
   const handleCloseOptionsModal = () => setOptionsModalOpen(false);
@@ -109,10 +114,42 @@ const Layout = ({
   const handleCloseHelpModal = () => setHelpModalOpen(false);
   const handleCloseFaqsModal = () => setFaqsModalOpen(false);
 
-  const handleOpenChatBotModal = () => {
-    setChatBotModalOpen(true);
+  const handleOpenRecapChatbot = async () => {
+    // Fetch recap data before opening the modal
+    try {
+      // Get the current user email
+      const userEmail = currentUser?.email || 'test@kirkwall.io';
+      
+      // Example API calls to fetch recap data - modify these according to your backend structure
+      const recapResponse = await axios.get(`/api/weekly-recap?user_email=${userEmail}`);
+      const alertsResponse = await axios.get(`/api/alerts/recent?user_email=${userEmail}`);
+      
+      setRecapData(recapResponse.data);
+      setRecentAlerts(alertsResponse.data);
+      
+      // Open the modal after data is fetched
+      setRecapChatbotOpen(true);
+    } catch (error) {
+      console.error('Error fetching recap data:', error);
+      // You might want to show a toast notification here
+      
+      // Open the modal anyway with mock data for testing
+      setRecapData([
+        { metric: 'temperature', high: 49.85, low: -22.1, avg: 32.5, alert_count: 4 },
+        { metric: 'humidity', high: 91, low: 60, avg: 78.65, alert_count: 0 },
+        { metric: 'soil_moisture', high: 230, low: 180, avg: 197.77, alert_count: 1 },
+        { metric: 'wind_speed', high: 22, low: 3, avg: 11.29, alert_count: 0 }
+      ]);
+      setRecentAlerts([
+        { sensor_id: 'temp_01', alert_type: 'low_temp', value: 39.1, timestamp: '2025-04-10 04:30:00' },
+        { sensor_id: 'temp_03', alert_type: 'low_temp', value: 38.5, timestamp: '2025-04-10 05:15:00' },
+        { sensor_id: 'soil_02', alert_type: 'high_moisture', value: 235, timestamp: '2025-04-11 13:45:00' }
+      ]);
+      setRecapChatbotOpen(true);
+    }
   };
-  const handleCloseChatBotModal = () => setChatBotModalOpen(false);
+  
+  const handleCloseRecapChatbot = () => setRecapChatbotOpen(false);
 
   const [runTour, setRunTour] = useState(false);
 
@@ -181,7 +218,7 @@ const Layout = ({
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               ml={2}
-              onClick={handleOpenChatBotModal}
+              onClick={handleOpenRecapChatbot}
               position="fixed"
               bottom="20px"
               right="20px"
@@ -189,10 +226,15 @@ const Layout = ({
             />
           )}
 
-          <ChatBotModal
-            isOpen={isChatBotModalOpen}
-            onClose={handleCloseChatBotModal}
-          />
+          {/* RecapChatbot Modal */}
+          {isRecapChatbotOpen && recapData && (
+            <RecapChatbot
+              recapData={recapData}
+              recentAlerts={recentAlerts}
+              userEmail={currentUser?.email || 'test@kirkwall.io'}
+              onClose={handleCloseRecapChatbot}
+            />
+          )}
 
           <OptionsModal
             isOpen={isOptionsModalOpen}
@@ -207,10 +249,6 @@ const Layout = ({
             startTourButtonRef={startTourButtonRef}
             runThresholdTour={runThresholdTour}
             setRunThresholdTour={setRunThresholdTour}
-            // setIsTourRunning={setIsTourRunning}
-            // isTourRunning={isTourRunning}
-            // activeChartID={activeChartID}
-            // setActiveChartID={setActiveChartID}
           />
         </>
       )}
@@ -310,8 +348,6 @@ const MainApp = () => {
         setRunThresholdTour={setRunThresholdTour}
       >
         <Routes>
-          {/* <Route path="/landing" element={<LandingPage />} /> */}
-          {/* <Route path="/signup" element={<SignUp />} /> */}
           <Route path="/privacypolicy" element={<PrivacyPolicy />} />
           <Route path="/" element={<Login />} />
           <Route path="/dslogin" element={<DisasterShieldLogin />} />
