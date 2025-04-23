@@ -1,6 +1,4 @@
-// frontend/src/components/ChatGPTComponent.jsx
-
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -56,7 +54,7 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
   const userBg = useColorModeValue('blue.500', 'blue.300');
 
   const starterPrompts = [
-    'Give me a summary of the data from WatchDog for the last week.',
+    'Give me a summary of the data from Monnit for the last week.',
   ];
 
   useEffect(() => {
@@ -65,15 +63,15 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
     }
   }, [messages, loading]);
 
-  const handlePromptClick = async prompt => {
+  const handlePromptClick = async (prompt) => {
     if (!userEmail) {
       setError('User email not available.');
       return;
     }
 
     const userMessage = { sender: 'user', text: prompt };
-    setMessages(prev => [...prev, userMessage]);
-    setConversationHistory(prev => [
+    setMessages((prev) => [...prev, userMessage]);
+    setConversationHistory((prev) => [
       ...prev,
       { role: 'user', content: prompt },
     ]);
@@ -82,14 +80,22 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
     setError(null);
 
     try {
-      const response = await axios.post('/api/nlquery/', {
-        question: prompt,
-        conversation: [
-          ...conversationHistory,
-          { role: 'user', content: prompt },
-        ],
-        userEmail,
-      });
+      const response = await axios.post(
+        '/api/nlquery/',
+        {
+          question: prompt,
+          conversation: [
+            ...conversationHistory,
+            { role: 'user', content: prompt },
+          ],
+          userEmail,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json', // Ensure the Content-Type is set to application/json
+          },
+        }
+      );
 
       if (response.data.response) {
         // Store dailyData for table rendering
@@ -99,14 +105,11 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
 
         const botMessage = {
           sender: 'summary',
-          // Instead of just response.data.response (a string),
-          // now you might do something like JSON.stringify or build a custom UI:
           text: JSON.stringify(response.data.response.summary, null, 2),
-          // or store it as a structured object
           data: response.data.response,
         };
-        setMessages(prev => [...prev, botMessage]);
-        setConversationHistory(prev => [
+        setMessages((prev) => [...prev, botMessage]);
+        setConversationHistory((prev) => [
           ...prev,
           { role: 'assistant', content: botMessage.text },
         ]);
@@ -129,8 +132,8 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
     }
 
     const userMessage = { sender: 'user', text: userInput };
-    setMessages(prev => [...prev, userMessage]);
-    setConversationHistory(prev => [
+    setMessages((prev) => [...prev, userMessage]);
+    setConversationHistory((prev) => [
       ...prev,
       { role: 'user', content: userInput },
     ]);
@@ -141,47 +144,59 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
     try {
       let response;
       if (isFollowUp && lastBotResponse) {
-        response = await axios.post(`/api/followup/`, {
-          lastResponse: lastBotResponse,
-          question: userInput,
-          userEmail,
-          readingsData: hiddenData,
-        });
+        response = await axios.post(
+          `/api/followup/`,
+          {
+            lastResponse: lastBotResponse,
+            question: userInput,
+            userEmail,
+            readingsData: hiddenData,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json', // Ensure the Content-Type is set to application/json
+            },
+          }
+        );
       } else {
-        response = await axios.post(`/api/nlquery/`, {
-          question: userInput,
-          conversation: conversationHistory.concat({
-            role: 'user',
-            content: userInput,
-          }),
-          userEmail,
-        });
+        response = await axios.post(
+          `/api/nlquery/`,
+          {
+            question: userInput,
+            conversation: conversationHistory.concat({
+              role: 'user',
+              content: userInput,
+            }),
+            userEmail,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json', // Ensure the Content-Type is set to application/json
+            },
+          }
+        );
       }
 
       if (response.data.response.summary) {
         const botMessage = {
           sender: 'bot',
-          // Instead of just response.data.response (a string),
-          // now you might do something like JSON.stringify or build a custom UI:
           text: JSON.stringify(response.data.response, null, 2),
-          // or store it as a structured object
           data: response.data.response,
         };
-        setMessages(prev => [...prev, botMessage]);
-        setConversationHistory(prev => [
+        setMessages((prev) => [...prev, botMessage]);
+        setConversationHistory((prev) => [
           ...prev,
           { role: 'assistant', content: botMessage.text },
         ]);
         setLastBotResponse(response.data.response);
         setIsFollowUp(true);
-      }
-      else if (response.data.response) {
+      } else if (response.data.response) {
         const botMessage = {
           sender: 'bot',
-          text: response.data.response
+          text: response.data.response,
         };
-        setMessages(prev => [...prev, botMessage]);
-        setConversationHistory(prev => [
+        setMessages((prev) => [...prev, botMessage]);
+        setConversationHistory((prev) => [
           ...prev,
           { role: 'assistant', content: botMessage.text },
         ]);
@@ -209,25 +224,19 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
     setHiddenData(null); // Clear the daily data
   };
 
-  const handleKeyPress = e => {
+  const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleUserInput();
     }
   };
 
-  // Build a display array that injects the table as the third item (right after the second message).
   const displayedMessages = useMemo(() => {
-    // If we don't have hiddenData or we have fewer than two messages, just display messages as usual.
     if (!hiddenData || messages.length < 2) {
-      return messages.map(msg => ({ ...msg, isTable: false }));
+      return messages.map((msg) => ({ ...msg, isTable: false }));
     }
 
-    // Otherwise, take the first two, add a special placeholder for the table, then the rest
-    const firstTwo = messages
-      .slice(0, 2)
-      .map(msg => ({ ...msg, isTable: false }));
-    const rest = messages.slice(2).map(msg => ({ ...msg, isTable: false }));
-    // This is our special placeholder for rendering the table
+    const firstTwo = messages.slice(0, 2).map((msg) => ({ ...msg, isTable: false }));
+    const rest = messages.slice(2).map((msg) => ({ ...msg, isTable: false }));
     const tablePlaceholder = { isTable: true };
     return [...firstTwo, tablePlaceholder, ...rest];
   }, [messages, hiddenData]);
@@ -268,7 +277,6 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
               boxShadow="base"
             >
               {displayedMessages.map((msg, index) => {
-                // 1) If this item is the table placeholder, render the table
                 if (msg.isTable) {
                   return (
                     <Box
@@ -282,28 +290,26 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
                         <Thead>
                           <Tr>
                             <Th>Date</Th>
-                            <Th>Avg Temp (°F)</Th>
-                            <Th>Min Temp (°F)</Th>
-                            <Th>Max Temp (°F)</Th>
-                            <Th>Avg Hum (%)</Th>
-                            <Th>Min Hum (%)</Th>
-                            <Th>Max Hum (%)</Th>
+                            <Th>Avg Signal Strength</Th>
+                            <Th>Min Signal Strength</Th>
+                            <Th>Max Signal Strength</Th>
+                            <Th>Avg Current Reading</Th>
+                            <Th>Min Current Reading</Th>
+                            <Th>Max Current Reading</Th>
                           </Tr>
                         </Thead>
                         <Tbody>
                           {hiddenData.map((dayRow, idx) => {
-                            const dayStr = new Date(
-                              dayRow.day
-                            ).toLocaleDateString();
+                            const dayStr = new Date(dayRow.day).toLocaleDateString();
                             return (
                               <Tr key={idx}>
                                 <Td>{dayStr}</Td>
-                                <Td>{dayRow.avg_temp.toFixed(2)}</Td>
-                                <Td>{dayRow.min_temp.toFixed(2)}</Td>
-                                <Td>{dayRow.max_temp.toFixed(2)}</Td>
-                                <Td>{dayRow.avg_hum.toFixed(2)}</Td>
-                                <Td>{dayRow.min_hum.toFixed(2)}</Td>
-                                <Td>{dayRow.max_hum.toFixed(2)}</Td>
+                                <Td>{dayRow.avg_signal_strength.toFixed(2)}</Td>
+                                <Td>{dayRow.min_signal_strength.toFixed(2)}</Td>
+                                <Td>{dayRow.max_signal_strength.toFixed(2)}</Td>
+                                <Td>{dayRow.avg_current_reading.toFixed(2)}</Td>
+                                <Td>{dayRow.min_current_reading.toFixed(2)}</Td>
+                                <Td>{dayRow.max_current_reading.toFixed(2)}</Td>
                               </Tr>
                             );
                           })}
@@ -313,39 +319,10 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
                   );
                 }
 
-                // 2) If the bot sent a structured JSON response (msg.data), render the JSON fields
-                else if (msg.sender === 'summary' && msg.data) {
-                  return (
-                    <Box
-                      key={index}
-                      alignSelf="flex-start"
-                      bg={botBg}
-                      px="4"
-                      py="2"
-                      borderRadius="md"
-                      maxW="70%"
-                      wordBreak="break-word"
-                      boxShadow="sm"
-                    >
-                      {/* Example of using specific fields from msg.data */}
-                      <Text color="white" fontWeight="bold">
-                        Summary:
-                      </Text>
-                      <Text color="white">{msg.data.summary}</Text>
-                      {/* {console.log(msg.data)} */}
-                      <Divider my={2} />
-                      <Text color="white" fontWeight="bold">What would you like to know about your watchdog sensors from the past week?</Text>
-                    </Box>
-                  )
-                }
-
-                // 3) Otherwise, render a normal message (text)
                 return (
                   <Box
                     key={index}
-                    alignSelf={
-                      msg.sender === 'user' ? 'flex-end' : 'flex-start'
-                    }
+                    alignSelf={msg.sender === 'user' ? 'flex-end' : 'flex-start'}
                     bg={msg.sender === 'user' ? userBg : botBg}
                     px="4"
                     py="2"
@@ -400,7 +377,7 @@ const ChatGPTComponent = ({ isOpen, onClose }) => {
                   <Input
                     placeholder="Type your message..."
                     value={userInput}
-                    onChange={e => setUserInput(e.target.value)}
+                    onChange={(e) => setUserInput(e.target.value)}
                     onKeyPress={handleKeyPress}
                   />
                   <IconButton
