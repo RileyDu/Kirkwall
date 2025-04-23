@@ -86,7 +86,7 @@ import {
     };
   
     return (
-      <Box mx="auto" mt={24} px={4} display="flex" flexDirection="column" alignItems="center">
+      <Box mx="auto" mt={24} mb={12} px={4} display="flex" flexDirection="column" alignItems="center">
         <Heading mb={6} textAlign="center" size="xl" fontWeight="bold">
           CubeSatSim Sensor Readings
         </Heading>
