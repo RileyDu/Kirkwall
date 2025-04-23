@@ -117,16 +117,29 @@ const Layout = ({
   const handleOpenRecapChatbot = async () => {
     // Fetch recap data before opening the modal
     try {
-      const userEmail = currentUser?.email || 'test@kirkwall.io';
-      const recapResponse = await axios.get(`/api/weekly-recap?user_email=${userEmail}`);
-      const alertsResponse = await axios.get(`/api/alerts/recent?user_email=${userEmail}`);
+      // const userEmail = currentUser?.email || 'test@kirkwall.io';
+      // const recapResponse = await axios.get(`/api/weekly-recap?user_email=${userEmail}`);
+      // const alertsResponse = await axios.get(`/api/alerts/recent?user_email=${userEmail}`);
     
-      if (!recapResponse.data || !alertsResponse.data) {
-        throw new Error('Empty data received');
-      }
+      // if (!recapResponse.data || !alertsResponse.data) {
+      //   throw new Error('Empty data received');
+      // }
     
-      setRecapData(recapResponse.data);
-      setRecentAlerts(alertsResponse.data);
+      // setRecapData(recapResponse.data);
+      // setRecentAlerts(alertsResponse.data);
+      // setRecapChatbotOpen(true);
+          
+      setRecapData([
+        { metric: 'temperature', high: 49.85, low: -22.1, avg: 32.5, alert_count: 4 },
+        { metric: 'humidity', high: 91, low: 60, avg: 78.65, alert_count: 0 },
+        { metric: 'soil_moisture', high: 230, low: 180, avg: 197.77, alert_count: 1 },
+        { metric: 'wind_speed', high: 22, low: 3, avg: 11.29, alert_count: 0 }
+      ]);
+      setRecentAlerts([
+        { sensor_id: 'temp_01', alert_type: 'low_temp', value: 39.1, timestamp: '2025-04-10 04:30:00' },
+        { sensor_id: 'temp_03', alert_type: 'low_temp', value: 38.5, timestamp: '2025-04-10 05:15:00' },
+        { sensor_id: 'soil_02', alert_type: 'high_moisture', value: 235, timestamp: '2025-04-11 13:45:00' }
+      ]);
       setRecapChatbotOpen(true);
     } catch (error) {
       console.error('Error fetching recap data (fallback to mock):', error);
