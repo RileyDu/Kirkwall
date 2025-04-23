@@ -28,4 +28,15 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/css', async (req, res) => {
+  try {
+    const result = await client.query('SELECT * FROM css_trial');
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching data from css_trial:', error);
+    res.status(500).json({ error: 'An error occurred while fetching BME280 data' });
+  }
+});
+
+
 export default router;

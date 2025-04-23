@@ -58,6 +58,7 @@ import Onboarding from './Frontend/AuthComponents/Onboarding.js';
 import DisasterShieldLogin from './Frontend/AuthComponents/DisasterShieldLogin.js';
 import DisasterShield from './Frontend/Clients/DisasterShield/DisasterShieldMap.js';
 import TrialESP32Data from './Frontend/OneTimers/ESP32/ESPMock.js';
+import CssTrial from './Frontend/Clients/CubeSatSim/CssTrial.js';
 
 import { useAuth } from './Frontend/AuthComponents/AuthContext.js';
 import axios from 'axios'; // For fetching recap data
@@ -277,9 +278,20 @@ const MainApp = () => {
   const location = useLocation();
   const [showAlerts, setShowAlerts] = useState(false);
   const [runThresholdTour, setRunThresholdTour] = useState(false);
+  const [isChatBotModalOpen, setIsChatBotModalOpen] = useState(false);
+
 
   const expandButtonRef = useRef(null);
   const startTourButtonRef = useRef(null);
+
+
+  const handleOpenChatBotModal = () => {
+    setIsChatBotModalOpen(true);
+  };
+  const handleCloseChatBotModal = () => {
+    setIsChatBotModalOpen(false);
+  };
+  
 
   const toggleAlerts = () => {
     setShowAlerts(!showAlerts);
@@ -317,8 +329,13 @@ const MainApp = () => {
             isMinimized={isMinimized}
             isVisible={showAlerts}
             toggleAlerts={toggleAlerts}
-          />
+            handleOpenChatBotModal={handleOpenChatBotModal}
+            />
         )}
+        <ChatBotModal
+            isOpen={isChatBotModalOpen}
+            onClose={handleCloseChatBotModal}
+          />
       <Layout
         isMinimized={isMinimized}
         toggleSidebar={toggleSidebar}
@@ -508,6 +525,14 @@ const MainApp = () => {
             element={
               <ProtectedRoute allowedUsers={['test@kirkwall.io']}>
                 <TrialESP32Data />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/CssTrial"
+            element={
+              <ProtectedRoute allowedUsers={['test@kirkwall.io']}>
+                <CssTrial />
               </ProtectedRoute>
             }
           />

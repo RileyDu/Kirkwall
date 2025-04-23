@@ -59,8 +59,9 @@ import { useAuth } from '../AuthComponents/AuthContext.js';
 import Admin from './Admin.js';
 import AdminExpandModal from '../Modals/AdminExpandModal.js';
 import ExportDataModal from '../Modals/ExportDataModal.js';
+import { IoSparkles } from 'react-icons/io5';
 
-const Header = ({ isMinimized, isVisible, toggleAlerts }) => {
+const Header = ({ isMinimized, isVisible, toggleAlerts, handleOpenChatBotModal }) => {
   const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
   const navigate = useNavigate();
   const [isDrawerOpen, setDrawerOpen] = useState(false);
@@ -259,6 +260,23 @@ const buttonConfig = {
           {isLargerThan768 && (
             <>
               {currentUser && currentUser.email === 'test@kirkwall.io' && (
+                <>
+                <motion.div {...motionProps}>
+                <Tooltip label="AI Chat Bot">
+                  <MotionIconButton
+                    icon={<IoSparkles />}
+                    isRound
+                    size="lg"
+                    onClick={handleOpenChatBotModal}
+                    bg="transparent"
+                    color="whitesmoke"
+                    aria-label="AI Chat Bot"
+                    _hover={{ bg: 'transparent' }}
+                    whileHover={{ scale: 1.4 }}
+                    whileTap={{ scale: 0.9 }}
+                  />
+                </Tooltip>
+              </motion.div>
                 <motion.div {...motionProps}>
                   <Tooltip label="Export Data">
                     <MotionIconButton
@@ -275,6 +293,7 @@ const buttonConfig = {
                     />
                   </Tooltip>
                 </motion.div>
+                </>
               )}
               <motion.div {...motionProps}>
                 <Tooltip label="Toggle Weather Alerts">

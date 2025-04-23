@@ -24,8 +24,12 @@ dotenv.config(); // Load environment variables
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Apply express.json middleware globally for both production and development
-app.use(express.json()); // Ensure JSON parsing works in both dev and prod
+
+// Conditional Middleware for Production
+if (process.env.NODE_ENV === 'production') {
+}
+app.use(express.json());
+
 app.use(cors()); // Enable CORS for all origins
 
 // ==============================
