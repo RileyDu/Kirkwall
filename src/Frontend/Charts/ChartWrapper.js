@@ -148,6 +148,7 @@ const ChartWrapper = ({
       case 'monnit_bathroom':
       case 'monnit_fridge':
       case 'monnit_freezer':
+      case 'monnit_amp':
         setSensorMap('house');
       default:
         console.error(`Unknown metric: ${metric}`);
@@ -180,6 +181,7 @@ const ChartWrapper = ({
         monnit_fridge: 'monnitlogo.png',
         monnit_freezer: 'monnitlogo.png',
         monnit_bathroom: 'monnitlogo.png',
+        monnit_amp: 'monnitlogo.png',
       },
       dark: {
         temperature: 'DavisLogoWhite.png',
@@ -193,6 +195,7 @@ const ChartWrapper = ({
         monnit_fridge: 'monnitlogo.png',
         monnit_freezer: 'monnitlogo.png',
         monnit_bathroom: 'monnitlogo.png',
+        monnit_amp: 'monnitlogo.png',
       },
     };
 
@@ -218,7 +221,7 @@ const { label, addSpace } = getLabelForMetric(metric);
       metric === 'soil_moisture' ||
       metric === 'leaf_wetness'
         ? dataLength * 5
-        : metric === 'monnit_bathroom' || metric === 'monnit_fridge' || metric === 'monnit_freezer'
+        : metric === 'monnit_bathroom' || metric === 'monnit_fridge' || metric === 'monnit_freezer' || metric === 'monnit_amp'
         ? dataLength * 15
         : dataLength * 10;
     const totalHours = Math.floor(totalMinutes / 60);

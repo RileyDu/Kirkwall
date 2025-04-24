@@ -18,6 +18,7 @@ export const SummaryMetrics = () => {
     monnitBathroomData,
     monnitFridgeData,
     monnitFreezerData,
+    monnitAmpData,
   } = useWeatherData();
 
   const calculateTimePeriod = (metric, dataLength) => {
@@ -29,7 +30,7 @@ export const SummaryMetrics = () => {
       metric === 'soil_moisture' ||
       metric === 'leaf_wetness'
         ? dataLength * 5
-        : metric === 'monnit_bathroom' || metric === 'monnit_fridge' || metric === 'monnit_freezer'
+        : metric === 'monnit_bathroom' || metric === 'monnit_fridge' || metric === 'monnit_freezer' || metric === 'monnit_amp'
         ? dataLength * 15
         : dataLength * 10;
     const totalHours = Math.floor(totalMinutes / 60);
@@ -132,5 +133,15 @@ export const SummaryMetrics = () => {
       ...calculateMetrics(monnitFreezerData, 'monnit_freezer'),
       metric: 'monnit_freezer',
     },
+    {
+      label: 'Bathroom Temperature',
+      ...calculateMetrics(monnitBathroomData, 'monnit_bathroom'),
+      metric: 'monnit_bathroom',
+    },
+    {
+      label: 'Lamp Amp Hours',
+      ...calculateMetrics(monnitAmpData, 'monnit_amp'),
+      metric: 'monnit_amp',
+    }
   ];
 };

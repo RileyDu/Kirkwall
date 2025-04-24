@@ -108,5 +108,14 @@ export const MetricSettings = [
         company:"Monnit",
         soloData:"monnitFreezerData",
         sourceData: "monnitFreezerData"
-    }
+    },
+    {
+        id:12,
+        metric:"monnit_amp",
+        name:"Lamp Amp Hours",
+        unit:"Ah",
+        color:"orange",
+        company:"Monnit",
+        soloData:"monnitAmpData",
+        sourceData: "monnitAmpData"}
 ];

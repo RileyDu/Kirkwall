@@ -30,6 +30,9 @@ router.get('/', async (req, res) => {
     case 'monnit_freezer':
       sensorId = 1259489;
       break;
+    case 'monnit_amp':
+      sensorId = 1251479;
+      break;
     default:
       sensorId = null;
   }
