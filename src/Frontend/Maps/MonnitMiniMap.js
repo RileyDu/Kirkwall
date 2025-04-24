@@ -18,7 +18,7 @@ const locations = [
     lat: 46.87763149837374,
     lng: -96.78810157220109,
     info: 'Fridge, Freezer, & Bathroom',
-    details: 'Temperature & Humidity',
+    details: 'Temperature, Humidity, & Amp Hours',
     dataReading: 'Sends data every 15 minutes',
   },
 ];
