@@ -17,6 +17,7 @@ export const CustomerSettings = [
       'monnit_fridge',
       'monnit_freezer',
       'monnit_bathroom',
+      'monnit_amp',
     ],
   },
   {

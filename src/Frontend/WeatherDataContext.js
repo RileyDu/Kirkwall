@@ -27,6 +27,7 @@ export const WeatherDataProvider = ({ children }) => {
     const [selectedTimePeriodMonnitBathroom, setSelectedTimePeriodMonnitBathroom] = useState('3H');
     const [selectedTimePeriodMonnitFridge, setSelectedTimePeriodMonnitFridge] = useState('3H');
     const [selectedTimePeriodMonnitFreezer, setSelectedTimePeriodMonnitFreezer] = useState('3H');
+    const [selectedTimePeriodMonnitAmp, setSelectedTimePeriodMonnitAmp] = useState('3H');
   const [selectedTimePeriodWDHum, setSelectedTimePeriodWDHum] = useState('3H');
   const [tempData, setTempData] = useState(null);
   const [humidityData, setHumidityData] = useState(null);
@@ -40,6 +41,7 @@ export const WeatherDataProvider = ({ children }) => {
   const [monnitBathroomData, setMonnitBathroomData] = useState(null);
   const [monnitFridgeData, setMonnitFridgeData] = useState(null);
   const [monnitFreezerData, setMonnitFreezerData] = useState(null);
+  const [monnitAmpData, setMonnitAmpData] = useState(null);
   const [alertsThreshold, setAlertsThreshold] = useState({});
   const [thresholds, setThresholds] = useState([]);
   const [chartData, setChartData] = useState([]);
@@ -55,6 +57,7 @@ export const WeatherDataProvider = ({ children }) => {
     monnitBathroom: false,
     monnitFridge: false,
     monnitFreezer: false,
+    monnitAmp: false,
   });
 
   const { currentUser } = useAuth();
@@ -182,6 +185,7 @@ export const WeatherDataProvider = ({ children }) => {
         fetchMonnitData('monnit_bathroom', selectedTimePeriodMonnitBathroom);
         fetchMonnitData('monnit_fridge', selectedTimePeriodMonnitFridge);
         fetchMonnitData('monnit_freezer', selectedTimePeriodMonnitFreezer);
+        fetchMonnitData('monnit_amp', selectedTimePeriodMonnitAmp);
       };
   
       // Initial fetch
@@ -198,6 +202,7 @@ export const WeatherDataProvider = ({ children }) => {
     selectedTimePeriodMonnitBathroom,
     selectedTimePeriodMonnitFridge,
     selectedTimePeriodMonnitFreezer,
+    selectedTimePeriodMonnitAmp,
   ]);
   
 
@@ -335,6 +340,10 @@ export const WeatherDataProvider = ({ children }) => {
         setSelectedTimePeriodMonnitFreezer(timePeriod);
         setDataLoaded(prevState => ({ ...prevState, monnitFreezer: true }));
         break;
+      case 'monnit_amp':
+        setSelectedTimePeriodMonnitAmp(timePeriod);
+        setDataLoaded(prevState => ({ ...prevState, monnitAmp: true }));
+        break;
       default:
         break;
     }
@@ -404,6 +413,7 @@ export const WeatherDataProvider = ({ children }) => {
       'monnit_bathroom',
       'monnit_fridge',
       'monnit_freezer',
+      'monnit_amp',
     ];
 
     // Determine which limits to use based on the metric
@@ -455,6 +465,10 @@ const fetchMonnitData = async (sensor, timePeriod) => {
       case 'monnit_freezer':
         setMonnitFreezerData(renamedData);
         console.log('Freezer sensor data:', renamedData);
+        break;
+      case 'monnit_amp':
+        setMonnitAmpData(renamedData);
+        console.log('Amp sensor data:', renamedData);
         break;
       default:
         break;
@@ -553,6 +567,7 @@ const fetchMonnitData = async (sensor, timePeriod) => {
         monnitBathroomData,
         monnitFridgeData,
         monnitFreezerData,
+        monnitAmpData,
       }}
     >
       {children}

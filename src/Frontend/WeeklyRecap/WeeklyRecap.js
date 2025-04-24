@@ -39,6 +39,7 @@ const METRIC_LABELS = {
   monnit_bathroom: { label: '', addSpace: false },
   monnit_fridge: { label: '°F', addSpace: false },
   monnit_freezer: { label: '°F', addSpace: false },
+  monnit_amp: { label: 'Ah', addSpace: true },
 };
 
 // Format date as MM/DD/YY

@@ -16,6 +16,7 @@ const ChartDataMapper = ({ dataForMetric }) => {
     monnitBathroomData,
     monnitFridgeData,
     monnitFreezerData,
+    monnitAmpData,
   } = useWeatherData();
 
   let dataForChart;
@@ -52,6 +53,9 @@ const ChartDataMapper = ({ dataForMetric }) => {
       break;
     case 'monnitFreezerData':
       dataForChart = monnitFreezerData || monnitFreezerData;
+      break;
+    case 'monnitAmpData':
+      dataForChart = monnitAmpData || monnitAmpData;
       break;
     default:
       dataForChart = weatherData;

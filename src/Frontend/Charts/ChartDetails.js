@@ -15,6 +15,7 @@ export const getLabelForMetric = metric => {
     monnit_bathroom: { label: '', addSpace: false },
     monnit_fridge: { label: '°F', addSpace: false },
     monnit_freezer: { label: '°F', addSpace: false },
+    monnit_amp: { label: 'Ah', addSpace: true },
   };
 
   return metricLabels[metric] || { label: '', addSpace: false };
