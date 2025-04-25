@@ -161,7 +161,7 @@ router.post('/followup', async (req, res) => {
       The agricultural sensors may include temperature, humidity, soil moisture, leaf wetness, 
       rainfall, and wind speed readings. These are critical metrics for farming operations.
       
-      IMPORTANT: Your response MUST be plain text without any special characters or formatting that could break JSON parsing.
+      IMPORTANT: Your response MUST be plain text without any JSON, Markdown, or special characters. Please give your response in natual language.
     `;
 
     const messages = [

@@ -82,5 +82,4 @@ export const WeeklyRecapHelper = async (userMetrics) => {
     return { high, low, avg };
   }
   
-  
-  
+};
